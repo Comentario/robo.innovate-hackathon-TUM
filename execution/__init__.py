@@ -24,12 +24,17 @@ class ExecutionAdapter(Protocol):
         ...
 
 
-def compile_job(plan, inventory, cell_config):
+def compile_job(plan, inventory, cell_config, *, source_poses=None):
     validate_plan(plan, inventory)
     cell = CellLayout(cell_config)
     if any(plan['shape'][k] > cell.capacity[k] for k in cell.capacity):
         raise ValueError('plan exceeds configured pallet capacity')
-    source = {b['id']:cell.source_pose(i) for i,b in enumerate(inventory)}
+    if source_poses is None:
+        source = {b['id']:cell.source_pose(i) for i,b in enumerate(inventory)}
+    else:
+        if not isinstance(source_poses,dict) or set(source_poses)!={b['id'] for b in inventory}:
+            raise ValueError('source poses must cover every inventory ID exactly once')
+        source = deepcopy(source_poses)
     for value in source.values():
         cell.check_pose(value)
     destinations = [cell.target_pose(p) for p in plan['placements']]

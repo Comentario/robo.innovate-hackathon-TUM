@@ -58,6 +58,9 @@ class CellLayout:
 
     def check_pose(self, value, carrying=True):
         center = vector(value['position_m'],3,'object position')
+        q = vector(value['orientation_xyzw'],4,'object orientation')
+        if not math.isclose(sum(x*x for x in q),1,abs_tol=1e-6) or abs(q[0])>1e-8 or abs(q[1])>1e-8 or not (abs(q[2])<1e-8 or abs(q[3])<1e-8):
+            raise ValueError('object pose requires normalized upright yaw 0/180 orientation')
         # Supported yaw rotations preserve the extents. No IK or trajectory collision test.
         for i,x in enumerate(center):
             half = self.size[i]/2 if carrying else 0

@@ -110,3 +110,19 @@ Para detener después de recoger el quinto ladrillo, añadir
 antes de iniciar otra. Ver `docs/cell_execution.md` para configuración, contrato,
 estados inciertos y límites: aún no hay brazo articulado ni trayectorias con
 colisiones comprobadas.
+
+## Personas 2 y 3: integración persistente
+
+Persona 1 continúa con percepción. Podemos preparar y probar el flujo con una
+instantánea sintética canónica, sin depender de su detector:
+
+```bash
+python3 -m integration run --state artifacts/persona23.sqlite3 --pause-after 10
+python3 -m integration resume --state artifacts/persona23.sqlite3
+python3 -m integration inspect --state artifacts/persona23.sqlite3
+```
+
+La pausa devuelve código 4. Se generan reportes HTML en inglés además del JSON.
+Un journal corresponde a un ciclo de celda; no volver a lanzar run sobre el
+mismo estado para repetir acciones. Ver `docs/orchestration.md` y
+`docs/perception_method.md` para contratos, evidencia final y método de percepción.
