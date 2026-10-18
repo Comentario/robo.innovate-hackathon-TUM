@@ -80,3 +80,17 @@ Abrir `artifacts/brick_demo.html` en Chrome o Edge. Incluye reproducción por pa
 comparación mixed/smooth, fallo antes del pick 5 y escenarios de tonalidad por
 cara con restricciones de orientación. No requiere servidor ni dependencias.
 Ver `docs/browser_demo.md` para un guion visual y `docs/faces.md` para el contrato.
+
+## ROS 2 opcional y adaptación a otros SDK
+
+El núcleo de planificación no depende de ROS. Para probar el transporte con
+ROS 2 Humble y ver un pallet 3D en RViz, en dos terminales:
+
+```bash
+bash scripts/ros_preview.sh
+bash scripts/ros_preview.sh rviz
+```
+
+Son cubos animados, sin brazo ni planificación de trayectorias. Otro SDK podrá
+consumir el mismo plan mediante su propio adaptador. Ver `docs/adapters.md`.
+Pruebas del transporte opcional: `bash scripts/ros_preview.sh test`.
