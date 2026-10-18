@@ -13,7 +13,9 @@ ROOT=Path(__file__).resolve().parents[1]
 
 class DurableRosTests(unittest.TestCase):
     count=test_cell.CellRosTests.count
-    wait=test_cell.CellRosTests.wait
+    def wait(self,status,confirmed,**expected):
+        # Durable dispatches commit twice per action; allow filesystem latency.
+        return test_cell.CellRosTests.wait(self,status,confirmed,timeout=30,**expected)
 
     def setUp(self):
         test_cell.CellRosTests.setUp(self)

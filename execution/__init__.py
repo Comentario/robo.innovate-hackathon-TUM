@@ -25,15 +25,20 @@ class ExecutionAdapter(Protocol):
         ...
 
 
-def compile_job(plan, inventory, cell_config, *, source_poses=None):
+def compile_job(plan, inventory, cell_config, *, source_poses=None, preserved_placements=None):
     validate_plan(plan, inventory)
+    preserved=[] if preserved_placements is None else deepcopy(preserved_placements)
+    if not isinstance(preserved,list) or preserved!=plan['placements'][:len(preserved)] or len(preserved)>len(plan['placements']):
+        raise ValueError('preserved placements must be an exact ordered plan prefix')
+    preserved_ids={p['brick_id'] for p in preserved}
+    active_inventory=[b for b in inventory if b['id'] not in preserved_ids]
     cell = CellLayout(cell_config)
     if any(plan['shape'][k] > cell.capacity[k] for k in cell.capacity):
         raise ValueError('plan exceeds configured pallet capacity')
     if source_poses is None:
-        source = {b['id']:cell.source_pose(i) for i,b in enumerate(inventory)}
+        source = {b['id']:cell.source_pose(i) for i,b in enumerate(active_inventory)}
     else:
-        if not isinstance(source_poses,dict) or set(source_poses)!={b['id'] for b in inventory}:
+        if not isinstance(source_poses,dict) or set(source_poses)!={b['id'] for b in active_inventory}:
             raise ValueError('source poses must cover every inventory ID exactly once')
         source = deepcopy(source_poses)
     for value in source.values():
@@ -44,9 +49,11 @@ def compile_job(plan, inventory, cell_config, *, source_poses=None):
         for target in destinations:
             if all(abs(a-b) < size-1e-9 for a,b,size in zip(start['position_m'], target['position_m'],cell.size)):
                 raise ValueError('source brick overlaps a pallet destination')
-    digest = hashlib.sha256(json.dumps(dict(plan=plan,cell=cell_config,inventory=inventory),sort_keys=True).encode()).hexdigest()[:16]
+    identity=dict(plan=plan,cell=cell_config,inventory=inventory)
+    if preserved:identity.update(preserved_placements=preserved,source_poses=source)
+    digest = hashlib.sha256(json.dumps(identity,sort_keys=True).encode()).hexdigest()[:16]
     commands = []
-    for p,target in zip(plan['placements'],destinations):
+    for p,target in list(zip(plan['placements'],destinations))[len(preserved):]:
         start = source[p['brick_id']]
         lifted = cell.above(start)
         oriented = pose(lifted['position_m'],target['orientation_xyzw'])
@@ -56,8 +63,10 @@ def compile_job(plan, inventory, cell_config, *, source_poses=None):
             commands.append(dict(action_id=f'{digest}/{p["step"]}/{phase}', step=p['step'],
                                  brick_id=p['brick_id'], phase=phase, frame=cell.frame,
                                  object_pose=deepcopy(value), placement=deepcopy(p)))
-    return dict(schema_version='execution-job-0.1',job_id=digest,frame=cell.frame,
+    result=dict(schema_version='execution-job-0.1',job_id=digest,frame=cell.frame,
                 plan=deepcopy(plan),cell=deepcopy(cell_config),source_poses=source,commands=commands)
+    if preserved:result['preserved_placements']=preserved
+    return result
 
 
 class SimulatedAdapter:
@@ -89,7 +98,8 @@ class ExecutionSession:
         self.held_brick = None
         self.placed_unconfirmed = None
         self.uncertain_brick = None
-        self.confirmed = []
+        self.confirmed = deepcopy(job.get('preserved_placements',[]))
+        if not job['commands']:self.status='completed'
         self.events = []
         self.object_pose = deepcopy(CellLayout(job['cell']).home)
 

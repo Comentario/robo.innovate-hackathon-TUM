@@ -18,10 +18,13 @@ Ver `person1_review_2026-10-18.md` para resultados y propuesta de contrato.
   La reproducción es cinemática y la confirmación sigue siendo sintética.
 - Restauración de simulación pausada, sin repetir acciones reconocidas.
 - Rechazo de replays, ejecutores con estado antiguo y acciones sin reconocimiento.
+- Recuperación explícita del simulador lógico: prefijo verificado, sustitución
+  por tono/cara compatible, nuevo run y rechazo de reconocimientos tardíos.
+  Demo e interfaces en `recovery.md`; no se reanuda hardware ni Panda.
 - Validador final independiente de las confirmaciones del ejecutor; sin
   observaciones reales el resultado permanece awaiting_observation.
 
-Verificaciones actuales: 50 pruebas sin ROS, 4 pruebas del adaptador Panda y
+Verificaciones actuales: 61 pruebas sin ROS, 4 pruebas del adaptador Panda y
 10 pruebas de transporte/consumo ROS. Se probó pausa entre procesos y restauración hasta completar 12 colocaciones.
 
 ## Cuando llegue persona 1
@@ -38,7 +41,8 @@ Verificaciones actuales: 50 pruebas sin ROS, 4 pruebas del adaptador Panda y
 - Validar y calibrar el modelo del robot real; la maqueta Panda no determina
   alcance, agarres, estabilidad ni dimensiones del equipo del evento.
 - Adaptador del SDK real cuando se conozca la tecnología del evento.
-- Reconciliación de acciones inciertas y replanificación de pallets parciales.
+- Reconstruir/verificar la escena y el estado real para recuperación Panda/SDK.
+  La recuperación actual solo conserva un prefijo y la receta del plan original.
 - Cola de producción, reset de ciclo físico, reserva compartida y persistencia
   operativa más allá del journal local de una sola celda simulada.
 

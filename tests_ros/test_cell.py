@@ -38,9 +38,9 @@ class CellRosTests(unittest.TestCase):
     def count(self,namespace):
         return sum(m.ns==namespace and m.action==Marker.ADD for m in self.markers[-1].markers)
 
-    def wait(self,status,confirmed,**expected):
+    def wait(self,status,confirmed,timeout=10,**expected):
         self.publisher.publish(string_message(self.request))
-        end=time.monotonic()+10
+        end=time.monotonic()+timeout
         while time.monotonic()<end:
             self.executor.spin_once(timeout_sec=.01)
             ready=self.events and self.events[-1]['status']==status and self.markers and self.count('bricks')==confirmed

@@ -142,3 +142,14 @@ La demo opcional Panda + MoveIt usa nuestro contrato de ejecución y journal,
 con trayectorias y colisiones planificadas y reproducción cinemática en RViz.
 Consulta [reproducción, parámetros y límites](docs/reference_arm.md).
 Percepción de persona 1 sigue sin integrarse.
+
+## Recuperación de un pallet parcial
+
+```bash
+python3 -m integration.recovery_demo --output-dir artifacts/recovery_demo
+```
+
+Abrir `index.html` en el directorio generado. La demo conserva cuatro posiciones,
+sustituye una pieza faltante y ejecuta solo lo pendiente en un run simulado nuevo.
+Ver [contrato, CLI y límites](docs/recovery.md). No reanuda automáticamente el
+Panda ni hardware, y no incorpora todavía el módulo de persona 1.

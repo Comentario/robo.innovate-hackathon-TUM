@@ -93,3 +93,12 @@ El adaptador de entrada se ajustará al productor real cuando llegue.
 La evidencia final usa pallet-observation-0.1, vinculada a run_id y plan_digest.
 Sin evidencia el estado es awaiting_observation, aunque la ejecución termine.
 El journal SQLite conserva reservas de un ciclo, acciones pendientes y reconocidas.
+
+## Recuperación explícita de un pallet parcial
+
+`cell-reconciliation-0.1` vincula evidencia completa al run, plan y huella del
+checkpoint. `integration.recovery.assess_recovery` produce una propuesta sin
+movimiento; `Journal.recover_simulation` crea un run hijo con un prefijo verificado
+preservado y tareas restantes, únicamente para acknowledgement_simulator.
+`execution.compile_job(..., preserved_placements=PREFIX)` excluye ese prefijo de
+los picks y exige poses solo para las piezas aún disponibles. Ver `docs/recovery.md`.
