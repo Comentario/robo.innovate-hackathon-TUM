@@ -105,8 +105,8 @@ def render_svg(report):
     width = 2 * panel_w + 64
     height = 180 + len(report['scenarios']) * section_h
     parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">',
-             '<title id="title">Comparación de mezclas de ladrillos</title>',
-             '<desc id="description">Inventarios sintéticos. Cada escenario compara mixed y smooth con rechazo o redistribución ante faltantes.</desc>',
+             '<title id="title">Brick blending comparison</title>',
+             '<desc id="description">Synthetic inventories. Each scenario compares mixed and smooth with rejection or redistribution when shades are missing.</desc>',
              '<style>text{font-family:Arial,sans-serif;fill:#243344} .small{font-size:12px} .metric{font-size:13px} .heading{font-size:19px;font-weight:bold}</style>',
              f'<rect width="{width}" height="{height}" fill="#f2f5f8"/>']
 
@@ -114,47 +114,47 @@ def render_svg(report):
         style = f' style="fill:{fill}"' if fill else ''
         parts.append(f'<text x="{x}" y="{y}" class="{cls}"{style}>{escape(str(value))}</text>')
 
-    text(24, 36, 'Marmon · laboratorio visual de mezclas', 'heading')
-    text(24, 61, 'Datos y colores sintéticos · posiciones lógicas · sin simulación física')
-    text(24, 83, 'Mixed evita vecinos iguales. Smooth reduce saltos de tono; puede formar zonas o gradientes.')
-    text(24, 105, 'La distancia de tono se mide con la misma escala en ambos modos; menor no implica mejor mezcla industrial.')
+    text(24, 36, 'Marmon · brick blending visual lab', 'heading')
+    text(24, 61, 'Synthetic data and colors · logical positions · no physics simulation')
+    text(24, 83, 'Mixed avoids matching neighbors. Smooth reduces shade jumps; it may create clusters or gradients.')
+    text(24, 105, 'Both modes use the same shade scale. A lower distance does not guarantee a better industrial blend.')
     legend = ' / '.join(f'{g}={v:g}' for g,v in report['tone_values'].items())
-    text(24, 127, 'Escala de tono: ' + legend)
+    text(24, 127, 'Shade scale: ' + legend)
     target = report['target_ratios']
-    recipe = ', '.join(f'{g}: {v / sum(target.values()):.1%}' for g,v in target.items()) if target else 'proporción del inventario'
-    text(24, 149, 'Receta objetivo: ' + recipe)
+    recipe = ', '.join(f'{g}: {v / sum(target.values()):.1%}' for g,v in target.items()) if target else 'inventory proportions'
+    text(24, 149, 'Target recipe: ' + recipe)
     for index, scenario in enumerate(report['scenarios']):
         top = 180 + index * section_h
         text(24, top + 20, scenario['name'], 'heading')
-        text(24, top + 43, 'Existencias: ' + ', '.join(f'{g}={n}' for g,n in scenario['stock'].items()))
+        text(24, top + 43, 'Stock: ' + ', '.join(f'{g}={n}' for g,n in scenario['stock'].items()))
         for i, result in enumerate(scenario['results']):
             x = 24 + (i % 2) * (panel_w + 16)
             y = top + 60 + (i // 2) * (card_h + 16)
             parts.append(f'<rect x="{x}" y="{y}" width="{panel_w}" height="{card_h}" rx="10" fill="white" stroke="#cdd6df"/>')
-            text(x + 14, y + 26, f"{result['mode']} · faltantes: {result['shortage_policy']}", 'heading')
+            text(x + 14, y + 26, f"{result['mode']} · shortage: {result['shortage_policy']}", 'heading')
             if result['status'] == 'rejected':
-                text(x + 14, y + 58, 'RECHAZADO · no se genera secuencia', fill='#9c2c26')
+                text(x + 14, y + 58, 'REJECTED · no placement sequence', fill='#9c2c26')
                 text(x + 14, y + 82, result['reason'], 'small')
                 continue
             plan = result['plan']
             metrics = plan['metrics']
-            text(x + 14, y + 50, 'Selección: ' + ', '.join(f'{g}={n}' for g,n in plan['blend'].items()))
+            text(x + 14, y + 50, 'Selection: ' + ', '.join(f'{g}={n}' for g,n in plan['blend'].items()))
             actual = ', '.join(f'{g}={v:.1%}' for g,v in metrics['actual_ratios'].items())
-            text(x + 14, y + 71, 'Proporciones reales: ' + actual, 'small')
-            text(x + 14, y + 93, f"Error receta L1: {metrics['ratio_l1_error']:.3f} · vecinos iguales: {metrics['same_tone_neighbors']}/{metrics['neighbor_pairs']}")
+            text(x + 14, y + 71, 'Actual proportions: ' + actual, 'small')
+            text(x + 14, y + 93, f"Recipe L1 error: {metrics['ratio_l1_error']:.3f} · matching neighbors: {metrics['same_tone_neighbors']}/{metrics['neighbor_pairs']}")
             cm = result['comparison_metrics']
-            text(x + 14, y + 114, f"Distancia media de tono: {cm['mean_neighbor_tone_distance']:.3f}")
+            text(x + 14, y + 114, f"Mean shade distance: {cm['mean_neighbor_tone_distance']:.3f}")
             for layer in range(shape['layers']):
                 lx = x + 14 + (layer % 2) * layer_w
                 ly = y + 144 + (layer // 2) * (shape['rows'] * cell_h + 42)
-                text(lx, ly, f"Capa {layer + 1} · error L1: {cm['layer_ratio_l1_errors'][str(layer)]:.3f}", 'small')
+                text(lx, ly, f"Layer {layer + 1} · L1 error: {cm['layer_ratio_l1_errors'][str(layer)]:.3f}", 'small')
                 for p in plan['placements']:
                     if p['layer'] != layer:
                         continue
                     bx = lx + p['column'] * cell_w
                     by = ly + 10 + p['row'] * cell_h
                     group = p['color_group']
-                    parts.append(f'<g class="brick"><title>{escape(p["brick_id"])} · paso {p["step"]} · capa {layer + 1}, fila {p["row"] + 1}, columna {p["column"] + 1}</title>')
+                    parts.append(f'<g class="brick"><title>{escape(p["brick_id"])} · step {p["step"]} · layer {layer + 1}, row {p["row"] + 1}, column {p["column"] + 1}</title>')
                     parts.append(f'<rect x="{bx}" y="{by}" width="{cell_w - 4}" height="{cell_h - 4}" rx="3" fill="{PALETTE.get(group, "#dde3e9")}"/>')
                     text(bx + 5, by + 19, group, 'small', TEXT.get(group, '#243344'))
                     text(bx + 5, by + 37, f'#{p["step"]}', 'small', TEXT.get(group, '#243344'))

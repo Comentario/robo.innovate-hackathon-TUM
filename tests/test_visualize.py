@@ -53,7 +53,7 @@ class VisualComparisonTests(unittest.TestCase):
         self.assertEqual(len(bricks), expected)
         self.assertIn('&lt;script&gt;&amp;', svg)
         self.assertEqual(len(root.findall('.//s:script', ns)), 0)
-        self.assertIn('RECHAZADO', svg)
+        self.assertIn('REJECTED', svg)
 
     def test_invalid_scenarios_fail_before_rendering(self):
         for change in (dict(target_ratios={'dark': 0}), dict(shape={'rows': 0}),
