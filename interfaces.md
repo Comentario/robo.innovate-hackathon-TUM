@@ -72,3 +72,12 @@ receta y de la mezcla seleccionada, y errores L1 contra ambos. Esto distingue
 falta de stock de acumulación espacial. Mixed asigna cuotas de mezcla por capa
 y fila antes de penalizar vecinos iguales. Smooth conserva su criterio local.
 El redondeo es determinista y no garantiza el óptimo visual global.
+
+## Contrato de ejecución independiente de transporte
+
+`execution.compile_job(plan, inventory, cell_config)` traduce placements a
+acciones de referencia de objeto; `ExecutionAdapter.perform(command)` reconoce
+cada acción con succeeded/failed_before_action/unknown. `config/cell.json` y
+`docs/cell_execution.md` definen poses, fases y estados. No cambia el contrato
+del planificador ni exige ROS. El modo ROS `--cell` publica estas mismas acciones
+y estados de ejecución simulada sobre el adaptador opcional.

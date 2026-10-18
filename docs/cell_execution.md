@@ -80,7 +80,7 @@ compartidas y persistencia requiere diseño con persona 3 y la plataforma real.
 
 ```bash
 bash scripts/ros_preview.sh --cell config/cell.json --period 0.2
-bash scripts/ros_preview.sh rviz
+bash scripts/ros_preview.sh rviz-cell
 ```
 
 Se ven dos mesas, stock de origen, ladrillos confirmados en destino, un marcador

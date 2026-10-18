@@ -10,6 +10,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--inventory', default='examples/faces/inventory.json')
     parser.add_argument('--config', default='examples/faces/config.json')
+    parser.add_argument('--cell', help='Optional synthetic cell layout with pick/place action acknowledgements')
+    parser.add_argument('--fail-phase', choices=['approach_pick','pick','lift','orient','approach_place','place','confirm','retreat'], default='pick')
+    parser.add_argument('--unknown', action='store_true', help='Inject an uncertain action outcome in cell mode')
     parser.add_argument('--per-brick', action='store_true', help='Use legacy per-brick shades instead of observed faces')
     parser.add_argument('--fail-step', type=int)
     parser.add_argument('--period', type=float, default=.8)
@@ -18,7 +21,10 @@ def main():
         parser.error('--period must be positive')
     if args.fail_step is not None and args.fail_step <= 0:
         parser.error('--fail-step must be positive')
+    if not args.cell and (args.unknown or args.fail_phase != 'pick'):
+        parser.error('--unknown and phase-specific failures require --cell')
     try:
+        cell_config = json.loads(Path(args.cell).read_text()) if args.cell else None
         request = dict(inventory=json.loads(Path(args.inventory).read_text()),
                        config=json.loads(Path(args.config).read_text()), face_aware=not args.per_brick)
     except (OSError, ValueError) as error:
@@ -33,9 +39,21 @@ def main():
         from .nodes import PlannerNode, PreviewNode, retained_qos, string_message
     except ImportError:
         parser.error('ROS 2 is optional. Source /opt/ros/humble/setup.bash before running this adapter.')
+    if cell_config is not None:
+        from execution.cell import CellLayout
+        try:
+            if CellLayout(cell_config).frame != 'world':
+                raise ValueError('ROS cell preview requires a world-frame layout')
+        except (ValueError,KeyError,TypeError) as error:
+            parser.error(str(error))
     rclpy.init(args=[])
     planner = PlannerNode()
-    preview = PreviewNode(period=args.period, fail_step=args.fail_step)
+    if cell_config is not None:
+        from .cell_node import CellExecutionNode
+        preview = CellExecutionNode(cell_config, period=args.period, fail_step=args.fail_step,
+                                    fail_phase=args.fail_phase,unknown=args.unknown)
+    else:
+        preview = PreviewNode(period=args.period, fail_step=args.fail_step)
     source = rclpy.create_node('brick_fixture_source')
     publisher = source.create_publisher(String, '/munich_demo/inventory_request', retained_qos())
     executor = SingleThreadedExecutor()

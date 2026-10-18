@@ -94,3 +94,19 @@ bash scripts/ros_preview.sh rviz
 Son cubos animados, sin brazo ni planificación de trayectorias. Otro SDK podrá
 consumir el mismo plan mediante su propio adaptador. Ver `docs/adapters.md`.
 Pruebas del transporte opcional: `bash scripts/ros_preview.sh test`.
+
+## Celda y acciones de ejecución
+
+```bash
+# Sin ROS: 12 ladrillos / 96 acciones reconocidas por el adaptador simulado
+python3 -m execution
+# Vista de recogida, herramienta de referencia y pallet (dos terminales)
+bash scripts/ros_preview.sh --cell config/cell.json --period 0.2
+bash scripts/ros_preview.sh rviz-cell
+```
+
+Para detener después de recoger el quinto ladrillo, añadir
+`--fail-step 5 --fail-phase orient` al publicador. Cerrar la ejecución anterior
+antes de iniciar otra. Ver `docs/cell_execution.md` para configuración, contrato,
+estados inciertos y límites: aún no hay brazo articulado ni trayectorias con
+colisiones comprobadas.

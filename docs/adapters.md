@@ -121,3 +121,12 @@ Las etiquetas de texto se publican, pero su namespace `labels` queda oculto
 por defecto para evitar artefactos tipográficos de OGRE/WSL. Los cubos de
 tonalidad siguen visibles. Se pueden activar en Namespaces si el renderizador
 local las dibuja correctamente.
+
+## Extensión de celda y contrato de acciones
+
+El modo básico anterior conserva la visualización lógica de cubos. El nuevo
+modo opcional `--cell config/cell.json` usa `execution/` para visualizar recogida,
+lift, orientación, colocación, confirmación y retirada. Usa `rviz-cell` como
+encuadre; ver `cell_execution.md`. El núcleo sigue funcionando sin ROS, y la
+nueva interfaz de acciones prepara un consumidor SDK sustituible. Sigue sin
+incluir un brazo articulado, IK ni planificación de movimiento con colisiones.
