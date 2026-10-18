@@ -9,6 +9,7 @@ from . import run_demo
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--face-aware', action='store_true', help='Use observed faces and declared orientations')
     parser.add_argument('--inventory', default='examples/handoff/inventory.json')
     parser.add_argument('--config', default='examples/handoff/config.json')
     parser.add_argument('--fail-step', type=int, help='Inject a failure before this simulated pick')
@@ -19,7 +20,7 @@ def main():
             inventory = json.load(source)
         with open(args.config, encoding='utf-8') as source:
             config = json.load(source)
-        report = run_demo(inventory, config, fail_step=args.fail_step)
+        report = run_demo(inventory, config, fail_step=args.fail_step, face_aware=args.face_aware)
         output = Path(args.output)
         if output.resolve() in (Path(args.inventory).resolve(), Path(args.config).resolve()):
             raise ValueError('output must not overwrite an input file')

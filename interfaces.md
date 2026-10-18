@@ -57,3 +57,10 @@ Ver `examples/handoff/` y `docs/handoff.md`. La salida de referencia v0.2 es
 un plan completo sobre inventario sintético. La gestión de disponibilidad,
 reservas, confirmaciones y pallets parcialmente construidos aún no forma parte
 de esta API; requiere coordinación con integración antes de ejecutar hardware.
+
+## Extensión opcional por caras v0.3
+
+Ver `docs/faces.md` y `examples/faces/`. `planning.faces.make_face_plan` consume
+caras observadas y orientaciones permitidas, conserva IDs físicos únicos y
+produce placements con `visible_face` y `orientation_id`. El consumidor simulado
+valida ambas versiones, v0.2 y v0.3. La API anterior mantiene su comportamiento.

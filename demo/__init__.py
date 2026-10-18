@@ -3,11 +3,12 @@ from collections import Counter
 from copy import deepcopy
 
 from planning import make_plan
+from planning.faces import face_candidates, make_face_plan
 
 
 def validate_plan(plan, inventory):
     """Check the consumer boundary before simulating any reservation or pick."""
-    if not isinstance(plan, dict) or plan.get('schema_version') != '0.2':
+    if not isinstance(plan, dict) or plan.get('schema_version') not in ('0.2', '0.3'):
         raise ValueError('unsupported plan schema')
     shape = plan.get('shape')
     if not isinstance(shape, dict) or set(shape) != {'rows', 'columns', 'layers'}:
@@ -16,11 +17,12 @@ def validate_plan(plan, inventory):
         raise ValueError('invalid plan dimensions')
     if not isinstance(inventory, list):
         raise ValueError('inventory must be a list')
+    face_choices = face_candidates(inventory)[0] if plan['schema_version'] == '0.3' else None
     source = {}
     for brick in inventory:
         if not isinstance(brick, dict) or not isinstance(brick.get('id'), str) or not brick['id'].strip():
             raise ValueError('inventory requires nonempty string IDs')
-        if not isinstance(brick.get('color_group'), str) or not brick['color_group'].strip():
+        if face_choices is None and (not isinstance(brick.get('color_group'), str) or not brick['color_group'].strip()):
             raise ValueError('inventory requires color categories')
         if brick['id'] in source:
             raise ValueError('duplicate inventory ID')
@@ -43,8 +45,12 @@ def validate_plan(plan, inventory):
         brick_id = p.get('brick_id')
         if not isinstance(brick_id, str) or brick_id not in source or brick_id in used:
             raise ValueError('plan references an unavailable or repeated brick ID')
-        if p.get('color_group') != source[brick_id]['color_group']:
-            raise ValueError('plan category does not match inventory')
+        if face_choices is None:
+            if p.get('color_group') != source[brick_id]['color_group']:
+                raise ValueError('plan category does not match inventory')
+        elif not any(all(p.get(k) == c[k] for k in ('orientation_id', 'visible_face', 'color_group'))
+                     for c in face_choices[brick_id]):
+            raise ValueError('selected face or orientation is not observed and allowed')
         used.add(brick_id)
     actual = Counter(p['color_group'] for p in placements)
     blend = plan.get('blend')
@@ -83,7 +89,7 @@ def simulate_plan(plan, inventory, *, fail_step=None):
                 resume_supported=False)
 
 
-def run_demo(inventory, config, *, fail_step=None):
+def run_demo(inventory, config, *, fail_step=None, face_aware=False):
     """Planning rejection emits no simulated execution events."""
     if not isinstance(config, dict):
         raise ValueError('config must be an object')
@@ -91,7 +97,8 @@ def run_demo(inventory, config, *, fail_step=None):
     if set(config) - allowed or not {'rows', 'columns'} <= set(config):
         raise ValueError('config requires rows/columns and known planner keys')
     try:
-        plan = make_plan(inventory, **config)
+        planner = make_face_plan if face_aware else make_plan
+        plan = planner(inventory, **config)
     except ValueError as error:
         return dict(schema_version='dry-run-0.1', execution='simulation_only', status='rejected',
                     reason=str(error), events=[], confirmed_placements=[],
