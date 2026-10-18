@@ -72,6 +72,19 @@ class Journal:
         for key,value in row['checkpoint'].items():setattr(session,key,set(value) if key=='available' else value)
         return DurableRunner(self,run_id,session)
 
+    def restore_simulation_view(self,run_id):
+        row=self.inspect(run_id)
+        if row['mode']!='simulation_only':
+            raise ValueError('hardware state requires live reconciliation, not a synthetic viewer restore')
+        from execution import SimulatedAdapter
+        session=ExecutionSession(row['job'],SimulatedAdapter())
+        for key,value in row['checkpoint'].items():setattr(session,key,set(value) if key=='available' else value)
+        if row['status']!='completed':session.status='stopped'
+        if row['pending'] is not None:
+            session.uncertain_brick=row['pending']['brick_id']
+            session.available.discard(session.uncertain_brick)
+        return session,row
+
     def save_validation(self,run_id,payload,result):
         self.inspect(run_id)
         encoded=json.dumps(payload,sort_keys=True)

@@ -126,3 +126,12 @@ La pausa devuelve código 4. Se generan reportes HTML en inglés además del JSO
 Un journal corresponde a un ciclo de celda; no volver a lanzar run sobre el
 mismo estado para repetir acciones. Ver `docs/orchestration.md` y
 `docs/perception_method.md` para contratos, evidencia final y método de percepción.
+
+Para mostrar un journal persistente en RViz:
+
+```bash
+bash scripts/ros_preview.sh --snapshot examples/perception/snapshot.json --cell config/cell.json --state artifacts/persona23.sqlite3 --period 0.2
+```
+
+Un estado existente abre solo una vista del checkpoint, sin repetir acciones.
+Cerrar cualquier publicador anterior antes de ejecutar este comando.

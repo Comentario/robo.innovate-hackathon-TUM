@@ -122,6 +122,17 @@ class OrchestrationTests(unittest.TestCase):
         with self.assertRaises(ValueError):journal.save_validation(runner.run_id,observation,result)
         journal.close()
 
+    def test_view_restore_preserves_state_without_enabling_motion(self):
+        journal=Journal(self.path);runner=journal.create(self.snapshot,self.job,SimulatedAdapter())
+        for _ in range(10):runner.advance()
+        before=journal.inspect(runner.run_id)['checkpoint']
+        view,row=journal.restore_simulation_view(runner.run_id)
+        self.assertEqual(view.status,'stopped')
+        self.assertEqual(view.cursor,10)
+        self.assertEqual(view.held_brick,runner.session.held_brick)
+        self.assertEqual(journal.inspect(runner.run_id)['checkpoint'],before)
+        journal.close()
+
     def test_cli_pause_resume_and_report_keep_observation_pending(self):
         output=Path(self.tmp.name)/'report.json'
         def invoke(*args):

@@ -45,6 +45,9 @@ class PlannerNode(Node):
         except (ValueError, TypeError, KeyError) as error:
             # Publish rejection on the same retained topic to invalidate an older preview.
             response = dict(schema_version='ros-envelope-0.1', status='rejected', reason=str(error))
+        if response['status']=='planned':
+            for key in ('snapshot','source_poses'):
+                if key in request:response[key]=request[key]
         self.publisher.publish(string_message(response))
 
 
@@ -130,3 +133,4 @@ class PreviewNode(Node):
             self.event(report['status'], confirmed=self.cursor,
                        next_action='reconcile_inventory_and_pallet' if report['status'] == 'stopped' else 'none')
             self.active = None
+        self.timer.reset()

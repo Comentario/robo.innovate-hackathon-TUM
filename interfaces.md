@@ -81,3 +81,15 @@ cada acción con succeeded/failed_before_action/unknown. `config/cell.json` y
 `docs/cell_execution.md` definen poses, fases y estados. No cambia el contrato
 del planificador ni exige ROS. El modo ROS `--cell` publica estas mismas acciones
 y estados de ejecución simulada sobre el adaptador opcional.
+
+## Entrega de persona 1 e integración de personas 2 y 3
+
+Ver `examples/perception/snapshot.json` y `docs/orchestration.md`: instantánea
+versionada con ID, origen declarado, modalidad por caras y lista de items.
+Planificar no exige poses. Ejecutar un origen perception exige poses métricas
+por ID en el frame de la celda; nunca se reinterpretan píxeles como metros.
+El adaptador de entrada se ajustará al productor real cuando llegue.
+
+La evidencia final usa pallet-observation-0.1, vinculada a run_id y plan_digest.
+Sin evidencia el estado es awaiting_observation, aunque la ejecución termine.
+El journal SQLite conserva reservas de un ciclo, acciones pendientes y reconocidas.

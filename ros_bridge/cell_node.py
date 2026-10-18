@@ -1,5 +1,7 @@
 """Waypoint visualization of an execution contract; not a robot or physics simulator."""
 import json
+import sqlite3
+from integration.intake import normalize_snapshot, execution_source_poses
 from geometry_msgs.msg import Point
 from visualization_msgs.msg import Marker, MarkerArray
 from execution import compile_job, ExecutionSession, SimulatedAdapter
@@ -8,17 +10,33 @@ from .nodes import PreviewNode
 
 
 class CellExecutionNode(PreviewNode):
-    def __init__(self, cell_config, prefix='/munich_demo', period=.3, fail_step=None, fail_phase='pick', unknown=False):
+    def __init__(self, cell_config, prefix='/munich_demo', period=.3, fail_step=None, fail_phase='pick', unknown=False, journal=None):
         self.cell = CellLayout(cell_config)
         if self.cell.frame != 'world':
             raise ValueError('ROS cell preview requires an explicit world-frame layout')
+        self.journal,self.runner,self.loaded_run_id,self.view_only=journal,None,None,False
         self.session = None
         self.inventory = []
         self.trace = []
         self.fail_phase,self.unknown = fail_phase,unknown
         super().__init__(prefix,period,fail_step)
+        if self.journal is not None:
+            try:run_id=self.journal.latest_run_id()
+            except ValueError:run_id=None
+            if run_id is not None:
+                self.session,row=self.journal.restore_simulation_view(run_id)
+                self.loaded_run_id,self.view_only=run_id,True
+                self.cell=CellLayout(row['job']['cell'])
+                self.inventory=row['snapshot']['items']
+                self.draw()
+                self.event('checkpoint_loaded',run_id=run_id,confirmed=len(self.session.confirmed),
+                           stored_status=row['status'],motion_enabled=False)
 
     def on_plan(self, message):
+        if self.journal is not None and self.session is not None:
+            self.event('request_refused',reason='cell_cycle_already_loaded',run_id=self.loaded_run_id,
+                       confirmed=len(self.session.confirmed))
+            return
         self.session,self.inventory,self.trace = None,[],[]
         self.marker_publisher.publish(MarkerArray(markers=[self.clear_marker()]))
         try:
@@ -26,13 +44,23 @@ class CellExecutionNode(PreviewNode):
             if response.get('schema_version') != 'ros-envelope-0.1' or response.get('status') != 'planned':
                 raise ValueError(response.get('reason','plan response rejected'))
             self.inventory = response['source_inventory']
-            job = compile_job(response['plan'],self.inventory,self.cell.config)
+            snapshot=normalize_snapshot(response['snapshot']) if 'snapshot' in response else None
+            if snapshot is not None and (snapshot['items']!=self.inventory or snapshot['face_aware']!=(response['plan']['schema_version']=='0.3')):
+                raise ValueError('snapshot does not match the plan source')
+            poses=execution_source_poses(snapshot,self.cell.config) if snapshot else response.get('source_poses')
+            job = compile_job(response['plan'],self.inventory,self.cell.config,source_poses=poses)
             if self.fail_step is not None and not 1 <= self.fail_step <= len(job['plan']['placements']):
                 raise ValueError('fail_step must identify a placement')
-            self.session = ExecutionSession(job,SimulatedAdapter(self.fail_step,self.fail_phase,self.unknown))
-            self.event('ready',confirmed=0,preview='synthetic_cell_waypoints')
+            adapter=SimulatedAdapter(self.fail_step,self.fail_phase,self.unknown)
+            if self.journal is not None:
+                if snapshot is None:raise ValueError('durable cell mode requires a canonical snapshot')
+                self.runner=self.journal.create(snapshot,job,adapter)
+                self.session,self.loaded_run_id=self.runner.session,self.runner.run_id
+            else:self.session = ExecutionSession(job,adapter)
+            self.event('ready',confirmed=0,preview='synthetic_cell_waypoints',run_id=self.loaded_run_id)
             self.draw()
-        except (ValueError,KeyError,TypeError,AttributeError) as error:
+            self.timer.reset()
+        except (ValueError,KeyError,TypeError,AttributeError,sqlite3.Error) as error:
             self.session = None
             self.event('rejected',reason=str(error))
 
@@ -100,12 +128,17 @@ class CellExecutionNode(PreviewNode):
         self.marker_publisher.publish(MarkerArray(markers=markers))
 
     def tick(self):
-        if self.session is None or self.session.status in ('completed','stopped'):return
-        event=self.session.advance()
+        if self.view_only or self.session is None or self.session.status in ('completed','stopped'):return
+        try:event=self.runner.advance() if self.runner else self.session.advance()
+        except (ValueError,sqlite3.Error) as error:
+            self.session.status='stopped'
+            self.event('journal_error',reason=str(error),run_id=self.loaded_run_id)
+            return
         if event['outcome']=='succeeded':
             self.trace.append(self.session.object_pose['position_m'][:])
         self.draw()
         fields={k:v for k,v in event.items() if k not in ('status','execution')}
         fields.update(held_brick=self.session.held_brick,placed_unconfirmed=self.session.placed_unconfirmed,
-                      uncertain_brick=self.session.uncertain_brick,preview='synthetic_cell_waypoints')
+                      uncertain_brick=self.session.uncertain_brick,preview='synthetic_cell_waypoints',run_id=self.loaded_run_id)
         self.event(event['status'],**fields)
+        self.timer.reset()

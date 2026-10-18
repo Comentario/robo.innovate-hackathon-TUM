@@ -95,3 +95,21 @@ no se consideran observadas solo porque su posición estaba planificada.
 Entrega real de persona 1, ajuste del adaptador a su formato, calibración y poses,
 observación final real, brazo de referencia/IK/colisiones, adaptador del SDK real,
 reservas de producción y reconciliación/replanificación del pallet parcial.
+
+## El mismo journal en RViz
+
+```bash
+bash scripts/ros_preview.sh --snapshot examples/perception/snapshot.json --cell config/cell.json --state artifacts/persona23.sqlite3 --period 0.2
+bash scripts/ros_preview.sh rviz-cell
+```
+
+Si el journal está vacío, se crea un ciclo y cada acción pasa por el registro
+persistente antes de reconocerse. Si ya existe, se restaura SOLO la vista del
+último estado sintético, sin emitir acciones. Las nuevas solicitudes sobre esa
+celda se rechazan sin borrar el pallet conocido. La restauración no implica
+reconciliación física; nunca se ejecuta automáticamente un checkpoint hardware.
+
+Para reanudar una simulación pausada usar el comando integration resume indicado
+arriba, y volver a abrir la vista para cargar su estado actualizado. Cerrar el
+publicador previo antes de iniciar otro con los mismos topics. La cadencia de
+publicación cede tiempo entre acciones para guardar estado y entregar mensajes.
