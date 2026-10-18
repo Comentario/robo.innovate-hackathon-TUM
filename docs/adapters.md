@@ -101,3 +101,23 @@ recibe el mismo plan a través de su adaptador, sin imponer ROS.
 
 Fuente técnica oficial consultada el 18-10-2026:
 https://moveit.picknik.ai/humble/doc/tutorials/quickstart_in_rviz/quickstart_in_rviz_tutorial.html
+
+## Corrección de visualización en WSL
+
+La suscripción a topics no demuestra que RViz esté dibujando. La vista publica
+ahora el TF estático `world → pallet`, usa `world` como Fixed Frame y carga
+explícitamente displays y cámara habilitados. El lanzador de RViz usa OpenGL por
+software, XCB y desactiva MIT-SHM para evitar el viewport vacío observado en WSL.
+Solo afecta al proceso de RViz. Para probar GPU: `MUNICH_RVIZ_SOFTWARE=0 bash
+scripts/ros_preview.sh rviz`.
+
+Mantener el publicador de la demo activo mientras se revisa RViz, especialmente
+al abrir una ventana nueva. El estado retenido depende de que siga existiendo
+el publicador. La comprobación visual exige ver la cuadrícula y los cubos; el
+estado OK de topics por sí solo no basta. Se añadió una prueba de disponibilidad
+del TF para suscriptores que se conectan después de iniciar la escena.
+
+Las etiquetas de texto se publican, pero su namespace `labels` queda oculto
+por defecto para evitar artefactos tipográficos de OGRE/WSL. Los cubos de
+tonalidad siguen visibles. Se pueden activar en Namespaces si el renderizador
+local las dibuja correctamente.

@@ -44,7 +44,7 @@ def main():
     publisher.publish(string_message(request))
     print('SIMULATION ONLY | ROS 2 adapter | no arm or robot commands', flush=True)
     print('Topics: /munich_demo/inventory_request → /munich_demo/plan → /munich_demo/markers and /munich_demo/events', flush=True)
-    print('RViz: Fixed Frame = pallet; MarkerArray topic = /munich_demo/markers', flush=True)
+    print('RViz: Fixed Frame = world; MarkerArray topic = /munich_demo/markers', flush=True)
     try:
         executor.spin()
     except KeyboardInterrupt:

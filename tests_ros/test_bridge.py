@@ -9,6 +9,8 @@ import rclpy
 from rclpy.executors import SingleThreadedExecutor
 from std_msgs.msg import String
 from visualization_msgs.msg import MarkerArray, Marker
+from tf2_ros import Buffer, TransformListener
+from rclpy.time import Time
 from planning.faces import make_face_plan
 from ros_bridge.nodes import PlannerNode, PreviewNode, retained_qos, string_message
 
@@ -53,6 +55,17 @@ class RosBridgeTests(unittest.TestCase):
 
     def cube_count(self):
         return sum(m.type == Marker.CUBE and m.action == Marker.ADD for m in self.markers[-1].markers)
+
+    def test_world_to_pallet_frame_is_available_to_late_subscribers(self):
+        buffer = Buffer()
+        listener = TransformListener(buffer, self.client)
+        deadline = time.monotonic() + 5
+        while time.monotonic() < deadline and not buffer.can_transform('world', 'pallet', Time()):
+            self.executor.spin_once(timeout_sec=.05)
+        transform = buffer.lookup_transform('world', 'pallet', Time())
+        self.assertEqual(transform.transform.rotation.w, 1.0)
+        self.assertEqual(transform.transform.translation.x, 0.0)
+        listener.unregister()
 
     def test_ros_request_plan_and_marker_transport(self):
         self.publisher.publish(string_message(self.request))

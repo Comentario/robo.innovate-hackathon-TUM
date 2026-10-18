@@ -6,6 +6,8 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy
 from std_msgs.msg import String
 from visualization_msgs.msg import Marker, MarkerArray
+from geometry_msgs.msg import TransformStamped
+from tf2_ros.static_transform_broadcaster import StaticTransformBroadcaster
 
 from demo import simulate_plan, validate_plan
 from planning import make_plan
@@ -50,6 +52,13 @@ class PreviewNode(Node):
     """Animate logical cubes; never publish joint, trajectory or robot commands."""
     def __init__(self, prefix='/munich_demo', period=0.8, fail_step=None):
         super().__init__('brick_pallet_preview')
+        self.static_tf = StaticTransformBroadcaster(self)
+        transform = TransformStamped()
+        transform.header.stamp = self.get_clock().now().to_msg()
+        transform.header.frame_id = 'world'
+        transform.child_frame_id = 'pallet'
+        transform.transform.rotation.w = 1.0
+        self.static_tf.sendTransform(transform)
         self.fail_step = fail_step
         self.active = None
         self.cursor = 0
@@ -63,6 +72,7 @@ class PreviewNode(Node):
 
     def markers(self, placements):
         clear = Marker()
+        clear.header.frame_id = 'pallet'
         clear.action = Marker.DELETEALL
         markers = [clear]
         palette = dict(dark=(.44,.26,.19), medium=(.72,.47,.32), light=(.91,.78,.63))

@@ -8,6 +8,8 @@ exec env -u AMENT_PREFIX_PATH -u CMAKE_PREFIX_PATH -u COLCON_PREFIX_PATH \
   PYTHONDONTWRITEBYTECODE=1 bash --noprofile --norc -c '
     source /opt/ros/humble/setup.bash
     if [ "${1:-}" = rviz ]; then
+      export LIBGL_ALWAYS_SOFTWARE="${MUNICH_RVIZ_SOFTWARE:-1}"
+      export QT_QPA_PLATFORM=xcb QT_X11_NO_MITSHM=1
       exec rviz2 -d ros_bridge/pallet.rviz
     elif [ "${1:-}" = test ]; then
       exec python3 -m unittest discover -s tests_ros -v
