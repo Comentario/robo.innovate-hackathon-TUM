@@ -69,3 +69,14 @@ python3 -m demo --fail-step 5 --output artifacts/dry_run_failure.json
 La primera ejecución confirma 12 colocaciones simuladas (código 0). La segunda
 se detiene antes del paso 5, con 4 confirmaciones (código 3 esperado).
 Ver `docs/integration_demo.md` para interpretar eventos, rechazos y límites.
+
+## Demo animada en el navegador
+
+```bash
+python3 -m demo.browser
+```
+
+Abrir `artifacts/brick_demo.html` en Chrome o Edge. Incluye reproducción por pasos,
+comparación mixed/smooth, fallo antes del pick 5 y escenarios de tonalidad por
+cara con restricciones de orientación. No requiere servidor ni dependencias.
+Ver `docs/browser_demo.md` para un guion visual y `docs/faces.md` para el contrato.
