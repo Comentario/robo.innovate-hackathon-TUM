@@ -1,0 +1,1 @@
+"""Brick detection package."""

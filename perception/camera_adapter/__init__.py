@@ -1,0 +1,1 @@
+"""Camera input adapter package."""

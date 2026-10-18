@@ -1,0 +1,266 @@
+{
+  "schema_version": "0.1",
+  "image_id": "bricks_17",
+  "image_size_px": {
+    "width": 811,
+    "height": 598
+  },
+  "processing_status": "partial",
+  "bricks": [
+    {
+      "bbox_px": {
+        "x": 564,
+        "y": 29,
+        "width": 38,
+        "height": 148
+      },
+      "center_px": {
+        "x": 583.44,
+        "y": 102.35
+      },
+      "color_group": "unknown",
+      "color_score": 0.0,
+      "id": "brick_001"
+    },
+    {
+      "bbox_px": {
+        "x": 676,
+        "y": 29,
+        "width": 40,
+        "height": 148
+      },
+      "center_px": {
+        "x": 695.75,
+        "y": 102.01
+      },
+      "color_group": "unknown",
+      "color_score": 0.0,
+      "id": "brick_002"
+    },
+    {
+      "bbox_px": {
+        "x": 716,
+        "y": 29,
+        "width": 38,
+        "height": 148
+      },
+      "center_px": {
+        "x": 732.71,
+        "y": 103.03
+      },
+      "color_group": "unknown",
+      "color_score": 0.0,
+      "id": "brick_003"
+    },
+    {
+      "bbox_px": {
+        "x": 640,
+        "y": 30,
+        "width": 36,
+        "height": 147
+      },
+      "center_px": {
+        "x": 657.28,
+        "y": 104.42
+      },
+      "color_group": "unknown",
+      "color_score": 0.0,
+      "id": "brick_004"
+    },
+    {
+      "bbox_px": {
+        "x": 602,
+        "y": 31,
+        "width": 38,
+        "height": 146
+      },
+      "center_px": {
+        "x": 620.33,
+        "y": 103.99
+      },
+      "color_group": "unknown",
+      "color_score": 0.0,
+      "id": "brick_005"
+    },
+    {
+      "bbox_px": {
+        "x": 567,
+        "y": 177,
+        "width": 37,
+        "height": 141
+      },
+      "center_px": {
+        "x": 585.15,
+        "y": 230.4
+      },
+      "color_group": "unknown",
+      "color_score": 0.0,
+      "id": "brick_006"
+    },
+    {
+      "bbox_px": {
+        "x": 604,
+        "y": 177,
+        "width": 38,
+        "height": 145
+      },
+      "center_px": {
+        "x": 623.26,
+        "y": 246.7
+      },
+      "color_group": "unknown",
+      "color_score": 0.0,
+      "id": "brick_007"
+    },
+    {
+      "bbox_px": {
+        "x": 642,
+        "y": 177,
+        "width": 37,
+        "height": 145
+      },
+      "center_px": {
+        "x": 660.53,
+        "y": 248.91
+      },
+      "color_group": "unknown",
+      "color_score": 0.0,
+      "id": "brick_008"
+    },
+    {
+      "bbox_px": {
+        "x": 679,
+        "y": 177,
+        "width": 37,
+        "height": 145
+      },
+      "center_px": {
+        "x": 696.9,
+        "y": 248.91
+      },
+      "color_group": "unknown",
+      "color_score": 0.0,
+      "id": "brick_009"
+    },
+    {
+      "bbox_px": {
+        "x": 716,
+        "y": 177,
+        "width": 37,
+        "height": 145
+      },
+      "center_px": {
+        "x": 733.23,
+        "y": 249.7
+      },
+      "color_group": "unknown",
+      "color_score": 0.0,
+      "id": "brick_010"
+    },
+    {
+      "bbox_px": {
+        "x": 573,
+        "y": 322,
+        "width": 37,
+        "height": 143
+      },
+      "center_px": {
+        "x": 591.49,
+        "y": 393.76
+      },
+      "color_group": "unknown",
+      "color_score": 0.0,
+      "id": "brick_011"
+    },
+    {
+      "bbox_px": {
+        "x": 610,
+        "y": 322,
+        "width": 37,
+        "height": 143
+      },
+      "center_px": {
+        "x": 628.11,
+        "y": 393.31
+      },
+      "color_group": "unknown",
+      "color_score": 0.0,
+      "id": "brick_012"
+    },
+    {
+      "bbox_px": {
+        "x": 647,
+        "y": 322,
+        "width": 37,
+        "height": 143
+      },
+      "center_px": {
+        "x": 664.93,
+        "y": 393.13
+      },
+      "color_group": "unknown",
+      "color_score": 0.0,
+      "id": "brick_013"
+    },
+    {
+      "bbox_px": {
+        "x": 684,
+        "y": 322,
+        "width": 36,
+        "height": 143
+      },
+      "center_px": {
+        "x": 701.33,
+        "y": 392.63
+      },
+      "color_group": "unknown",
+      "color_score": 0.0,
+      "id": "brick_014"
+    },
+    {
+      "bbox_px": {
+        "x": 720,
+        "y": 322,
+        "width": 39,
+        "height": 143
+      },
+      "center_px": {
+        "x": 737.41,
+        "y": 392.88
+      },
+      "color_group": "unknown",
+      "color_score": 0.0,
+      "id": "brick_015"
+    },
+    {
+      "bbox_px": {
+        "x": 607,
+        "y": 465,
+        "width": 143,
+        "height": 37
+      },
+      "center_px": {
+        "x": 690.89,
+        "y": 479.88
+      },
+      "color_group": "unknown",
+      "color_score": 0.0,
+      "id": "brick_016"
+    },
+    {
+      "bbox_px": {
+        "x": 604,
+        "y": 502,
+        "width": 145,
+        "height": 39
+      },
+      "center_px": {
+        "x": 686.22,
+        "y": 524.94
+      },
+      "color_group": "unknown",
+      "color_score": 0.0,
+      "id": "brick_017"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.py[cod]
+
+2026-03-17_CIDET_VO3_BricksDetectionDataset/
+Brick_Window_with_Masonry_New.v2-2024-11-14-1-00pm.multiclass/
+
+outputs/
