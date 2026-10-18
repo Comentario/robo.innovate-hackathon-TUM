@@ -79,7 +79,7 @@ python3 -m integration.recovery continue --state PATH/state.sqlite3 \
 `assess` no despacha acciones y produce HTML junto al JSON. Retorna 3 si queda
 bloqueado; los errores de formato/binding retornan 2. `continue` vuelve a calcular
 la propuesta bajo una transacción y compara su huella con la revisada antes de
-transferir el ciclo. Solo admite el backend acknowledgement_simulator, tanto
+transferir el ciclo. Esta CLI solo admite el backend acknowledgement_simulator, tanto
 en el padre como en el hijo. Rechaza hardware y panda_moveit_kinematic.
 
 ## Qué conserva y qué recalcula
@@ -132,3 +132,6 @@ hasta 30 s para completar la secuencia de 96 acciones con commits persistentes;
 el límite anterior de 10 s se agotó con progreso activo en esta máquina. Los
 tests en memoria mantienen su límite original. No se reduce la durabilidad ni
 se omiten las comprobaciones del journal para acelerar la demo.
+
+La recuperación articulada tiene una entrada específica con comprobación de escena:
+ver `reference_arm_recovery.md`. No cambia la restricción de esta CLI genérica.

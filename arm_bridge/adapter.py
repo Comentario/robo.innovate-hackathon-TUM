@@ -8,15 +8,18 @@ from rclpy.node import Node
 from rclpy.time import Time
 from rclpy.clock import Clock, ClockType
 from .motion import TimedPath
+from .scene_state import scene_digest,require_same_scene,same_pose,without_timestamps,compose_poses
+from rosidl_runtime_py.convert import message_to_ordereddict
 from rclpy.qos import QoSProfile, DurabilityPolicy
 from sensor_msgs.msg import JointState
-from geometry_msgs.msg import Pose
+from geometry_msgs.msg import Pose, Point
 from shape_msgs.msg import SolidPrimitive
 from moveit_msgs.msg import (PlanningScene, CollisionObject, AttachedCollisionObject,
-    AllowedCollisionEntry, PlanningSceneComponents, Constraints, PositionConstraint, OrientationConstraint, BoundingVolume)
+    AllowedCollisionEntry, PlanningSceneComponents, Constraints, PositionConstraint, OrientationConstraint, BoundingVolume, JointConstraint)
 from moveit_msgs.srv import ApplyPlanningScene, GetMotionPlan, GetStateValidity, GetPositionFK, GetPlanningScene, GetPositionIK
 from visualization_msgs.msg import Marker, MarkerArray
 from execution import ActionResult
+from execution.cell import CellLayout
 
 JOINTS=[f'panda_joint{i}' for i in range(1,8)]
 FINGERS=['panda_finger_joint1','panda_finger_joint2']
@@ -48,6 +51,7 @@ def hand_goal(value,offset=GRASP_OFFSET):
 def box(name,size,value,frame='world'):
     obj=CollisionObject(id=name)
     obj.header.frame_id=frame
+    obj.pose.orientation.w=1.
     obj.primitives=[SolidPrimitive(type=SolidPrimitive.BOX,dimensions=list(map(float,size)))]
     obj.primitive_poses=[geometry_pose(value)]
     obj.operation=CollisionObject.ADD
@@ -58,7 +62,7 @@ class MoveItAdapter(Node):
     mode='simulation_only'
     backend='panda_moveit_kinematic'
 
-    def __init__(self,job,*,speed=4.):
+    def __init__(self,job,*,speed=4.,restore=False,saved_state=None):
         super().__init__('munich_reference_arm')
         self.job=deepcopy(job)
         self.speed=speed
@@ -87,14 +91,120 @@ class MoveItAdapter(Node):
         for client in (self.apply,self.plan,self.valid,self.fk,self.get_scene,self.ik):
             if not client.wait_for_service(timeout_sec=20.):raise RuntimeError('MoveIt service unavailable; start scripts/arm_demo.sh launch')
         request=GetPlanningScene.Request()
-        request.components.components=PlanningSceneComponents.WORLD_OBJECT_NAMES | PlanningSceneComponents.ROBOT_STATE_ATTACHED_OBJECTS
+        request.components.components=PlanningSceneComponents.WORLD_OBJECT_GEOMETRY | PlanningSceneComponents.ROBOT_STATE | PlanningSceneComponents.ROBOT_STATE_ATTACHED_OBJECTS
         previous=self.call(self.get_scene,request).scene
-        if previous.world.collision_objects or previous.robot_state.attached_collision_objects:
+        if restore:
+            if not isinstance(saved_state,dict) or saved_state.get('job_id')!=job['job_id']:raise ValueError('restore requires a checkpoint bound to this reference job')
+            previous,semantic=self.capture_scene()
+            require_same_scene(semantic,saved_state.get('scene_digest'))
+            self.restore_from_scene(previous)
+            self.visual_epoch_ns=max(self.visual_epoch_ns,int(saved_state['visual_time_ns']))
+            self.visual_start_ns=time.monotonic_ns()
+        elif previous.world.collision_objects or previous.robot_state.attached_collision_objects:
             raise RuntimeError('reference scene is occupied; inspect its journal and restart the synthetic server before a new cycle')
         self.timer=self.create_timer(.02,self.publish_state,clock=Clock(clock_type=ClockType.STEADY_TIME))
         self.publish_state()
         self.spin_for(1.)
-        self.initialize_scene()
+        if not restore:self.initialize_scene()
+        elif not self.is_valid():raise RuntimeError('restored reference state is in collision')
+
+    @staticmethod
+    def object_pose(obj):
+        if obj.header.frame_id not in ('world','panda_link0') or len(obj.primitives)!=1 or len(obj.primitive_poses)!=1 or obj.meshes or obj.planes or obj.primitives[0].type!=SolidPrimitive.BOX:
+            raise ValueError('known reference bricks must be world-frame boxes')
+        def value(p):return dict(position_m=[p.position.x,p.position.y,p.position.z],orientation_xyzw=[p.orientation.x,p.orientation.y,p.orientation.z,p.orientation.w])
+        return compose_poses(value(obj.pose),value(obj.primitive_poses[0]))
+
+    def restore_from_scene(self,scene):
+        joints=dict(zip(scene.robot_state.joint_state.name,scene.robot_state.joint_state.position))
+        if any(name not in joints or not math.isfinite(joints[name]) for name in JOINTS+FINGERS):
+            raise ValueError('live scene does not contain all reference robot joints')
+        self.positions=[joints[name] for name in JOINTS+FINGERS]
+        world={o.id:o for o in scene.world.collision_objects}
+        attached=scene.robot_state.attached_collision_objects
+        if len(attached)>1:raise ValueError('multiple attached objects require explicit intervention')
+        held=attached[0].object.id if attached else None
+        if attached and attached[0].link_name!='panda_hand':raise ValueError('unexpected attachment link')
+        for bid in self.objects:
+            if bid==held:continue  # rendered in hand frame, never treated as available stock
+            if bid not in world:raise ValueError(f'reference brick missing from live scene: {bid}')
+            obj=world[bid]
+            value=self.object_pose(obj)
+            if list(obj.primitives[0].dimensions)!=self.job['cell']['brick_size_m']:raise ValueError('brick dimensions changed')
+            self.objects[bid]=value
+        if held is not None and held not in self.objects:raise ValueError('unidentified attached object')
+        self.held=held
+        # No collision object, TF or joint is reset during restoration.
+
+    def capture_scene(self):
+        request=GetPlanningScene.Request()
+        request.components.components=(PlanningSceneComponents.ROBOT_STATE | PlanningSceneComponents.ROBOT_STATE_ATTACHED_OBJECTS | PlanningSceneComponents.WORLD_OBJECT_GEOMETRY | PlanningSceneComponents.ALLOWED_COLLISION_MATRIX | PlanningSceneComponents.TRANSFORMS | PlanningSceneComponents.OCTOMAP)
+        scene=self.call(self.get_scene,request).scene
+        joints=dict(zip(scene.robot_state.joint_state.name,scene.robot_state.joint_state.position))
+        return scene,dict(joints=joints,objects={o.id:message_to_ordereddict(o) for o in scene.world.collision_objects},attached=[message_to_ordereddict(o) for o in scene.robot_state.attached_collision_objects],collision_matrix=message_to_ordereddict(scene.allowed_collision_matrix),transforms=[message_to_ordereddict(t) for t in scene.fixed_frame_transforms],octomap=message_to_ordereddict(scene.world.octomap))
+
+    def require_empty_stopped_robot(self,scene):
+        joints=dict(zip(scene.robot_state.joint_state.name,scene.robot_state.joint_state.position))
+        if self.motion is not None or scene.robot_state.attached_collision_objects or self.held is not None:
+            raise ValueError('reference recovery requires no active trajectory and no attached object')
+        if any(name not in joints or abs(joints[name]-.04)>.0002 for name in FINGERS):raise ValueError('gripper is not verified open')
+        if any(name not in joints or abs(joints[name]-value)>1e-5 for name,value in zip(JOINTS+FINGERS,self.positions)):
+            raise ValueError('live robot joints differ from restored playback state')
+        if not self.is_valid():raise ValueError('reference state is in collision')
+
+    def fk_hand(self):
+        request=GetPositionFK.Request();request.header.frame_id='world'
+        request.fk_link_names=['panda_hand'];request.robot_state=self.state()
+        response=self.call(self.fk,request)
+        if response.error_code.val!=1 or not response.pose_stamped:raise ValueError('reference FK unavailable')
+        p=response.pose_stamped[0].pose
+        return dict(position_m=[p.position.x,p.position.y,p.position.z],orientation_xyzw=[p.orientation.x,p.orientation.y,p.orientation.z,p.orientation.w])
+
+    def move_to_recovery_home(self):
+        scene,_=self.capture_scene();self.require_empty_stopped_robot(scene)
+        goal=hand_goal({'position_m':self.job['cell']['home_m'],'orientation_xyzw':[0,0,0,1]},self.grasp_offset)
+        trajectory,code=self.plan_to(goal)
+        if trajectory is None:return ActionResult('failed_before_action',f'recovery_home_plan_rejected:{code}')
+        self.playback(trajectory)
+        if math.dist(self.fk_hand()['position_m'],[goal.position.x,goal.position.y,goal.position.z])>.004:
+            raise ValueError('robot did not reach recovery home')
+        return ActionResult('succeeded','collision_checked_reference_home')
+
+    def reconciliation(self,row,observation_id):
+        from integration.recovery import basis_digest
+        from integration.validation import plan_digest
+        scene,semantic=self.capture_scene();self.require_empty_stopped_robot(scene)
+        home=hand_goal({'position_m':self.job['cell']['home_m'],'orientation_xyzw':[0,0,0,1]},self.grasp_offset)
+        expected=dict(position_m=[home.position.x,home.position.y,home.position.z],orientation_xyzw=[home.orientation.x,home.orientation.y,home.orientation.z,home.orientation.w])
+        if not same_pose(self.fk_hand(),expected,position_tolerance=.004,angle_tolerance=.04):raise ValueError('reference hand is not at recovery home')
+        world={o.id:o for o in scene.world.collision_objects}
+        placements=[];prefix_ended=False
+        for p in row['job']['plan']['placements']:
+            bid=p['brick_id']
+            if bid not in world:raise ValueError('missing known brick in reference scene')
+            actual=self.object_pose(world[bid]);target=CellLayout(row['job']['cell']).target_pose(p)
+            on_pallet=same_pose(actual,target)
+            if on_pallet and prefix_ended:raise ValueError('reference pallet is not an ordered prefix')
+            if on_pallet:placements.append(deepcopy(p))
+            else:prefix_ended=True
+        ids={p['brick_id'] for p in placements}
+        inventory=[deepcopy(b) for b in row['snapshot']['items'] if b['id'] not in ids]
+        for bid in self.objects:
+            if bid not in world:raise ValueError('complete reference inventory is required')
+        return dict(schema_version='cell-reconciliation-0.1',run_id=row['run_id'],plan_digest=plan_digest(row['job']['plan']),basis_digest=basis_digest(row),observation_id=observation_id,source='synthetic',coverage='complete',gripper={'state':'empty'},robot={'state':'safe_home'},placements=placements,inventory=inventory,missing_ids=[],frame='world',units='m',source_poses={b['id']:self.object_pose(world[b['id']]) for b in inventory},robot_scene_digest=scene_digest(semantic),robot_scene=semantic)
+
+    def verify_recovery_scene(self,row,observation,proposal):
+        fresh=self.reconciliation(row,observation['observation_id'])
+        require_same_scene(fresh['robot_scene'],observation.get('robot_scene_digest'))
+        if without_timestamps(fresh)!=without_timestamps(observation):raise ValueError('reconciliation differs from the live reference scene')
+        return dict(backend=self.backend,scene_digest=fresh['robot_scene_digest'],proposal_digest=proposal['proposal_digest'],joints=deepcopy(self.positions),physical_validation=False)
+
+    def activate_recovery(self,job,receipt):
+        _,semantic=self.capture_scene();require_same_scene(semantic,receipt['scene_digest'])
+        self.job=deepcopy(job)
+        self.placed={p['brick_id'] for p in job.get('preserved_placements',[])}
+        self.evidence=[];self.playback_metrics=[]
+        self.publish_state()
 
     def call(self,client,request,timeout=20.):
         future=client.call_async(request)
@@ -206,10 +316,26 @@ class MoveItAdapter(Node):
         pc.constraint_region=BoundingVolume(primitives=[SolidPrimitive(type=SolidPrimitive.SPHERE,dimensions=[.002])],primitive_poses=[goal])
         oc=OrientationConstraint(link_name='panda_hand',orientation=goal.orientation,absolute_x_axis_tolerance=.02,absolute_y_axis_tolerance=.02,absolute_z_axis_tolerance=.02,weight=1.)
         oc.header.frame_id='world'
-        req.goal_constraints=[Constraints(position_constraints=[pc],orientation_constraints=[oc])]
+        pose_constraints=Constraints(position_constraints=[pc],orientation_constraints=[oc])
         for _ in range(3):
+            # Resolve a collision-valid goal before asking OMPL for a path. This
+            # avoids relying only on random pose-goal sampling for the redundant arm.
+            from builtin_interfaces.msg import Duration
+            ik_request=GetPositionIK.Request()
+            ik_request.ik_request.group_name='panda_arm'
+            ik_request.ik_request.ik_link_name='panda_hand'
+            ik_request.ik_request.robot_state=self.state()
+            ik_request.ik_request.pose_stamped.header.frame_id='world'
+            ik_request.ik_request.pose_stamped.pose=goal
+            ik_request.ik_request.timeout=Duration(sec=1)
+            ik_request.ik_request.avoid_collisions=True
+            ik=self.call(self.ik,ik_request)
+            goal_joints=dict(zip(ik.solution.joint_state.name,ik.solution.joint_state.position))
+            if ik.error_code.val==1 and all(name in goal_joints for name in JOINTS):
+                req.goal_constraints=[Constraints(joint_constraints=[JointConstraint(joint_name=name,position=goal_joints[name],tolerance_above=.0001,tolerance_below=.0001,weight=1.) for name in JOINTS])]
+            else:req.goal_constraints=[pose_constraints]
             response=self.call(self.plan,request,timeout=15.).motion_plan_response
-            if response.error_code.val not in (-1,-2):break
+            if response.error_code.val not in (-1,-2,99999):break
         return (response.trajectory if response.error_code.val==1 else None),response.error_code.val
 
     def playback(self,trajectory):
@@ -245,6 +371,7 @@ class MoveItAdapter(Node):
         self.animate(TimedPath([0.,.7*self.speed],[[initial,initial],[width,width]]),[7,8])
 
     def perform(self,command):
+        if command['action_id'] not in {c['action_id'] for c in self.job['commands']}:return ActionResult('failed_before_action','reference_job_not_activated')
         phase,bid=command['phase'],command['brick_id']
         if phase=='confirm':
             return ActionResult('succeeded' if bid in self.placed else 'unknown','synthetic_scene_check_only')
@@ -314,4 +441,17 @@ class MoveItAdapter(Node):
             m.scale.x,m.scale.y,m.scale.z=support['size_m']
             m.color.r,m.color.g,m.color.b,m.color.a=.22,.32,.4,1.
             result.markers.append(m)
+        # Wire outlines identify preserved placements without altering their shades.
+        for p in self.job.get('preserved_placements',[]):
+            marker=Marker(id=1000+p['step'],ns='preserved_outline',type=Marker.LINE_LIST,action=Marker.ADD)
+            marker.header.frame_id='world';marker.pose=geometry_pose(self.objects[p['brick_id']])
+            marker.scale.x=.002
+            marker.color.r,marker.color.g,marker.color.b,marker.color.a=.3,1.,.75,1.
+            half=[v/2+.001 for v in self.job['cell']['brick_size_m']]
+            corners=[(x,y,z) for x in (-half[0],half[0]) for y in (-half[1],half[1]) for z in (-half[2],half[2])]
+            for i,a in enumerate(corners):
+                for b in corners[i+1:]:
+                    if sum(x!=y for x,y in zip(a,b))==1:
+                        marker.points.extend([Point(x=a[0],y=a[1],z=a[2]),Point(x=b[0],y=b[1],z=b[2])])
+            result.markers.append(marker)
         self.markers.publish(result)

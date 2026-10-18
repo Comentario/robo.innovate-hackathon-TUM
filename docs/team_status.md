@@ -21,10 +21,13 @@ Ver `person1_review_2026-10-18.md` para resultados y propuesta de contrato.
 - Recuperación explícita del simulador lógico: prefijo verificado, sustitución
   por tono/cara compatible, nuevo run y rechazo de reconocimientos tardíos.
   Demo e interfaces en `recovery.md`; no se reanuda hardware ni Panda.
+- Recuperación Panda verificada contra escena y articulaciones: reconstrucción
+  del cliente, preparación auditada de posición segura y continuación con
+  colisiones comprobadas. Ver `reference_arm_recovery.md` para límites.
 - Validador final independiente de las confirmaciones del ejecutor; sin
   observaciones reales el resultado permanece awaiting_observation.
 
-Verificaciones actuales: 61 pruebas sin ROS, 4 pruebas del adaptador Panda y
+Verificaciones actuales: 67 pruebas sin ROS, 11 pruebas del adaptador Panda y
 10 pruebas de transporte/consumo ROS. Se probó pausa entre procesos y restauración hasta completar 12 colocaciones.
 
 ## Cuando llegue persona 1
@@ -41,8 +44,8 @@ Verificaciones actuales: 61 pruebas sin ROS, 4 pruebas del adaptador Panda y
 - Validar y calibrar el modelo del robot real; la maqueta Panda no determina
   alcance, agarres, estabilidad ni dimensiones del equipo del evento.
 - Adaptador del SDK real cuando se conozca la tecnología del evento.
-- Reconstruir/verificar la escena y el estado real para recuperación Panda/SDK.
-  La recuperación actual solo conserva un prefijo y la receta del plan original.
+- Recuperación con el SDK real, ante pérdida del servidor/escena o una pieza
+  sostenida. La demo Panda actual conserva un prefijo y la receta original.
 - Cola de producción, reset de ciclo físico, reserva compartida y persistencia
   operativa más allá del journal local de una sola celda simulada.
 

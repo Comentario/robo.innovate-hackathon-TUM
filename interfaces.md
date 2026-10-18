@@ -102,3 +102,14 @@ movimiento; `Journal.recover_simulation` crea un run hijo con un prefijo verific
 preservado y tareas restantes, únicamente para acknowledgement_simulator.
 `execution.compile_job(..., preserved_placements=PREFIX)` excluye ese prefijo de
 los picks y exige poses solo para las piezas aún disponibles. Ver `docs/recovery.md`.
+
+
+## Recuperación de la referencia Panda
+
+`Journal.recover_reference_simulation` es una vía distinta de la recuperación
+lógica. Requiere el adaptador Panda concreto, checkpoint de escena, preparación
+persistente de posición segura y comparación actual de la escena/articulaciones.
+La evidencia cell-reconciliation-0.1 añade robot_scene y robot_scene_digest.
+El hijo conserva panda_moveit_kinematic y queda listo solo tras activar su escena.
+No habilita hardware ni `resume_simulation` para Panda. Ver
+`docs/reference_arm_recovery.md` para el alcance de esta demo.

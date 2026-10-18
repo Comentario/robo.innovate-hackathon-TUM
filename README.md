@@ -153,3 +153,16 @@ Abrir `index.html` en el directorio generado. La demo conserva cuatro posiciones
 sustituye una pieza faltante y ejecuta solo lo pendiente en un run simulado nuevo.
 Ver [contrato, CLI y límites](docs/recovery.md). No reanuda automáticamente el
 Panda ni hardware, y no incorpora todavía el módulo de persona 1.
+
+
+## Recuperación con el Panda en RViz
+
+```bash
+scripts/arm_demo.sh launch
+# En otra terminal, con un directorio nuevo:
+scripts/arm_demo.sh recovery --output-dir artifacts/panda_recovery --speed 3
+```
+
+Coloca cuatro piezas, se detiene, reconstruye el cliente desde MoveIt y continúa
+sin volver a recoger las cuatro posiciones verificadas. Ver
+[reproducción y límites](docs/reference_arm_recovery.md). No controla hardware.

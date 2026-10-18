@@ -34,7 +34,7 @@ cierra y vuelve a arrancar también el servidor: no restaures una escena parcial
 como si fuese un pallet vacío. Los bloqueos impiden clientes/servidores duplicados.
 
 El proceso rechaza un journal ocupado antes de cambiar la escena y rechaza
-una escena que contenga objetos de un ciclo anterior. No implementa
+una escena que contenga objetos de un ciclo anterior. Esta CLI básica no implementa
 reanudación del brazo: un fallo, timeout o despacho sin respuesta requiere revisar
 el checkpoint. No usar `integration resume` para mover este brazo ni borrar un
 journal para ocultar un fallo. Los ensayos fallidos se conservan para diagnóstico.
@@ -133,3 +133,7 @@ Los eventos e informes incluyen `playback`: duración, número de actualizacione
 y separación máxima entre ellas. La primera trayectoria de la prueba local
 `panda_smooth_01` publicó 204 actualizaciones en 4,47 s, con separación máxima de
 33 ms. En esa prueba no se observaron avisos `TF_OLD_DATA` al verificar el inicio.
+
+Para la demo de recuperación explícita con reconstrucción del cliente, consultar
+`reference_arm_recovery.md`. Esa vía verifica la escena antes de continuar y no
+utiliza `integration resume` ni reconocimientos del simulador lógico.

@@ -22,5 +22,9 @@ exec env -u AMENT_PREFIX_PATH -u CMAKE_PREFIX_PATH -u COLCON_PREFIX_PATH -u PYTH
     if [ "${1:-}" = test ]; then
       exec python3 -m unittest discover -s tests_arm -v
     fi
+    if [ "${1:-}" = recovery ]; then
+      shift
+      exec flock -n -o /tmp/munich-arm-client-88.lock python3 -m arm_bridge.recovery_demo "$@"
+    fi
     exec flock -n -o /tmp/munich-arm-client-88.lock python3 -m arm_bridge "$@"
   ' -- "$@"

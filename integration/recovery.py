@@ -115,7 +115,7 @@ def assess_recovery(row,observation):
         if i not in assigned and not match(i,set()):issue('insufficient_compatible_stock',step=remaining[i]['step'],color_group=remaining[i]['color_group'])
     proposal=dict(schema_version='recovery-proposal-0.1',status='blocked' if issues else 'ready',
         parent_run_id=row['run_id'],basis_digest=basis,observation_id=oid,source=observation['source'],
-        execution_scope='acknowledgement_simulator_only',issues=issues,
+        execution_scope=('reference_simulator_after_scene_verification' if row['job'].get('execution_backend')=='panda_moveit_kinematic' else 'acknowledgement_simulator_only'),issues=issues,
         preserved_placements=prefix,replacements=[],job=None,snapshot=None)
     if not issues:
         plan=deepcopy(original)
@@ -161,13 +161,14 @@ def render_recovery(proposal,*,outcome=None):
             cells+='</div>'
     rows=''.join(f'<tr><td>{r["step"]}</td><td>{esc(r["old_brick_id"])}</td><td>{esc(r["new_brick_id"])}</td></tr>' for r in proposal['replacements'])
     issues=''.join(f'<li>{esc(i)}</li>' for i in proposal['issues'])
+    scope_notice=('Panda kinematic continuation requires live joint and collision-scene verification. Hardware is not resumed.' if proposal['execution_scope']=='reference_simulator_after_scene_verification' else 'This continuation supports the acknowledgement simulator only; Panda and hardware adapters are not resumed.')
     result=''
     if outcome:
         result=f'<h2>Continuation result</h2><p><b>{esc(outcome["status"])}</b> · {outcome["confirmed"]} positions confirmed in the simulator · {outcome["actions"]} new action acknowledgements.</p><p>New run: <code>{esc(outcome["run_id"])}</code>. The original checkpoint and dispatch history remain archived.</p>'
     return f'''<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Partial pallet recovery</title>
 <style>body{{background:#122027;color:#edf3f6;font:16px system-ui;max-width:1100px;margin:40px auto;padding:0 24px}}p{{line-height:1.65;color:#c5d7df}}h1{{font-size:36px}}.cards{{display:flex;gap:12px;flex-wrap:wrap}}.card{{background:#21333d;padding:20px;border-radius:12px;flex:1;min-width:150px}}.card b{{display:block;font-size:26px;margin-top:10px}}.grid{{display:grid;gap:12px}}.brick{{padding:20px 12px;border:4px solid transparent;border-radius:8px;min-width:0;overflow-wrap:anywhere}}.preserved{{border-color:#69e5ba}}.replacement{{border-color:#ffc770}}small{{display:block;margin-top:6px}}table{{width:100%;border-collapse:collapse}}td,th{{padding:12px;border-bottom:1px solid #50616a;text-align:left}}.notice{{border-left:4px solid #ffc770;padding:16px;background:#34342e}}code{{overflow-wrap:anywhere}}h2{{margin-top:32px}}</style>
 <h1>Partial pallet recovery</h1><p>Stop → reconcile the cell → preserve verified placements → plan remaining work → continue in a new simulation run.</p>
-<p class="notice">Evidence source: <b>{esc(proposal['source'])}</b>. A declared observation is not proof of a physical grasp or a camera-validated pallet. This continuation supports the acknowledgement simulator only; Panda and hardware adapters are not resumed.</p>
+<p class="notice">Evidence source: <b>{esc(proposal['source'])}</b>. A declared observation is not proof of a physical grasp or a camera-validated pallet. {esc(scope_notice)}</p>
 <div class="cards"><div class="card">Proposal<b>{esc(proposal['status'].upper())}</b></div><div class="card">Preserved positions<b>{len(preserved)}</b></div><div class="card">Substituted bricks<b>{len(changed)}</b></div><div class="card">Remaining actions<b>{len(job['commands']) if job else 'Blocked'}</b></div></div>
 <h2>Reconciliation requirements</h2><p>Complete cell coverage, empty gripper, robot at safe home, all original IDs accounted for, and a verified prefix of the pallet. Source positions must be in meters in the cell frame. Unresolved evidence blocks execution.</p>
 <h2>Recovery plan · before continuation</h2><p>Green border: already placed, no new pick. Amber border: replacement with the same shade. Other cells: remaining work. The recipe and shade pattern remain unchanged.</p>{cells or '<p>No continuation job was produced.</p>'}
