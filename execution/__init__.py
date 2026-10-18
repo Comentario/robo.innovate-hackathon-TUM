@@ -19,6 +19,7 @@ class ActionResult:
 
 class ExecutionAdapter(Protocol):
     mode: str
+    backend: str
     def perform(self, command: dict) -> ActionResult:
         """Acknowledge a command; timeouts must return unknown, never implicit success."""
         ...
@@ -61,6 +62,7 @@ def compile_job(plan, inventory, cell_config, *, source_poses=None):
 
 class SimulatedAdapter:
     mode = "simulation_only"
+    backend = "acknowledgement_simulator"
     """Deterministic acknowledgements; no SDK, physical grasp or motion planner."""
     def __init__(self, fail_step=None, fail_phase='pick', unknown=False):
         if fail_phase not in PHASES or (fail_step is not None and (type(fail_step) is not int or fail_step <= 0)):

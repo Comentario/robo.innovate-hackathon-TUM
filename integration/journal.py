@@ -32,6 +32,8 @@ class Journal:
     def close(self):self.db.close()
 
     def create(self,snapshot,job,adapter):
+        job=deepcopy(job)
+        job['execution_backend']=getattr(adapter,'backend','external_adapter')
         session=ExecutionSession(job,adapter)
         run_id=uuid4().hex
         try:
@@ -64,6 +66,8 @@ class Journal:
         row=self.inspect(run_id)
         if adapter.mode!='simulation_only' or row['mode']!='simulation_only':
             raise ValueError('automatic restoration is available only for simulation checkpoints')
+        if row['job'].get('execution_backend','acknowledgement_simulator')!='acknowledgement_simulator' or getattr(adapter,'backend',None)!='acknowledgement_simulator':
+            raise ValueError('this backend requires scene reconciliation; automatic simulation resume refused')
         if row['pending'] is not None:
             raise ValueError('unacknowledged dispatched action requires reconciliation; replay refused')
         if row['status'] not in ('ready','running'):

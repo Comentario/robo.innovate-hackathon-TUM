@@ -11,13 +11,16 @@ No se considera integrado su módulo ni se afirma que use una NN.
 - Orquestación: geometría configurable, reservas locales de un ciclo, acciones,
   reconocimientos y journal persistente previo a cada despacho.
 - Monitor: informes HTML/JSON y vista RViz opcional del checkpoint.
+- Adaptador opcional Panda/MoveIt: brazo articulado, pinza, planificación OMPL,
+  objetos adjuntos y colisiones de la maqueta. Ver `reference_arm.md`.
+  La reproducción es cinemática y la confirmación sigue siendo sintética.
 - Restauración de simulación pausada, sin repetir acciones reconocidas.
 - Rechazo de replays, ejecutores con estado antiguo y acciones sin reconocimiento.
 - Validador final independiente de las confirmaciones del ejecutor; sin
   observaciones reales el resultado permanece awaiting_observation.
 
-Verificaciones actuales: 49 pruebas sin ROS y 10 pruebas de transporte/consumo
-ROS. Se probó pausa entre procesos y restauración hasta completar 12 colocaciones.
+Verificaciones actuales: 50 pruebas sin ROS, 2 pruebas del adaptador Panda y
+10 pruebas de transporte/consumo ROS. Se probó pausa entre procesos y restauración hasta completar 12 colocaciones.
 
 ## Cuando llegue persona 1
 
@@ -30,8 +33,8 @@ ROS. Se probó pausa entre procesos y restauración hasta completar 12 colocacio
 
 ## Pendientes de persona 3 que ahora son nuestros
 
-- Brazo de referencia articulado con pinza, IK, alcance y trayectorias con
-  colisiones comprobadas. El marcador actual de herramienta no hace eso.
+- Validar y calibrar el modelo del robot real; la maqueta Panda no determina
+  alcance, agarres, estabilidad ni dimensiones del equipo del evento.
 - Adaptador del SDK real cuando se conozca la tecnología del evento.
 - Reconciliación de acciones inciertas y replanificación de pallets parciales.
 - Cola de producción, reset de ciclo físico, reserva compartida y persistencia

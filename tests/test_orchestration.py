@@ -60,6 +60,20 @@ class OrchestrationTests(unittest.TestCase):
         self.assertEqual(len(restored.session.confirmed),12)
         journal.close()
 
+    def test_articulated_simulation_cannot_resume_as_synthetic_acknowledgements(self):
+        class Articulated(SimulatedAdapter):backend='panda_moveit_kinematic'
+        journal=Journal(self.path)
+        try:
+            runner=journal.create(self.snapshot,self.job,Articulated())
+            runner.advance()
+            self.assertEqual(journal.inspect(runner.run_id)['job']['execution_backend'],'panda_moveit_kinematic')
+            with self.assertRaisesRegex(ValueError,'reconciliation'):
+                journal.resume_simulation(runner.run_id,SimulatedAdapter())
+            with self.assertRaisesRegex(ValueError,'reconciliation'):
+                journal.resume_simulation(runner.run_id,Articulated())
+            self.assertEqual(journal.inspect(runner.run_id)['checkpoint']['cursor'],1)
+        finally:journal.close()
+
     def test_crash_after_dispatch_requires_reconciliation(self):
         class Crash(SimulatedAdapter):
             def perform(self,command):raise SystemExit('simulated process crash')

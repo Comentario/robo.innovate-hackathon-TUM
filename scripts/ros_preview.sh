@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 set -e
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
+munich_ros_domain=87
+if [ "${1:-}" = test ]; then munich_ros_domain=89; fi
 # Only this subprocess is reset; no old workspace is sourced or changed.
 exec env -u AMENT_PREFIX_PATH -u CMAKE_PREFIX_PATH -u COLCON_PREFIX_PATH \
   -u PYTHONPATH -u LD_LIBRARY_PATH \
-  ROS_DOMAIN_ID=87 ROS_LOCALHOST_ONLY=1 ROS_LOG_DIR=/tmp/munich-ros-logs \
+  ROS_DOMAIN_ID="$munich_ros_domain" ROS_LOCALHOST_ONLY=1 ROS_LOG_DIR=/tmp/munich-ros-logs \
   PYTHONDONTWRITEBYTECODE=1 bash --noprofile --norc -c '
     source /opt/ros/humble/setup.bash
     if [ "${1:-}" = rviz ] || [ "${1:-}" = rviz-cell ]; then

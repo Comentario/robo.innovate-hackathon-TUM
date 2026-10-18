@@ -135,3 +135,10 @@ bash scripts/ros_preview.sh --snapshot examples/perception/snapshot.json --cell 
 
 Un estado existente abre solo una vista del checkpoint, sin repetir acciones.
 Cerrar cualquier publicador anterior antes de ejecutar este comando.
+
+## Brazo articulado de referencia (persona 3)
+
+La demo opcional Panda + MoveIt usa nuestro contrato de ejecución y journal,
+con trayectorias y colisiones planificadas y reproducción cinemática en RViz.
+Consulta [reproducción, parámetros y límites](docs/reference_arm.md).
+Percepción de persona 1 sigue sin integrarse.
