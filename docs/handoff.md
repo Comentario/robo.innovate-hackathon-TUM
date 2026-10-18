@@ -60,3 +60,10 @@ Estas capacidades se deben diseñar junto con persona 3 antes de conectar hardwa
 
 Las demostraciones y visualizaciones se mantienen en inglés. La documentación
 de coordinación puede estar en español.
+
+## Banco de prueba disponible
+
+`python3 -m demo` permite verificar ahora el intercambio con un ejecutor
+simulado. Ver `integration_demo.md`. Las reservas y confirmaciones allí son
+locales a la simulación: los acuerdos e implementación de integración real
+indicados arriba siguen pendientes.

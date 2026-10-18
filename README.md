@@ -58,3 +58,14 @@ python3 -m planning examples/handoff/inventory.json --config examples/handoff/co
 `docs/handoff.md` para los requisitos de percepción/ejecución y los acuerdos
 pendientes de reservas y recuperación. Todas las demos y visualizaciones están
 en inglés; la documentación puede estar en español.
+
+## Prueba de integración sin hardware
+
+```bash
+python3 -m demo
+python3 -m demo --fail-step 5 --output artifacts/dry_run_failure.json
+```
+
+La primera ejecución confirma 12 colocaciones simuladas (código 0). La segunda
+se detiene antes del paso 5, con 4 confirmaciones (código 3 esperado).
+Ver `docs/integration_demo.md` para interpretar eventos, rechazos y límites.
