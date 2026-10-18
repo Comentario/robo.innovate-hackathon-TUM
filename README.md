@@ -35,3 +35,15 @@ python3 -m planning data/inventory.json --config config/smooth.json
 Los ejemplos no son recetas oficiales. Ver `docs/mixing_criteria.md` para el
 fundamento del reto, criterios provisionales, limitaciones y decisiones pendientes.
 VS Code: abrir esta carpeta con `code --new-window .`; no requiere instalar paquetes.
+
+## Comparación visual por capas
+
+```bash
+python3 -m planning.visualize
+```
+
+Abrir `artifacts/mixing_comparison.svg` en un navegador o vista previa SVG.
+Se generan también planes y métricas en `artifacts/mixing_comparison.json`.
+Compara ambos modos y políticas de faltantes sobre tres inventarios sintéticos.
+Consultar `docs/visual_comparison.md` para interpretar resultados y limitaciones.
+Los artefactos se regeneran desde `data/scenarios.json` y no se versionan.
