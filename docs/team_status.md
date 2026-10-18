@@ -1,7 +1,9 @@
 # Estado del equipo: cubrimos personas 2 y 3
 
-Persona 1 continúa con percepción. No tenemos todavía su rama, formato ni método.
-No se considera integrado su módulo ni se afirma que use una NN.
+Persona 1 continúa con percepción. Se revisó `origin/persona1/perception` en `e71ddf3`: detector OpenCV clásico,
+formato de inventario parcial y cinco escenas reproducidas. La estimación de
+tono sigue pendiente; no se considera integrado su módulo.
+Ver `person1_review_2026-10-18.md` para resultados y propuesta de contrato.
 
 ## Implementado y comprobado con fixtures sintéticos
 
@@ -24,7 +26,7 @@ Verificaciones actuales: 50 pruebas sin ROS, 4 pruebas del adaptador Panda y
 
 ## Cuando llegue persona 1
 
-1. Revisar código y ejemplo de salida antes de decidir si su método necesita NN.
+1. Revisar los nuevos cambios respecto a `e71ddf3`; la detección actual no usa NN.
 2. Convertir su formato al snapshot canónico manteniendo IDs, clases y caras.
 3. Acordar significado de score, desconocidos y disponibilidad de cada ladrillo.
 4. Evaluar errores con imágenes representativas, separadas de ajuste/entrenamiento.
