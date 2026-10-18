@@ -17,7 +17,7 @@ Visualization Manager:
     - Class: rviz_default_plugins/MarkerArray
       Name: Simulated brick placements
       Enabled: true
-      Marker Topic:
+      Topic:
         Value: /munich_demo/markers
         Reliability Policy: Reliable
         Durability Policy: Transient Local
