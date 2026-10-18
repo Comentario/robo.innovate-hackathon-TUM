@@ -30,7 +30,7 @@
     const box = el('article', `panel ${mode}`); box.dataset.mode = mode; box.dataset.status = state;
     const head = el('div', 'panel-head'), title = el('div', 'panel-title');
     title.append(el('h2', '', mode === 'mixed' ? 'Mixed' : 'Smooth'), el('span', `status ${state}`, state));
-    head.append(title, el('p', 'subtitle', mode === 'mixed' ? 'Prioritize different neighboring shades' : 'Prioritize small neighboring shade differences'));
+    head.append(title, el('p', 'subtitle', mode === 'mixed' ? 'Balance shades across layers and rows' : 'Prioritize small neighboring shade differences'));
     box.append(head);
     if (r.status === 'rejected') {
       box.append(el('p', 'rejection', `Recipe rejected. ${r.reason}. No placements will be simulated.`));
@@ -44,6 +44,11 @@
       const item = el('div'); item.append(el('strong', '', value), el('span', '', label)); stats.append(item);
     }
     head.append(stats);
+    const recipe = el('p', 'recipe-counts');
+    recipe.append(el('strong', '', 'Final shade counts: '));
+    recipe.append(document.createTextNode(Object.entries(plan.blend).map(([g,n]) => `${g} ${n}`).join(' · ')));
+    recipe.append(el('span', '', ' | Same quantities, different positions.'));
+    head.append(recipe);
     for (let layer = 0; layer < plan.shape.layers; layer++) {
       const section = el('section', 'layer');
       const lh = el('div', 'layer-head'); lh.append(el('span', '', `LAYER ${layer + 1}`), el('span', '', layer === 0 ? 'Bottom layer' : 'Upper layer'));
@@ -64,7 +69,25 @@
         } else cell.append(el('span', 'empty', `Position ${p.step}`));
         grid.append(cell);
       }
-      section.append(lh, grid); box.append(section);
+      const balance = plan.metrics.distribution;
+      if (balance) {
+        const counts = balance.layers.find(r => r.layer === layer);
+        const summary = el('div', 'layer-counts');
+        const table = el('table');
+        const header = el('tr');
+        for (const text of ['Shade', 'Target', 'Planned']) header.append(el('th', '', text));
+        table.append(header);
+        for (const [shade, n] of Object.entries(counts.counts)) {
+          const tr = el('tr');
+          for (const text of [shade, counts.target_counts[shade].toFixed(1), String(n)]) tr.append(el('td', '', text));
+          table.append(tr);
+        }
+        summary.append(table);
+        const rows = balance.rows.filter(r => r.layer === layer);
+        summary.append(el('p', '', 'Row counts (dark / medium / light): ' + rows.map(r => ['dark','medium','light'].map(g => r.counts[g] || 0).join('/')).join(' · ')));
+        section.append(lh, grid, summary);
+      } else section.append(lh, grid);
+      box.append(section);
     }
     const detail = el('section', 'detail');
     const selected = state === 'completed' ? placements[placements.length - 1] : placements[confirmed];

@@ -8,7 +8,7 @@
 <body>
 <main>
 <header><div class="eyebrow">MARMON #08 / MUNICH 2026</div><h1>See the blend take shape.</h1>
-<p class="intro">Compare placement strategies, inspect the chosen brick face, and watch what happens when a pick fails.</p>
+<p class="intro">Both strategies use the same shade quantities. Compare their positions, layer balance, chosen faces and failure handling.</p>
 <div class="notice">SYNTHETIC DATA · LOGICAL PLACEMENT · NO ROBOT CONNECTION</div></header>
 <section class="controls" aria-label="Simulation controls">
 <div class="config"><label>Scenario<select id="scenario"></select></label>
@@ -21,8 +21,8 @@
 <span id="progress" aria-live="polite"></span></div></section>
 <div class="legend" aria-label="Shade legend"><span><i class="dark"></i>Dark</span><span><i class="medium"></i>Medium</span><span><i class="light"></i>Light</span><span><i class="unknown"></i>Unobserved face</span><span>Target recipe: ⅓ of each shade</span></div>
 <section id="panels" class="panels" aria-label="Strategy comparison"></section>
-<section class="explanation"><h2>What this demonstrates</h2><p><strong>Mixed</strong> discourages matching neighbors. <strong>Smooth</strong> reduces shade differences and may create clusters. Neither strategy guarantees the desired industrial appearance.</p>
-<p>In face-aware scenarios, a brick is counted once. Its displayed shade comes from the selected observed face and a declared allowed orientation. Other faces remain distinct; unobserved faces are never guessed.</p>
+<section class="explanation"><h2>What this demonstrates</h2><p><strong>Mixed</strong> allocates shade quotas to layers and rows, then discourages matching neighbors. <strong>Smooth</strong> reduces shade differences and may create clusters. Neither strategy guarantees the desired industrial appearance.</p>
+<p>Target and planned counts are shown for each layer. Row counts expose smaller clusters. Missing stock can cause recipe deviation even when the available shades are evenly distributed.</p><p>In face-aware scenarios, a brick is counted once. Its displayed shade comes from the selected observed face and a declared allowed orientation. Other faces remain distinct; unobserved faces are never guessed.</p>
 <p class="muted">One display face per placement · illustrative colors · orientation candidates are not robot-verified · no physical stability or wall simulation · reset starts a fresh simulation</p></section>
 </main>
 <noscript>This local demo requires JavaScript to animate the precomputed plans.</noscript>

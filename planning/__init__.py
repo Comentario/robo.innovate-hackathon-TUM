@@ -51,8 +51,20 @@ def pallet_pattern_planner(counts, rows, columns, layers, *, mode="mixed", tone_
     grid = {}
     row_counts = Counter()
     layer_counts = Counter()
+    def quota(available, capacity, proportions):
+        result = dict.fromkeys(available, 0)
+        for _ in range(capacity):
+            group = min((g for g in available if available[g] > result[g]),
+                        key=lambda g: (-(capacity * proportions[g] - result[g]), g))
+            result[group] += 1
+        return result
+
+    proportions = {g: n / capacity for g, n in counts.items()}
     for layer in range(layers):
+        layer_remaining = quota(remaining, rows * columns, proportions) if mode == 'mixed' else None
+        layer_proportions = {g: n / (rows * columns) for g,n in layer_remaining.items()} if layer_remaining else None
         for row in range(rows):
+            row_remaining = quota(layer_remaining, columns, layer_proportions) if mode == 'mixed' else None
             for column in range(columns):
                 previous = [(layer, row, column - 1), (layer, row - 1, column),
                             (layer - 1, row, column)]
@@ -65,9 +77,13 @@ def pallet_pattern_planner(counts, rows, columns, layers, *, mode="mixed", tone_
                     deficit = (fraction * columns - row_counts[layer, row, group]
                                + fraction * rows * columns - layer_counts[layer, group])
                     return neighbors, -deficit, group
-                group = min((g for g in remaining if remaining[g] > 0), key=cost)
+                group = min((g for g in remaining if remaining[g] > 0
+                             and (row_remaining is None or row_remaining[g] > 0)), key=cost)
                 grid[layer, row, column] = group
                 remaining[group] -= 1
+                if mode == 'mixed':
+                    row_remaining[group] -= 1
+                    layer_remaining[group] -= 1
                 row_counts[layer, row, group] += 1
                 layer_counts[layer, group] += 1
     return grid
@@ -126,11 +142,13 @@ def make_plan(inventory, *, rows, columns, layers=1, target_ratios=None,
                 if mode == 'smooth':
                     tone_distance += abs(tone_values[group] - tone_values[grid[previous]])
     actual = {g: counts[g] / capacity for g in ratios}
+    from .evaluation import evaluate_distribution
+    balance = evaluate_distribution(placements, dict(rows=rows, columns=columns, layers=layers), ratios, counts)
     return dict(schema_version='0.2', policy=dict(mode=mode, shortage_policy=shortage_policy,
                                                  tone_values=tone_values if mode == 'smooth' else None),
                 shape=dict(rows=rows, columns=columns, layers=layers),
                 blend=counts, placements=placements,
-                metrics=dict(target_ratios=ratios, actual_ratios=actual,
+                metrics=dict(distribution=balance, target_ratios=ratios, actual_ratios=actual,
                              ratio_l1_error=sum(abs(actual[g] - ratios[g]) for g in ratios),
                              same_tone_neighbors=same, neighbor_pairs=edges,
                              mean_neighbor_tone_distance=(tone_distance / edges if edges else 0.0)

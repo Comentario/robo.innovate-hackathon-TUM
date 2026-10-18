@@ -34,3 +34,9 @@ No se ha probado con cámara ni robot. El dataset es sintético.
 La motivación industrial y las políticas nuevas están en `mixing_criteria.md`.
 La API sigue admitiendo la estrategia inicial y añade mezcla suave configurable.
 La salida evoluciona a v0.2; coordinar su adopción antes de integrar.
+
+## Equilibrio local y adaptadores
+
+Mixed asigna ahora cuotas por capa y fila. Las métricas separan desviación de
+receta y distribución de la mezcla disponible. ROS 2 se ofrece como transporte
+opcional y vista RViz; el núcleo no importa ROS ni depende de un SDK de robot.

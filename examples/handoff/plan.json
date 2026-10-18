@@ -58,15 +58,15 @@
     },
     {
       "step": 6,
-      "brick_id": "brick_009",
-      "color_group": "light",
+      "brick_id": "brick_005",
+      "color_group": "medium",
       "layer": 0,
       "row": 1,
       "column": 2
     },
     {
       "step": 7,
-      "brick_id": "brick_012",
+      "brick_id": "brick_009",
       "color_group": "light",
       "layer": 1,
       "row": 0,
@@ -82,7 +82,7 @@
     },
     {
       "step": 9,
-      "brick_id": "brick_005",
+      "brick_id": "brick_008",
       "color_group": "medium",
       "layer": 1,
       "row": 0,
@@ -98,8 +98,8 @@
     },
     {
       "step": 11,
-      "brick_id": "brick_008",
-      "color_group": "medium",
+      "brick_id": "brick_012",
+      "color_group": "light",
       "layer": 1,
       "row": 1,
       "column": 1
@@ -114,6 +114,138 @@
     }
   ],
   "metrics": {
+    "distribution": {
+      "layers": [
+        {
+          "layer": 0,
+          "counts": {
+            "dark": 2,
+            "light": 2,
+            "medium": 2
+          },
+          "target_counts": {
+            "dark": 2.0,
+            "light": 2.0,
+            "medium": 2.0
+          },
+          "selected_mix_counts": {
+            "dark": 2.0,
+            "light": 2.0,
+            "medium": 2.0
+          },
+          "recipe_l1_error": 0.0,
+          "distribution_l1_error": 0.0
+        },
+        {
+          "layer": 1,
+          "counts": {
+            "dark": 2,
+            "light": 2,
+            "medium": 2
+          },
+          "target_counts": {
+            "dark": 2.0,
+            "light": 2.0,
+            "medium": 2.0
+          },
+          "selected_mix_counts": {
+            "dark": 2.0,
+            "light": 2.0,
+            "medium": 2.0
+          },
+          "recipe_l1_error": 0.0,
+          "distribution_l1_error": 0.0
+        }
+      ],
+      "rows": [
+        {
+          "layer": 0,
+          "row": 0,
+          "counts": {
+            "dark": 1,
+            "light": 1,
+            "medium": 1
+          },
+          "target_counts": {
+            "dark": 1.0,
+            "light": 1.0,
+            "medium": 1.0
+          },
+          "selected_mix_counts": {
+            "dark": 1.0,
+            "light": 1.0,
+            "medium": 1.0
+          },
+          "recipe_l1_error": 0.0,
+          "distribution_l1_error": 0.0
+        },
+        {
+          "layer": 0,
+          "row": 1,
+          "counts": {
+            "dark": 1,
+            "light": 1,
+            "medium": 1
+          },
+          "target_counts": {
+            "dark": 1.0,
+            "light": 1.0,
+            "medium": 1.0
+          },
+          "selected_mix_counts": {
+            "dark": 1.0,
+            "light": 1.0,
+            "medium": 1.0
+          },
+          "recipe_l1_error": 0.0,
+          "distribution_l1_error": 0.0
+        },
+        {
+          "layer": 1,
+          "row": 0,
+          "counts": {
+            "dark": 1,
+            "light": 1,
+            "medium": 1
+          },
+          "target_counts": {
+            "dark": 1.0,
+            "light": 1.0,
+            "medium": 1.0
+          },
+          "selected_mix_counts": {
+            "dark": 1.0,
+            "light": 1.0,
+            "medium": 1.0
+          },
+          "recipe_l1_error": 0.0,
+          "distribution_l1_error": 0.0
+        },
+        {
+          "layer": 1,
+          "row": 1,
+          "counts": {
+            "dark": 1,
+            "light": 1,
+            "medium": 1
+          },
+          "target_counts": {
+            "dark": 1.0,
+            "light": 1.0,
+            "medium": 1.0
+          },
+          "selected_mix_counts": {
+            "dark": 1.0,
+            "light": 1.0,
+            "medium": 1.0
+          },
+          "recipe_l1_error": 0.0,
+          "distribution_l1_error": 0.0
+        }
+      ],
+      "max_layer_distribution_l1": 0.0,
+      "max_row_distribution_l1": 0.0
+    },
     "target_ratios": {
       "dark": 0.3333333333333333,
       "light": 0.3333333333333333,
@@ -125,7 +257,7 @@
       "medium": 0.3333333333333333
     },
     "ratio_l1_error": 0.0,
-    "same_tone_neighbors": 3,
+    "same_tone_neighbors": 4,
     "neighbor_pairs": 20,
     "mean_neighbor_tone_distance": null
   }

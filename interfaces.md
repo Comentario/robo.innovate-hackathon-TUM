@@ -64,3 +64,11 @@ Ver `docs/faces.md` y `examples/faces/`. `planning.faces.make_face_plan` consume
 caras observadas y orientaciones permitidas, conserva IDs físicos únicos y
 produce placements con `visible_face` y `orientation_id`. El consumidor simulado
 valida ambas versiones, v0.2 y v0.3. La API anterior mantiene su comportamiento.
+
+## Diagnóstico de distribución local (campos adicionales)
+
+`metrics.distribution` publica conteos por capa y fila, objetivos locales de
+receta y de la mezcla seleccionada, y errores L1 contra ambos. Esto distingue
+falta de stock de acumulación espacial. Mixed asigna cuotas de mezcla por capa
+y fila antes de penalizar vecinos iguales. Smooth conserva su criterio local.
+El redondeo es determinista y no garantiza el óptimo visual global.

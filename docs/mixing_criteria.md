@@ -19,7 +19,7 @@ umbrales de calidad, dimensiones ni robot específico para este reto.
 2. **Disponibilidad**: jamás repetir IDs ni superar existencias. La demo usa
    `reject`: rechazar si la receta redondeada no se puede cumplir. Alternativa
    `redistribute`: sustituir según disponibilidad y reportar desviación.
-3. **Patrón**: `mixed` prioriza evitar categorías iguales vecinas; `smooth`
+3. **Patrón**: `mixed` asigna cuotas por capa y fila y después evita categorías iguales vecinas; `smooth`
    prioriza reducir diferencias de tono entre vecinos. Después se busca
    equilibrio en fila/capa. Ambas son heurísticas voraces, no óptimos globales.
 4. **Secuencia**: completar capas desde abajo, en orden de fila/columna.

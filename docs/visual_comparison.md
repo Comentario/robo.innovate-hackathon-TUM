@@ -40,10 +40,10 @@ compararlos; no se modifican las métricas originales del contrato del planifica
 
 ## Lo aprendido
 
-- En el caso equilibrado, `mixed` produce 3 pares iguales de 20 y distancia
-  media 0.675; `smooth` produce 8 de 20 y distancia 0.350. La receta es idéntica.
-- Sin tono medio, `mixed` alterna los dos extremos: 0 pares iguales y distancia
-  1.000. `smooth` forma zonas: 14 pares iguales y distancia 0.300.
+- En el caso equilibrado, `mixed` produce 4 pares iguales de 20 y distancia
+  media 0.700; `smooth` produce 8 de 20 y distancia 0.350. La receta es idéntica.
+- Sin tono medio, `mixed` alterna los dos extremos: 4 pares iguales y distancia
+  0.800. `smooth` forma zonas: 14 pares iguales y distancia 0.300.
 - Menor distancia local no equivale automáticamente a mejor aspecto industrial.
   Ningún modo debe elegirse solo por una métrica aislada.
 - Una receta imposible debe seguir siendo un rechazo con política estricta;
@@ -60,3 +60,10 @@ y con la apariencia deseada para paquete/pared.
 Siguiente integración: acordar IDs/categorías y disponibilidad con persona 1;
 reservas, confirmaciones y recuperación ante fallos con persona 3. El laboratorio
 no modela poses, estabilidad, agarre, cámara ni construcción de una pared.
+
+## Actualización de equilibrio local
+
+Mixed ahora reserva cuotas por capa y por fila antes de elegir vecinos. En el
+caso equilibrado cada capa contiene 2/2/2 y cada fila 1/1/1. El redondeo puede
+aumentar pares iguales frente a una búsqueda que solo evita vecinos; no se
+garantiza un óptimo global. Las métricas anteriores corresponden a esta versión.
