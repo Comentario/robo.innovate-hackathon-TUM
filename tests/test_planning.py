@@ -44,6 +44,32 @@ class PlanningTests(unittest.TestCase):
         self.assertEqual(plan['blend'], dict(dark=0, light=4))
         self.assertEqual(plan['metrics']['ratio_l1_error'], 1)
 
+    def test_smooth_uses_tone_distance_and_keeps_recipe(self):
+        inventory = stock(dark=2, medium=2, light=2)
+        tones = dict(dark=0, medium=0.5, light=1)
+        mixed = make_plan(inventory, rows=1, columns=6)
+        smooth = make_plan(inventory, rows=1, columns=6, mode='smooth', tone_values=tones)
+        def distance(plan):
+            groups = [p['color_group'] for p in plan['placements']]
+            return sum(abs(tones[a] - tones[b]) for a,b in zip(groups, groups[1:])) / 5
+        self.assertLess(distance(smooth), distance(mixed))
+        self.assertEqual(smooth['blend'], mixed['blend'])
+        self.assertAlmostEqual(smooth['metrics']['mean_neighbor_tone_distance'], distance(smooth))
+
+    def test_strict_recipe_rejects_substitution_but_allows_rounding(self):
+        with self.assertRaises(ValueError):
+            make_plan(stock(dark=1, light=8), rows=1, columns=4,
+                      target_ratios=dict(dark=1, light=1), shortage_policy='reject')
+        plan = make_plan(stock(dark=3, light=3), rows=1, columns=3,
+                         target_ratios=dict(dark=1, light=1), shortage_policy='reject')
+        self.assertEqual(sum(plan['blend'].values()), 3)
+
+    def test_invalid_policy(self):
+        for options in (dict(mode='unknown'), dict(shortage_policy='unknown'),
+                        dict(mode='smooth'), dict(mode='smooth', tone_values={'dark': 2})):
+            with self.subTest(options=options), self.assertRaises(ValueError):
+                make_plan(stock(dark=2), rows=1, columns=2, **options)
+
     def test_invalid_contracts(self):
         cases = [([], {}), (stock(dark=1), {}),
                  ([dict(id='x', color_group='dark')]*2, {}),

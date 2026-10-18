@@ -24,3 +24,14 @@ Consulta `interfaces.md` y `docs/person_2_notes.md` antes de integrar.
 - Para recuperar un estado, preferir una rama desde el commit estable o `git revert`.
 
 El roadmap original está en `docs/roadmap_graph.md`.
+
+## Políticas configurables
+
+```bash
+python3 -m planning data/inventory.json --config config/mixed.json
+python3 -m planning data/inventory.json --config config/smooth.json
+```
+
+Los ejemplos no son recetas oficiales. Ver `docs/mixing_criteria.md` para el
+fundamento del reto, criterios provisionales, limitaciones y decisiones pendientes.
+VS Code: abrir esta carpeta con `code --new-window .`; no requiere instalar paquetes.

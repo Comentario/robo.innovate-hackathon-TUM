@@ -28,3 +28,9 @@ receta objetivo y criterio de evaluación oficial. La geometría de capas
 alternadas y estabilidad física quedan pendientes del hardware/enunciado.
 
 No se ha probado con cámara ni robot. El dataset es sintético.
+
+## Actualización tras consultar la fuente oficial
+
+La motivación industrial y las políticas nuevas están en `mixing_criteria.md`.
+La API sigue admitiendo la estrategia inicial y añade mezcla suave configurable.
+La salida evoluciona a v0.2; coordinar su adopción antes de integrar.
