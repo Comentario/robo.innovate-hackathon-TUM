@@ -1,0 +1,132 @@
+{
+  "schema_version": "0.2",
+  "policy": {
+    "mode": "mixed",
+    "shortage_policy": "reject",
+    "tone_values": null
+  },
+  "shape": {
+    "rows": 2,
+    "columns": 3,
+    "layers": 2
+  },
+  "blend": {
+    "dark": 4,
+    "light": 4,
+    "medium": 4
+  },
+  "placements": [
+    {
+      "step": 1,
+      "brick_id": "brick_001",
+      "color_group": "dark",
+      "layer": 0,
+      "row": 0,
+      "column": 0
+    },
+    {
+      "step": 2,
+      "brick_id": "brick_003",
+      "color_group": "light",
+      "layer": 0,
+      "row": 0,
+      "column": 1
+    },
+    {
+      "step": 3,
+      "brick_id": "brick_002",
+      "color_group": "medium",
+      "layer": 0,
+      "row": 0,
+      "column": 2
+    },
+    {
+      "step": 4,
+      "brick_id": "brick_006",
+      "color_group": "light",
+      "layer": 0,
+      "row": 1,
+      "column": 0
+    },
+    {
+      "step": 5,
+      "brick_id": "brick_004",
+      "color_group": "dark",
+      "layer": 0,
+      "row": 1,
+      "column": 1
+    },
+    {
+      "step": 6,
+      "brick_id": "brick_009",
+      "color_group": "light",
+      "layer": 0,
+      "row": 1,
+      "column": 2
+    },
+    {
+      "step": 7,
+      "brick_id": "brick_012",
+      "color_group": "light",
+      "layer": 1,
+      "row": 0,
+      "column": 0
+    },
+    {
+      "step": 8,
+      "brick_id": "brick_007",
+      "color_group": "dark",
+      "layer": 1,
+      "row": 0,
+      "column": 1
+    },
+    {
+      "step": 9,
+      "brick_id": "brick_005",
+      "color_group": "medium",
+      "layer": 1,
+      "row": 0,
+      "column": 2
+    },
+    {
+      "step": 10,
+      "brick_id": "brick_010",
+      "color_group": "dark",
+      "layer": 1,
+      "row": 1,
+      "column": 0
+    },
+    {
+      "step": 11,
+      "brick_id": "brick_008",
+      "color_group": "medium",
+      "layer": 1,
+      "row": 1,
+      "column": 1
+    },
+    {
+      "step": 12,
+      "brick_id": "brick_011",
+      "color_group": "medium",
+      "layer": 1,
+      "row": 1,
+      "column": 2
+    }
+  ],
+  "metrics": {
+    "target_ratios": {
+      "dark": 0.3333333333333333,
+      "light": 0.3333333333333333,
+      "medium": 0.3333333333333333
+    },
+    "actual_ratios": {
+      "dark": 0.3333333333333333,
+      "light": 0.3333333333333333,
+      "medium": 0.3333333333333333
+    },
+    "ratio_l1_error": 0.0,
+    "same_tone_neighbors": 3,
+    "neighbor_pairs": 20,
+    "mean_neighbor_tone_distance": null
+  }
+}

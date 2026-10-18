@@ -1,0 +1,62 @@
+[
+  {
+    "id": "brick_001",
+    "color_group": "dark",
+    "score": 0.95
+  },
+  {
+    "id": "brick_002",
+    "color_group": "medium",
+    "score": 0.95
+  },
+  {
+    "id": "brick_003",
+    "color_group": "light",
+    "score": 0.95
+  },
+  {
+    "id": "brick_004",
+    "color_group": "dark",
+    "score": 0.95
+  },
+  {
+    "id": "brick_005",
+    "color_group": "medium",
+    "score": 0.95
+  },
+  {
+    "id": "brick_006",
+    "color_group": "light",
+    "score": 0.95
+  },
+  {
+    "id": "brick_007",
+    "color_group": "dark",
+    "score": 0.95
+  },
+  {
+    "id": "brick_008",
+    "color_group": "medium",
+    "score": 0.95
+  },
+  {
+    "id": "brick_009",
+    "color_group": "light",
+    "score": 0.95
+  },
+  {
+    "id": "brick_010",
+    "color_group": "dark",
+    "score": 0.95
+  },
+  {
+    "id": "brick_011",
+    "color_group": "medium",
+    "score": 0.95
+  },
+  {
+    "id": "brick_012",
+    "color_group": "light",
+    "score": 0.95
+  }
+]

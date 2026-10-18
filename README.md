@@ -47,3 +47,14 @@ Se generan también planes y métricas en `artifacts/mixing_comparison.json`.
 Compara ambos modos y políticas de faltantes sobre tres inventarios sintéticos.
 Consultar `docs/visual_comparison.md` para interpretar resultados y limitaciones.
 Los artefactos se regeneran desde `data/scenarios.json` y no se versionan.
+
+## Ejemplo de intercambio entre módulos
+
+```bash
+python3 -m planning examples/handoff/inventory.json --config examples/handoff/config.json
+```
+
+`examples/handoff/plan.json` contiene una salida de referencia. Consultar
+`docs/handoff.md` para los requisitos de percepción/ejecución y los acuerdos
+pendientes de reservas y recuperación. Todas las demos y visualizaciones están
+en inglés; la documentación puede estar en español.

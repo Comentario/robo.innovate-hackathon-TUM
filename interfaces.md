@@ -50,3 +50,10 @@ La salida v0.2 añade `policy` (modo, política de faltantes y escala de tonos)
 y `metrics.mean_neighbor_tone_distance` (null en modo mixed; 0 sin vecinos).
 La CLI acepta `--config PATH`; los argumentos de dimensiones y `--ratios`
 prevalecen sobre el JSON. Las claves desconocidas se rechazan.
+
+## Ejemplo reproducible de integración
+
+Ver `examples/handoff/` y `docs/handoff.md`. La salida de referencia v0.2 es
+un plan completo sobre inventario sintético. La gestión de disponibilidad,
+reservas, confirmaciones y pallets parcialmente construidos aún no forma parte
+de esta API; requiere coordinación con integración antes de ejecutar hardware.
