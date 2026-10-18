@@ -74,6 +74,7 @@ class MoveItAdapter(Node):
         self.visual_epoch_ns=time.time_ns()
         self.visual_start_ns=time.monotonic_ns()
         self.motion=None
+        self.demo_status="Starting reference simulation"
         self.playback_metrics=[]
         self.joints=self.create_publisher(JointState,'/joint_states',100)
         self.markers=self.create_publisher(MarkerArray,'/munich_arm/markers',QoSProfile(depth=1,durability=DurabilityPolicy.TRANSIENT_LOCAL))
@@ -373,6 +374,7 @@ class MoveItAdapter(Node):
     def perform(self,command):
         if command['action_id'] not in {c['action_id'] for c in self.job['commands']}:return ActionResult('failed_before_action','reference_job_not_activated')
         phase,bid=command['phase'],command['brick_id']
+        self.demo_status=f"Step {command['step']}/12: {phase.replace('_',' ')}"
         if phase=='confirm':
             return ActionResult('succeeded' if bid in self.placed else 'unknown','synthetic_scene_check_only')
         # Only the selected object may contact the reference gripper.
@@ -454,4 +456,18 @@ class MoveItAdapter(Node):
                     if sum(x!=y for x,y in zip(a,b))==1:
                         marker.points.extend([Point(x=a[0],y=a[1],z=a[2]),Point(x=b[0],y=b[1],z=b[2])])
             result.markers.append(marker)
+        lines=[getattr(self,'demo_status','Reference simulation'),
+               f"Placed in scene: {len(getattr(self,'placed',set()))}/12",
+               "Synthetic | Independent validation pending"]
+        for index,text in enumerate(lines):
+            status=Marker(id=2000+index,ns='demo_status',type=Marker.TEXT_VIEW_FACING,action=Marker.ADD)
+            status.header.frame_id='world'
+            status.pose.orientation.w=1.
+            status.pose.position.x=.6
+            status.pose.position.y=-.35
+            status.pose.position.z=.65-index*.05
+            status.scale.x=status.scale.y=status.scale.z=.02
+            status.color.r=status.color.g=status.color.b=status.color.a=1.
+            status.text=text
+            result.markers.append(status)
         self.markers.publish(result)

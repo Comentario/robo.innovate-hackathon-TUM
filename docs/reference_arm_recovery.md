@@ -1,5 +1,7 @@
 # Recuperación articulada con Panda y MoveIt
 
+Para el ensayo habitual con arranque y cierre automáticos, usar el [lanzador único](rehearsal.md). Los comandos siguientes permiten manejar servidor y cliente por separado.
+
 Esta demo conecta la reconciliación del pallet parcial con el adaptador Panda.
 Continúa usando únicamente la maqueta cinemática y el inventario sintético;
 no incorpora percepción de persona 1 ni controla hardware.

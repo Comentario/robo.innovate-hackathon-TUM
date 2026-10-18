@@ -50,6 +50,9 @@ Visualization Manager:
       Namespaces:
         bricks: true
         labels: false
+        demo_status: true
+        preserved_outline: true
+        stations: true
       Topic:
         Value: /munich_arm/markers
         Reliability Policy: Reliable

@@ -48,6 +48,8 @@ def main():
         if len(parent.session.confirmed)!=4:raise RuntimeError('demo did not reach the intended four-placement checkpoint')
         row=journal.inspect(parent.run_id);save('stopped_run',row)
         print('STOPPED: four positions preserved. No fifth brick was moved.',flush=True)
+        adapter.demo_status="STOPPED: four placements preserved; recovery pending"
+        adapter.publish_state()
         adapter.spin_for(args.pause)
         saved=save_robot_checkpoint(journal,row,adapter);save('robot_checkpoint',saved)
         adapter.destroy_node();adapter=None
@@ -57,6 +59,7 @@ def main():
         _,restored=adapter.capture_scene();save('restored_scene',restored)
         if scene_digest(restored)!=saved['scene_digest']:raise RuntimeError('restoration changed the robot or scene')
         print('Phase 2: joints and scene restored without resetting the pallet.',flush=True)
+        adapter.demo_status="RECOVERY: verifying scene and returning home"
         preparation=prepare_home(journal,row,adapter);save('home_preparation',preparation)
         observation=adapter.reconciliation(row,'panda-live-recheck-001');save('reconciliation',observation)
         proposal=assess_recovery(row,observation);save('proposal',proposal)
@@ -78,6 +81,8 @@ def main():
         save('result',result)
         (directory/'index.html').write_text(render_recovery(proposal,outcome=outcome))
         print(f'Panda recovery: {outcome["status"]}; preserved=4; new actions={outcome["actions"]}; confirmed={outcome["confirmed"]}/12; unchanged={unchanged}',flush=True)
+        adapter.demo_status=f"{outcome['status'].upper()}: recovery; four placements preserved"
+        adapter.publish_state()
         adapter.timer.timer_period_ns=500_000_000
         adapter.spin_for(args.hold)
         if not success:raise SystemExit(2)

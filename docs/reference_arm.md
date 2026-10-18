@@ -1,5 +1,7 @@
 # Brazo de referencia: Panda + MoveIt 2
 
+Para el ensayo habitual con arranque y cierre automáticos, usar el [lanzador único](rehearsal.md). Los comandos siguientes permiten manejar servidor y cliente por separado.
+
 Esta prueba cubre la preparación de persona 3 sin integrar percepción de persona 1.
 Reutiliza el planificador, las ocho acciones por ladrillo y el journal existentes.
 El adaptador opcional convierte centros de ladrillo a poses de `panda_hand`, pide

@@ -2,6 +2,17 @@
 
 Preparación para el reto #8: Intelligent Brick Blending and Palletizing.
 
+## Ensayo del brazo con un comando
+
+```bash
+python3 scripts/rehearse.py normal
+python3 scripts/rehearse.py recovery
+```
+
+Ejecutar uno cada vez. Abre MoveIt y RViz, muestra el progreso en inglés y conserva
+el journal y un informe por ensayo. Ver [guion de reproducción](docs/rehearsal.md).
+Requiere las dependencias de [brazo de referencia](docs/reference_arm.md).
+
 ## Persona 2: planificación
 
 Python 3.10+, sin dependencias externas. Desde la raíz:

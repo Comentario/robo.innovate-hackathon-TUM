@@ -57,6 +57,8 @@ def main():
         report.update(run_id=runner.run_id,reference_robot='Panda',physical_validation=False,validation_status='awaiting_observation',confirmation='synthetic_scene_only',motion_probes=probes,motion_evidence=adapter.evidence,playback_metrics=adapter.playback_metrics)
         Path(args.output).write_text(json.dumps(report,indent=2)+'\n')
         print(f'Arm demo: {report["status"]}; confirmed={len(report["confirmed_placements"])}',flush=True)
+        adapter.demo_status=f"{report['status'].upper()}: normal cycle"
+        adapter.publish_state()
         # A completed scene needs only a slow heartbeat, especially with software GL.
         adapter.timer.timer_period_ns=500_000_000
         adapter.spin_for(args.hold)
