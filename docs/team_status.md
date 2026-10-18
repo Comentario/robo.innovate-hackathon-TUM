@@ -19,7 +19,7 @@ No se considera integrado su módulo ni se afirma que use una NN.
 - Validador final independiente de las confirmaciones del ejecutor; sin
   observaciones reales el resultado permanece awaiting_observation.
 
-Verificaciones actuales: 50 pruebas sin ROS, 2 pruebas del adaptador Panda y
+Verificaciones actuales: 50 pruebas sin ROS, 4 pruebas del adaptador Panda y
 10 pruebas de transporte/consumo ROS. Se probó pausa entre procesos y restauración hasta completar 12 colocaciones.
 
 ## Cuando llegue persona 1

@@ -5,6 +5,9 @@ import time
 
 import rclpy
 from rclpy.node import Node
+from rclpy.time import Time
+from rclpy.clock import Clock, ClockType
+from .motion import TimedPath
 from rclpy.qos import QoSProfile, DurabilityPolicy
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import Pose
@@ -64,7 +67,11 @@ class MoveItAdapter(Node):
         if not math.isfinite(self.grasp_offset) or self.grasp_offset<=0:raise ValueError('invalid grasp offset')
         if job['frame']!='world' or job['cell']['brick_size_m'][1]>.08:raise ValueError('reference adapter requires world frame and a brick width within 80 mm')
         self.positions=READY+[.04,.04]
-        self.joints=self.create_publisher(JointState,'/joint_states',10)
+        self.visual_epoch_ns=time.time_ns()
+        self.visual_start_ns=time.monotonic_ns()
+        self.motion=None
+        self.playback_metrics=[]
+        self.joints=self.create_publisher(JointState,'/joint_states',100)
         self.markers=self.create_publisher(MarkerArray,'/munich_arm/markers',QoSProfile(depth=1,durability=DurabilityPolicy.TRANSIENT_LOCAL))
         self.apply=self.create_client(ApplyPlanningScene,'/apply_planning_scene')
         self.plan=self.create_client(GetMotionPlan,'/plan_kinematic_path')
@@ -84,7 +91,7 @@ class MoveItAdapter(Node):
         previous=self.call(self.get_scene,request).scene
         if previous.world.collision_objects or previous.robot_state.attached_collision_objects:
             raise RuntimeError('reference scene is occupied; inspect its journal and restart the synthetic server before a new cycle')
-        self.timer=self.create_timer(.04,self.publish_state)
+        self.timer=self.create_timer(.02,self.publish_state,clock=Clock(clock_type=ClockType.STEADY_TIME))
         self.publish_state()
         self.spin_for(1.)
         self.initialize_scene()
@@ -100,8 +107,14 @@ class MoveItAdapter(Node):
         while rclpy.ok() and time.monotonic()<end:rclpy.spin_once(self,timeout_sec=min(.02,max(0,end-time.monotonic())))
 
     def publish_state(self):
+        if self.motion is not None:
+            path,indexes,start,speed=self.motion
+            now=time.monotonic()
+            self.motion_samples.append(now)
+            elapsed=(now-start)*speed
+            for index,value in zip(indexes,path.sample(elapsed)):self.positions[index]=value
         msg=JointState()
-        msg.header.stamp=self.get_clock().now().to_msg()
+        msg.header.stamp=Time(nanoseconds=self.visual_epoch_ns+time.monotonic_ns()-self.visual_start_ns).to_msg()
         msg.name=JOINTS+FINGERS
         msg.position=list(self.positions)
         self.joints.publish(msg)
@@ -128,8 +141,10 @@ class MoveItAdapter(Node):
         self.scene(scene)
         if not self.is_valid():raise RuntimeError('reference ready state collides with configured scene')
 
-    def is_valid(self):
-        response=self.call(self.valid,GetStateValidity.Request(robot_state=self.state(),group_name='panda_arm'))
+    def is_valid(self,positions=None):
+        candidate=self.state()
+        if positions is not None:candidate.joint_state.position=list(positions)
+        response=self.call(self.valid,GetStateValidity.Request(robot_state=candidate,group_name='panda_arm'))
         if not response.valid:self.get_logger().error(str([(c.contact_body_1,c.contact_body_2) for c in response.contacts]))
         return response.valid
 
@@ -201,30 +216,33 @@ class MoveItAdapter(Node):
         joint=trajectory.joint_trajectory
         if not joint.points:raise RuntimeError('MoveIt returned an empty path')
         indexes=[(JOINTS+FINGERS).index(name) for name in joint.joint_names]
-        prev=list(self.positions)
-        previous_t=0.
-        for point in joint.points:
-            stamp=point.time_from_start.sec+point.time_from_start.nanosec*1e-9
-            duration=max(.01,(stamp-previous_t)/self.speed)
-            start=time.monotonic()
-            while True:
-                fraction=min(1.,(time.monotonic()-start)/duration)
-                for index,value in zip(indexes,point.positions):self.positions[index]=prev[index]+fraction*(value-prev[index])
-                self.publish_state()
-                if fraction>=1.:break
-                self.spin_for(.02)
-            prev=list(self.positions)
-            previous_t=stamp
-        self.spin_for(.1)
+        path=TimedPath([p.time_from_start.sec+p.time_from_start.nanosec*1e-9 for p in joint.points],[p.positions for p in joint.points])
+        self.animate(path,indexes)
+
+    def animate(self,path,indexes):
+        if max(abs(self.positions[i]-v) for i,v in zip(indexes,path.positions[0]))>.01:
+            raise RuntimeError('trajectory start differs from displayed joints; refusing a jump')
+        start=time.monotonic()
+        self.motion_samples=[]
+        self.motion=(path,indexes,start,self.speed)
+        # One steady publication timer samples the entire path, without restarting
+        # an interpolation clock (or publishing a burst) at every waypoint.
+        try:
+            while (time.monotonic()-start)*self.speed<path.duration:
+                rclpy.spin_once(self,timeout_sec=.01)
+            self.publish_state()
+        finally:self.motion=None
+        self.playback_metrics.append(dict(planned_duration_s=path.duration,wall_duration_s=time.monotonic()-start,speed=self.speed,frames=len(self.motion_samples),max_frame_gap_s=max((b-a for a,b in zip(self.motion_samples,self.motion_samples[1:])),default=0.)))
+        self.spin_for(.04)
 
     def set_gripper(self,width):
         initial=self.positions[-1]
         for i in range(1,7):
             value=initial+(width-initial)*i/6
-            self.positions[-2:]=[value,value]
-            if not self.is_valid():raise RuntimeError('collision during synthetic gripper motion')
-            self.publish_state()
-            self.spin_for(.02)
+            candidate=list(self.positions)
+            candidate[-2:]=[value,value]
+            if not self.is_valid(candidate):raise RuntimeError('collision during synthetic gripper motion')
+        self.animate(TimedPath([0.,.7*self.speed],[[initial,initial],[width,width]]),[7,8])
 
     def perform(self,command):
         phase,bid=command['phase'],command['brick_id']
@@ -281,6 +299,7 @@ class MoveItAdapter(Node):
             m.pose=geometry_pose(value)
             if bid==self.held:
                 m.header.frame_id='panda_hand'
+                m.frame_locked=True
                 m.pose=geometry_pose(dict(position_m=[0,0,self.grasp_offset],orientation_xyzw=[1,0,0,0]))
             m.scale.x,m.scale.y,m.scale.z=self.job['cell']['brick_size_m']
             color=COLORS.get(byid.get(bid,{}).get('color_group'),COLORS['medium'])

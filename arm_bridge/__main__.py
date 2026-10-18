@@ -51,9 +51,10 @@ def main():
         runner=journal.create(snapshot,job,adapter)
         while runner.session.status not in ('stopped','completed'):
             event=runner.advance()
+            if adapter.playback_metrics:event['playback']=adapter.playback_metrics[-1]
             print(json.dumps(event),flush=True)
         report=runner.session.report()
-        report.update(run_id=runner.run_id,reference_robot='Panda',physical_validation=False,validation_status='awaiting_observation',confirmation='synthetic_scene_only',motion_probes=probes,motion_evidence=adapter.evidence)
+        report.update(run_id=runner.run_id,reference_robot='Panda',physical_validation=False,validation_status='awaiting_observation',confirmation='synthetic_scene_only',motion_probes=probes,motion_evidence=adapter.evidence,playback_metrics=adapter.playback_metrics)
         Path(args.output).write_text(json.dumps(report,indent=2)+'\n')
         print(f'Arm demo: {report["status"]}; confirmed={len(report["confirmed_placements"])}',flush=True)
         # A completed scene needs only a slow heartbeat, especially with software GL.

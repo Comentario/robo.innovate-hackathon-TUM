@@ -112,3 +112,24 @@ Los tests ROS usan el dominio 89, separado de la demo original (87) y Panda
 (88). Las primeras comprobaciones compartían el dominio de la demo anterior y
 sufrieron timeouts; las pruebas durables aisladas pasaron en 7,8 s conservando
 los límites y las comprobaciones originales. No se rebaja la durabilidad SQLite.
+
+## Reproducción visual continua
+
+El muestreo de las trayectorias usa una única línea temporal monotónica y un
+publicador de articulaciones a 50 Hz. Se conservan los tiempos de MoveIt;
+`--speed 1` reproduce duración normal. Las marcas TF visuales avanzan con tiempo
+monotónico anclado al instante inicial para evitar que correcciones del reloj de
+WSL hagan que RViz descarte movimientos anteriores. No se cambia el reloj de
+planificación de MoveIt.
+
+La pieza agarrada usa `frame_locked` en `panda_hand`: RViz vuelve a aplicar su
+transformación en cada fotograma. La pinza abre y cierra durante 0,7 s, después
+de comprobar las posiciones intermedias, sin publicar esos estados de prueba.
+La publicación Fast DDS es asíncrona y RViz se configura a 30 FPS. Esto sigue
+siendo simulación cinemática; hay pausas reales al calcular cada trayectoria,
+pero no se sustituyen los transportes por cambios instantáneos de posición.
+
+Los eventos e informes incluyen `playback`: duración, número de actualizaciones
+y separación máxima entre ellas. La primera trayectoria de la prueba local
+`panda_smooth_01` publicó 204 actualizaciones en 4,47 s, con separación máxima de
+33 ms. En esa prueba no se observaron avisos `TF_OLD_DATA` al verificar el inicio.

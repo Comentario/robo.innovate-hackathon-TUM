@@ -2,7 +2,7 @@
 set -e
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
 exec env -u AMENT_PREFIX_PATH -u CMAKE_PREFIX_PATH -u COLCON_PREFIX_PATH -u PYTHONPATH -u LD_LIBRARY_PATH \
-  ROS_DOMAIN_ID=88 ROS_LOCALHOST_ONLY=1 ROS_LOG_DIR=/tmp/munich-arm-logs PYTHONDONTWRITEBYTECODE=1 \
+  RMW_FASTRTPS_PUBLICATION_MODE=ASYNCHRONOUS ROS_DOMAIN_ID=88 ROS_LOCALHOST_ONLY=1 ROS_LOG_DIR=/tmp/munich-arm-logs PYTHONDONTWRITEBYTECODE=1 \
   bash --noprofile --norc -c '
     source /opt/ros/humble/setup.bash
     prefix="$PWD/.deps/moveit"

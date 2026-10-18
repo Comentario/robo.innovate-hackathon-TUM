@@ -16,7 +16,7 @@ Visualization Manager:
   Global Options:
     Background Color: 26; 34; 40
     Fixed Frame: world
-    Frame Rate: 15
+    Frame Rate: 30
   Displays:
     - Class: rviz_default_plugins/Grid
       Name: Ground grid
