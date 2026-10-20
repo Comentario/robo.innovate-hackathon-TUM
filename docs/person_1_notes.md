@@ -1,54 +1,63 @@
-# Persona 1 — Perception
+# Person 1 — Perception
 
-This document is a short, versioned summary of the perception work. It will be updated whenever the detector or inventory contract changes.
+Short, versioned summary of the detector and inventory delivered by Person 1.
 
-## Version 0.1 — Partial inventory
+## Version 0.2 — Full-pallet brick geometry
 
 ### Current flow
 
 ```mermaid
 flowchart LR
-    A[Current image] --> C[Lab difference]
-    B[Empty background] --> C
-    C --> D[Binary threshold]
-    D --> E[Mask opening and cleanup]
-    E --> F[Row and orientation estimation]
-    F --> G[Cell-based brick separation]
-    G --> H[Bounding boxes and centers]
-    H --> I[Partial JSON inventory]
+    A[Current image] --> C[Affine alignment]
+    B[Empty pallet] --> C
+    C --> D[Lab difference and binary mask]
+    D --> E[Component grouping]
+    E --> F[Stack-envelope refinement]
+    F --> G[Row orientation and cells]
+    G --> H[Local foreground recovery]
+    H --> I[Sobel bbox refinement]
+    I --> J[Envelope containment]
+    J --> K[Partial inventory]
 ```
 
 ### Implemented
 
-- The background is resized to the current image resolution; the current image is not resized.
-- Brick regions are obtained from color difference in Lab space using a threshold of `40`.
-- A `3 x 3` morphological opening removes small isolated noise.
-- Connected components remove regions smaller than `100 px`.
-- A hierarchical layout estimates vertical or horizontal rows using nominal brick dimensions.
-- Local projection valleys and geometry fallback cuts separate touching bricks.
-- Detection cells produce one bounding box and pixel center per brick.
-- IDs are assigned and the partial inventory is exported as JSON.
+- Affine ECC alignment keeps the current image resolution and aligns the empty background.
+- Lab color difference, thresholding, morphological opening, and component grouping isolate the brick stack.
+- A hierarchical estimator supports vertical and horizontal rows using nominal brick dimensions.
+- Local recovery restores weak foreground without changing the detected grid.
+- Sobel X/Y locally refines the four sides of each bounding box.
+- The stack envelope removes contaminated outer regions and prevents boxes from following pallet edges.
+- IDs are spatially ordered by row, from left to right.
 
-### Current validation
+### Validation
 
-The detector returns the expected brick count for the selected Zenodo scenes containing `2`, `6`, `10`, `17`, and `25` bricks. The shared example currently uses the 17-brick scene.
+- Exact counts were obtained for scenes containing `2`, `6`, `10`, `17`, `22`, `25`, `32`, `37`, `51`, and `70` bricks.
+- Previous regression scenes retain mean IoU values between `0.891` and `0.935` after the 0.2 changes.
+- The full-pallet scene returns `70/70` detections, mean IoU `0.901`, and minimum IoU `0.700`.
+- The previous-row geometry fallback was not required by any validated scene.
 
-### Output for the team
+Validation artifacts are written to `outputs/` and remain local. Development and regression scripts are stored in `scripts/`.
+
+### Team output
 
 - Contract: `interfaces.md`
 - Shared example: `data/inventories/partial_inventory.json`
-- Reproducible image subset: `data/images/zenodo_detection/`
-- Diagnostic images: `outputs/` (local only)
+- Reproducible images: `data/images/zenodo_detection/`
 
-The inventory is marked as `partial`. Bounding boxes and centers are available, while `color_group` remains `unknown` and `color_score` remains `0.0`.
+The shared inventory uses the 70-brick full-pallet scene. It remains `partial`: geometry is available, while `color_group` is `unknown` and `color_score` is `0.0`.
 
 ### Known limitations
 
-- The method requires an empty background image with a similar camera viewpoint.
-- Separation uses approximate brick size and mostly axis-aligned orientations.
-- Some internal boundaries are not yet perfectly aligned, especially in denser layouts.
-- Validation currently covers only the selected dataset scenes, not the final hackathon setup.
+- The method requires an empty-pallet reference with a similar camera viewpoint.
+- Brick dimensions are used as layout priors, and orientations are assumed to be approximately axis-aligned.
+- Final validation is still required with the hackathon camera and pallet.
 
 ### Next step
 
-Improve the remaining internal cut alignment and then implement the color estimator using the detected brick regions.
+Implement the color estimator for each detected brick region.
+
+## Version 0.1 — Initial geometry
+
+- Introduced Lab background difference, mask cleanup, hierarchical cells, spatial IDs, and the partial inventory contract.
+- Validated progressively from 2 to 32 bricks.

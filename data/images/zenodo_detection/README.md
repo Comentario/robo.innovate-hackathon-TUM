@@ -19,6 +19,11 @@ Small reproducible subset used to develop and validate the brick detector.
 | `bricks_06.png` | `74831553-image_271.png` | 6-brick validation scene |
 | `bricks_10.png` | `bcff4c6b-image_267.png` | 10-brick validation scene |
 | `bricks_17.png` | `cc710eab-image_260.png` | 17-brick shared example |
+| `bricks_22.png` | `6ba46c8c-image_255.png` | 22-brick validation scene |
 | `bricks_25.png` | `d7ff9b9a-image_252.png` | 25-brick validation scene |
+| `bricks_32.png` | `1f38648d-image_245.png` | 32-brick validation scene |
+| `bricks_37.png` | `2716974e-image_240.png` | 37-brick validation scene |
+| `bricks_51.png` | `52a7b304-image_226.png` | 51-brick mixed-orientation scene |
+| `bricks_70.png` | `34c1881b-image_205.png` | Full-pallet 70-brick shared example |
 
 Only these selected images are redistributed; the complete dataset is not included in this repository.
