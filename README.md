@@ -30,4 +30,11 @@ Additional enriched test inventories are available in
 
 The current data contract is documented in `interfaces.md`.
 
+## ROS 2 perception node
+
+The `marmon_perception` package in `ros2/marmon_perception/` wraps the existing
+Python pipeline in one ROS 2 Humble node. It subscribes to images and publishes
+the shared inventory as JSON. Build, transport configuration, and dataset test
+instructions are in [perception/README.md](perception/README.md).
+
 The selected Zenodo images required to reproduce the current detector results are included in `data/images/zenodo_detection/` with their attribution and license.

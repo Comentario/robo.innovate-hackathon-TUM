@@ -872,7 +872,42 @@ def run_pallet_pipeline(
         cv2.connectedComponentsWithStats(clean_mask, connectivity=8)
     )
     if clean_component_count == 1:
-        raise ValueError("No foreground region found in clean mask")
+        # A cleaned-away foreground or a failed alignment is not evidence of
+        # an empty pallet. Preserve the error for those ambiguous cases.
+        if np.any(mask) or alignment_correlation is None:
+            raise ValueError("No foreground region found in clean mask")
+        diagnostics = {
+            "background_was_resized": background_was_resized,
+            "alignment_correlation": float(alignment_correlation),
+            "alignment_affine_matrix": alignment_warp.tolist(),
+            "selected_component_labels": [],
+            "anchor_component_label": None,
+            "local_recovery_count": 0,
+            "bbox_fallback_count": 0,
+            "previous_row_geometry_fallbacks": 0,
+            "gradient_refined_detection_count": 0,
+            "gradient_refined_side_count": 0,
+            "stack_top_original_y": None,
+            "stack_top_refined_y": None,
+            "stack_top_refinement_applied": False,
+            "envelope_clamped_detection_count": 0,
+            "envelope_clamped_side_count": 0,
+            "horizontal_splits": [],
+            "vertical_splits": [],
+            "geometry_fallback_splits": [],
+            "cell_occupancy": None,
+            "estimated_row_layout": [],
+            "detection_count": 0,
+        }
+        artifacts = {
+            "aligned_background": background,
+            "difference": difference_view,
+            "raw_mask": mask,
+            "clean_mask": clean_mask,
+            "grouped_mask": clean_mask.copy(),
+            "split_mask": clean_mask.copy(),
+        }
+        return [], diagnostics, artifacts
 
     grouping = group_stack_components(
         clean_component_labels,

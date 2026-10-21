@@ -312,18 +312,22 @@ def calculate_uniformity_scores(measurements: list[dict]) -> dict[str, float]:
 def build_relative_lab_classification(measurements: list[dict]) -> dict:
     """Select one, two, or three relative CIELAB groups."""
     if len(measurements) < MIN_CLUSTER_SAMPLES:
-        raise ValueError("At least three Lab measurements are required")
-
-    features = convert_to_standard_lab(measurements)
-    k1 = evaluate_candidate(features, 1)
-    candidates = [
-        k1,
-        evaluate_candidate(features, 2, k1["inertia"]),
-        evaluate_candidate(features, 3, k1["inertia"]),
-    ]
-    selected, selection_reason = choose_candidate(candidates)
+        candidates = []
+        selected = None
+        selection_reason = "insufficient_measurements"
+    else:
+        features = convert_to_standard_lab(measurements)
+        k1 = evaluate_candidate(features, 1)
+        candidates = [
+            k1,
+            evaluate_candidate(features, 2, k1["inertia"]),
+            evaluate_candidate(features, 3, k1["inertia"]),
+        ]
+        selected, selection_reason = choose_candidate(candidates)
     selected_k = None if selected is None else selected["k"]
-    uniformity_scores = calculate_uniformity_scores(measurements)
+    uniformity_scores = (
+        calculate_uniformity_scores(measurements) if selected is not None else {}
+    )
     assignments = []
     for index, measurement in enumerate(measurements):
         if selected is None:
@@ -485,9 +489,6 @@ def main() -> None:
     image, inventory = load_inputs(args.image, args.inventory)
     all_bricks = inventory["bricks"]
     bricks = select_color_eligible_bricks(all_bricks)
-    if not bricks:
-        raise ValueError("Inventory has no detections eligible for color estimation")
-
     output_directory = args.output_dir or DEFAULT_OUTPUT_ROOT / inventory["image_id"]
     measurements_path = output_directory / "lab_measurements.json"
     preview_path = output_directory / "sampling_preview.png"

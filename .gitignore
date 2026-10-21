@@ -6,3 +6,8 @@ __pycache__/
 Brick_Window_with_Masonry_New.v2-2024-11-14-1-00pm.multiclass/
 
 outputs/
+build/
+install/
+log/
+*.egg-info/
+.pytest_cache/
