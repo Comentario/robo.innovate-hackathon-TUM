@@ -830,10 +830,13 @@ def split_component_hierarchy(
     return horizontal_splits, vertical_splits, geometry_fallback_splits, cells
 
 
-def main() -> None:
-    background = load_image(BACKGROUND_PATH)
-    current = load_image(CURRENT_PATH)
-
+def run_pallet_pipeline(
+    current: np.ndarray,
+    background: np.ndarray,
+) -> tuple[list[dict], dict, dict[str, np.ndarray]]:
+    """Run pallet detection in memory and return detections and diagnostics."""
+    if current.size == 0 or background.size == 0:
+        raise ValueError("Current and background images must not be empty")
     background_was_resized = background.shape[:2] != current.shape[:2]
     background, alignment_correlation, alignment_warp = align_background(
         background,
@@ -1041,14 +1044,87 @@ def main() -> None:
         detection.pop("_sort_column_x")
         detection["id"] = f"brick_{index:03d}"
 
-    inventory = build_partial_inventory(
-        image_id=CURRENT_PATH.stem,
-        image_shape=current.shape,
-        detections=detections,
-        source_detector="pallet_background_difference_v0.2",
-    )
+    normalized_row_layout = [
+        {
+            "orientation": row["orientation"],
+            "start_y": int(grouped_y + row["start_y"]),
+            "end_y": int(grouped_y + row["end_y"]),
+            "expected_bricks": int(row["expected_bricks"]),
+            "score": float(row["score"]),
+        }
+        for row in estimated_row_layout
+    ]
+    diagnostics = {
+        "background_was_resized": background_was_resized,
+        "alignment_correlation": (
+            None
+            if alignment_correlation is None
+            else float(alignment_correlation)
+        ),
+        "alignment_affine_matrix": alignment_warp.tolist(),
+        "selected_component_labels": [
+            int(label) for label in grouping["selected_labels"]
+        ],
+        "anchor_component_label": int(grouping["anchor_label"]),
+        "local_recovery_count": int(local_recovery_count),
+        "bbox_fallback_count": int(bbox_fallback_count),
+        "previous_row_geometry_fallbacks": int(
+            split_diagnostics["previous_row_geometry_fallbacks"]
+        ),
+        "gradient_refined_detection_count": int(
+            gradient_refined_detection_count
+        ),
+        "gradient_refined_side_count": int(gradient_refined_side_count),
+        "stack_top_original_y": int(original_grouped_bbox["y"]),
+        "stack_top_refined_y": int(grouped_bbox["y"]),
+        "stack_top_refinement_applied": bool(stack_top_refinement_applied),
+        "envelope_clamped_detection_count": int(
+            envelope_clamped_detection_count
+        ),
+        "envelope_clamped_side_count": int(envelope_clamped_side_count),
+        "horizontal_splits": [int(value) for value in horizontal_splits],
+        "vertical_splits": [int(value) for value in vertical_splits],
+        "geometry_fallback_splits": [
+            int(value) for value in geometry_fallback_splits
+        ],
+        "cell_occupancy": (
+            None
+            if not cell_occupancies
+            else {
+                "minimum": float(min(cell_occupancies)),
+                "mean": float(np.mean(cell_occupancies)),
+                "maximum": float(max(cell_occupancies)),
+            }
+        ),
+        "estimated_row_layout": normalized_row_layout,
+        "detection_count": int(len(detections)),
+    }
+    artifacts = {
+        "aligned_background": background,
+        "difference": difference_view,
+        "raw_mask": mask,
+        "clean_mask": clean_mask,
+        "grouped_mask": grouped_mask,
+        "split_mask": split_mask,
+    }
+    return detections, diagnostics, artifacts
 
-    preview = current.copy()
+
+def detect_pallet_bricks(
+    current: np.ndarray,
+    background: np.ndarray,
+) -> tuple[list[dict], dict]:
+    """Return pallet-brick detections and JSON-compatible diagnostics."""
+    detections, diagnostics, _ = run_pallet_pipeline(current, background)
+    return detections, diagnostics
+
+
+def draw_detection_preview(
+    image: np.ndarray,
+    detections: list[dict],
+) -> np.ndarray:
+    """Draw pallet detections and their spatial IDs."""
+    preview = image.copy()
     for detection in detections:
         box = detection["bbox_px"]
         center = detection["center_px"]
@@ -1071,21 +1147,41 @@ def main() -> None:
             1,
             cv2.LINE_AA,
         )
+    return preview
+
+
+def main() -> None:
+    background = load_image(BACKGROUND_PATH)
+    current = load_image(CURRENT_PATH)
+    detections, diagnostics, artifacts = run_pallet_pipeline(
+        current,
+        background,
+    )
+    inventory = build_partial_inventory(
+        image_id=CURRENT_PATH.stem,
+        image_shape=current.shape,
+        detections=detections,
+        source_detector="pallet_background_difference_v0.2",
+    )
+    preview = draw_detection_preview(current, detections)
 
     DIFFERENCE_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    if not cv2.imwrite(str(ALIGNED_BACKGROUND_OUTPUT_PATH), background):
+    if not cv2.imwrite(
+        str(ALIGNED_BACKGROUND_OUTPUT_PATH),
+        artifacts["aligned_background"],
+    ):
         raise OSError(
             f"Could not write image: {ALIGNED_BACKGROUND_OUTPUT_PATH}"
         )
-    if not cv2.imwrite(str(DIFFERENCE_OUTPUT_PATH), difference_view):
+    if not cv2.imwrite(str(DIFFERENCE_OUTPUT_PATH), artifacts["difference"]):
         raise OSError(f"Could not write image: {DIFFERENCE_OUTPUT_PATH}")
-    if not cv2.imwrite(str(MASK_OUTPUT_PATH), mask):
+    if not cv2.imwrite(str(MASK_OUTPUT_PATH), artifacts["raw_mask"]):
         raise OSError(f"Could not write image: {MASK_OUTPUT_PATH}")
-    if not cv2.imwrite(str(CLEAN_MASK_OUTPUT_PATH), clean_mask):
+    if not cv2.imwrite(str(CLEAN_MASK_OUTPUT_PATH), artifacts["clean_mask"]):
         raise OSError(f"Could not write image: {CLEAN_MASK_OUTPUT_PATH}")
-    if not cv2.imwrite(str(GROUPED_MASK_OUTPUT_PATH), grouped_mask):
+    if not cv2.imwrite(str(GROUPED_MASK_OUTPUT_PATH), artifacts["grouped_mask"]):
         raise OSError(f"Could not write image: {GROUPED_MASK_OUTPUT_PATH}")
-    if not cv2.imwrite(str(SPLIT_MASK_OUTPUT_PATH), split_mask):
+    if not cv2.imwrite(str(SPLIT_MASK_OUTPUT_PATH), artifacts["split_mask"]):
         raise OSError(f"Could not write image: {SPLIT_MASK_OUTPUT_PATH}")
     if not cv2.imwrite(str(DETECTIONS_OUTPUT_PATH), preview):
         raise OSError(f"Could not write image: {DETECTIONS_OUTPUT_PATH}")
@@ -1099,52 +1195,64 @@ def main() -> None:
     print(f"Saved split mask to: {SPLIT_MASK_OUTPUT_PATH}")
     print(f"Saved detection preview to: {DETECTIONS_OUTPUT_PATH}")
     print(f"Saved partial inventory to: {INVENTORY_OUTPUT_PATH}")
-    print(f"Background resized to current image: {background_was_resized}")
-    print(f"Alignment ECC correlation: {alignment_correlation}")
-    print(f"Alignment affine matrix: {alignment_warp.tolist()}")
+    print(
+        "Background resized to current image: "
+        f"{diagnostics['background_was_resized']}"
+    )
+    print(f"Alignment ECC correlation: {diagnostics['alignment_correlation']}")
+    print(f"Alignment affine matrix: {diagnostics['alignment_affine_matrix']}")
     print(
         "Grouped component labels: "
-        f"{grouping['selected_labels']} "
-        f"(anchor={grouping['anchor_label']})"
+        f"{diagnostics['selected_component_labels']} "
+        f"(anchor={diagnostics['anchor_component_label']})"
     )
-    print(f"Local foreground recoveries used: {local_recovery_count}")
-    print(f"Cell bbox fallbacks used: {bbox_fallback_count}")
+    print(
+        "Local foreground recoveries used: "
+        f"{diagnostics['local_recovery_count']}"
+    )
+    print(f"Cell bbox fallbacks used: {diagnostics['bbox_fallback_count']}")
     print(
         "Previous-row geometry fallbacks used: "
-        f"{split_diagnostics['previous_row_geometry_fallbacks']}"
+        f"{diagnostics['previous_row_geometry_fallbacks']}"
     )
     print(
         "Gradient refinements used: "
-        f"{gradient_refined_detection_count} detections, "
-        f"{gradient_refined_side_count} sides"
+        f"{diagnostics['gradient_refined_detection_count']} detections, "
+        f"{diagnostics['gradient_refined_side_count']} sides"
     )
     print(
         "Stack top refinement: "
-        f"{original_grouped_bbox['y']} -> {grouped_bbox['y']} "
-        f"(applied={stack_top_refinement_applied})"
+        f"{diagnostics['stack_top_original_y']} -> "
+        f"{diagnostics['stack_top_refined_y']} "
+        f"(applied={diagnostics['stack_top_refinement_applied']})"
     )
     print(
         "Envelope clamps used: "
-        f"{envelope_clamped_detection_count} detections, "
-        f"{envelope_clamped_side_count} sides"
+        f"{diagnostics['envelope_clamped_detection_count']} detections, "
+        f"{diagnostics['envelope_clamped_side_count']} sides"
     )
-    print(f"Detected horizontal splits at y={horizontal_splits}")
-    print(f"Detected vertical splits at x={vertical_splits}")
-    print(f"Geometry fallback splits at x={geometry_fallback_splits}")
-    if cell_occupancies:
+    print(f"Detected horizontal splits at y={diagnostics['horizontal_splits']}")
+    print(f"Detected vertical splits at x={diagnostics['vertical_splits']}")
+    print(
+        "Geometry fallback splits at x="
+        f"{diagnostics['geometry_fallback_splits']}"
+    )
+    if diagnostics["cell_occupancy"] is not None:
+        occupancy = diagnostics["cell_occupancy"]
         print(
             "Cell occupancy: "
-            f"min={min(cell_occupancies):.3f}, "
-            f"mean={np.mean(cell_occupancies):.3f}, "
-            f"max={max(cell_occupancies):.3f}"
+            f"min={occupancy['minimum']:.3f}, "
+            f"mean={occupancy['mean']:.3f}, "
+            f"max={occupancy['maximum']:.3f}"
         )
     print("Estimated row layout:")
-    for row_index, row in enumerate(estimated_row_layout, start=1):
-        global_start_y = grouped_y + row["start_y"]
-        global_end_y = grouped_y + row["end_y"]
+    for row_index, row in enumerate(
+        diagnostics["estimated_row_layout"],
+        start=1,
+    ):
         print(
             f"  Row {row_index}: orientation={row['orientation']}, "
-            f"y={global_start_y}:{global_end_y}, "
+            f"y={row['start_y']}:{row['end_y']}, "
             f"expected_bricks={row['expected_bricks']}, "
             f"score={row['score']:.3f}"
         )
