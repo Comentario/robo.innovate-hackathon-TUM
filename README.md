@@ -192,3 +192,14 @@ python3 -m integration.person1_intake examples/person1/inventory_with_color.json
 El umbral y la receta 50/50 son hipótesis explícitas de la demo. El informe HTML
 explica aceptados/excluidos y las doce posiciones. No ejecuta el robot: faltan
 poses métricas y caras. Ver [revisión y límites](docs/person1_review_2026-10-21.md).
+
+## Ver imagen, filtro y plan con los mismos IDs
+
+```bash
+python3 -m demo.person1_visual --output-dir artifacts/person1_visual_new
+```
+
+Abrir el `index.html` generado. Seleccionar un ladrillo en la foto o en el plan
+para ver su correspondencia y motivo de aceptación/exclusión. Cambiar el umbral
+permite comprobar cuándo la receta deja de ser viable. Página autónoma, en inglés,
+sin ejecutar el robot. Ver [guion de la demo](docs/person1_visual.md).
