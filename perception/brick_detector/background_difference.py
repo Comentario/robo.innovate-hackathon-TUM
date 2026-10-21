@@ -1045,6 +1045,7 @@ def main() -> None:
         image_id=CURRENT_PATH.stem,
         image_shape=current.shape,
         detections=detections,
+        source_detector="pallet_background_difference_v0.2",
     )
 
     preview = current.copy()
