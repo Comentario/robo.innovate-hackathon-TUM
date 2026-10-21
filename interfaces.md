@@ -125,15 +125,3 @@ No incorpora source_poses ni identidad de cara: `source=perception`,
 métricas medidas como cualquier entrada de percepción. Los IDs son locales a
 la imagen; categorías de capturas distintas no se equiparan automáticamente.
 Ver `docs/person1_review_2026-10-21.md` y `examples/person1/`.
-
-## Referencia humana de las clases de persona 1
-
-`person1-reference-review-0.1` se vincula a `image_id`, `image_sha256` e
-`inventory_sha256`, con `reference_kind=operator_image_review`. Incluye revisor,
-definiciones de los grupos y anotaciones únicas `{id, reference_group, note?}`.
-`uncertain` significa revisado sin clase definida; IDs ausentes no están revisados.
-No hereda respuestas del detector. `integration.person1_reference.evaluate`
-rechaza referencias de otra captura o etiquetas inválidas y produce cobertura,
-confusión y acuerdo por umbral, sin validar ni recomendar automáticamente uno.
-Esta evidencia de clases no es `pallet-observation-0.1` ni habilita el robot.
-Ver `docs/person1_reference.md`.

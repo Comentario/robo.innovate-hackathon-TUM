@@ -27,7 +27,7 @@ Ver `person1_review_2026-10-18.md` para resultados y propuesta de contrato.
 - Validador final independiente de las confirmaciones del ejecutor; sin
   observaciones reales el resultado permanece awaiting_observation.
 
-Verificaciones actuales: 84 pruebas sin ROS, 11 pruebas del adaptador Panda y
+Verificaciones actuales: 78 pruebas sin ROS, 11 pruebas del adaptador Panda y
 10 pruebas de transporte/consumo ROS. Se probó pausa entre procesos y restauración hasta completar 12 colocaciones.
 
 ## Entrega de persona 1 revisada
@@ -39,9 +39,6 @@ Prueba: 57/70 piezas admitidas con umbral heurístico 0.5; plan de doce posicion
 Ver `person1_review_2026-10-21.md`. No se hizo merge del código de percepción.
 La demo `python3 -m demo.person1_visual` enlaza imagen, decisiones e IDs del plan
 y muestra recetas bloqueadas al variar el filtro; guion en `person1_visual.md`.
-Revisión manual y evaluador de umbrales preparados (`person1_reference.md`),
-sin etiquetas humanas reales todavía. La evaluación inicial espera referencias;
-no hay umbral calibrado ni recomendación automática.
 
 Antes de ejecutar percepción real: fijar categorías estables entre capturas,
 tracking/lote estático, caras observadas, poses métricas y calibración de celda.

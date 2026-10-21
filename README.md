@@ -203,11 +203,3 @@ Abrir el `index.html` generado. Seleccionar un ladrillo en la foto o en el plan
 para ver su correspondencia y motivo de aceptación/exclusión. Cambiar el umbral
 permite comprobar cuándo la receta deja de ser viable. Página autónoma, en inglés,
 sin ejecutar el robot. Ver [guion de la demo](docs/person1_visual.md).
-
-## Revisar las clases antes de fijar el umbral
-
-La demo visual incluye anotación por pieza, criterios explícitos, opción de
-ocultar predicciones e importación/exportación de la revisión. No hay etiquetas
-humanas prellenadas. `python3 -m integration.person1_reference evaluate` compara
-la copia exportada con persona 1 y genera un informe de cobertura/desacuerdos por
-umbral. Ver [guía de revisión manual](docs/person1_reference.md).

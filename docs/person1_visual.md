@@ -73,10 +73,3 @@ caras, tracking o protocolo de lote estático y validación independiente del pa
 - Evidencia local: `artifacts/person1_visual_final/browser_checks.json`,
   `browser_review.png` e `index.html`; log del núcleo en
   `artifacts/person1_visual_tests.log`.
-
-## Revisión humana de los grupos
-
-La página ahora permite definir criterios y registrar clases de referencia o
-incertidumbre sin prellenar predicciones. Abrir con `?review=1` oculta clases y
-scores del modelo. Ver `person1_reference.md` para exportar/evaluar la revisión
-y comprender por qué esta herramienta todavía no valida un umbral.
