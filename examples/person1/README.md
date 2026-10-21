@@ -16,3 +16,8 @@ University of Pardubice. DOI: https://doi.org/10.5281/zenodo.18952529 .
 License: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 Only this selected source image is redistributed here. Its visual review adds
 selectable overlays; the underlying photo is unchanged.
+
+`inventory_three_groups.json` is copied unchanged from the same commit, path
+`data/inventories/color_estimation/wall_exposure_light.json`. It is an offline
+wall-scene export with three relative groups. The arm demo stages selected IDs
+synthetically; it does not model the photographed wall as physically pickable.

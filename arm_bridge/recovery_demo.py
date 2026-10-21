@@ -30,17 +30,32 @@ def main():
     parser.add_argument('--speed',type=float,default=2.)
     parser.add_argument('--pause',type=float,default=8.)
     parser.add_argument('--hold',type=float,default=600.)
+    parser.add_argument('--person1-inventory',type=Path,help='producer JSON; preserve delivered IDs, classes and scores')
+    parser.add_argument('--person1-config',type=Path,help='optional recipe using producer group names')
     args=parser.parse_args()
+    if args.person1_config and not args.person1_inventory:parser.error('person1-config requires person1-inventory')
     if not 0<args.speed<=20 or not 0<=args.pause<=60 or not 0<=args.hold<=7200:parser.error('invalid speed or duration')
     directory=Path(args.output_dir);directory.mkdir(parents=True,exist_ok=True)
     state=directory/'state.sqlite3'
-    if state.exists():parser.error('journal already exists; choose a new output directory')
+    generated={directory/name for name in ('state.sqlite3','person1_handoff.json','stopped_run.json','robot_checkpoint.json','restored_scene.json','home_preparation.json','reconciliation.json','proposal.json','final_scene.json','result.json','index.html')}
+    protected={p.resolve() for p in (args.person1_inventory,args.person1_config) if p}
+    if any(p.exists() or p.resolve() in protected for p in generated):parser.error('recovery evidence must be new and separate from inputs; choose a new output directory')
     root=Path(__file__).resolve().parents[1]
     read=lambda p:json.loads((root/p).read_text())
-    snapshot,plan,job=prepare(read('examples/perception/snapshot.json'),read('examples/faces/config.json'),read('config/cell_panda.json'))
+    bundle=None
+    if args.person1_inventory:
+        from integration.person1_simulation import prepare_person1_simulation
+        inventory=json.loads(args.person1_inventory.read_text())
+        config=json.loads(args.person1_config.read_text()) if args.person1_config else None
+        bundle=prepare_person1_simulation(inventory,read('config/cell_panda.json'),config)
+        snapshot,plan,job=(bundle[name] for name in ('staged_snapshot','plan','job'))
+    else:
+        snapshot,plan,job=prepare(read('examples/perception/snapshot.json'),read('examples/faces/config.json'),read('config/cell_panda.json'))
+    if len(plan['placements'])!=12:parser.error('this recovery rehearsal requires a 12-position plan')
     save=lambda name,value:(directory/f'{name}.json').write_text(json.dumps(value,indent=2)+'\n')
     rclpy.init();journal=Journal(state);adapter=None
     try:
+        if bundle:save('person1_handoff',bundle)
         adapter=MoveItAdapter(job,speed=args.speed)
         parent=journal.create(snapshot,job,StopBeforeFifth(adapter))
         print('Phase 1: build four positions, then inject a stop before the fifth pick.',flush=True)
@@ -78,6 +93,13 @@ def main():
         success=child.session.status=='completed' and len(child.session.confirmed)==12 and len(child.session.events)==64
         outcome=dict(run_id=child.run_id,status=child.session.status,confirmed=len(child.session.confirmed),actions=len(child.session.events),preserved_objects_unchanged=unchanged,final_validation='awaiting_observation',physical_validation=False)
         result=dict(parent_run_id=parent.run_id,proposal=proposal,outcome=outcome,parent_after=after_row,child=journal.inspect(child.run_id),motion_evidence=adapter.evidence,playback_metrics=adapter.playback_metrics)
+        if bundle:
+            parent_items={b['id']:(b['color_group'],b.get('score')) for b in snapshot['items']}
+            child_items={b['id']:(b['color_group'],b.get('score')) for b in result['child']['snapshot']['items']}
+            continuity=dict(producer_handoff_unchanged=result['child']['job'].get('person1_handoff')==bundle['handoff'],ids_groups_scores_unchanged=parent_items==child_items,recipe_and_plan_unchanged=result['child']['job']['plan']==plan,no_additional_score_filter=not bundle['handoff']['additional_score_filter'])
+            result.update(person1_handoff=bundle['handoff'],producer_continuity=continuity)
+            if not all(continuity.values()):raise RuntimeError('producer data or plan changed during reference recovery')
+            outcome.update(producer_data_unchanged=True,recipe_unchanged=True)
         save('result',result)
         (directory/'index.html').write_text(render_recovery(proposal,outcome=outcome))
         print(f'Panda recovery: {outcome["status"]}; preserved=4; new actions={outcome["actions"]}; confirmed={outcome["confirmed"]}/12; unchanged={unchanged}',flush=True)

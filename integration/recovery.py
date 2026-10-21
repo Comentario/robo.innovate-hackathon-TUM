@@ -66,6 +66,14 @@ def assess_recovery(row,observation):
     for b in stock:
         if not isinstance(b,dict) or not isinstance(b.get('id'),str) or not b['id'].strip():raise ValueError('stock IDs must be nonempty strings')
         ids.append(b['id'])
+    if row['job'].get('person1_handoff'):
+        # This reference run continues the exact producer-classified staged batch.
+        for brick in stock:
+            if not isinstance(brick,dict):raise ValueError('stock must contain objects')
+            old=original_items.get(brick.get('id'))
+            if old is None:issue('person1_unrecognized_staged_id',brick_id=brick.get('id'))
+            elif any(brick.get(key)!=old.get(key) for key in ('color_group','score')):
+                issue('person1_producer_classification_changed',brick_id=brick['id'])
     if any(not isinstance(b,str) or not b for b in missing):raise ValueError('missing_ids requires strings')
     all_ids=prefix_ids+ids+missing
     if len(all_ids)!=len(set(all_ids)):issue('duplicate_or_conflicting_brick_locations')
@@ -135,8 +143,11 @@ def assess_recovery(row,observation):
             job['job_id']=token
             for command in job['commands']:command['action_id']=f'{token}/{command["step"]}/{command["phase"]}'
             job['recovery']=dict(parent_run_id=row['run_id'],observation_id=oid,source=observation['source'],basis_digest=basis)
+            if row['job'].get('person1_handoff'):job['person1_handoff']=deepcopy(row['job']['person1_handoff'])
             proposal['job']=job
             proposal['snapshot']=dict(schema_version='inventory-snapshot-0.1',snapshot_id=f'recovery/{row["run_id"]}/{oid}',source='synthetic',face_aware=plan['schema_version']=='0.3',items=inventory,reconciliation_source=observation['source'])
+    if proposal['snapshot'] is not None and row['job'].get('person1_handoff'):
+        proposal['snapshot']['producer']=deepcopy(row['snapshot'].get('producer',{}))
     proposal['proposal_digest']=digest(proposal)
     return proposal
 
@@ -159,6 +170,10 @@ def render_recovery(proposal,*,outcome=None):
                 text='#29231e' if p['color_group']=='light' else '#ffffff'
                 cells+=f'<div class="brick {kind}" style="background:{color};color:{text}"><b>#{p["step"]} {esc(p["color_group"])}</b><small>{esc(p["brick_id"])}</small><small>{esc(p.get("visible_face","face not modeled"))} · {kind}</small></div>'
             cells+='</div>'
+    producer_notice=''
+    if job and job.get('person1_handoff'):
+        h=job['person1_handoff']
+        producer_notice=f'<p>Person 1 export: <b>{esc(h["image_id"])}</b> · {len(h["group_centers_lab"])} received groups. Original IDs, classes and scores are retained; no additional score filter. Pick positions are synthetic. Card backgrounds do not reconstruct material color.</p>'
     rows=''.join(f'<tr><td>{r["step"]}</td><td>{esc(r["old_brick_id"])}</td><td>{esc(r["new_brick_id"])}</td></tr>' for r in proposal['replacements'])
     issues=''.join(f'<li>{esc(i)}</li>' for i in proposal['issues'])
     scope_notice=('Panda kinematic continuation requires live joint and collision-scene verification. Hardware is not resumed.' if proposal['execution_scope']=='reference_simulator_after_scene_verification' else 'This continuation supports the acknowledgement simulator only; Panda and hardware adapters are not resumed.')
@@ -171,7 +186,7 @@ def render_recovery(proposal,*,outcome=None):
 <p class="notice">Evidence source: <b>{esc(proposal['source'])}</b>. A declared observation is not proof of a physical grasp or a camera-validated pallet. {esc(scope_notice)}</p>
 <div class="cards"><div class="card">Proposal<b>{esc(proposal['status'].upper())}</b></div><div class="card">Preserved positions<b>{len(preserved)}</b></div><div class="card">Substituted bricks<b>{len(changed)}</b></div><div class="card">Remaining actions<b>{len(job['commands']) if job else 'Blocked'}</b></div></div>
 <h2>Reconciliation requirements</h2><p>Complete cell coverage, empty gripper, robot at safe home, all original IDs accounted for, and a verified prefix of the pallet. Source positions must be in meters in the cell frame. Unresolved evidence blocks execution.</p>
-<h2>Recovery plan · before continuation</h2><p>Green border: already placed, no new pick. Amber border: replacement with the same shade. Other cells: remaining work. The recipe and shade pattern remain unchanged.</p>{cells or '<p>No continuation job was produced.</p>'}
+<h2>Recovery plan · before continuation</h2>{producer_notice}<p>Green border: already placed, no new pick. Amber border: replacement with the same shade. Other cells: remaining work. The recipe and shade pattern remain unchanged.</p>{cells or '<p>No continuation job was produced.</p>'}
 <h2>Substitutions</h2><table><tr><th>Step</th><th>Unavailable brick</th><th>Replacement</th></tr>{rows or '<tr><td colspan="3">No substitutions</td></tr>'}</table>
 <h2>Blocking issues</h2><ul>{issues or '<li>No blocking issues in the supplied reconciliation.</li>'}</ul>{result}
 <h2>Audit trail</h2><p>Parent run: <code>{esc(proposal['parent_run_id'])}</code><br>Observation: <code>{esc(proposal['observation_id'])}</code><br>Checkpoint digest: <code>{esc(proposal['basis_digest'])}</code></p>

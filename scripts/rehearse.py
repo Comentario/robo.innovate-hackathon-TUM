@@ -28,7 +28,7 @@ def stop(process):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('scenario',choices=['normal','recovery','person1'],nargs='?',default='normal')
+    parser.add_argument('scenario',choices=['normal','recovery','person1','person1-recovery'],nargs='?',default='normal')
     parser.add_argument('--speed',type=float,default=3.)
     parser.add_argument('--hold',type=float,default=600.)
     parser.add_argument('--headless',action='store_true',help='verify without opening RViz')
@@ -65,9 +65,9 @@ def main():
             time.sleep(2)
             if server.poll() is not None:raise RuntimeError('MoveIt launch failed; inspect server.log')
             command=['scripts/arm_demo.sh']
-            if args.scenario=='recovery':command+=['recovery','--output-dir',str(directory)]
+            if args.scenario in ('recovery','person1-recovery'):command+=['recovery','--output-dir',str(directory)]
             else:command+=['--state',str(directory/'state.sqlite3'),'--output',str(directory/'result.json')]
-            if args.scenario=='person1':
+            if args.scenario in ('person1','person1-recovery'):
                 command+=['--person1-inventory',str(args.inventory.resolve())]
                 if args.recipe:command+=['--person1-config',str(args.recipe.resolve())]
             command+=['--speed',str(args.speed),'--hold',str(args.hold)]
@@ -96,6 +96,7 @@ def main():
             summary['execution_status']=outcome['status']
             summary['confirmed']=outcome.get('confirmed',len(outcome.get('confirmed_placements',[])))
             if 'person1_handoff' in result:summary['person1_handoff']=result['person1_handoff']
+            if 'producer_continuity' in result:summary['producer_continuity']=result['producer_continuity']
         (directory/'rehearsal.json').write_text(json.dumps(summary,indent=2)+'\n')
         (directory/'summary.html').write_text(
             '<!doctype html><html lang="en"><meta charset="utf-8"><title>Robot rehearsal</title>'

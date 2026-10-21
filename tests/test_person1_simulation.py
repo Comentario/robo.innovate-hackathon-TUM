@@ -44,6 +44,12 @@ class Person1SimulationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'measured source_poses'):
             prepare(bundle['observed_snapshot'],bundle['handoff']['recipe'],self.cell)
 
+    def test_synthetic_staging_cannot_be_sent_to_a_hardware_adapter(self):
+        class Hardware(SimulatedAdapter):mode='hardware'
+        bundle=prepare_person1_simulation(self.inventory,self.cell)
+        with self.assertRaisesRegex(ValueError,'simulation-only'):
+            ExecutionSession(bundle['job'],Hardware())
+
     def test_received_group_count_is_not_replaced_by_our_old_shades(self):
         for count in (1,3):
             value=deepcopy(self.inventory)

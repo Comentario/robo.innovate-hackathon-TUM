@@ -199,12 +199,14 @@ class MoveItAdapter(Node):
         return dict(schema_version='cell-reconciliation-0.1',run_id=row['run_id'],plan_digest=plan_digest(row['job']['plan']),basis_digest=basis_digest(row),observation_id=observation_id,source='synthetic',coverage='complete',gripper={'state':'empty'},robot={'state':'safe_home'},placements=placements,inventory=inventory,missing_ids=[],frame='world',units='m',source_poses={b['id']:self.object_pose(world[b['id']]) for b in inventory},robot_scene_digest=scene_digest(semantic),robot_scene=semantic)
 
     def verify_recovery_scene(self,row,observation,proposal):
+        if proposal['job'].get('person1_handoff')!=self.job.get('person1_handoff'):raise ValueError('producer handoff changed during recovery')
         fresh=self.reconciliation(row,observation['observation_id'])
         require_same_scene(fresh['robot_scene'],observation.get('robot_scene_digest'))
         if without_timestamps(fresh)!=without_timestamps(observation):raise ValueError('reconciliation differs from the live reference scene')
         return dict(backend=self.backend,scene_digest=fresh['robot_scene_digest'],proposal_digest=proposal['proposal_digest'],joints=deepcopy(self.positions),physical_validation=False)
 
     def activate_recovery(self,job,receipt):
+        if job.get('person1_handoff')!=self.job.get('person1_handoff'):raise ValueError('producer handoff changed during recovery')
         _,semantic=self.capture_scene();require_same_scene(semantic,receipt['scene_digest'])
         self.job=deepcopy(job)
         self.placed={p['brick_id'] for p in job.get('preserved_placements',[])}

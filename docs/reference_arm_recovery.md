@@ -120,3 +120,9 @@ Captura: `artifacts/panda_recovery_03/rviz_recovery.png`.
 Comprobaciones: `artifacts/panda_recovery_03/verification.json`.
 Los ensayos anteriores se conservan para diagnóstico y no se presentan como
 recuperaciones completas satisfactorias.
+
+## Inventario de persona 1
+
+La variante `python3 scripts/rehearse.py person1-recovery` conserva sus grupos
+Lab/K-means, IDs y scores al recuperar. Está comprobada con dos y tres grupos.
+Ver `person1_recovery.md`; el escenario anterior sigue siendo reproducible.

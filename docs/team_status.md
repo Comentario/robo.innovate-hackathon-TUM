@@ -27,7 +27,7 @@ de recogida siguen siendo explícitamente simuladas. Ver `person1_simulation.md`
 - Validador final independiente de las confirmaciones del ejecutor; sin
   observaciones reales el resultado permanece awaiting_observation.
 
-Verificaciones actuales: 82 pruebas sin ROS, 12 pruebas del adaptador Panda y
+Verificaciones actuales: 89 pruebas sin ROS, 14 pruebas del adaptador Panda y
 10 pruebas de transporte/consumo ROS. Se probó pausa entre procesos y restauración hasta completar 12 colocaciones.
 
 ## Entrega de persona 1 revisada
@@ -42,6 +42,11 @@ La demo `python3 -m demo.person1_visual` enlaza imagen, decisiones e IDs del pla
 sin filtro adicional por defecto; guion en `person1_visual.md`.
 El lanzador `person1` consume el JSON de la entrega y usa una cuadrícula de staging
 sintética para conectar el plan con el brazo; admite uno, dos o tres grupos.
+`person1-recovery` también está comprobado con las exportaciones reales de dos
+y tres grupos: doce colocaciones, cuatro preservadas y 64 acciones nuevas, sin
+cambiar la receta ni los datos de persona 1. Ver `person1_recovery.md`.
+La transición física está documentada en `event_connection.md`, con plantilla
+informativa desactivada `config/event_connection.template.json`.
 
 Antes de ejecutar percepción real: fijar categorías estables entre capturas,
 tracking/lote estático, caras observadas, poses métricas y calibración de celda.

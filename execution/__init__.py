@@ -92,6 +92,8 @@ class ExecutionSession:
         self.mode = getattr(adapter,'mode',None)
         if self.mode not in ('simulation_only','hardware'):
             raise ValueError('adapter must declare its execution mode')
+        if self.mode=='hardware' and job.get('person1_handoff',{}).get('geometry_source')=='synthetic_staging_grid':
+            raise ValueError('Person 1 synthetic staging is simulation-only; hardware requires measured cell poses')
         self.job,self.adapter = deepcopy(job),adapter
         self.cursor,self.status = 0,'ready'
         self.available = set(job['source_poses'])

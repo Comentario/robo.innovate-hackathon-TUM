@@ -8,6 +8,7 @@ Preparación para el reto #8: Intelligent Brick Blending and Palletizing.
 python3 scripts/rehearse.py normal
 python3 scripts/rehearse.py recovery
 python3 scripts/rehearse.py person1
+python3 scripts/rehearse.py person1-recovery
 ```
 
 Ejecutar uno cada vez. Abre MoveIt y RViz, muestra el progreso en inglés y conserva
@@ -218,3 +219,18 @@ Usa directamente sus grupos Lab/K-means, IDs y puntuaciones, sin reclasificació
 ni revisión manual. Planifica y coloca doce piezas en RViz con poses explícitamente
 simuladas. Los centros Lab solo se convierten a RGB para dibujarlos. Ver
 [integración incremental](docs/person1_simulation.md).
+
+## Recuperación con el inventario de persona 1
+
+```bash
+python3 scripts/rehearse.py person1-recovery
+# Exportación original con tres grupos:
+python3 scripts/rehearse.py person1-recovery \
+  --inventory examples/person1/inventory_three_groups.json
+```
+
+Coloca cuatro piezas, reconstruye el cliente y completa las ocho restantes con
+64 acciones nuevas, conservando la receta y los IDs/grupos/scores entregados.
+Ver [recuperación integrada](docs/person1_recovery.md). Para sustituir la maqueta
+por el equipo del evento, ver [datos y conexión pendientes](docs/event_connection.md)
+y `config/event_connection.template.json`, una plantilla informativa desactivada.

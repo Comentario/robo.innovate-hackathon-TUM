@@ -135,3 +135,13 @@ consume clases/scores sin reclasificar ni filtrar por puntuación adicional. Dev
 El job conserva `person1_handoff` con centros Lab, huella del inventario, receta,
 conteos y procedencia de geometría. Se preserva el bloqueo de ejecución del
 snapshot real sin poses medidas. Ver `docs/person1_simulation.md`.
+
+## Continuidad de persona 1 durante recuperación
+
+El reconciliador conserva `job.person1_handoff` y el `producer` del snapshot de
+staging en el ciclo hijo. Para ese lote, rechaza cambios de clase/score de IDs
+conocidos e IDs no incluidos en el staging. El adaptador Panda verifica también
+que no cambie la procedencia al activar el nuevo job. Receta, plan y prefijo
+permanecen intactos; el hijo contiene únicamente acciones nuevas para el resto.
+Los jobs con geometría `synthetic_staging_grid` no se admiten con `mode=hardware`.
+Ver `docs/person1_recovery.md` y `docs/event_connection.md`.

@@ -71,9 +71,10 @@ real ni calibración de cámara. La validación física continúa pendiente.
 - Otro ciclo a velocidad 3 completó también las doce posiciones. Su captura
   muestra en RViz el ID, grupo, procedencia y número de piezas en staging.
 - Exportación real de tres grupos: 104 piezas elegibles, doce posiciones con
-  cuatro de cada grupo y preparación geométrica correcta. No se presenta como
-  un segundo ensayo articulado de tres grupos ni como una pared recogible.
-- 82 pruebas del núcleo y 12 del adaptador pasan. Las pruebas nuevas verifican
+  cuatro de cada grupo. Después se completó también el ensayo articulado de
+  recuperación con esa exportación; ver `person1_recovery.md`. La pared de la
+  foto no se presenta como físicamente recogible.
+- 89 pruebas del núcleo y 14 del adaptador pasan. Las pruebas nuevas verifican
   la conservación de los scores más bajos, uno/dos/tres grupos, receta configurable,
   staging separado del dato real y ausencia de llamadas K-means en la conversión
   de color para pantalla.
@@ -90,5 +91,5 @@ Ya está conectado el intercambio por JSON hasta la ejecución del simulador.
 El código productor sigue en la rama de persona 1: no es necesario copiarlo al
 planificador para consumir sus archivos. Un futuro SDK sustituirá el adaptador del
 robot; las poses medidas/calibradas sustituirán la geometría sintética. El escenario
-recovery existente conserva su fixture de demostración; la combinación de esa
-recuperación con este nuevo escenario puede incorporarse como siguiente incremento.
+`person1-recovery` ya conecta la recuperación con ese mismo inventario; se
+comprobó con dos y tres grupos. Ver `person1_recovery.md` y `event_connection.md`.

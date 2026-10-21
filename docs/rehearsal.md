@@ -65,3 +65,10 @@ sin volver a clasificar ni aplicar un filtro de score adicional. `--inventory`
 permite escoger otro JSON y `--recipe` una política propia. Se preparan únicamente
 las piezas del plan en una cuadrícula de recogida simulada. Consultar
 `person1_simulation.md` para la separación entre datos del productor y geometría.
+
+## Parada y continuación con persona 1
+
+`python3 scripts/rehearse.py person1-recovery` usa el mismo JSON, coloca cuatro
+piezas, verifica el estado y completa las ocho restantes. Acepta `--inventory` y
+`--recipe` como el escenario normal. El guion requiere doce posiciones y no
+cambia la receta ni las clases. Ver `person1_recovery.md`.
