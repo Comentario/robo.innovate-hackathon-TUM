@@ -27,17 +27,21 @@ Ver `person1_review_2026-10-18.md` para resultados y propuesta de contrato.
 - Validador final independiente de las confirmaciones del ejecutor; sin
   observaciones reales el resultado permanece awaiting_observation.
 
-Verificaciones actuales: 67 pruebas sin ROS, 11 pruebas del adaptador Panda y
+Verificaciones actuales: 74 pruebas sin ROS, 11 pruebas del adaptador Panda y
 10 pruebas de transporte/consumo ROS. Se probó pausa entre procesos y restauración hasta completar 12 colocaciones.
 
-## Cuando llegue persona 1
+## Entrega de persona 1 revisada
 
-1. Revisar los nuevos cambios respecto a `e71ddf3`; la detección actual no usa NN.
-2. Convertir su formato al snapshot canónico manteniendo IDs, clases y caras.
-3. Acordar significado de score, desconocidos y disponibilidad de cada ladrillo.
-4. Evaluar errores con imágenes representativas, separadas de ajuste/entrenamiento.
-5. Convertir posiciones medidas al frame de celda; no usar píxeles como metros.
-6. Integrar observaciones independientes del pallet o verificaciones por paso.
+Revisada `3e705b4` el 21 de octubre: detectores de pallet/pared e inventarios
+relativos Lab reproducidos. Adaptador offline `integration.person1_intake`,
+fixture JSON sin cambios y receta provisional de dos grupos disponibles.
+Prueba: 57/70 piezas admitidas con umbral heurístico 0.5; plan de doce posiciones.
+Ver `person1_review_2026-10-21.md`. No se hizo merge del código de percepción.
+
+Antes de ejecutar percepción real: fijar categorías estables entre capturas,
+tracking/lote estático, caras observadas, poses métricas y calibración de celda.
+El score no es probabilidad calibrada. La validación final sigue requiriendo
+observaciones independientes del pallet.
 
 ## Pendientes de persona 3 que ahora son nuestros
 

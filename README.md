@@ -177,3 +177,18 @@ scripts/arm_demo.sh recovery --output-dir artifacts/panda_recovery --speed 3
 Coloca cuatro piezas, se detiene, reconstruye el cliente desde MoveIt y continúa
 sin volver a recoger las cuatro posiciones verificadas. Ver
 [reproducción y límites](docs/reference_arm_recovery.md). No controla hardware.
+
+## Inventario entregado por persona 1
+
+Entrada offline revisada en `3e705b4`: planificar conservando los grupos Lab
+relativos, sin requerir OpenCV en nuestro núcleo.
+
+```bash
+python3 -m integration.person1_intake examples/person1/inventory_with_color.json \
+  --min-score 0.5 --config examples/person1/config.json \
+  --output-dir artifacts/person1_intake_new
+```
+
+El umbral y la receta 50/50 son hipótesis explícitas de la demo. El informe HTML
+explica aceptados/excluidos y las doce posiciones. No ejecuta el robot: faltan
+poses métricas y caras. Ver [revisión y límites](docs/person1_review_2026-10-21.md).

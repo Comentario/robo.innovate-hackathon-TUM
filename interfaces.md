@@ -113,3 +113,15 @@ La evidencia cell-reconciliation-0.1 añade robot_scene y robot_scene_digest.
 El hijo conserva panda_moveit_kinematic y queda listo solo tras activar su escena.
 No habilita hardware ni `resume_simulation` para Panda. Ver
 `docs/reference_arm_recovery.md` para el alcance de esta demo.
+
+## Entrada de persona 1: color relativo schema 0.2
+
+`integration.person1_intake.convert_inventory(value, min_score=...)` convierte
+el inventario `color_estimated`/`accepted` de persona 1 a nuestro snapshot.
+Conserva `uniform`/`color_group_N`, centros Lab, score heurístico y geometría px;
+excluye unknown, parciales, posibles merges, no elegibles y scores bajo umbral.
+No incorpora source_poses ni identidad de cara: `source=perception`,
+`face_aware=false`. El snapshot sirve para planificar; ejecutar exige poses
+métricas medidas como cualquier entrada de percepción. Los IDs son locales a
+la imagen; categorías de capturas distintas no se equiparan automáticamente.
+Ver `docs/person1_review_2026-10-21.md` y `examples/person1/`.
