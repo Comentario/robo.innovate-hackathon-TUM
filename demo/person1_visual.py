@@ -39,7 +39,7 @@ def build_data(inventory,config,image_bytes):
     return dict(image_id=inventory['image_id'],image_size_px=inventory['image_size_px'],
                 inventory_sha256=base['producer']['inventory_sha256'],image_sha256=hashlib.sha256(image_bytes).hexdigest(),
                 bricks=deepcopy(inventory['bricks']),color_estimation=deepcopy(inventory['color_estimation']),
-                config=deepcopy(config),scenarios=scenarios,default_threshold=.5,
+                config=deepcopy(config),scenarios=scenarios,default_threshold=0.,
                 attribution='Bricks Detection Dataset — Dominik Štursa, Petr Doležel, Daniel Honc, Vítek Rais, Tomáš Novák; University of Pardubice. CC BY 4.0. DOI: 10.5281/zenodo.18952529. Image 34c1881b-image_205.png, unchanged.')
 
 

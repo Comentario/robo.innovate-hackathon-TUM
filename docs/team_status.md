@@ -1,9 +1,9 @@
 # Estado del equipo: cubrimos personas 2 y 3
 
-Persona 1 continúa con percepción. Se revisó `origin/persona1/perception` en `e71ddf3`: detector OpenCV clásico,
-formato de inventario parcial y cinco escenas reproducidas. La estimación de
-tono sigue pendiente; no se considera integrado su módulo.
-Ver `person1_review_2026-10-18.md` para resultados y propuesta de contrato.
+Persona 1 entregó clasificación Lab/K-means e inventario en `3e705b4`.
+Nuestro módulo consume su JSON y ya lo conecta con planificación y ejecución
+Panda/MoveIt de referencia, sin reclasificación ni revisión manual. Las posiciones
+de recogida siguen siendo explícitamente simuladas. Ver `person1_simulation.md`.
 
 ## Implementado y comprobado con fixtures sintéticos
 
@@ -27,7 +27,7 @@ Ver `person1_review_2026-10-18.md` para resultados y propuesta de contrato.
 - Validador final independiente de las confirmaciones del ejecutor; sin
   observaciones reales el resultado permanece awaiting_observation.
 
-Verificaciones actuales: 78 pruebas sin ROS, 11 pruebas del adaptador Panda y
+Verificaciones actuales: 82 pruebas sin ROS, 12 pruebas del adaptador Panda y
 10 pruebas de transporte/consumo ROS. Se probó pausa entre procesos y restauración hasta completar 12 colocaciones.
 
 ## Entrega de persona 1 revisada
@@ -35,10 +35,13 @@ Verificaciones actuales: 78 pruebas sin ROS, 11 pruebas del adaptador Panda y
 Revisada `3e705b4` el 21 de octubre: detectores de pallet/pared e inventarios
 relativos Lab reproducidos. Adaptador offline `integration.person1_intake`,
 fixture JSON sin cambios y receta provisional de dos grupos disponibles.
-Prueba: 57/70 piezas admitidas con umbral heurístico 0.5; plan de doce posiciones.
+Flujo actual: 70/70 piezas sin filtro de score adicional; doce seleccionadas y
+colocadas en el brazo de referencia (96 acciones). Se conservan sus IDs/clases.
 Ver `person1_review_2026-10-21.md`. No se hizo merge del código de percepción.
 La demo `python3 -m demo.person1_visual` enlaza imagen, decisiones e IDs del plan
-y muestra recetas bloqueadas al variar el filtro; guion en `person1_visual.md`.
+sin filtro adicional por defecto; guion en `person1_visual.md`.
+El lanzador `person1` consume el JSON de la entrega y usa una cuadrícula de staging
+sintética para conectar el plan con el brazo; admite uno, dos o tres grupos.
 
 Antes de ejecutar percepción real: fijar categorías estables entre capturas,
 tracking/lote estático, caras observadas, poses métricas y calibración de celda.

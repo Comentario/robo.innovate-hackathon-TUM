@@ -125,3 +125,13 @@ No incorpora source_poses ni identidad de cara: `source=perception`,
 métricas medidas como cualquier entrada de percepción. Los IDs son locales a
 la imagen; categorías de capturas distintas no se equiparan automáticamente.
 Ver `docs/person1_review_2026-10-21.md` y `examples/person1/`.
+
+## Inventario de persona 1 en la celda de referencia
+
+`integration.person1_simulation.prepare_person1_simulation(inventory, cell, config=None)`
+consume clases/scores sin reclasificar ni filtrar por puntuación adicional. Devuelve
+`observed_snapshot` (perception), `staged_snapshot` (synthetic), `plan`, `job` y
+`handoff`. Solo los IDs seleccionados se colocan en la cuadrícula de staging.
+El job conserva `person1_handoff` con centros Lab, huella del inventario, receta,
+conteos y procedencia de geometría. Se preserva el bloqueo de ejecución del
+snapshot real sin poses medidas. Ver `docs/person1_simulation.md`.

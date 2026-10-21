@@ -65,6 +65,10 @@ class MoveItAdapter(Node):
     def __init__(self,job,*,speed=4.,restore=False,saved_state=None):
         super().__init__('munich_reference_arm')
         self.job=deepcopy(job)
+        self.group_colors=dict(COLORS)
+        if job.get('person1_handoff'):
+            from .colors import lab_display_colors
+            self.group_colors.update(lab_display_colors(job['person1_handoff']['group_centers_lab']))
         self.speed=speed
         self.reference=job['cell']['reference_arm']
         self.grasp_offset=float(self.reference['grasp_offset_m'])
@@ -374,7 +378,8 @@ class MoveItAdapter(Node):
     def perform(self,command):
         if command['action_id'] not in {c['action_id'] for c in self.job['commands']}:return ActionResult('failed_before_action','reference_job_not_activated')
         phase,bid=command['phase'],command['brick_id']
-        self.demo_status=f"Step {command['step']}/12: {phase.replace('_',' ')}"
+        self.demo_status=f"Step {command['step']}/{len(self.job['plan']['placements'])}: {phase.replace('_',' ')}"
+        if self.job.get('person1_handoff'):self.demo_status+=f" | {bid} | {command['placement']['color_group']}"
         if phase=='confirm':
             return ActionResult('succeeded' if bid in self.placed else 'unknown','synthetic_scene_check_only')
         # Only the selected object may contact the reference gripper.
@@ -431,7 +436,7 @@ class MoveItAdapter(Node):
                 m.frame_locked=True
                 m.pose=geometry_pose(dict(position_m=[0,0,self.grasp_offset],orientation_xyzw=[1,0,0,0]))
             m.scale.x,m.scale.y,m.scale.z=self.job['cell']['brick_size_m']
-            color=COLORS.get(byid.get(bid,{}).get('color_group'),COLORS['medium'])
+            color=getattr(self,'group_colors',COLORS).get(byid.get(bid,{}).get('color_group'),(.6,.6,.6))
             m.color.r,m.color.g,m.color.b=color
             m.color.a=1.
             result.markers.append(m)
@@ -457,8 +462,12 @@ class MoveItAdapter(Node):
                         marker.points.extend([Point(x=a[0],y=a[1],z=a[2]),Point(x=b[0],y=b[1],z=b[2])])
             result.markers.append(marker)
         lines=[getattr(self,'demo_status','Reference simulation'),
-               f"Placed in scene: {len(getattr(self,'placed',set()))}/12",
+               f"Placed in scene: {len(getattr(self,'placed',set()))}/{len(self.job['plan']['placements'])}",
                "Synthetic | Independent validation pending"]
+        if self.job.get('person1_handoff'):
+            handoff=self.job['person1_handoff']
+            lines[2]=f"P1 groups: {len(handoff['group_centers_lab'])} | Staged {handoff['staged_count']}/{handoff['input_count']} | Synthetic poses"
+            lines.append('Original classes and scores | No additional score filter')
         for index,text in enumerate(lines):
             status=Marker(id=2000+index,ns='demo_status',type=Marker.TEXT_VIEW_FACING,action=Marker.ADD)
             status.header.frame_id='world'

@@ -28,11 +28,13 @@ def stop(process):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('scenario',choices=['normal','recovery'],nargs='?',default='normal')
+    parser.add_argument('scenario',choices=['normal','recovery','person1'],nargs='?',default='normal')
     parser.add_argument('--speed',type=float,default=3.)
     parser.add_argument('--hold',type=float,default=600.)
     parser.add_argument('--headless',action='store_true',help='verify without opening RViz')
     parser.add_argument('--output-dir',type=Path)
+    parser.add_argument('--inventory',type=Path,default=Path('examples/person1/inventory_with_color.json'),help='Person 1 delivered JSON for person1 scenario')
+    parser.add_argument('--recipe',type=Path,help='optional Person 1 recipe; default equal weights across received groups')
     args=parser.parse_args()
     if not 0<args.speed<=20 or not 0<=args.hold<=7200:parser.error('invalid speed or hold duration')
     def interrupted(*_):raise KeyboardInterrupt
@@ -65,6 +67,9 @@ def main():
             command=['scripts/arm_demo.sh']
             if args.scenario=='recovery':command+=['recovery','--output-dir',str(directory)]
             else:command+=['--state',str(directory/'state.sqlite3'),'--output',str(directory/'result.json')]
+            if args.scenario=='person1':
+                command+=['--person1-inventory',str(args.inventory.resolve())]
+                if args.recipe:command+=['--person1-config',str(args.recipe.resolve())]
             command+=['--speed',str(args.speed),'--hold',str(args.hold)]
             with (directory/'client.log').open('w') as client_log:
                 client=subprocess.Popen(command,stdout=client_log,stderr=subprocess.STDOUT,start_new_session=True)
@@ -90,6 +95,7 @@ def main():
             outcome=result.get('outcome',result)
             summary['execution_status']=outcome['status']
             summary['confirmed']=outcome.get('confirmed',len(outcome.get('confirmed_placements',[])))
+            if 'person1_handoff' in result:summary['person1_handoff']=result['person1_handoff']
         (directory/'rehearsal.json').write_text(json.dumps(summary,indent=2)+'\n')
         (directory/'summary.html').write_text(
             '<!doctype html><html lang="en"><meta charset="utf-8"><title>Robot rehearsal</title>'

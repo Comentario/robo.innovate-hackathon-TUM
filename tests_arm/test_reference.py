@@ -31,7 +31,7 @@ class ReferenceTests(unittest.TestCase):
         self.assertTrue(marker.frame_locked)
         status=' '.join(m.text for m in messages[-1].markers if m.ns=='demo_status')
         self.assertIn('Independent validation pending',status)
-        self.assertIn('Placed in scene: 0/12',status)
+        self.assertIn('Placed in scene: 0/1',status)
         harness.held=None
         MoveItAdapter.publish_markers(harness)
         self.assertEqual(messages[-1].markers[0].header.frame_id,'world')

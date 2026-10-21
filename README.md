@@ -7,6 +7,7 @@ Preparación para el reto #8: Intelligent Brick Blending and Palletizing.
 ```bash
 python3 scripts/rehearse.py normal
 python3 scripts/rehearse.py recovery
+python3 scripts/rehearse.py person1
 ```
 
 Ejecutar uno cada vez. Abre MoveIt y RViz, muestra el progreso en inglés y conserva
@@ -185,11 +186,12 @@ relativos, sin requerir OpenCV en nuestro núcleo.
 
 ```bash
 python3 -m integration.person1_intake examples/person1/inventory_with_color.json \
-  --min-score 0.5 --config examples/person1/config.json \
+  --min-score 0 --config examples/person1/config.json \
   --output-dir artifacts/person1_intake_new
 ```
 
-El umbral y la receta 50/50 son hipótesis explícitas de la demo. El informe HTML
+Se consumen sus clases sin filtro de score adicional. La receta 50/50 es una
+hipótesis explícita de la demo. El informe HTML
 explica aceptados/excluidos y las doce posiciones. No ejecuta el robot: faltan
 poses métricas y caras. Ver [revisión y límites](docs/person1_review_2026-10-21.md).
 
@@ -203,3 +205,16 @@ Abrir el `index.html` generado. Seleccionar un ladrillo en la foto o en el plan
 para ver su correspondencia y motivo de aceptación/exclusión. Cambiar el umbral
 permite comprobar cuándo la receta deja de ser viable. Página autónoma, en inglés,
 sin ejecutar el robot. Ver [guion de la demo](docs/person1_visual.md).
+
+## Inventario de persona 1 con el brazo
+
+```bash
+python3 scripts/rehearse.py person1
+# Otro archivo entregado por persona 1:
+python3 scripts/rehearse.py person1 --inventory /ruta/inventory_with_color.json
+```
+
+Usa directamente sus grupos Lab/K-means, IDs y puntuaciones, sin reclasificación
+ni revisión manual. Planifica y coloca doce piezas en RViz con poses explícitamente
+simuladas. Los centros Lab solo se convierten a RGB para dibujarlos. Ver
+[integración incremental](docs/person1_simulation.md).

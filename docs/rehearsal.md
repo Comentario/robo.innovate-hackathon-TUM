@@ -57,3 +57,11 @@ Las once pruebas del adaptador pasan, incluida la distinción visual entre
 colocaciones de la escena y validación independiente pendiente. Los ensayos
 `rehearsal_visual_check` y `rehearsal_visual_final` se interrumpieron deliberadamente
 para comprobar el cierre; no deben interpretarse como ciclos completados.
+
+## Inventario de persona 1
+
+`python3 scripts/rehearse.py person1` usa el inventario Lab/K-means entregado,
+sin volver a clasificar ni aplicar un filtro de score adicional. `--inventory`
+permite escoger otro JSON y `--recipe` una política propia. Se preparan únicamente
+las piezas del plan en una cuadrícula de recogida simulada. Consultar
+`person1_simulation.md` para la separación entre datos del productor y geometría.

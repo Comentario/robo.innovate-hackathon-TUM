@@ -14,7 +14,7 @@ function state(id){return placement(id)?'planned':scenario.accepted_ids.includes
 function stateLabel(id){return {planned:'Planned',available:'Accepted, not selected',excluded:'Excluded'}[state(id)];}
 function target(p){return p?`L${p.layer+1} · R${p.row+1} · C${p.column+1}`:'—';}
 function selectBrick(id,focus=false){selected=id;render();if(focus)document.querySelector(`[data-brick="${CSS.escape(id)}"]`)?.focus({preventScroll:true});}
-for(const s of data.scenarios){const option=el('option',s.threshold.toFixed(2));option.value=s.threshold;$('threshold').append(option);}
+for(const s of data.scenarios){const option=el('option',s.threshold===0?'0.00 · no extra filter':s.threshold.toFixed(2));option.value=s.threshold;$('threshold').append(option);}
 $('threshold').value=scenario.threshold;
 $('threshold').addEventListener('change',()=>{scenario=data.scenarios.find(s=>s.threshold===Number($('threshold').value));render();});
 $('filter').addEventListener('change',render);
