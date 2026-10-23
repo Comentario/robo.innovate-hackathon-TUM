@@ -2,6 +2,18 @@
 
 Preparación para el reto #8: Intelligent Brick Blending and Palletizing.
 
+## Tarea 3: simulación de producción con SimPy
+
+```bash
+python3 scripts/plant_demo.py --compare --output-dir artifacts/plant_line_01
+```
+
+Abrir `artifacts/plant_line_01/index.html` y `comparison.html`. Línea independiente:
+dehacking de dos capas, separación, inspección, corrección selectiva, emparejamiento
+y reapilado. Incluye buffers finitos, sensores virtuales y fallos. Todos los ciclos
+son supuestos configurables; no representa validación física ni mejora industrial
+medida. Instalación y alcance: [simulación de planta](docs/plant_simulation.md).
+
 ## Ensayo del brazo con un comando
 
 ```bash

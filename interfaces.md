@@ -145,3 +145,16 @@ que no cambie la procedencia al activar el nuevo job. Receta, plan y prefijo
 permanecen intactos; el hijo contiene únicamente acciones nuevas para el resto.
 Los jobs con geometría `synthetic_staging_grid` no se admiten con `mode=hardware`.
 Ver `docs/person1_recovery.md` y `docs/event_connection.md`.
+
+
+## Task 3 — independent process simulation
+
+`plant_sim.model.Plant(config).run()` consumes the versioned configuration in
+`config/plant_demo.json`; it returns run status, config/provenance, KPIs, material
+ledger, pallet IDs, per-layer/pallet mixing metrics and a timestamped event log.
+Time is seconds; rates are bricks/hour; dimensions are millimeters. One product
+per run. Input geometry is 10×4×20 and output 10×4×14 in the organizer example.
+The synthetic detector is separate from the existing Person 1 adapter. No ROS or
+hardware commands are emitted. `blocked` requires explicit reconciliation; no
+automatic restart is implemented. Generated HTML is an offline event-log replay.
+See `docs/plant_simulation.md` for assumptions, conservation and limitations.
