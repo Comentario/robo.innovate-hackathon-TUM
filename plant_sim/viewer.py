@@ -1,13 +1,27 @@
-"""Offline SVG process replay driven by the exact SimPy event log; no CDN."""
+"""Offline 3D and schematic replays driven by the SimPy log; no CDN."""
 import html
 import json
 from pathlib import Path
 
 
 def write_viewer(report, path):
+    from .mechanics import compile_mechanics, validate_mechanics
+    path = Path(path)
+    folder = Path(__file__).parent
     payload = json.dumps(report, separators=(',', ':')).replace('<', '\\u003c')
-    template = Path(__file__).with_name('viewer.html').read_text()
-    Path(path).write_text(template.replace('__RUN_DATA__', payload))
+    # Preserve the original 2D representation as a secondary diagnostic view.
+    template = folder.joinpath('viewer.html').read_text()
+    path.with_name('process_2d.html').write_text(template.replace('__RUN_DATA__', payload))
+    mechanics = compile_mechanics(report)
+    mechanics['audit'] = validate_mechanics(mechanics)
+    path.with_name('mechanics.json').write_text(json.dumps(mechanics, separators=(',', ':')))
+    library = folder.parent/'third_party/three/three.min.js'
+    template = folder.joinpath('viewer3d.html').read_text()
+    template = template.replace('__THREE_LIBRARY__', library.read_text())
+    template = template.replace('__RUN_DATA__', payload)
+    template = template.replace('__MECHANICS_DATA__', json.dumps(mechanics, separators=(',', ':')).replace('<', '\\u003c'))
+    template = template.replace('__VIEWER_CODE__', folder.joinpath('viewer3d.js').read_text())
+    path.write_text(template)
 
 
 def write_comparison(results, path):

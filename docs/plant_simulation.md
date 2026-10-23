@@ -1,5 +1,9 @@
 # Tarea 3: línea de dehacking en SimPy
 
+La vista principal ahora es 3D. Consultar [planta 3D](plant_3d.md) para uso,
+transferencias temporizadas añadidas y límites mecánicos. El checkpoint 2D es
+`dc8cab1` / `task3-2d-checkpoint`; la evidencia histórica de abajo corresponde a él.
+
 Implementación independiente de tareas 1 y 2. No consume datos de persona 1 ni
 controla un robot. Todas las etiquetas del visor están en inglés.
 
@@ -147,7 +151,7 @@ Referencias: https://simpy.readthedocs.io/en/stable/ y
 https://simpy.readthedocs.io/en/stable/api_reference/simpy.resources.html.
 
 
-## Verificación de esta implementación
+## Verificación histórica de la versión 2D (dc8cab1)
 
 - 89 tests existentes del núcleo: PASS.
 - 10 tests de planta: conservación/IDs, pallets entre stacks, observación después

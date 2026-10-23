@@ -158,3 +158,15 @@ The synthetic detector is separate from the existing Person 1 adapter. No ROS or
 hardware commands are emitted. `blocked` requires explicit reconciliation; no
 automatic restart is implemented. Generated HTML is an offline event-log replay.
 See `docs/plant_simulation.md` for assumptions, conservation and limitations.
+
+
+### Task 3 mechanical trace, revision 1.1
+
+The process config/report is now 1.1 and includes `seconds.lane_transfer` and
+brick/lane/slot/destination context on correction operation-start events.
+`compile_mechanics(report)` emits meter-based, Y-up identity tracks, tool paths,
+attachment intervals and inspection observations. `validate_mechanics` audits
+continuity and exclusive tool booking, not contact or collision physics.
+Default `index.html` is now an offline Three.js 3D view; the 2D view is preserved
+as `process_2d.html`. `mechanics.json` records paths separately from `run.json`.
+No robot or PLC control is introduced. See `docs/plant_3d.md`.

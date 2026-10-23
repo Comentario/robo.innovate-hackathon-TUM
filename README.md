@@ -2,17 +2,20 @@
 
 Preparación para el reto #8: Intelligent Brick Blending and Palletizing.
 
-## Tarea 3: simulación de producción con SimPy
+## Tarea 3: planta 3D con SimPy
 
 ```bash
-python3 scripts/plant_demo.py --compare --output-dir artifacts/plant_line_01
+python3 scripts/plant_demo.py --compare --output-dir artifacts/plant_3d_01
 ```
 
-Abrir `artifacts/plant_line_01/index.html` y `comparison.html`. Línea independiente:
+Abrir `artifacts/plant_3d_01/index.html` y `comparison.html`. Escena 3D offline con
+pórticos, transportadores, cámaras, sensores virtuales y seguimiento de cada ID.
+Punto de retorno 2D: `dc8cab1` / etiqueta `task3-2d-checkpoint`. Línea independiente:
 dehacking de dos capas, separación, inspección, corrección selectiva, emparejamiento
 y reapilado. Incluye buffers finitos, sensores virtuales y fallos. Todos los ciclos
 son supuestos configurables; no representa validación física ni mejora industrial
-medida. Instalación y alcance: [simulación de planta](docs/plant_simulation.md).
+medida. Uso y límites: [planta 3D](docs/plant_3d.md);
+[modelo de proceso](docs/plant_simulation.md).
 
 ## Ensayo del brazo con un comando
 

@@ -1,8 +1,19 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "seed": 8,
   "product_id": "ACME-demo-product",
-  "geometry": {"columns": 10, "rows": 4, "input_layers": 20, "output_layers": 14, "stacks_per_cart": 36, "brick_mm": [245, 67, 69]},
+  "geometry": {
+    "columns": 10,
+    "rows": 4,
+    "input_layers": 20,
+    "output_layers": 14,
+    "stacks_per_cart": 36,
+    "brick_mm": [
+      245,
+      67,
+      69
+    ]
+  },
   "input_stacks": 2,
   "arrival_bricks_per_hour": 3000,
   "inflight_pairs": 4,
@@ -12,20 +23,40 @@
   "false_accept_rate": 0.0,
   "false_reject_rate": 0.0,
   "input_pattern": "random",
-  "shades": ["Warm", "Copper", "Russet"],
-  "recipe": [0.3333333333333333, 0.3333333333333333, 0.3333333333333333],
+  "shades": [
+    "Warm",
+    "Copper",
+    "Russet"
+  ],
+  "recipe": [
+    0.3333333333333333,
+    0.3333333333333333,
+    0.3333333333333333
+  ],
   "replacement_per_shade": 150,
   "mixing_budget_per_layer": 0,
-  "seconds": {"dock": 12, "dehack": 8, "conveyor": 3, "split": 8, "inspect": 2, "reject_pick_place": 3, "replacement_pick_place": 3, "pair": 8, "restack": 8, "pallet_exchange": 12},
+  "seconds": {
+    "dock": 12,
+    "dehack": 8,
+    "conveyor": 3,
+    "split": 8,
+    "inspect": 2,
+    "reject_pick_place": 3,
+    "replacement_pick_place": 3,
+    "pair": 8,
+    "restack": 8,
+    "pallet_exchange": 12,
+    "lane_transfer": 4
+  },
   "sensor_timeout_seconds": 5,
   "fault": null,
   "max_simulation_seconds": 20000,
   "provenance": {
     "geometry": "UTUM Brick Coloration, slide 18; supplied by organizer",
-    "throughput": "Organizer range 1500–3000 bricks/hour; 3000 selected as arrival target",
+    "throughput": "Organizer range 1500\u20133000 bricks/hour; 3000 selected as arrival target",
     "product": "Team assumption: one product per run; these shade names are illustrative",
     "mechanism": "Team concept: two-layer dehacking, whole-layer separation, two inspection lanes, selective robot correction, pairing, restacking",
-    "timing": "ALL operation durations are unmeasured team assumptions, not factory observations",
+    "timing": "ALL operation durations are unmeasured team assumptions, not factory observations; corrected-layer transfer is explicitly timed at 4 s (assumed)",
     "quality": "Synthetic labels and simulated inspection; no camera or Person 1 integration; perfect inspection is an explicit demo assumption",
     "mixing": "Equal shade recipe is a team assumption. Budget 0 preserves good bricks; replacement choice favors distribution. Mixing is evaluated, not guaranteed.",
     "mechanics": "Whole-layer support/grip, robot reach, brick temperature/mass and contact mechanics remain unvalidated"

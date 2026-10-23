@@ -33,6 +33,8 @@ def validate(config):
     for k in ('columns', 'rows', 'input_layers', 'output_layers', 'stacks_per_cart'):
         if type(g[k]) is not int or g[k] <= 0:
             raise ValueError(f'geometry.{k} must be a positive integer')
+    if len(g['brick_mm']) != 3 or any(not math.isfinite(v) or v <= 0 for v in g['brick_mm']):
+        raise ValueError('brick_mm must contain positive width, depth and height')
     if g['input_layers'] % 2 or g['output_layers'] % 2:
         raise ValueError('Input and output heights must contain whole two-layer units')
     for k in ('input_stacks', 'inflight_pairs', 'buffer_pairs', 'correction_robots'):
@@ -48,7 +50,7 @@ def validate(config):
         if not math.isfinite(c[k]) or c[k] <= 0:
             raise ValueError(f'{k} must be positive and finite')
     expected = {'dock', 'dehack', 'conveyor', 'split', 'inspect', 'reject_pick_place',
-                'replacement_pick_place', 'pair', 'restack', 'pallet_exchange'}
+                'replacement_pick_place', 'pair', 'restack', 'pallet_exchange', 'lane_transfer'}
     if set(c['seconds']) != expected:
         raise ValueError('seconds must specify exactly the documented operations')
     if any(not math.isfinite(v) or v <= 0 for v in c['seconds'].values()):
@@ -155,17 +157,18 @@ class Plant:
         for b in bricks:
             b.location = location
 
-    def motion(self, station, phase, duration, pair):
+    def motion(self, station, phase, duration, pair, **context):
         # Positive transfer acknowledgment + drive command + end-stop confirmation.
         # These are deliberately modeled virtual signals, not hardware feedback.
         self.signal(station, 'workpiece_present', True, pair)
         if not self.signals[station]['workpiece_present']:
             raise PlantStop(f'{station}: workpiece presence interlock')
-        self.signal(station, 'part_clamped', True, pair)
+        if station not in ('infeed', 'outfeed'):
+            self.signal(station, 'part_clamped', True, pair)
         self.signal(station, 'end_limit', False, pair)
         self.signal(station, 'drive_enabled', True, pair)
         start = self.env.now
-        self.emit('operation_start', station, pair, phase=phase, duration=duration)
+        self.emit('operation_start', station, pair, phase=phase, duration=duration, **context)
         fail = self.c['fault'] == {'station': 'robot' if station.startswith('robot_') else station, 'pair': pair}
         yield self.env.timeout(duration)
         if fail:
@@ -176,7 +179,8 @@ class Plant:
             raise PlantStop(f'{station}: end_limit timeout; explicit reconciliation required')
         self.signal(station, 'end_limit', True, pair)
         self.signal(station, 'drive_enabled', False, pair)
-        self.signal(station, 'part_clamped', False, pair)
+        if station not in ('infeed', 'outfeed'):
+            self.signal(station, 'part_clamped', False, pair)
         self.intervals.append((station, start, self.env.now, phase))
         self.emit('operation_end', station, pair, phase=phase)
 
@@ -257,14 +261,14 @@ class Plant:
             # Re-select after waiting: another lane may have consumed this shade.
             shade = self.choose_shade(layer, slot)
             replacement = self.reserve[shade].pop()
-            self.emit('supply_reserved', robot_station, pid, brick=replacement.id, shade=shade)
+            self.emit('supply_reserved', robot_station, pid, brick=replacement.id, shade=shade, lane=lane, slot=slot)
             self.move([replacement], 'robot_reserved')
             yield from self.motion(robot_station, 'Remove brick' if reason == 'quality' else 'Mix exchange: remove',
-                                   self.c['seconds']['reject_pick_place'], pid)
+                                   self.c['seconds']['reject_pick_place'], pid, brick=old.id, lane=lane, slot=slot, destination='reject' if reason == 'quality' else 'reuse')
             old.location = 'reject' if reason == 'quality' else 'reuse'
             self.emit('brick_removed', 'robot', pid, brick=old.id, lane=lane, slot=slot, reason=reason)
             yield from self.motion(robot_station, 'Insert approved replacement',
-                                   self.c['seconds']['replacement_pick_place'], pid)
+                                   self.c['seconds']['replacement_pick_place'], pid, brick=replacement.id, lane=lane, slot=slot, destination='layer')
             layer[slot] = replacement
             replacement.location = f'lane_{lane+1}'
             self.observed[replacement.id] = 'accepted_supply'
@@ -312,6 +316,7 @@ class Plant:
                                   self.c['shades'], self.c['recipe'])
             self.layer_results.append({'pair': pid, 'lane': lane, **metrics})
             self.emit('layer_corrected', station, pid, lane=lane, shades=[b.shade for b in layer], metrics=metrics)
+            yield from self.motion(station, 'Transfer corrected layer', self.c['seconds']['lane_transfer'], pid, lane=lane)
             self.move(layer, 'join_buffer')
             pair['finished'] += 1
             self.signal(station, 'workpiece_present', False, pid)
@@ -420,7 +425,7 @@ class Plant:
         discarded_good = sum(b.good and b.location == 'reject' for b in self.bricks.values())
         layers = self.layer_results
         return {
-            'schema_version': '1.0', 'status': self.status, 'reason': self.reason,
+            'schema_version': '1.1', 'status': self.status, 'reason': self.reason,
             'config': self.c, 'simulated_seconds': round(elapsed, 6),
             'kpis': {
                 'input_bricks': self.initial_input, 'initial_reserve': self.initial_reserve,
