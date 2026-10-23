@@ -11,6 +11,7 @@ from dataclasses import asdict, dataclass
 import math
 import random
 import simpy
+from .automation import AutomationPlanner, validate_automation, timing_report
 
 
 class PlantStop(Exception):
@@ -30,6 +31,9 @@ class Brick:
 def validate(config):
     c = deepcopy(config)
     g = c['geometry']
+    validate_automation(c)
+    if not math.isfinite(c['initial_arrival_s']) or c['initial_arrival_s'] < 0:
+        raise ValueError('initial_arrival_s must be nonnegative')
     for k in ('columns', 'rows', 'input_layers', 'output_layers', 'stacks_per_cart'):
         if type(g[k]) is not int or g[k] <= 0:
             raise ValueError(f'geometry.{k} must be a positive integer')
@@ -49,12 +53,6 @@ def validate(config):
     for k in ('arrival_bricks_per_hour', 'sensor_timeout_seconds', 'max_simulation_seconds'):
         if not math.isfinite(c[k]) or c[k] <= 0:
             raise ValueError(f'{k} must be positive and finite')
-    expected = {'dock', 'dehack', 'conveyor', 'split', 'inspect', 'reject_pick_place',
-                'replacement_pick_place', 'pair', 'restack', 'pallet_exchange', 'lane_transfer'}
-    if set(c['seconds']) != expected:
-        raise ValueError('seconds must specify exactly the documented operations')
-    if any(not math.isfinite(v) or v <= 0 for v in c['seconds'].values()):
-        raise ValueError('Operation durations must be positive and finite')
     if len(c['shades']) < 2 or len(set(c['shades'])) != len(c['shades']):
         raise ValueError('At least two unique accepted shades are required')
     if len(c['recipe']) != len(c['shades']) or any(not math.isfinite(x) or x <= 0 for x in c['recipe']):
@@ -111,7 +109,12 @@ class Plant:
         self.status = 'running'
         self.reason = None
         self.done = self.env.event()
-        self.tokens = simpy.Container(self.env, capacity=self.c['inflight_pairs'], init=self.c['inflight_pairs'])
+        self.tokens = simpy.Store(self.env, capacity=self.c['inflight_pairs'])
+        self.tokens.items.extend(range(self.c['inflight_pairs']))
+        self.pairer_exit = simpy.Resource(self.env, capacity=1)
+        self.stacker_entry = simpy.Resource(self.env, capacity=1)
+        self.raw_berth = simpy.Resource(self.env, capacity=1)
+        self.lane_entry = [simpy.Resource(self.env, capacity=1) for _ in range(2)]
         self.raw = simpy.Store(self.env, capacity=self.c['buffer_pairs'])
         self.lanes = [simpy.Store(self.env, capacity=self.c['buffer_pairs']) for _ in range(2)]
         self.corrected = simpy.Store(self.env, capacity=self.c['buffer_pairs'])
@@ -120,6 +123,7 @@ class Plant:
         self.robot = simpy.Resource(self.env, capacity=self.c['correction_robots'])
         self.robot_slots = list(range(1, self.c['correction_robots']+1))
         self._create_material()
+        self.planner = AutomationPlanner(self.c, self.bricks)
 
     def _create_material(self):
         for k in range(self.c['input_stacks'] * self.pairs_per_stack):
@@ -157,30 +161,52 @@ class Plant:
         for b in bricks:
             b.location = location
 
-    def motion(self, station, phase, duration, pair, **context):
-        # Positive transfer acknowledgment + drive command + end-stop confirmation.
-        # These are deliberately modeled virtual signals, not hardware feedback.
-        self.signal(station, 'workpiece_present', True, pair)
-        if not self.signals[station]['workpiece_present']:
-            raise PlantStop(f'{station}: workpiece presence interlock')
-        if station not in ('infeed', 'outfeed'):
-            self.signal(station, 'part_clamped', True, pair)
-        self.signal(station, 'end_limit', False, pair)
-        self.signal(station, 'drive_enabled', True, pair)
+    def acquire(self, resource, station, pid, gate):
+        request = resource.request()
         start = self.env.now
-        self.emit('operation_start', station, pair, phase=phase, duration=duration, **context)
+        if not request.triggered:
+            self.emit('interlock_wait', station, pid, gate=gate, reason='Occupied destination; movement inhibited')
+        yield request
+        self.queue_wait[gate] += self.env.now-start
+        self.emit('interlock_granted', station, pid, gate=gate, waited_s=self.env.now-start)
+        return request
+
+    def release_permit(self, resource, request, station, pid, gate):
+        resource.release(request)
+        self.emit('interlock_released', station, pid, gate=gate)
+
+    def motion(self, station, phase, duration, pair, **context):
+        # Plan once. SimPy time and 3D follow this exact sequence, not independent clocks.
+        plan = self.planner.plan(station, phase, self.pairs[pair-1], context)
+        duration = plan['duration_s']
+        self.signal(station, 'workpiece_present', True, pair)
+        self.signal(station, 'end_limit', False, pair)
+        start = self.env.now
+        self.emit('operation_start', station, pair, phase=phase, duration=duration, motion_plan=plan, **context)
+        for step in plan['steps']:
+            moving = step['kind'] == 'travel'
+            self.signal(station, 'drive_enabled', moving, pair)
+            if moving:
+                for channel in ('above_source','pick_limit','clearance_limit','above_destination','place_limit','retracted_limit','home_limit','position_sensor','position_stable'):
+                    if self.signals[station].get(channel): self.signal(station, channel, False, pair)
+            if step['sensor']: self.signal(station, step['sensor'], False, pair)
+            self.emit('sequence_step', station, pair, step=step)
+            yield self.env.timeout(step['duration_s'])
+            if step['sensor']: self.signal(station, step['sensor'], True, pair)
+            if step['sensor']=='clamp_closed':
+                self.signal(station, 'part_clamped', True, pair)
+                self.signal(station, 'grip_open', False, pair)
+            if step['sensor']=='grip_open':
+                self.signal(station, 'part_clamped', False, pair)
+                self.signal(station, 'clamp_closed', False, pair)
+        self.signal(station, 'drive_enabled', False, pair)
         fail = self.c['fault'] == {'station': 'robot' if station.startswith('robot_') else station, 'pair': pair}
-        yield self.env.timeout(duration)
         if fail:
             self.emit('waiting_sensor', station, pair, sensor='end_limit')
             yield self.env.timeout(self.c['sensor_timeout_seconds'])
-            self.signal(station, 'drive_enabled', False, pair)
             self.intervals.append((station, start, self.env.now, 'fault'))
             raise PlantStop(f'{station}: end_limit timeout; explicit reconciliation required')
         self.signal(station, 'end_limit', True, pair)
-        self.signal(station, 'drive_enabled', False, pair)
-        if station not in ('infeed', 'outfeed'):
-            self.signal(station, 'part_clamped', False, pair)
         self.intervals.append((station, start, self.env.now, phase))
         self.emit('operation_end', station, pair, phase=phase)
 
@@ -198,21 +224,22 @@ class Plant:
     def source(self):
         period = self.pair_size / self.c['arrival_bricks_per_hour'] * 3600
         for index, pair in enumerate(self.pairs):
-            due = (index + 1) * period
+            due = self.c['initial_arrival_s'] + index * period
             if self.env.now < due:
                 yield self.env.timeout(due - self.env.now)
-            yield self.tokens.get(1)
+            pair['nest'] = yield self.tokens.get()
             pair['admitted_at'] = self.env.now
-            self.emit('pair_admitted', 'dock', pair['id'])
+            self.emit('pair_admitted', 'dock', pair['id'], nest=pair['nest'])
             pid = pair['id']
             if index % self.pairs_per_stack == 0:
-                yield from self.motion('dock', 'Load input stack', self.c['seconds']['dock'], pid)
+                yield from self.motion('dock', 'Load input stack', 0, pid)
                 self.signal('dock', 'workpiece_present', False, pid)
+            pair['raw_permit'] = yield from self.acquire(self.raw_berth, 'dehacker', pid, 'infeed_berth_free')
             self.move(sum(pair['layers'], []), 'dehacker')
-            yield from self.motion('dehacker', 'Remove two-layer unit', self.c['seconds']['dehack'], pid)
+            yield from self.motion('dehacker', 'Remove two-layer unit', 0, pid)
             self.signal('dehacker', 'workpiece_present', False, pid)
             self.move(sum(pair['layers'], []), 'infeed')
-            yield from self.motion('infeed', 'Conveyor transfer', self.c['seconds']['conveyor'], pid)
+            yield from self.motion('infeed', 'Conveyor transfer', 0, pid)
             self.move(sum(pair['layers'], []), 'raw_buffer')
             yield from self.put(self.raw, pair, 'infeed', pid)
         self.emit('source_finished', 'dock')
@@ -221,8 +248,13 @@ class Plant:
         while True:
             pair = yield self.raw.get()
             pid = pair['id']
+            pair['entry_permits'] = []
+            for lane in (0,1):
+                permit = yield from self.acquire(self.lane_entry[lane], 'separator', pid, f'lane_{lane+1}_entry_free')
+                pair['entry_permits'].append(permit)
             self.move(sum(pair['layers'], []), 'separator')
-            yield from self.motion('separator', 'Separate upper and lower layers', self.c['seconds']['split'], pid)
+            yield from self.motion('separator', 'Separate upper and lower layers', 0, pid)
+            self.release_permit(self.raw_berth, pair['raw_permit'], 'separator', pid, 'infeed_berth_free')
             for lane, layer in enumerate(pair['layers']):
                 self.move(layer, f'lane_{lane+1}_buffer')
                 yield from self.put(self.lanes[lane], (pair, lane), 'separator', pid)
@@ -255,7 +287,10 @@ class Plant:
         # Shared robot ownership covers the complete remove/insert transaction.
         start = self.env.now
         with self.robot.request() as request:
+            if not request.triggered:
+                self.emit('robot_wait', 'robot_queue', pid, reason='Correction robot occupied')
             yield request
+            self.emit('robot_acquired', 'robot_queue', pid, waited_s=self.env.now-start)
             self.stats['robot_wait_seconds'] += self.env.now-start
             robot_station = f'robot_{self.robot_slots.pop(0)}'
             # Re-select after waiting: another lane may have consumed this shade.
@@ -264,11 +299,11 @@ class Plant:
             self.emit('supply_reserved', robot_station, pid, brick=replacement.id, shade=shade, lane=lane, slot=slot)
             self.move([replacement], 'robot_reserved')
             yield from self.motion(robot_station, 'Remove brick' if reason == 'quality' else 'Mix exchange: remove',
-                                   self.c['seconds']['reject_pick_place'], pid, brick=old.id, lane=lane, slot=slot, destination='reject' if reason == 'quality' else 'reuse')
+                                   0, pid, brick=old.id, lane=lane, slot=slot, destination='reject' if reason == 'quality' else 'reuse')
             old.location = 'reject' if reason == 'quality' else 'reuse'
             self.emit('brick_removed', 'robot', pid, brick=old.id, lane=lane, slot=slot, reason=reason)
             yield from self.motion(robot_station, 'Insert approved replacement',
-                                   self.c['seconds']['replacement_pick_place'], pid, brick=replacement.id, lane=lane, slot=slot, destination='layer')
+                                   0, pid, brick=replacement.id, lane=lane, slot=slot, destination='layer')
             layer[slot] = replacement
             replacement.location = f'lane_{lane+1}'
             self.observed[replacement.id] = 'accepted_supply'
@@ -286,7 +321,9 @@ class Plant:
             layer = pair['layers'][lane]
             pid = pair['id']
             self.move(layer, station)
-            yield from self.motion(station, 'Inspect exposed layer', self.c['seconds']['inspect'], pid)
+            yield from self.motion(station, 'Position layer at inspection sensor', 0, pid, lane=lane)
+            self.release_permit(self.lane_entry[lane], pair['entry_permits'][lane], station, pid, f'lane_{lane+1}_entry_free')
+            yield from self.motion(station, 'Inspect exposed layer', 0, pid)
             decisions = []
             # Latent truth is accessed only here to generate synthetic detector outputs.
             for b in layer:
@@ -297,6 +334,7 @@ class Plant:
             self.emit('inspection', station, pid, lane=lane, ids=[b.id for b in layer],
                       shades=[b.shade for b in layer], rejected=decisions,
                       source='synthetic detector; exposed layer only')
+            yield from self.motion(station, 'Position layer at correction sensor', 0, pid, lane=lane)
             for slot, rejected in enumerate(decisions):
                 if rejected:
                     yield from self.replace(pair, lane, slot, 'quality')
@@ -316,7 +354,7 @@ class Plant:
                                   self.c['shades'], self.c['recipe'])
             self.layer_results.append({'pair': pid, 'lane': lane, **metrics})
             self.emit('layer_corrected', station, pid, lane=lane, shades=[b.shade for b in layer], metrics=metrics)
-            yield from self.motion(station, 'Transfer corrected layer', self.c['seconds']['lane_transfer'], pid, lane=lane)
+            yield from self.motion(station, 'Transfer corrected layer', 0, pid, lane=lane)
             self.move(layer, 'join_buffer')
             pair['finished'] += 1
             self.signal(station, 'workpiece_present', False, pid)
@@ -328,8 +366,9 @@ class Plant:
             pair = yield self.corrected.get()
             assert pair['finished'] == 2, 'Both layers must be corrected before pairing'
             pid = pair['id']
+            pair['pairer_exit_permit'] = yield from self.acquire(self.pairer_exit, 'pairer', pid, 'pairer_exit_free')
             self.move(sum(pair['layers'], []), 'pairer')
-            yield from self.motion('pairer', 'Recombine two corrected layers', self.c['seconds']['pair'], pid)
+            yield from self.motion('pairer', 'Recombine two corrected layers', 0, pid)
             self.move(sum(pair['layers'], []), 'paired_buffer')
             yield from self.put(self.paired, pair, 'pairer', pid)
 
@@ -337,8 +376,10 @@ class Plant:
         while True:
             pair = yield self.paired.get()
             pid = pair['id']
+            pair['stacker_entry_permit'] = yield from self.acquire(self.stacker_entry, 'outfeed', pid, 'stacker_entry_free')
             self.move(sum(pair['layers'], []), 'outfeed')
-            yield from self.motion('outfeed', 'Output conveyor transfer', self.c['seconds']['conveyor'], pid)
+            yield from self.motion('outfeed', 'Output conveyor transfer', 0, pid)
+            self.release_permit(self.pairer_exit, pair['pairer_exit_permit'], 'outfeed', pid, 'pairer_exit_free')
             self.move(sum(pair['layers'], []), 'output_buffer')
             yield from self.put(self.outfeed, pair, 'outfeed', pid)
 
@@ -349,7 +390,8 @@ class Plant:
             pid = pair['id']
             bricks = sum(pair['layers'], [])
             self.move(bricks, 'stacker')
-            yield from self.motion('stacker', 'Restack two-layer unit', self.c['seconds']['restack'], pid)
+            yield from self.motion('stacker', 'Restack two-layer unit', 0, pid)
+            self.release_permit(self.stacker_entry, pair['stacker_entry_permit'], 'stacker', pid, 'stacker_entry_free')
             self.move(bricks, 'output')
             self.output.extend(bricks)
             pallet.extend(bricks)
@@ -361,9 +403,10 @@ class Plant:
                 self.pallets.append([b.id for b in pallet])
                 self.emit('pallet_completed', 'stacker', pid, pallet=len(self.pallets), size=len(pallet))
                 pallet = []
-                yield from self.motion('stacker', 'Exchange output pallet', self.c['seconds']['pallet_exchange'], pid)
+                yield from self.motion('stacker', 'Exchange output pallet', 0, pid)
             self.signal('stacker', 'workpiece_present', False, pid)
-            yield self.tokens.put(1)
+            yield self.tokens.put(pair['nest'])
+            self.emit('nest_released', 'stacker', pid, nest=pair['nest'])
             if self.stats['completed_pairs'] == len(self.pairs):
                 self.partial_pallet = [b.id for b in pallet]
                 self.status = 'completed'
@@ -425,7 +468,7 @@ class Plant:
         discarded_good = sum(b.good and b.location == 'reject' for b in self.bricks.values())
         layers = self.layer_results
         return {
-            'schema_version': '1.1', 'status': self.status, 'reason': self.reason,
+            'schema_version': '1.2', 'status': self.status, 'reason': self.reason,
             'config': self.c, 'simulated_seconds': round(elapsed, 6),
             'kpis': {
                 'input_bricks': self.initial_input, 'initial_reserve': self.initial_reserve,
@@ -447,6 +490,7 @@ class Plant:
                 'robot_active_fraction': round(sum(v for k,v in busy.items() if k.startswith('robot_'))/elapsed/self.c['correction_robots'], 6) if elapsed else 0,
                 'robot_wait_seconds': round(self.stats['robot_wait_seconds'], 6),
             },
+            'automation': {'initial_positions': self.planner.initial, 'auxiliary_ids': self.planner.auxiliary_ids, 'timing': timing_report(self.events, elapsed, self.initial_input, len(self.output), self.c['correction_robots'])},
             'material_locations': dict(locations), 'busy_seconds': dict(busy),
             'downstream_blocked_seconds': dict(self.queue_wait), 'buffer_max_occupancy': dict(self.queue_max),
             'pallet_mix': [mix_metrics([self.bricks[i] for i in ids], 0, 0, self.c['shades'], self.c['recipe']) for ids in self.pallets],

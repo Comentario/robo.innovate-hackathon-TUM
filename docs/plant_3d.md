@@ -1,5 +1,8 @@
 # Tarea 3 — planta 3D con flujo y cinemática
 
+Revisión actual: [automatización, reservas y trazabilidad de tiempos](plant_automation.md).
+Los valores de 2002/2006 segundos de este documento corresponden a los checkpoints históricos.
+
 ## Punto de retorno
 
 La versión anterior se conserva en el commit `dc8cab1` y en la etiqueta local

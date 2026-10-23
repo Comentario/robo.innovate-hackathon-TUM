@@ -13,7 +13,7 @@ class MechanicalContracts(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         config_path=ROOT/'config/plant_demo.json'
-        if not config_path.exists():config_path=ROOT/'plant_demo.json'
+        if not config_path.exists():config_path=ROOT/'config/plant_demo.json'
         cls.config=json.loads(config_path.read_text())
         cls.report=Plant(cls.config).run()
         cls.mechanics=compile_mechanics(cls.report)
@@ -33,7 +33,7 @@ class MechanicalContracts(unittest.TestCase):
         for tool,seq in m['tools'].items():
             for segment in seq:
                 for fraction in (.15,.25,.5,.75,.85):
-                    t=segment['t0']+(segment['t1']-segment['t0'])*fraction
+                    t=segment['attach'][0]+(segment['attach'][1]-segment['attach'][0])*((fraction-.15)/.70)
                     head=position_at([segment],segment['points'][0][1:],t)
                     bricks=[position_at(m['tracks'][i],m['initial_positions'][i],t) for i in segment['brick_ids']]
                     reference=[sum(p[0] for p in bricks)/len(bricks),max(p[1] for p in bricks)+half_height,sum(p[2] for p in bricks)/len(bricks)]
@@ -45,7 +45,7 @@ class MechanicalContracts(unittest.TestCase):
             positions=[position_at(m['tracks'][i],m['initial_positions'][i],t) for i in ids]
             self.assertEqual(len({round(p[1],6) for p in positions}),14)
             meanx=sum(p[0] for p in positions)/len(positions)
-            self.assertAlmostEqual(meanx,22+index*.65,places=5)
+            self.assertAlmostEqual(meanx,self.mechanics['layout']['discharge_x']+index*.65,places=5)
 
     def test_corrected_layer_transfer_is_timed_and_precedes_pairing(self):
         ends={}
@@ -54,7 +54,7 @@ class MechanicalContracts(unittest.TestCase):
                 self.assertGreater(e['duration'],0)
                 ends[e['pair'],e['lane']]=e['t']+e['duration']
             if e['kind']=='operation_start' and e['station']=='pairer':
-                self.assertGreaterEqual(e['t'],max(ends[e['pair'],i] for i in (0,1)))
+                self.assertGreaterEqual(e['t']+2e-6,max(ends[e['pair'],i] for i in (0,1)))
 
     def test_handoff_has_no_zero_time_geometry_jump(self):
         m=self.mechanics

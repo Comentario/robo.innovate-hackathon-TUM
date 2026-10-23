@@ -1,5 +1,8 @@
 # Tarea 3: línea de dehacking en SimPy
 
+Revisión actual: [automatización, reservas y trazabilidad de tiempos](plant_automation.md).
+Los valores de 2002/2006 segundos de este documento corresponden a los checkpoints históricos.
+
 La vista principal ahora es 3D. Consultar [planta 3D](plant_3d.md) para uso,
 transferencias temporizadas añadidas y límites mecánicos. El checkpoint 2D es
 `dc8cab1` / `task3-2d-checkpoint`; la evidencia histórica de abajo corresponde a él.

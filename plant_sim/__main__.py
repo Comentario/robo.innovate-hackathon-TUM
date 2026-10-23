@@ -13,10 +13,14 @@ def main():
     parser.add_argument('--config', type=Path, default=Path('config/plant_demo.json'))
     parser.add_argument('--output-dir', type=Path, default=Path('artifacts/plant_demo'))
     parser.add_argument('--compare', action='store_true', help='Also run stress, mixing, stockout and sensor-timeout scenarios')
+    parser.add_argument('--infeed-speed', type=float, help='Override infeed speed [m/s]')
+    parser.add_argument('--robot-speed', type=float, help='Override correction robot X/Z speed [m/s]')
     args = parser.parse_args()
     if args.output_dir.exists():
         parser.error('Output directory already exists; select a new directory to preserve evidence')
     config = json.loads(args.config.read_text())
+    if args.infeed_speed is not None: config['automation']['infeed_m_s'] = args.infeed_speed
+    if args.robot_speed is not None: config['automation']['robot_xy_m_s'] = args.robot_speed
     report = Plant(config).run()
     args.output_dir.mkdir(parents=True)
     (args.output_dir/'run.json').write_text(json.dumps(report, indent=2))
@@ -27,7 +31,7 @@ def main():
             ('High rejection', {'defect_rate': 0.45, 'replacement_per_shade': 1000}),
             ('Stratified input', {'input_pattern': 'stratified', 'replacement_per_shade': 1000}),
             ('Stratified with mix exchanges', {'input_pattern': 'stratified', 'mixing_budget_per_layer': 16, 'replacement_per_shade': 1000}),
-            ('Two correction robots', {'defect_rate': 0.45, 'correction_robots': 2, 'replacement_per_shade': 1000}),
+            ('Faster correction axes', {'defect_rate': 0.45, 'replacement_per_shade': 1000, 'automation': {**config['automation'], 'robot_xy_m_s': 4.0, 'robot_z_m_s': 2.0}}),
             ('Imperfect inspection', {'false_accept_rate': 0.25, 'false_reject_rate': 0.03}),
             ('Supply shortage', {'replacement_per_shade': 0}),
             ('Separator end-limit timeout', {'fault': {'station': 'separator', 'pair': 3}}),

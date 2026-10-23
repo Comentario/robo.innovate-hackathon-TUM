@@ -6,6 +6,8 @@ from pathlib import Path
 
 def write_viewer(report, path):
     from .mechanics import compile_mechanics, validate_mechanics
+    if report['config']['correction_robots'] != 1:
+        raise ValueError('Current 3D workspace supports one correction robot; multi-robot capacity runs need a separate geometric layout')
     path = Path(path)
     folder = Path(__file__).parent
     payload = json.dumps(report, separators=(',', ':')).replace('<', '\\u003c')
@@ -14,6 +16,11 @@ def write_viewer(report, path):
     path.with_name('process_2d.html').write_text(template.replace('__RUN_DATA__', payload))
     mechanics = compile_mechanics(report)
     mechanics['audit'] = validate_mechanics(mechanics)
+    from .clearance import audit_clearances, structure_boxes
+    mechanics['clearance_audit'] = audit_clearances(mechanics)
+    mechanics['fixed_solids'] = structure_boxes()
+    if not mechanics['clearance_audit']['passed']:
+        raise ValueError('Payload crosses fixed equipment; inspect clearance_audit before generating the demo')
     path.with_name('mechanics.json').write_text(json.dumps(mechanics, separators=(',', ':')))
     library = folder.parent/'third_party/three/three.min.js'
     template = folder.joinpath('viewer3d.html').read_text()

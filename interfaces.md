@@ -170,3 +170,19 @@ continuity and exclusive tool booking, not contact or collision physics.
 Default `index.html` is now an offline Three.js 3D view; the 2D view is preserved
 as `process_2d.html`. `mechanics.json` records paths separately from `run.json`.
 No robot or PLC control is introduced. See `docs/plant_3d.md`.
+
+
+### Task 3 automation revision 1.2
+
+`automation` contains positive speeds [m/s], grip/release/settle/exposure/inference
+pauses [s], and carry clearance [m]. `initial_arrival_s` is nonnegative. The old
+`seconds` table no longer drives motion. Every operation-start event embeds its
+actual `motion_plan`: ordered substeps, material/tool/auxiliary tracks and duration.
+SimPy executes that recipe; the renderer reads it without re-planning.
+`automation.timing` reports travel/dwell, explicit resource waits and shared-clock
+rate arithmetic. Join nests and physical infeed/lane/pairer/stacker berths have
+exclusive reservations. Photoeyes in the viewer use material coordinates;
+sequence limit confirmations remain virtual. 3D export checks swept brick bounds
+against fixed solids and refuses known penetrations. Scope excludes full contact,
+brick-brick, tools/cables and dynamics. Multi-robot process capacity requires a
+separate audited geometric layout before exporting 3D. See docs/plant_automation.md.
