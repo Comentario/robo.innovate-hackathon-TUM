@@ -107,3 +107,19 @@ Punto anterior conservado: `d78f742`, `artifacts/greenfield_05/index.html`. Demo
 **Fichas:** fotos de fabricante incrustadas para funcionar offline, con atribución. Cámara Basler, sensor SICK, pórtico Güdel, horquilla KINSHOFER y eje Festo ELGC-TB-80. Este último aporta una referencia técnica de los empujadores/selectores: fuerza de avance máxima 250 N, velocidad máxima 1,5 m/s y repetibilidad ±0,1 mm. No se convierten esos máximos en una configuración de máquina homologada. Los detectores SICK se montan sobre los ladrillos con trayecto corto descendente, acorde con su alcance de 15–150 mm; no se presentan como barreras de 600 mm ni sensores de seguridad.
 
 **Resultados y pruebas:** 3.200 inspeccionados, 2.240 expedidos en cuatro pallets completos, 280 en pallets parciales, 284 en WIP aprobado y 396 descartados. Caudal del lote corregido: **3.597,208 conformes/h**, frente a 3.597,994/h en el anterior. La comparación no afirma aumentar producción mediante una corrección visual; muestra que el despeje y los interlocks no eliminan el objetivo de 3.000/h. Pasaron **33 pruebas** (20 anteriores y 13 del modelo dual), incluyendo contacto, despeje en cada llegada, apoyo del chute, retención antes de levantar y retorno automático. El navegador se verificó offline: imágenes cargadas, hover/clic, panel de 660 px, ocho cámaras, 63 capas, 3.200 piezas y viewport móvil sin desbordamiento. Capturas en `artifacts/greenfield_06/verification/`.
+
+## Versión actual: dos carros fijos y retención de rejilla (greenfield_07)
+
+Checkpoint anterior: `b99df11`, `artifacts/greenfield_06/index.html`. Actual: `artifacts/greenfield_07/index.html`. Esta versión sustituye la logística automática de carros de descarte descrita anteriormente.
+
+- Se representa la retención mediante barrotes/rejilla metálica opaca con huecos reales. No hay paneles transparentes; se conserva su cierre/apertura temporizado.
+- Un solo carro de descarte permanece en cada extremo exterior: X=6,8 m, Z=-16,5 / +16,5 m. Ambos son mini almacenes estacionarios: no tienen ninguna trayectoria de movimiento. Se retiran de la escena los carros de reserva, los depósitos, las marcas del circuito y sus controles. Los carros de inventario y expedición conservan su función.
+- La recogida de cada línea avanza hacia su extremo exterior. Cada carro tiene un límite operativo de 240 piezas, configurado, no un rating comercial. Si se llena, la recogida entra en paro protegido; no se inventa vaciado, reposición ni transporte humano/automático. La retirada externa queda fuera del lote modelado.
+- Cada carro tiene boca de entrada abierta y puente de rodillos hasta su interior. La base de almacenamiento está a 150 mm, manteniendo las seis capas máximas de descarte por debajo de la entrada. El acomodo dentro del recipiente sigue siendo abstracto.
+- En el chute, los laterales rojos empiezan 340 mm después de la entrada y terminan 80 mm antes de su salida. La boca lateral queda abierta para la llegada del empujador; se mantiene el suelo continuo de apoyo. No se recorta la trayectoria del ladrillo ni se hace atravesar una pared.
+
+Se ejecutó un lote nominal nuevo porque cambió el recorrido de recogida. Se verificaron 17 pruebas: cuatro del almacenamiento fijo (dos únicos carros inmóviles, movimiento exterior, conservación de descartes y paro por lleno) y 13 de compatibilidad del modelo dual anterior. No se repitió la matriz completa de escenarios.
+
+Resultado del lote: 3459.141 conformes/h expedidos, 62 capas completas, 4 pallets expedidos, 240 piezas en pallets parciales y 324 en WIP. Los 396 descartes permanecen en los dos carros; no hay intercambios ni vaciado. El cambio de flujo actualiza el KPI respecto a los 3.597,208/h anteriores.
+
+La revisión de navegador usa el lote nuevo y comprueba 3.200 piezas, ocho cámaras, 62 capas, dos carros fijos, ausencia del control del circuito y las fichas con imágenes. Evidencia: `artifacts/greenfield_07/verification/`.

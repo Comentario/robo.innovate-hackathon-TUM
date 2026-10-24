@@ -22,6 +22,9 @@ class TwinPlant(Plant):
         if type(log['discard_carts_per_line']) is not int or not 1<=log['discard_carts_per_line']<=4:raise ValueError('Service lanes support one to four discard carts per line')
         for key in ('cart_m_s','bridge_xy_m_s','bridge_z_m_s','fork_tool_kg','bridge_capacity_kg','rail_cart_capacity_kg','unload_service_s'):
             if not math.isfinite(log[key]) or log[key]<=0:raise ValueError('Positive finite logistics inputs required')
+        if log.get('discard_mode','mobile') not in ('fixed','mobile'):raise ValueError('Unknown discard collection mode')
+        self.fixed_discard=log.get('discard_mode')=='fixed'
+        if self.fixed_discard and log['discard_carts_per_line']!=1:raise ValueError('Fixed layout requires exactly one stationary bin per line')
         self.line_z=[-8.0,8.0];self.lines=2
         self.tool_homes={f'{kind}_{line}':[1.5 if kind=='dehack' else 21+(config['buffer_cells_per_shade']-20)*.3,2.6,z]
                          for line,z in enumerate(self.line_z) for kind in ('dehack','stacker')}
@@ -36,6 +39,8 @@ class TwinPlant(Plant):
         for line,store in enumerate(self.line_trays):store.items.extend((bay,nest) for bay in range(line*2,line*2+2) for nest in (0,1))
         self.tray_slots=RoutedStore(self.line_trays,lambda item:item[0]//2)
         self.collectors={(line,side,k):simpy.Resource(self.env,capacity=1) for line in range(2) for side in (-1,1) for k in range(1,26)}
+        if self.fixed_discard:
+            for line in range(2):self.collectors[line,1,0]=simpy.Resource(self.env,capacity=1)
         self.cart_inlet=[simpy.Resource(self.env,capacity=1) for _ in range(2)]
         self.cart_index=[0,0];self.discard_carts=[]
         self.cart_payloads={f'DISCARD-CART-{line}-{n}':[] for line in range(2) for n in range(self.c['logistics']['discard_carts_per_line'])}
@@ -72,7 +77,7 @@ class TwinPlant(Plant):
             for number in range(4):
                 self.add_aux(f'P-OUT-{2*number+line}',[x,.214,z+side*(3+number*1.35)],'pallet')
             for number in range(self.c['logistics']['discard_carts_per_line']):
-                p=[5.8,0,z] if number==0 else [1.6,0,z-side*number*1.4]
+                p=[6.8,0,z+side*8.5] if self.fixed_discard else ([5.8,0,z] if number==0 else [1.6,0,z-side*number*1.4])
                 self.add_aux(f'DISCARD-CART-{line}-{number}',p,'discard_cart')
         self.add_aux('KILN-CART',[-12,0,0],'kiln_cart')
         self.add_aux('INVENTORY-FORK',[-9.2,3.48,0],'pallet_fork')
@@ -165,6 +170,9 @@ class TwinPlant(Plant):
 
     def collect_discard(self,identity,line,side,k,reservation):
         center=self.line_z[line]
+        if self.fixed_discard:
+            yield from self.collect_fixed_discard(identity,line,side,k,reservation)
+            return
         while k>1:
             next_resource=self.collectors[line,side,k-1];nxt=next_resource.request();yield nxt
             yield from self.move([identity],[[6.8,.65,center+side*(k-1)*.3]],f'discard_conveyor_{line}','Advance reserved discard collection zone',.6)
@@ -179,6 +187,29 @@ class TwinPlant(Plant):
             yield from self.move([identity],[target],f'discard_cart_{line}','Contained discard cart collection; settling abstracted',1.0)
             reason=self.material[identity]['discard_reason'];self.material[identity]['location']=reason
             self.cart_pack[line].append(identity);self.emit('routed',f'discard_cart_{line}',brick=identity,destination=reason,line=line,cart=cart)
+            self.discard_pending-=1;self.notify()
+
+    def collect_fixed_discard(self,identity,line,side,k,reservation):
+        """One direction per line, one stationary finite cart at the outside end."""
+        center=self.line_z[line];outward=-1 if line==0 else 1;index=side*k
+        def key(index):return (line,-1 if index<0 else 1,abs(index))
+        while index!=outward*25:
+            next_index=index+outward;nxt=self.collectors[key(next_index)].request();yield nxt
+            yield from self.move([identity],[[6.8,.65,center+next_index*.3]],f'discard_conveyor_{line}','Advance toward stationary outer-end bin',.6)
+            self.collectors[key(index)].release(reservation);reservation=nxt;index=next_index
+        with self.cart_inlet[line].request() as request:
+            yield request
+            if len(self.cart_pack[line])>=self.c['logistics']['discard_cart_capacity']:
+                self.emit('fixed_bin_full',f'discard_cart_{line}',line=line)
+                raise Hold('Stationary discard bin full; external emptying required')
+            cart=f'DISCARD-CART-{line}-0';number=len(self.cart_pack[line]);end=center+outward*8.5
+            yield from self.move([identity],[[6.8,.65,center+outward*8.10]],f'discard_conveyor_{line}','Cross supported end-of-collector discharge bridge',.6)
+            self.collectors[key(index)].release(reservation)
+            target=[6.8+(number%4-1.5)*.26,.15+self.H/2+(number//40)*self.H,end+((number//4)%10-4.5)*.075]
+            yield from self.move([identity],[target],f'discard_cart_{line}','Contained discard cart collection; settling abstracted',1.0)
+            reason=self.material[identity]['discard_reason'];self.material[identity]['location']=reason
+            self.cart_pack[line].append(identity)
+            self.emit('routed',f'discard_cart_{line}',brick=identity,destination=reason,line=line,cart=cart)
             self.discard_pending-=1;self.notify()
 
     def swap_discard_cart(self,line):
@@ -329,7 +360,7 @@ class TwinPlant(Plant):
 
     def report(self):
         r=super().report();r['schema_version']='3.0';r['concept']='Dual-line autonomous dehacking'
-        r['mechanics'].update(line_z=self.line_z,layout='dual',collector_x=6.8,collector_y=.65)
+        r['mechanics'].update(line_z=self.line_z,layout='dual',collector_x=6.8,collector_y=.65,discard_mode='fixed' if self.fixed_discard else 'mobile')
         r['discard_cart_state']=[{'id':f'DISCARD-CART-{line}-{n}','line':line,'capacity':self.c['logistics']['discard_cart_capacity'],
             'ids':self.cart_payloads[f'DISCARD-CART-{line}-{n}'][:]}
             for line in range(2) for n in range(self.c['logistics']['discard_carts_per_line'])]
@@ -342,5 +373,6 @@ class TwinPlant(Plant):
         r['scope'][:1]=['The batch represents four stacks, not the full 36-stack industrial kiln cart; the 800/560-brick stack/pallet interfaces are preserved.','One common discard stream for off-spec and unresolved observations; the reason remains in the trace. No automatic reinsertion.',
             'Discard carts follow an autonomous concept route: interlocked exchange, automatic unloading, separate empty return, FIFO spare docking and presence confirmation. No operator is modeled; industrial AGV navigation and contact dynamics require qualification.',
             'Internal settling inside enclosed carts is abstracted, not contact-simulated. Bulk fork, rail carts and full-stack crane require separate load validation.']
+        if self.fixed_discard:r['scope'][2]='Two stationary outer-end discard carts, 240-piece operational capacity each. No cart transport or automatic unloading is modeled; a full bin causes a protected stop. External collection is outside the batch scope.'
         for layer in r['layers']:layer['line']=layer['cell']//4
         return r

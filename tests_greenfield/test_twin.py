@@ -10,6 +10,7 @@ class TwinTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.config=json.loads((Path(__file__).parents[1]/'config/greenfield_dual.json').read_text())
+        cls.config['logistics'].update(discard_mode='mobile',discard_carts_per_line=4,discard_cart_capacity=120)
         cached=os.environ.get('GREENFIELD_TEST_REPORT')
         cls.base=json.loads(Path(cached).read_text()) if cached else TwinPlant(cls.config).run()
         if cached and cls.base['config']!=cls.config:raise AssertionError('Cached run configuration differs from tested configuration')
@@ -155,5 +156,53 @@ class TwinTests(unittest.TestCase):
             if e['kind']!='discard_cart_returned':continue
             states=[x['state'] for x in events if x['kind']=='cart_route_state' and x['cart']==e['cart'] and x['t']<=e['t']]
             self.assertEqual(states[-4:],['Loaded departure','Automatic unloading','Empty return','Available spare'])
+
+
+class FixedDiscardTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.config=json.loads((Path(__file__).parents[1]/'config/greenfield_dual.json').read_text())
+        cached=os.environ.get('GREENFIELD_FIXED_REPORT')
+        cls.base=json.loads(Path(cached).read_text()) if cached else TwinPlant(cls.config).run()
+        if cls.base['config']!=cls.config:raise AssertionError('Fixed-bin report/configuration mismatch')
+
+    def test_only_two_stationary_bins_exist_at_outer_ends(self):
+        r=self.base;m=r['mechanics'];ids=[i for i,a in m['auxiliaries'].items() if a['kind']=='discard_cart']
+        self.assertEqual(len(ids),2)
+        for line,z in enumerate([-16.5,16.5]):
+            key=f'DISCARD-CART-{line}-0';self.assertEqual(m['initial'][key],[6.8,0,z]);self.assertFalse(m['tracks'].get(key,[]))
+        self.assertFalse(any(e['kind'] in ('cart_route_state','discard_swap_start','discard_cart_returned') for e in r['events']))
+        self.assertEqual(r['kpis']['discard_cart_exchanges'],0);self.assertEqual(r['kpis']['discard_carts_emptied'],0)
+
+    def test_collection_moves_outward_without_hidden_disposal(self):
+        r=self.base
+        for line in range(2):
+            direction=-1 if line==0 else 1
+            for seq in r['mechanics']['tracks'].values():
+                for s in seq:
+                    if s['station']!=f'discard_conveyor_{line}':continue
+                    self.assertGreaterEqual(direction*(s['to'][2]-s['from'][2]),0)
+                    self.assertEqual(s['to'][0],6.8)
+        self.assertEqual(r['disposal_ids'],[[],[]])
+
+    def test_all_discarded_bricks_remain_inside_the_two_bins(self):
+        r=self.base;m=r['mechanics'];count=0
+        for cart in r['discard_cart_state']:
+            center=m['initial'][cart['id']];self.assertLessEqual(len(cart['ids']),240)
+            for identity in cart['ids']:
+                p=pose(m,identity,r['simulated_seconds']);count+=1
+                self.assertLess(abs(p[0]-center[0])+.245/2,.55)
+                self.assertLess(abs(p[2]-center[2])+.067/2,.48)
+                self.assertGreaterEqual(p[1]-.069/2,.15-1e-6)
+                self.assertLessEqual(p[1]+.069/2,.65)
+        self.assertEqual(count,r['kpis']['discard_bricks']);self.assertEqual(r['status'],'completed_with_residual_stock')
+
+    def test_full_stationary_bin_stops_without_synthetic_emptying(self):
+        c=deepcopy(self.config);c['logistics']['discard_cart_capacity']=1;c['defect_rate']=1;c['uncertain_rate']=0
+        r=TwinPlant(c).run();self.assertEqual(r['status'],'safe_hold')
+        self.assertIn('Stationary discard bin full',r['reason'])
+        self.assertTrue(any(e['kind']=='fixed_bin_full' for e in r['events']))
+        self.assertEqual(r['kpis']['discard_cart_exchanges'],0)
+        self.assertTrue(all(len(cart['ids'])<=1 for cart in r['discard_cart_state']))
 
 if __name__=='__main__':unittest.main()

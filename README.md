@@ -277,3 +277,5 @@ python3 scripts/greenfield_refresh_view.py artifacts/greenfield_04 --output-dir 
 Abrir `artifacts/greenfield_05/index.html`: estructuras reforzadas, Inspection panel ampliado e inspector de componentes con hover/clic. El informe y los KPIs se reutilizan sin cambios.
 
 Última demostración con ciclos corregidos: `artifacts/greenfield_06/index.html`. Incluye empujador con despeje/contacto modelados, chute conectado, retención del stack, circuito automático visible (`Watch cart cycle`) e imágenes de fabricante en las fichas. Ver `docs/greenfield_dual.md` para resultados, referencias y límites.
+
+Vista actual: `artifacts/greenfield_07/index.html`. Retención de rejilla metálica, boca abierta del chute y dos carros de descarte fijos en los extremos. Se retiró el circuito de recogida de la escena. Los KPIs corresponden al nuevo lote simulado; ver `docs/greenfield_dual.md`.
