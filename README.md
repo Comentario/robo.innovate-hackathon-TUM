@@ -5,16 +5,16 @@ Preparación para el reto #8: Intelligent Brick Blending and Palletizing.
 ## Tarea 3 · concepto 1: instalación nueva autónoma
 
 ```bash
-python3 scripts/greenfield_demo.py --compare --output-dir artifacts/greenfield_02
+python3 scripts/greenfield_demo.py --compare --output-dir artifacts/greenfield_03
 ```
 
-Abrir `artifacts/greenfield_02/index.html`: cuatro células, inspección, mezcla por
-buffers, cuarentena automática y pozo de apilado descendente. Sin estación de
+Abrir `artifacts/greenfield_03/index.html`: ocho células, transportadores por zonas,
+shuttles, topes y empujadores sincronizados, cámaras virtuales ampliables y apilado descendente. Sin estación de
 clasificación humana. KPIs de producto **liberado** frente a material formado,
-actividad de transferencias, meta y brecha de capacidad. Referencias de equipos,
-hipótesis y límites: [concepto greenfield](docs/greenfield.md).
+actividad de transferencias, meta y brecha de capacidad. Mecánica, cambios y límites: [greenfield v2](docs/greenfield_v2.md).
+Base inicial: [concepto greenfield](docs/greenfield.md).
 
-Comparación con dos células y cinco escenarios de incertidumbre/fallos en
+Comparación con 2, 4, 6 y 8 células y cinco escenarios de incertidumbre/fallos en
 `comparison.html`. Son estimaciones sintéticas, no rendimiento industrial validado.
 El prototipo previo queda intacto en `plant_sim` y su commit `86b820d`.
 

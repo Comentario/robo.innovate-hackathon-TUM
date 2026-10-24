@@ -12,6 +12,7 @@ class GreenfieldTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.config=json.loads((ROOT/'config/greenfield.json').read_text())
+        cls.config.update(cells=4,input_stacks=2,accepted_overflow_capacity=200)
         cls.base=Plant(cls.config).run()
 
     def run_variant(self,**changes):
@@ -136,6 +137,69 @@ class GreenfieldTests(unittest.TestCase):
         for a in self.base['handling_activity']:
             self.assertGreater(a['busy_s'],0)
             self.assertLessEqual(a['active_fraction'],1)
+
+    def test_stops_fully_retract_before_downstream_motion(self):
+        r=self.base;events=r['events']
+        commands=[e for e in events if e['kind']=='stop_command']
+        self.assertGreater(len(commands),100)
+        from bisect import bisect_right
+        indexed={}
+        for e in commands:indexed.setdefault(e['zone'],[]).append(e)
+        times={zone:[e['t'] for e in es] for zone,es in indexed.items()}
+        from greenfield.model import Plant
+        plant=Plant(self.config)
+        for identity,seq in r['mechanics']['tracks'].items():
+            if not identity.startswith('B'):continue
+            for stroke in seq:
+                zone=plant.zone_key(stroke['from'])
+                if zone and stroke['to'][0]>stroke['from'][0]+.05:
+                    command=indexed[zone][bisect_right(times[zone],stroke['t0']+1e-6)-1]
+                    self.assertTrue(command['opened'])
+                    self.assertGreaterEqual(stroke['t0']-command['t'],.08-1e-6)
+
+    def test_rows_transfer_on_the_same_moving_shuttle(self):
+        r=self.base;m=r['mechanics']
+        for identity,seq in m['tracks'].items():
+            if not identity.startswith('B'):continue
+            for stroke in seq:
+                if stroke['label']=='Supported row shuttle cross-travel':
+                    bay=int(stroke['station'].split('_')[-1]);tool=f'ROW-SHUTTLE-{bay}'
+                    t=(stroke['t0']+stroke['t1'])/2
+                    brick=pose(m,identity,t);tray=pose(m,tool,t)
+                    self.assertAlmostEqual(brick[0],tray[0])
+                    self.assertLessEqual(abs(brick[2]-tray[2]),.302)
+                    self.assertAlmostEqual(brick[1]-self.config['geometry']['brick_mm'][2]/2000,tray[1])
+
+    def test_incremental_rows_start_before_full_layer_inventory(self):
+        events=self.base['events'];first=next(e for e in events if e['kind']=='row_started')
+        cell=int(first['station'].split('_')[1]);observed=sum(e['kind']=='inspection' and e['station']==f'cell_{cell}_vision' and e['t']<=first['t'] for e in events)
+        self.assertLess(observed,40)
+        unfinished=[b for b in self.base['material'] if b['location']=='unfinished_layer']
+        self.assertTrue(all(b['id'] not in set(i for p in self.base['pallets'] for i in p) for b in unfinished))
+
+    def test_rejected_bricks_are_pushed_before_entering_chute(self):
+        m=self.base['mechanics']
+        for b in self.base['material']:
+            if b['location'] not in ('reject','quarantine'):continue
+            seq=m['tracks'][b['id']]
+            push=next(s for s in seq if s['label']=='Side pusher ejects observed extreme or uncertainty')
+            self.assertAlmostEqual(push['from'][1],push['to'][1])
+            t=(push['t0']+push['t1'])/2
+            tool=pose(m,f"REJECT-PUSHER-{b['cell']}",t);brick=pose(m,b['id'],t)
+            self.assertAlmostEqual(brick[2]-tool[2],.067/2+.012)
+            self.assertTrue(any('supported collection chute' in s['label'] for s in seq))
+
+    def test_render_payload_keeps_physical_trajectories_and_stop_commands(self):
+        from greenfield.report import visual_payload
+        r=self.base;v=visual_payload(r)
+        self.assertEqual(v['kpis'],r['kpis'])
+        self.assertEqual(set(v['mechanics']['tracks']),set(r['mechanics']['tracks']))
+        for t in (0,r['simulated_seconds']/3,r['simulated_seconds']):
+            for b in r['material'][::37]:
+                self.assertEqual(pose(r['mechanics'],b['id'],t),pose(v['mechanics'],b['id'],t))
+        commands=[e for e in r['events'] if e['kind']=='stop_command']
+        self.assertEqual(len(commands),len(v['mechanics']['stop_commands']))
+        self.assertTrue(all(e['kind']!='stop_command' for e in v['events']))
 
     def test_pattern_has_constrained_counts_and_varies(self):
         for offset in range(3):

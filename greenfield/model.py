@@ -37,11 +37,12 @@ class Plant:
         self.L,self.D,self.H=[v/1000 for v in g['brick_mm']];self.n=g['rows']*g['columns'];self.env=simpy.Environment()
         self.rng=random.Random(c['seed']);self.done=self.env.event();self.changed=self.env.event()
         self.events=[];self.tracks=defaultdict(list);self.positions={};self.initial={};self.material={};self.aux={}
-        self.pending_steps=0;self.active=set();self.stats=Counter();self.status='running';self.reason=None
+        self.held_tools={};self.pending_steps=0;self.active=set();self.stats=Counter();self.status='running';self.reason=None
         self.placed=[];self.shipped=[];self.pallets=[];self.layer_results=[];self.faults_used=set()
         self.source_finished=False;self.inspected=0;self.inventory=defaultdict(int);self.candidates=defaultdict(list)
         self.pallet_mix=[];self.pack_layers=[]
-        self.produced_layers=0;self.reserved_layers=0;self.timing=defaultdict(lambda:Counter())
+        self.builders_finished=0;self.produced_layers=0;self.reserved_layers=0;self.timing=defaultdict(lambda:Counter())
+        self.tail_shift=(c['buffer_cells_per_shade']-20)*.3
         self.bays=(c['cells']+1)//2;self.cell_z=[(i-(c['cells']-1)/2)*4.0 for i in range(c['cells'])]
         self.bay_z=[sum(self.cell_z[2*b:2*b+2])/len(self.cell_z[2*b:2*b+2]) for b in range(self.bays)]
         self.tray_slots=simpy.Store(self.env);self.tray_slots.items.extend((b,k) for b in range(self.bays) for k in (0,1))
@@ -68,9 +69,9 @@ class Plant:
 
     def validate(self):
         c=self.c;g=c['geometry']
-        if c['input_stacks'] not in (1,2):raise ValueError('Demonstrated input dock supports one or two 800-brick stacks')
+        if c['input_stacks'] not in (1,2,3,4):raise ValueError('Input buffer supports one to four 800-brick stacks')
         if g['brick_mm'] != [245,67,69]:raise ValueError('Current physical layout is qualified only for the organizer brick dimensions')
-        if c['cells'] not in (2,4):raise ValueError('Supported physical layouts: 2 or 4 cells')
+        if c['cells'] not in (2,4,6,8):raise ValueError('Supported physical layouts: 2, 4, 6 or 8 cells')
         if g['rows']!=4 or g['columns']!=10 or g['output_layers']!=14 or g['input_layers']!=20:
             raise ValueError('This concept preserves the organizer 10x4x20 -> 10x4x14 layout')
         for k in ('input_stacks','buffer_cells_per_shade','reject_capacity','quarantine_capacity','accepted_overflow_capacity'):
@@ -85,10 +86,9 @@ class Plant:
         if c['accepted_overflow_capacity']//c['cells']>50 or c['accepted_overflow_capacity']%c['cells']:
             raise ValueError('Approved reserve layout supports at most 50 pockets per cell, equally divided')
         if c['buffer_cells_per_shade']<14:raise ValueError('Each tone queue must support the largest 40-brick layer quota')
-        if c['buffer_cells_per_shade'] != 20:raise ValueError('Current physical tone layout has 20 zones per shade')
-        if c['buffer_cells_per_shade']*.30>10:raise ValueError('Tone buffer exceeds reference conveyor length')
-        if c['buffer_cells_per_shade']*c['brick_mass_kg']>125:raise ValueError('Tone buffer exceeds reference belt load')
-        if c['speeds']['belt_m_s']>80/60 or c['speeds']['buffer_m_s']>80/60:raise ValueError('Reference belt speed exceeded')
+        if c['buffer_cells_per_shade'] not in (20,30):raise ValueError('Supported physical tone layouts have 20 or 30 zones per shade')
+        if c['brick_mass_kg']*9.80665>350:raise ValueError('Selected driven roller load envelope exceeded')
+        if c['speeds']['belt_m_s']>.6 or c['speeds']['buffer_m_s']>.6:raise ValueError('Selected 35 W 30:1 roller profile exceeded')
         if not .1<=c['speeds']['pallet_m_s']<=.5:raise ValueError('Reference pallet conveyor speed exceeded')
         if c['geometry']['rows']*c['geometry']['columns']*c['brick_mass_kg']+c['layer_tool_mass_kg']>2000/9.80665:
             raise ValueError('Reference high-load gantry force envelope exceeded')
@@ -113,12 +113,18 @@ class Plant:
             self.material[identity]={'id':identity,'product_id':self.c['product_id'],'shade':shade,
                 'good':self.rng.random()>=self.c['defect_rate'],'location':'input','observed':None}
             self.initial[identity]=p[:];self.positions[identity]=p[:]
-        self.add_aux('GUIDE-GATE',[21,.91,0],'guide_gate')
-        for tool,p in [('dehack',[0,2.6,0]),('stacker',[21,2.6,0])]:self.add_aux('TOOL-'+tool,p,'tool')
-        for b,z in enumerate(self.bay_z):self.add_aux(f'PUSHER-{b}',[3,BED,z],'row_pusher')
-        for i,z in enumerate(self.cell_z):self.add_aux(f'SELECTOR-{i}',[16.25,BED,z-.3015],'selector')
+        self.add_aux('GUIDE-GATE',[(21+self.tail_shift),.91,0],'guide_gate')
+        for tool,p in [('dehack',[0,2.6,0]),('stacker',[(21+self.tail_shift),2.6,0])]:self.add_aux('TOOL-'+tool,p,'tool')
+        for b,z in enumerate(self.bay_z):self.add_aux(f'ROW-SHUTTLE-{b}',[4.7,BED,z],'roller_shuttle')
+        for i,z in enumerate(self.cell_z):
+            self.add_aux(f'REJECT-PUSHER-{i}',[9,BED+.045,z-self.D/2-.012],'side_pusher')
+            self.add_aux(f'INFEED-{i}',[5.6-self.L/2-.012,BED+.045,z],'pusher')
+            self.add_aux(f'ROW-PUSHER-{i}',[(16.65+self.tail_shift)-self.L/2-.012,BED+.045,z],'pusher')
+            self.add_aux(f'SORTER-{i}',[9.45,BED,z],'roller_shuttle')
+            self.add_aux(f'PICKER-{i}',[9,2.5,z],'clamp_gripper')
+        for i,z in enumerate(self.cell_z):self.add_aux(f'SELECTOR-{i}',[(16.25+self.tail_shift),BED,z-.3015],'selector')
         for i in range(self.c['input_stacks']):self.add_aux(f'P-IN-{i}',[-3,.08,i*1.2],'pallet')
-        for i in range(math.ceil(total/560)+1):self.add_aux(f'P-OUT-{i}',[21,.214,0 if i==0 else -3-i*1.2],'pallet')
+        for i in range(math.ceil(total/560)+1):self.add_aux(f'P-OUT-{i}',[(21+self.tail_shift),.214,0 if i==0 else -3-i*1.2],'pallet')
 
     def add_aux(self,identity,p,kind):
         self.aux[identity]={'kind':kind};self.positions[identity]=p[:];self.initial[identity]=p[:]
@@ -138,9 +144,29 @@ class Plant:
         yield self.env.timeout(seconds)
         self.pending_steps-=1
 
+    def zone_key(self,p):
+        if abs(p[1]-(BED+self.H/2))>.001:return None
+        cell=round(p[2]/4+(self.c['cells']-1)/2)
+        if cell not in range(self.c['cells']):return None
+        z=self.cell_z[cell]
+        if abs(p[2]-z)<.01 and 6.39<=p[0]<=8.51:
+            zone=round((p[0]-6.4)/.3)
+            if abs(p[0]-(6.4+.3*zone))<.001:return f'scan:{cell}:0:{zone}'
+        if 10.14<=p[0]<=10.16+(self.c['buffer_cells_per_shade']-1)*.3:
+            lane=round(p[2]-z)+1;zone=round((p[0]-10.15)/.3)
+            if lane in range(3) and abs(p[2]-(z+lane-1))<.001 and abs(p[0]-(10.15+zone*.3))<.001:
+                return f'tone:{cell}:{lane}:{zone}'
+        return None
+
     def move(self,ids,targets,station,label,speed):
         if not ids:return
         if any(i in self.active for i in ids):raise AssertionError('Material double booking')
+        gate=None
+        if len(ids)==1 and ids[0] in self.material and targets[0][0]>self.positions[ids[0]][0]+.05:
+            gate=self.zone_key(self.positions[ids[0]])
+        if gate:
+            self.emit('stop_command',station,zone=gate,opened=True,duration=.08)
+            yield from self.pause(station,'Retract accumulation stop',.08)
         starts=[self.positions[i][:] for i in ids]
         distance=max(max(abs(a-b) for a,b in zip(p,q)) for p,q in zip(starts,targets))
         if distance<1e-10:return
@@ -152,13 +178,16 @@ class Plant:
             self.positions[identity]=q[:];self.active.add(identity)
         yield self.env.timeout(duration)
         for identity in ids:self.active.remove(identity)
+        if gate:
+            self.emit('stop_command',station,zone=gate,opened=False,duration=.08)
+            yield from self.pause(station,'Raise cleared-zone stop',.08)
 
     def carry(self,ids,targets,tool,label):
         aux='TOOL-'+tool;speed=self.c['speeds'];dwell=self.c['dwell']
         starts=[self.positions[i][:] for i in ids];x=sum(p[0] for p in starts)/len(ids);z=sum(p[2] for p in starts)/len(ids)
         xt=sum(p[0] for p in targets)/len(ids);zt=sum(p[2] for p in targets)/len(ids)
         top=max(p[1] for p in starts)+self.H/2;top_t=max(p[1] for p in targets)+self.H/2
-        clear=max(2.35,top+.15,top_t+.15);home=[0,2.6,0] if tool=='dehack' else [21,2.6,0]
+        clear=max(2.35,top+.15,top_t+.15);home=[0,2.6,0] if tool=='dehack' else [(21+self.tail_shift),2.6,0]
         yield from self.move([aux],[[x,2.6,z]],tool,'Approach above source',speed['gantry_xy_m_s'])
         yield from self.move([aux],[[x,top,z]],tool,'Lower to grip',speed['gantry_z_m_s'])
         yield from self.pause(tool,'Grip confirmation',dwell['grip_s'])
@@ -172,11 +201,35 @@ class Plant:
         yield from self.move([aux],[[xt,2.6,zt]],tool,'Vertical retract',speed['gantry_z_m_s'])
         yield from self.move([aux],[home],tool,'Return to clear home',speed['gantry_xy_m_s'])
 
+    def picked_move(self,identity,target,cell,station,label,speed):
+        tool=f'PICKER-{cell}';p=self.positions[identity][:]
+        grip=[p[0],p[1]+self.H/2+.025,p[2]]
+        if self.held_tools.get(tool)!=identity:
+            old=self.positions[tool][:];clear=max(2.5,old[1],grip[1]+.15)
+            yield from self.move([tool],[[old[0],clear,old[2]]],station,'Empty clamp retract',.7)
+            yield from self.move([tool],[[grip[0],clear,grip[2]]],station,'Empty clamp approach above source',self.c['speeds']['transfer_m_s'])
+            yield from self.move([tool],[grip],station,'Lower mechanical clamp',.7)
+            yield from self.pause(station,'Clamp confirmation',.1)
+            self.held_tools[tool]=identity;self.emit('grip_closed',station,brick=identity,tool=tool)
+        q=target[0]
+        yield from self.move([identity,tool],[q,[q[0],q[1]+self.H/2+.025,q[2]]],station,label,speed)
+
+    def release_picker(self,cell,station):
+        tool=f'PICKER-{cell}';identity=self.held_tools.pop(tool)
+        self.emit('grip_open',station,brick=identity,tool=tool)
+        p=self.positions[tool][:]
+        yield from self.pause(station,'Release clamp confirmation',.1)
+        yield from self.move([tool],[[p[0],max(2.5,p[1]+.15),p[2]]],station,'Empty clamp vertical retract',.7)
+
     def guarded(self,generator):
         try:yield from generator
         except Hold as e:
             if not self.done.triggered:
                 self.status='safe_hold';self.reason=str(e);self.emit('safe_hold',reason=self.reason);self.done.succeed()
+
+    def work_in_progress(self,cell=None,bay=None):
+        terminal={'shipped','partial_pallet','reject','quarantine'}
+        return sum(b['location'] not in terminal and (cell is None or b.get('cell')==cell) and (bay is None or b.get('bay')==bay) for b in self.material.values())
 
     def source(self):
         total=self.c['input_stacks']*20;speed=self.c['speeds'];last_stack=-1
@@ -188,6 +241,10 @@ class Plant:
             if stack!=last_stack:
                 if stack:
                     old=f'P-IN-{stack-1}'
+                    previous=[f'P-IN-{k}' for k in range(stack-1)]
+                    if previous:
+                        yield from self.move(previous,[[self.positions[i][0],.08,self.positions[i][2]-1.2] for i in previous],'dock','Advance empty pallet return',speed['pallet_m_s'])
+                    yield from self.move([old],[[-3,.08,0]],'dock','Transfer empty pallet onto return lane',speed['pallet_m_s'])
                     yield from self.move([old],[[-3,.08,-2]],'dock','Empty input pallet discharge',speed['pallet_m_s'])
                 ids=[f'B{j:05}' for j in range(stack*800,(stack+1)*800)]+[f'P-IN-{stack}']
                 aligned=[[self.positions[i][0],self.positions[i][1],self.positions[i][2]-stack*1.2] for i in ids]
@@ -195,6 +252,7 @@ class Plant:
                 yield from self.move(ids,[[p[0]+3,p[1],p[2]] for p in aligned],'dock','Dock full input pallet',speed['pallet_m_s'])
                 last_stack=stack
             ids=[f'B{j:05}' for j in range(layer*self.n,(layer+1)*self.n)]
+            for identity in ids:self.material[identity]['bay']=bay
             z=self.bay_z[bay]+(nest-.5)*1.1
             target=[self.pose(3,BED+self.H/2,z,k) for k in range(self.n)]
             yield from self.carry(ids,target,'dehack','Unload single layer')
@@ -203,18 +261,23 @@ class Plant:
         self.source_finished=True;self.emit('source_finished');self.notify()
 
     def feeder(self,bay):
+        shuttle=f'ROW-SHUTTLE-{bay}';v=self.c['speeds']['transfer_m_s']
         while True:
             layer,nest,ids=yield self.layers[bay].get()
-            # Front row is removed first; a pusher never crosses the rows behind it.
             for r in (3,2,1,0):
                 cell=yield self.free_cells[bay].get();z=self.cell_z[cell]
-                row=ids[r*10:(r+1)*10]
+                row=ids[r*10:(r+1)*10];rz=sum(self.positions[i][2] for i in row)/10
+                yield from self.move([shuttle],[[4.7,BED,rz]],f'feeder_{bay}','Dock empty roller shuttle',v)
                 target=[[4.7,self.positions[i][1],self.positions[i][2]] for i in row]
-                yield from self.move(row,target,f'feeder_{bay}','Extract front row',self.c['speeds']['transfer_m_s'])
-                target=[[5.6,BED+self.H/2,z+(k-4.5)*self.D] for k in range(10)]
-                yield from self.move(row,target,f'feeder_{bay}','Row shuttle to available cell',self.c['speeds']['transfer_m_s'])
-                self.locate(row,f'cell_{cell}_intake');yield self.intakes[cell].put(row)
-                yield from self.pause(f'feeder_{bay}','Pusher retract / end limit',.15)
+                yield from self.move(row,target,f'feeder_{bay}','Powered front-row extraction',v)
+                target=[[4.7,BED+self.H/2,z+(k-4.5)*self.D] for k in range(10)]
+                yield from self.move(row+[shuttle],target+[[4.7,BED,z]],f'feeder_{bay}','Supported row shuttle cross-travel',v)
+                target=[[5.6,p[1],p[2]] for p in target]
+                yield from self.move(row,target,f'feeder_{bay}','Powered row discharge to infeed',v)
+                self.locate(row,f'cell_{cell}_intake')
+                for identity in row:self.material[identity]['cell']=cell
+                yield self.intakes[cell].put(row)
+                yield from self.pause(f'feeder_{bay}','Row-clear sensor confirmation',self.c['dwell']['sensor_s'])
             yield self.tray_slots.put((bay,nest));self.notify()
 
     def intake(self,cell):
@@ -226,7 +289,10 @@ class Plant:
                     yield req
                     entrance=self.inspect_zones[cell][0].request();yield entrance
                     p=self.positions[identity][:]
-                    yield from self.move([identity],[[5.95,p[1],p[2]]],f'cell_{cell}_infeed','Clear the remaining row',self.c['speeds']['transfer_m_s'])
+                    tool=f'INFEED-{cell}';home=5.6-self.L/2-.012
+                    yield from self.move([tool],[[home,BED+.045,p[2]]],f'cell_{cell}_infeed','Position singulation pusher',self.c['speeds']['transfer_m_s'])
+                    yield from self.move([identity,tool],[[5.95,p[1],p[2]],[5.95-self.L/2-.012,BED+.045,p[2]]],f'cell_{cell}_infeed','Pusher singulates one brick',self.c['speeds']['transfer_m_s'])
+                    yield from self.move([tool],[[home,BED+.045,p[2]]],f'cell_{cell}_infeed','Retract singulation pusher',self.c['speeds']['transfer_m_s'])
                     yield from self.move([identity],[[5.95,p[1],z]],f'cell_{cell}_infeed','Align separated brick with lane',self.c['speeds']['transfer_m_s'])
                     target=[[6.4,BED+self.H/2,z]]
                     yield from self.move([identity],target,f'cell_{cell}_infeed','Meter separated brick',self.c['speeds']['transfer_m_s'])
@@ -272,22 +338,32 @@ class Plant:
                     capacity=self.c[decision+'_capacity']
                     if self.stats[decision]>=capacity:raise Hold(decision+' container full')
                     index=self.stats[f'{decision}_{cell}'];self.stats[f'{decision}_{cell}']+=1;self.stats[decision]+=1
+                    if index>=400:raise Hold('Collection compartment full; upstream inhibited')
                     xx=8.5 if decision=='reject' else 7.7
-                    target=[[xx,BED+self.H/2+(index//20)*self.H,z+1.6+(index%20)*.075]]
-                    clear=max(2.05,BED+self.H/2+(max(self.stats[f'reject_{cell}'],self.stats[f'quarantine_{cell}'])//20)*self.H+.15)
-                    yield from self.move([identity],[[9.0,clear,z]],f'cell_{cell}_router','Lift clear of terminal stock',.3)
-                    yield from self.move([identity],[[target[0][0],clear,target[0][2]]],f'cell_{cell}_router','Transfer over terminal stock',self.c['speeds']['transfer_m_s'])
-                    yield from self.move([identity],target,f'cell_{cell}_router','Lower into '+decision+' pocket',.3)
+                    inlet=9.0 if decision=='reject' else 8.7
+                    target=[[xx+((index%2)-.5)*.28,.22+self.H/2+(index//40)*self.H,z+1.6+((index//2)%20)*.075]]
+                    tool=f'REJECT-PUSHER-{cell}';v=self.c['speeds']['transfer_m_s']
+                    yield from self.move([tool],[[inlet,BED+.045,z-self.D/2-.012]],f'cell_{cell}_router','Select side-ejection channel',v)
+                    yield from self.move([identity],[[inlet,BED+self.H/2,z]],f'cell_{cell}_router','Position over ejector rollers',v)
+                    yield from self.move([identity,tool],[[inlet,BED+self.H/2,z+1.25],[inlet,BED+.045,z+1.25-self.D/2-.012]],f'cell_{cell}_router','Side pusher ejects observed extreme or uncertainty',v)
+                    yield from self.move([tool],[[inlet,BED+.045,z-self.D/2-.012]],f'cell_{cell}_router','Retract side pusher',v)
+                    # The enclosed collection compartment is not a contact/settling model.
+                    yield from self.move([identity],[[xx,.65,z+1.6]],f'cell_{cell}_router','Travel down supported collection chute',.6)
+                    yield from self.move([identity],target,f'cell_{cell}_router','Contained collection; settling abstracted',1.0)
                     b['location']=decision;self.emit('routed',f'cell_{cell}_router',brick=identity,destination=decision);self.inspect_zones[cell][-1].release(reservation);self.notify();return
                 shade=b['shade'];s=self.c['shades'].index(shade);zz=z+(s-1)*1.0
                 # Admission to a finite physical buffer is reserved before transfer.
                 resources=self.queue_cells[cell,shade]
-                if resources[0].count:
+                if all(zone.count for zone in resources):
                     self.env.process(self.guarded(self.overflow(identity,cell,shade,reservation)))
                     return
                 buffer_reservation=resources[0].request()
                 yield buffer_reservation
-                yield from self.move([identity],[[10.15,BED+self.H/2,zz]],f'cell_{cell}_router','Route observed shade',self.c['speeds']['transfer_m_s'])
+                shuttle=f'SORTER-{cell}';v=self.c['speeds']['transfer_m_s']
+                yield from self.move([shuttle],[[9.45,BED,z]],f'cell_{cell}_router','Return cross-belt shuttle to receive',v)
+                yield from self.move([identity],[[9.45,BED+self.H/2,z]],f'cell_{cell}_router','Load cross-belt shuttle',v)
+                yield from self.move([identity,shuttle],[[9.45,BED+self.H/2,zz],[9.45,BED,zz]],f'cell_{cell}_router','Shuttle to accepted shade lane',v)
+                yield from self.move([identity],[[10.15,BED+self.H/2,zz]],f'cell_{cell}_router','Powered discharge into shade lane',v)
                 self.inventory[cell,shade]+=1;b['location']='accepted_buffer';self.emit('buffer_admitted',f'cell_{cell}_buffer',brick=identity,shade=shade);self.notify()
                 self.inspect_zones[cell][-1].release(reservation)
                 self.env.process(self.guarded(self.buffer(identity,cell,shade,buffer_reservation)))
@@ -299,20 +375,28 @@ class Plant:
         with self.reserve_transfer[cell].request() as transfer:
             yield transfer
             p=self.positions[identity][:]
-            yield from self.move([identity],[[p[0],2.05,p[2]]],f'cell_{cell}_reserve','Lift above approved stock',.3)
-            yield from self.move([identity],[[target[0][0],2.05,target[0][2]]],f'cell_{cell}_reserve','Transfer over reserved pocket',self.c['speeds']['transfer_m_s'])
-            yield from self.move([identity],target,f'cell_{cell}_reserve','Lower into approved pocket',.3)
+            yield from self.picked_move(identity,[[p[0],2.05,p[2]]],cell,f'cell_{cell}_reserve','Lift above approved stock',.3)
+            yield from self.picked_move(identity,[[target[0][0],2.05,target[0][2]]],cell,f'cell_{cell}_reserve','Transfer over reserved pocket',self.c['speeds']['transfer_m_s'])
+            yield from self.picked_move(identity,target,cell,f'cell_{cell}_reserve','Lower into approved pocket',.3)
+            yield from self.release_picker(cell,f'cell_{cell}_reserve')
         self.locate([identity],'accepted_reserve');self.emit('reserve_admitted',f'cell_{cell}_reserve',brick=identity);self.stats['overflow_routes']+=1
         self.inspect_zones[cell][-1].release(inspection_reservation);self.notify()
-        resource=self.queue_cells[cell,shade][0];request=resource.request();yield request
+        resource=self.queue_cells[cell,shade][0]
         zz=z+(self.c['shades'].index(shade)-1)
-        # A lift/transfer pocket clears neighboring stored pieces, with a declared ideal support assumption.
-        with self.reserve_transfer[cell].request() as transfer:
-            yield transfer
-            p=self.positions[identity][:]
-            yield from self.move([identity],[[p[0],2.05,p[2]]],f'cell_{cell}_reserve','Raise retrieval pocket',.3)
-            yield from self.move([identity],[[10.15,2.05,zz]],f'cell_{cell}_reserve','Automatic reserve return',self.c['speeds']['transfer_m_s'])
-            yield from self.move([identity],[[10.15,BED+self.H/2,zz]],f'cell_{cell}_reserve','Lower retrieved brick',.3)
+        while True:
+            with self.reserve_transfer[cell].request() as transfer:
+                yield transfer
+                if resource.count:
+                    pass
+                else:
+                    request=resource.request();yield request
+                    p=self.positions[identity][:]
+                    yield from self.picked_move(identity,[[p[0],2.05,p[2]]],cell,f'cell_{cell}_reserve','Raise retrieval pocket',.3)
+                    yield from self.picked_move(identity,[[10.15,2.05,zz]],cell,f'cell_{cell}_reserve','Automatic reserve return',self.c['speeds']['transfer_m_s'])
+                    yield from self.picked_move(identity,[[10.15,BED+self.H/2,zz]],cell,f'cell_{cell}_reserve','Lower retrieved brick',.3)
+                    yield from self.release_picker(cell,f'cell_{cell}_reserve')
+                    break
+            yield self.changed | self.env.timeout(.25)
         yield self.reserve_slots[cell].put(slot)
         self.inventory[cell,shade]+=1;self.locate([identity],'accepted_buffer');self.notify()
         self.env.process(self.guarded(self.buffer(identity,cell,shade,request)))
@@ -336,17 +420,21 @@ class Plant:
     def builder(self,cell):
         z=self.cell_z[cell];selector=f'SELECTOR-{cell}';speed=self.c['speeds'];dwell=self.c['dwell']
         while True:
-            index=self.reserved_layers;q=self.quota(index)
-            while any(self.inventory[cell,s]<v for s,v in zip(self.c['shades'],q)):
-                if self.inspected==len(self.material) and self.source_finished:
-                    self.emit('recipe_stock_hold',f'cell_{cell}_former',reason='Finite batch has insufficient observed stock for another compliant layer')
-                yield self.changed
-                index=self.reserved_layers;q=self.quota(index)
-            self.reserved_layers+=1
-            for s,v in zip(self.c['shades'],q):self.inventory[cell,s]-=v
+            index=self.reserved_layers;self.reserved_layers+=1;q=self.quota(index)
             desired=pattern(4,10,q,index%3);ids_by_slot={};row_ids=[]
-            yield self.formation[cell].request()
+            request=self.formation[cell].request();yield request
             for r in range(4):
+                need=Counter(self.c['shades'][v] for v in desired[r*10:r*10+10])
+                while any(self.inventory[cell,shade]<n for shade,n in need.items()):
+                    if self.inspected==len(self.material) and self.source_finished:
+                        remaining=Counter(b['shade'] for b in self.material.values() if b.get('cell')==cell and b['observed']=='accepted' and b['location'] in ('accepted_buffer','accepted_reserve',f'cell_{cell}_intake'))
+                        if any(remaining[shade]<n for shade,n in need.items()):
+                            self.locate(list(ids_by_slot.values()),'unfinished_layer')
+                            self.emit('partial_layer_retained',f'cell_{cell}_former',bricks=len(ids_by_slot),reason='End-of-batch stock cannot complete the next compliant row')
+                            self.formation[cell].release(request);self.builders_finished+=1;self.notify();return
+                    yield self.changed | self.env.timeout(.25)
+                for shade,n in need.items():self.inventory[cell,shade]-=n
+                self.emit('row_started',f'cell_{cell}_former',layer=index,row=r)
                 for col in range(9,-1,-1):
                     # Move the already formed row by one short-edge pitch before admitting the next brick.
                     if row_ids:
@@ -356,17 +444,19 @@ class Plant:
                     identity,selected=yield self.ready[cell,shade].get()
                     self.locate([identity],'forming');ids_by_slot[r*10+col]=identity
                     zz=self.positions[identity][2]
-                    yield from self.move([selector],[[16.25,BED,zz]],f'cell_{cell}_selector','Select required tone queue',speed['selector_m_s'])
-                    yield from self.move([identity],[[16.25,BED+self.H/2,zz]],f'cell_{cell}_selector','Feed confirmed brick onto shuttle',speed['transfer_m_s'])
+                    yield from self.move([selector],[[(16.25+self.tail_shift),BED,zz]],f'cell_{cell}_selector','Select required tone queue',speed['selector_m_s'])
+                    yield from self.move([identity],[[(16.25+self.tail_shift),BED+self.H/2,zz]],f'cell_{cell}_selector','Feed confirmed brick onto shuttle',speed['transfer_m_s'])
                     selected.succeed();self.notify()
-                    yield from self.move([identity,selector],[[16.25,BED+self.H/2,z-.3015],[16.25,BED,z-.3015]],f'cell_{cell}_selector','Align with row inlet',speed['selector_m_s'])
-                    yield from self.move([identity],[[16.65,BED+self.H/2,z-.3015]],f'cell_{cell}_selector','Feed row inlet',speed['transfer_m_s'])
+                    yield from self.move([identity,selector],[[(16.25+self.tail_shift),BED+self.H/2,z-.3015],[(16.25+self.tail_shift),BED,z-.3015]],f'cell_{cell}_selector','Align with row inlet',speed['selector_m_s'])
+                    yield from self.move([identity],[[(16.65+self.tail_shift),BED+self.H/2,z-.3015]],f'cell_{cell}_selector','Feed row inlet',speed['transfer_m_s'])
                     yield from self.pause(f'cell_{cell}_selector','Confirm inlet clear',dwell['sensor_s'])
                     row_ids.append(identity)
-                row_x=18.2+(1.5-r)*self.L
+                row_x=(18.2+self.tail_shift)+(1.5-r)*self.L
                 target=[[row_x,BED+self.H/2,self.positions[i][2]] for i in row_ids]
-                yield from self.move(row_ids,target,f'cell_{cell}_former','Push complete row into layer nest',speed['transfer_m_s'])
-                yield from self.pause(f'cell_{cell}_former','Row pusher retract / end limit',dwell['settle_s'])
+                pusher=f'ROW-PUSHER-{cell}'
+                yield from self.move(row_ids+[pusher],target+[[row_x-self.L/2-.012,BED+.045,z]],f'cell_{cell}_former','Push complete row across roller deck',speed['transfer_m_s'])
+                yield from self.move([pusher],[[(16.65+self.tail_shift)-self.L/2-.012,BED+.045,z]],f'cell_{cell}_former','Retract row pusher to home limit',speed['transfer_m_s'])
+                yield from self.pause(f'cell_{cell}_former','Pusher home confirmation',dwell['sensor_s'])
                 row_ids=[]
             ids=[ids_by_slot[k] for k in range(self.n)]
             # Slots are reversed in X relative to input, but the spatial pattern remains explicit.
@@ -380,13 +470,13 @@ class Plant:
             self.locate(ids,'formed_layer');pickup=self.env.event()
             yield self.full_layers.put((cell,index,ids,pickup))
             yield pickup
-            self.formation[cell].release(self.formation[cell].users[0]);self.notify()
+            self.formation[cell].release(request);self.notify()
 
     def stacker(self):
         speed=self.c['speeds'];dwell=self.c['dwell'];g=self.c['geometry'];pack=[];pallet_index=0
         while True:
             cell,index,ids,pickup=yield self.full_layers.get()
-            target=[[21+(1.5-k//10)*self.L,BED+self.H/2,(k%10-4.5)*self.D] for k in range(self.n)]
+            target=[[(21+self.tail_shift)+(1.5-k//10)*self.L,BED+self.H/2,(k%10-4.5)*self.D] for k in range(self.n)]
             # Critical uncertain confirmation is inhibited BEFORE moving material.
             if self.c['faults']['critical_sensor_layer']==index:
                 yield from self.pause('stacker','Bounded source confirmation timeout',2.0)
@@ -420,7 +510,7 @@ class Plant:
                 previous=[i for p in self.pallets for i in p]+[f'P-OUT-{k}' for k in range(pallet_index)]
                 if previous:
                     yield from self.move(previous,[[self.positions[i][0]+1.25,self.positions[i][1],self.positions[i][2]] for i in previous],'pallet_out','Index downstream pallet accumulation',speed['pallet_m_s'])
-                yield from self.move(['GUIDE-GATE'],[[21,2.31,0]],'guide_gate','Raise guide panels clear of output path',.3)
+                yield from self.move(['GUIDE-GATE'],[[(21+self.tail_shift),2.31,0]],'guide_gate','Raise guide panels clear of output path',.3)
                 yield from self.pause('guide_gate','Open end-limit confirmation',dwell['sensor_s'])
                 self.emit('gate_open_confirmed','guide_gate')
                 dx=3
@@ -429,21 +519,19 @@ class Plant:
                 self.emit('pallet_released','pallet_out',pallet=pallet_index,shipped=len(self.shipped))
                 pallet_index+=1;pack=[]
                 empty=f'P-OUT-{pallet_index}'
-                yield from self.move([empty],[[21,self.positions[empty][1],0]],'pallet_in','Automatic empty pallet feed',speed['pallet_m_s'])
-                yield from self.move([empty],[[21,BED-.07,0]],'elevator','Raise empty pallet to transfer plane',speed['elevator_m_s'])
-                yield from self.move(['GUIDE-GATE'],[[21,.91,0]],'guide_gate','Close guide panels around clear transfer plane',.3)
+                yield from self.move([empty],[[(21+self.tail_shift),self.positions[empty][1],0]],'pallet_in','Automatic empty pallet feed',speed['pallet_m_s'])
+                yield from self.move([empty],[[(21+self.tail_shift),BED-.07,0]],'elevator','Raise empty pallet to transfer plane',speed['elevator_m_s'])
+                yield from self.move(['GUIDE-GATE'],[[(21+self.tail_shift),.91,0]],'guide_gate','Close guide panels around clear transfer plane',.3)
                 yield from self.pause('guide_gate','Closed end-limit confirmation',dwell['sensor_s'])
                 self.emit('gate_closed_confirmed','guide_gate')
             self.notify()
 
     def monitor(self):
-        # Wait for all input to be classified and all physically reserved recipes to finish.
         while True:
-            if self.source_finished and self.inspected==len(self.material) and self.produced_layers==self.reserved_layers:
-                if not any(all(self.inventory[i,s]>=v for s,v in zip(self.c['shades'],self.quota(self.reserved_layers))) for i in range(self.c['cells'])):
-                    # Wait until all terminal routing motions and buffer advances are physically settled.
-                    if not self.active and not self.pending_steps:
-                        self.status='completed_with_residual_stock';self.done.succeed();return
+            if (self.source_finished and self.inspected==len(self.material) and
+                    self.builders_finished==self.c['cells'] and self.produced_layers==len(self.layer_results)
+                    and not self.active and not self.pending_steps):
+                self.status='completed_with_residual_stock';self.done.succeed();return
             yield self.changed | self.env.timeout(.25)
 
     def run(self):
@@ -479,12 +567,14 @@ class Plant:
             stations={f'cell_{cell}_router',f'cell_{cell}_reserve'}
             busy=sum(min(e['duration'],max(0,t-e['t'])) for e in self.events if e['kind']=='step' and e['station'] in stations)
             activity.append({'cell':cell,'busy_s':round(busy,6),'active_fraction':round(busy/t,6) if t else 0})
-        return {'handling_activity':activity,'schema_version':'1.0','concept':'Greenfield autonomous blending','config':self.c,'status':self.status,'reason':self.reason,
-                'simulated_seconds':round(t,6),'kpis':k,'material':list(self.material.values()),'locations':dict(locations),
+        return {'handling_activity':activity,'schema_version':'2.0','concept':'Greenfield autonomous blending','config':self.c,'status':self.status,'reason':self.reason,
+                'simulated_seconds':round(t,7),'kpis':k,'material':list(self.material.values()),'locations':dict(locations),
                 'pallets':self.pallets,'pallet_mix':self.pallet_mix,'layers':self.layer_results,'events':self.events,'timing':dict(self.timing),
                 'mechanics':{'initial':self.initial,'tracks':dict(self.tracks),'auxiliaries':self.aux,'cell_z':self.cell_z,'bay_z':self.bay_z,
-                             'bed_y':BED,'brick_m':[self.L,self.H,self.D],'orientation':self.c['orientation_assumption']},
-                'scope':['No routine human station; autonomous reinspection/quarantine; asset maintenance is outside the production model.',
+                             'tail_shift_m':self.tail_shift,'bed_y':BED,'brick_m':[self.L,self.H,self.D],'orientation':self.c['orientation_assumption']},
+                'scope':['Reject/quarantine slide along supported chutes. Internal settling inside closed collection bins is abstracted, not contact-simulated.',
+                         'Individual powered accumulation zones have independent stops; incremental row formation preserves unfinished layers as WIP.',
+                         'No routine human station; autonomous reinspection/quarantine; asset maintenance is outside the production model.',
                          'Dataset classification is synthetic; no Person 1 labels or scores are changed.',
                          'Kinematics, finite accumulation zones and virtual automation; no contact/friction/load dynamics.',
                          'Reference data bound component envelopes only; EOAT, temperature, dust, strokes and product footprint need validation.',

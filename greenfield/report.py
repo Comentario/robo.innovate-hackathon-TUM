@@ -36,9 +36,9 @@ def equipment_checks(c):
         {'component':'Layer gantry','selected':f'{layer:.1f} kg including assumed tool',
          'reference':'2000 N high-load axis envelope (~204 kg); selected X/Z speed <= 1.25 m/s',
          'within_envelope':layer<=2000/9.80665 and c['speeds']['gantry_xy_m_s']<=1.25},
-        {'component':'Each 6 m tone conveyor','selected':f'{c["buffer_cells_per_shade"]*mass:.1f} kg; {c["speeds"]["buffer_m_s"]} m/s',
-         'reference':'mk GUF-P 2000: up to 125 kg, up to 80 m/min (variant dependent)',
-         'within_envelope':c['buffer_cells_per_shade']*mass<=125},
+        {'component':'Each powered roller zone','selected':f'{mass:.1f} kg/zone; 0.50 m reference roller; {c["speeds"]["buffer_m_s"]} m/s',
+         'reference':'EC5000 35 W 30:1: 0.60 m/s, 350 N with drive head; custom 300 mm zone assembly requires validation',
+         'within_envelope':mass*9.80665<=350 and c['speeds']['buffer_m_s']<=.6 and c['speeds']['belt_m_s']<=.6},
         {'component':'Input pallet conveyor','selected':f'{800*mass+25:.1f} kg incl. assumed 25 kg pallet',
          'reference':'Interroll PM9710: 3000 kg/drive, 1250 kg/m; assumed 1.2 m supported pallet',
          'within_envelope':800*mass+25<=3000 and (800*mass+25)/1.2<=1250},
@@ -46,6 +46,30 @@ def equipment_checks(c):
          'reference':'Same pallet-conveyor envelope; support distribution still requires verification',
          'within_envelope':560*mass+25<=3000 and (560*mass+25)/1.2<=1250},
     ]
+
+
+def visual_payload(report):
+    """Preserve every physical trajectory; omit engineering-only repetition."""
+    view=dict(report);m=dict(report['mechanics']);view['mechanics']=m
+    m['tracks']={identity:[{key:stroke[key] for key in ('t0','t1','from','to')} for stroke in seq]
+                 for identity,seq in m['tracks'].items()}
+    keys=sorted({e['zone'] for e in report['events'] if e['kind']=='stop_command'});lookup={key:i for i,key in enumerate(keys)}
+    m['stop_keys']=keys
+    m['stop_commands']=[[e['t'],lookup[e['zone']],int(e['opened'])] for e in report['events'] if e['kind']=='stop_command']
+    def visible(e):
+        if e['kind'] in ('stop_command','buffer_admitted','attach','detach'):return False
+        return e['kind']!='step' or e['station'] in ('dehack','stacker','elevator','guide_gate','pallet_out','dock') or e['station'].endswith('_former')
+    view['events']=[e for e in report['events'] if visible(e)]
+    return view
+
+
+def render_view(report,folder,study=None):
+    template=Path(__file__).with_name('viewer.html').read_text()
+    code=Path(__file__).with_name('viewer.js').read_text()
+    library=Path(__file__).parents[1]/'third_party/three/three.min.js'
+    payload=json.dumps(visual_payload(report),separators=(',',':')).replace('<','\\u003c')
+    template=template.replace('__STUDY__',json.dumps(study or [])).replace('__THREE__',library.read_text()).replace('__REPORT__',payload).replace('__CODE__',code)
+    (Path(folder)/'index.html').write_text(template)
 
 
 def write_report(report,folder):
@@ -56,9 +80,4 @@ def write_report(report,folder):
     report['audit']=audit(report);report['equipment_checks']=equipment_checks(report['config'])
     report['catalog']=json.loads(Path(__file__).with_name('catalog.json').read_text())
     (folder/'run.json').write_text(json.dumps(report,indent=2))
-    template=Path(__file__).with_name('viewer.html').read_text()
-    code=Path(__file__).with_name('viewer.js').read_text()
-    library=Path(__file__).parents[1]/'third_party/three/three.min.js'
-    payload=json.dumps(report,separators=(',',':')).replace('<','\\u003c')
-    template=template.replace('__THREE__',library.read_text()).replace('__REPORT__',payload).replace('__CODE__',code)
-    (folder/'index.html').write_text(template)
+    render_view(report,folder)

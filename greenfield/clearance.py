@@ -23,6 +23,8 @@ def sampled_material_clearance(report,samples=24):
         occupied={};positions={};tested=set()
         for identity in ids:
             p=pose(m,identity,t,index);positions[identity]=p
+            seq=m['tracks'].get(identity,[]);k=bisect_right(index[identity],t)-1
+            if k>=0 and seq[k]['label']=='Contained collection; settling abstracted':continue
             cells=[range(math.floor((p[a]-half[a]) /size[a]),math.floor((p[a]+half[a])/size[a])+1) for a in range(3)]
             for key in product(*cells):
                 for other in occupied.get(key,[]):
@@ -33,4 +35,4 @@ def sampled_material_clearance(report,samples=24):
                         hits.append({'t':t,'a':identity,'b':other,'p':p,'q':q})
                         if len(hits)>=12:return {'passed':False,'sampled_frames':len(times),'collisions':hits,'scope':'Sampled axis-aligned brick envelopes; no tools, cables or contact dynamics'}
                 occupied.setdefault(key,[]).append(identity)
-    return {'passed':not hits,'sampled_frames':len(times),'collisions':hits,'scope':'Sampled axis-aligned brick envelopes; not a continuous collision proof; excludes tools/cables/dynamics'}
+    return {'passed':not hits,'sampled_frames':len(times),'collisions':hits,'scope':'Sampled axis-aligned brick envelopes; not a continuous collision proof; excludes tools/cables/dynamics and internal enclosed-bin settling'}
