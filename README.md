@@ -2,7 +2,23 @@
 
 Preparación para el reto #8: Intelligent Brick Blending and Palletizing.
 
-## Tarea 3: planta 3D con SimPy
+## Tarea 3 · concepto 1: instalación nueva autónoma
+
+```bash
+python3 scripts/greenfield_demo.py --compare --output-dir artifacts/greenfield_02
+```
+
+Abrir `artifacts/greenfield_02/index.html`: cuatro células, inspección, mezcla por
+buffers, cuarentena automática y pozo de apilado descendente. Sin estación de
+clasificación humana. KPIs de producto **liberado** frente a material formado,
+actividad de transferencias, meta y brecha de capacidad. Referencias de equipos,
+hipótesis y límites: [concepto greenfield](docs/greenfield.md).
+
+Comparación con dos células y cinco escenarios de incertidumbre/fallos en
+`comparison.html`. Son estimaciones sintéticas, no rendimiento industrial validado.
+El prototipo previo queda intacto en `plant_sim` y su commit `86b820d`.
+
+## Tarea 3: prototipo anterior de planta 3D con SimPy
 
 ```bash
 python3 scripts/plant_demo.py --compare --output-dir artifacts/plant_automation_01
