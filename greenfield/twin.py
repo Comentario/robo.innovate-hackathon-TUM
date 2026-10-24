@@ -162,6 +162,7 @@ class TwinPlant(Plant):
         v=self.c['speeds']['transfer_m_s'];tool=f'REJECT-PUSHER-{cell}'
         yield from self.move([identity,tool],[[9,BED+self.H/2,z+1.25],[9,BED+.045,z+1.25-self.D/2-.012]],f'cell_{cell}_router','Side pusher sends non-approved brick to common discard',v)
         yield from self.move([tool],[[9,BED+.045,z-self.D/2-.012]],f'cell_{cell}_router','Retract guided side ejector',v)
+        yield from self.move([identity],[[8.50,BED+self.H/2,z+1.25]],f'cell_{cell}_router','Cross flat receiving deck at inspection height',.6)
         yield from self.move([identity],[[7.06,.65,center+side*k*.3]],f'cell_{cell}_router','Travel down supported full-length discard chute',.6)
         yield from self.move([identity],[[6.8,.65,center+side*k*.3]],f'cell_{cell}_router','Enter flush collector receiving rollers',.6)
         self.material[identity]['location']='discard_transit';self.material[identity]['discard_reason']=decision

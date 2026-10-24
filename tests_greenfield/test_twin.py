@@ -197,6 +197,20 @@ class FixedDiscardTests(unittest.TestCase):
                 self.assertLessEqual(p[1]+.069/2,.65)
         self.assertEqual(count,r['kpis']['discard_bricks']);self.assertEqual(r['status'],'completed_with_residual_stock')
 
+    def test_discard_crosses_full_flat_deck_before_descending(self):
+        r=self.base;count=0
+        for identity,seq in r['mechanics']['tracks'].items():
+            for k,stroke in enumerate(seq):
+                if stroke['label']!='Cross flat receiving deck at inspection height':continue
+                count+=1
+                self.assertAlmostEqual(stroke['from'][0],9.0)
+                self.assertAlmostEqual(stroke['to'][0],8.5)
+                self.assertAlmostEqual(stroke['from'][1],1.2845)
+                self.assertEqual(stroke['from'][1:],stroke['to'][1:])
+                self.assertEqual(seq[k+1]['from'],stroke['to'])
+                self.assertEqual(seq[k+1]['label'],'Travel down supported full-length discard chute')
+        self.assertEqual(count,r['kpis']['discard_bricks'])
+
     def test_full_stationary_bin_stops_without_synthetic_emptying(self):
         c=deepcopy(self.config);c['logistics']['discard_cart_capacity']=1;c['defect_rate']=1;c['uncertain_rate']=0
         r=TwinPlant(c).run();self.assertEqual(r['status'],'safe_hold')

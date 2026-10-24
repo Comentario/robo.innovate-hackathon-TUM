@@ -127,3 +127,13 @@ La revisión de navegador usa el lote nuevo y comprueba 3.200 piezas, ocho cáma
 ## Ajuste visual de unión y orientación (greenfield_08)
 
 Se reutiliza sin cambios el lote de `greenfield_07`. La mesa recibe una chapa de transferencia plana a la cota de las bolas, conectada a la boca abierta del chute. Ambos carros de descarte se giran 180°; la abertura local se ajusta con el giro para que su entrada permanezca orientada al transportador. No se modifican posiciones de almacenamiento, tiempos ni KPIs. Vista: `artifacts/greenfield_08/index.html`.
+
+## Corrección de la plataforma y de la cara receptora (greenfield_09)
+
+El ajuste de `264586f` era insuficiente: una pestaña de 60 mm no convertía en plana la zona marcada, y girar el cuerpo del carro manteniendo paneles cerrados no dejaba una cara receptora claramente abierta. Esta versión sustituye ese ajuste.
+
+La plataforma mide **730 × 600 mm**, con superficie superior a la cota de la mesa (Y=1,25 m). Es una extensión plana completa de la mesa de bolas: se mueve el inicio de la rampa a X=8,50 m. El modelo registra un tramo horizontal de X=9,00 a 8,50 m antes del descenso, evitando colocar una plataforma sobre una trayectoria que ya desciende. Se regeneró un único lote; el caudal se mantiene en 3.459,141 conformes/h.
+
+Cada carro se representa con tres paredes, suelo y **cara receptora completamente abierta**, delimitada por postes y umbral bajo, sin panel amarillo vertical. Su cara local +X se orienta hacia el transportador: -90° para A y +90° para B, con normales mundiales +Z y -Z respectivamente. No hay una compensación que vuelva a colocar la pared delante de la llegada. La posición fija y el inventario de ambos carros se conservan.
+
+Pasaron cinco pruebas focalizadas: almacenamiento y capacidad de los carros, dirección de recogida, y recorrido horizontal de los 396 descartes. La revisión del navegador comprueba las dimensiones de las ocho plataformas y las normales de ambas aberturas, además de WebGL, 3.200 piezas, ocho cámaras, 62 capas y vista móvil sin desbordamiento. Primeros planos: `artifacts/greenfield_09/verification/flat-platform-closeup.png`, `bin-A-opening-closeup.png` y `bin-B-opening-closeup.png`.

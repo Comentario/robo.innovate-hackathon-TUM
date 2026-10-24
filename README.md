@@ -281,3 +281,5 @@ Abrir `artifacts/greenfield_05/index.html`: estructuras reforzadas, Inspection p
 Vista actual: `artifacts/greenfield_07/index.html`. Retención de rejilla metálica, boca abierta del chute y dos carros de descarte fijos en los extremos. Se retiró el circuito de recogida de la escena. Los KPIs corresponden al nuevo lote simulado; ver `docs/greenfield_dual.md`.
 
 Ajuste visual actual: `artifacts/greenfield_08/index.html` (chapa plana de unión y carros orientados hacia la descarga; mismo lote y KPIs de greenfield_07).
+
+Última corrección: `artifacts/greenfield_09/index.html`. Plataforma plana de 730×600 mm conectada a la mesa; ambos carros con cara receptora abierta hacia el transportador. Incluye primeros planos en `artifacts/greenfield_09/verification/`.
