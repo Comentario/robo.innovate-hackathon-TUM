@@ -75,3 +75,19 @@ El caudal de salida del lote es **3.597,994 ladrillos conformes/h**, contando ú
 Pasaron 29 pruebas de modelo y contratos (20 anteriores y 9 de logística dual), incluyendo concurrencia real A/B, soporte del primer pallet, acceso exclusivo al merge, capacidad y retorno de carros, y parada por falta de confirmación. La comprobación de envolventes externas pasó en 162 instantes; conserva las exclusiones descritas arriba.
 
 La revisión de navegador se ejecutó sin acceso HTTP/HTTPS: WebGL activo, 3.200 piezas, ocho cámaras, 63 tarjetas de capas al final, cuatro pallets expedidos y ausencia de errores JavaScript. El ancho móvil de 430 px no produce desbordamiento horizontal. Capturas y datos de navegador: `artifacts/greenfield_04/verification/`. El renderizado de la cámara usa un contexto independiente para mantener visible la escena principal al desplegar el panel.
+
+## Revisión visual sin resimulación
+
+Checkpoint previo: `5260ca0`, demo `artifacts/greenfield_04/index.html`. Nueva vista: `artifacts/greenfield_05/index.html`. Se reutiliza **exactamente el mismo `run.json`**; no se ejecuta SimPy, percepción ni recálculo de KPIs.
+
+```bash
+python3 scripts/greenfield_refresh_view.py artifacts/greenfield_04 --output-dir artifacts/greenfield_05
+```
+
+Cambios: puente de stacks con doble viga, carros extremos, carro de izado, mástil y respaldo de horquilla; portales reforzados; vivienda del apilador con paneles inferiores y ventanas; chasis y guías de salida reforzados. El chute termina antes de la envolvente de rodillos de recogida. El empujador de singulación se eleva visualmente fuera del paso de nuevas filas y desciende durante el empuje existente; esta elevación es una animación de holgura, sin asignación adicional de tiempo en el modelo. Su carrera/viabilidad requeriría validación mecánica.
+
+Los carros y el recinto de descarga se mantienen porque participan en el flujo. Las bases de los carros se representan como plataformas motorizadas omnidireccionales para explicar su desplazamiento lateral sin operario. Esto es una interpretación visual del concepto, sin selección de un AGV comercial ni simulación de dirección de ruedas, aceleraciones o control de navegación.
+
+Inspection panel vuelve a una ventana amplia (660 px en escritorio). Hover identifica componentes con sombreado y contorno punteado: verde actuadores, rojo sensores, azul transporte y ámbar estructuras. Clic abre la ficha, referencia enlazada y valores nominales **ya incluidos en el catálogo**, diferenciados de velocidades/cargas asumidas y mecanismos propios sin fabricante seleccionado. No se han inventado datasheets para los mecanismos custom.
+
+Verificación: comparación SHA-256 idéntica de ambos `run.json` (`c61ce000a5c2150b8167c4a25e7125ddec520c8427354571e69e875af673e317`), navegador offline con hover y clic real, ficha Basler y resolución 2600×2160, panel de 660 px, ocho cámaras, 3.200 piezas y 63 tarjetas de capas. Ancho móvil de 430 px sin desbordamiento. Evidencia en `artifacts/greenfield_05/verification/`. Las 29 pruebas de simulación anteriores no se vuelven a ejecutar porque el modelo no cambió.

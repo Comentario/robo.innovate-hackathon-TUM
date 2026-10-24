@@ -267,3 +267,11 @@ Coloca cuatro piezas, reconstruye el cliente y completa las ocho restantes con
 Ver [recuperación integrada](docs/person1_recovery.md). Para sustituir la maqueta
 por el equipo del evento, ver [datos y conexión pendientes](docs/event_connection.md)
 y `config/event_connection.template.json`, una plantilla informativa desactivada.
+
+Para retocar únicamente la vista 3D sin volver a ejecutar la simulación:
+
+```bash
+python3 scripts/greenfield_refresh_view.py artifacts/greenfield_04 --output-dir artifacts/greenfield_05
+```
+
+Abrir `artifacts/greenfield_05/index.html`: estructuras reforzadas, Inspection panel ampliado e inspector de componentes con hover/clic. El informe y los KPIs se reutilizan sin cambios.
