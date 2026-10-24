@@ -79,7 +79,7 @@ class TwinPlant(Plant):
         self.add_aux('OUTPUT-SHUTTLE',[28,.154,0],'pallet_shuttle')
         self.add_aux('OUTPUT-CART',[31.5,0,0],'output_cart')
         for cell,z in enumerate(self.cell_z):
-            key=f'INFEED-{cell}';self.positions[key]=[5.30,BED+.045,z];self.initial[key]=self.positions[key][:]
+            key=f'INFEED-{cell}';self.positions[key]=[5.30,BED+.30,z];self.initial[key]=self.positions[key][:]
 
     def inventory_delivery(self):
         ids=list(self.material)+[f'P-IN-{s}' for s in range(self.c['input_stacks'])]+['KILN-CART']
@@ -94,14 +94,16 @@ class TwinPlant(Plant):
         yield from self.move([tool],[[source[0]-1.45,3.48,source[2]]],'inventory_bridge','Approach inventory from fork-pocket side',v)
         yield from self.move([tool],[[source[0]-1.45,source[1]+.02,source[2]]],'inventory_bridge','Lower fork outside the stack',vz)
         yield from self.move([tool],[[source[0],source[1]+.02,source[2]]],'inventory_bridge','Insert fork into pallet pockets',v)
-        yield from self.pause('inventory_bridge','Pallet retention confirmation',.4)
+        self.emit('retention_command','inventory_bridge',closed=True,duration=.6)
+        yield from self.pause('inventory_bridge','Close retention net and confirm load secured',.6)
         self.emit('bulk_attach','inventory_bridge',stack=stack,line=line)
         lift=3.46-source[1]
         yield from self.move(ids+[tool],[[self.positions[i][0],self.positions[i][1]+lift,self.positions[i][2]] for i in ids]+[[source[0],3.48,source[2]]],'inventory_bridge','Lift complete 800-brick stack above local gantries',vz)
         dx=-source[0];dz=z-source[2]
         yield from self.move(ids+[tool],[[self.positions[i][0]+dx,self.positions[i][1],self.positions[i][2]+dz] for i in ids]+[[0,3.48,z]],'inventory_bridge',f'Transfer retained stack to dehacking line {line+1}',v)
         yield from self.move(ids+[tool],[[self.positions[i][0],self.positions[i][1]-3.2,self.positions[i][2]] for i in ids]+[[0,.28,z]],'inventory_bridge','Lower stack onto receiving dock',vz)
-        yield from self.pause('inventory_bridge','Dock support and fork release confirmation',.4)
+        self.emit('retention_command','inventory_bridge',closed=False,duration=.6)
+        yield from self.pause('inventory_bridge','Retract retention screens after dock load confirmation',.6)
         self.emit('stack_delivered','inventory_bridge',stack=stack,line=line)
         yield from self.move([tool],[[-1.45,.28,z]],'inventory_bridge','Withdraw empty fork from pallet pockets',v)
         yield from self.move([tool],[[-1.45,3.48,z]],'inventory_bridge','Retract fork clear of production',vz)
@@ -138,10 +140,10 @@ class TwinPlant(Plant):
                 with self.inlet[cell].request() as request:
                     yield request;entrance=self.inspect_zones[cell][0].request();yield entrance
                     p=self.positions[identity][:]
-                    yield from self.move([tool],[[5.30,BED+.045,p[2]]],f'cell_{cell}_infeed','Traverse supported pusher carriage behind the row',v)
-                    yield from self.move([tool],[[5.6-self.L/2-.012,BED+.045,p[2]]],f'cell_{cell}_infeed','Advance paddle to rear-face contact',v)
+                    yield from self.move([tool],[[5.30,BED+.30,p[2]]],f'cell_{cell}_infeed','Traverse raised pusher behind incoming row',v)
+                    yield from self.move([tool],[[5.6-self.L/2-.012,BED+.045,p[2]]],f'cell_{cell}_infeed','Lower paddle behind rear face with clear approach',v)
                     yield from self.move([identity,tool],[[5.95,p[1],p[2]],[5.95-self.L/2-.012,BED+.045,p[2]]],f'cell_{cell}_infeed','Pusher singulates one brick',v)
-                    yield from self.move([tool],[[5.30,BED+.045,p[2]]],f'cell_{cell}_infeed','Retract paddle clear before cross-traverse',v)
+                    yield from self.move([tool],[[5.30,BED+.30,p[2]]],f'cell_{cell}_infeed','Lift and retract paddle above row loading envelope',v)
                     yield from self.move([identity],[[5.95,p[1],z]],f'cell_{cell}_infeed','Align separated brick with lane',v)
                     yield from self.move([identity],[[6.4,BED+self.H/2,z]],f'cell_{cell}_infeed','Meter across connected roller bridge',v)
                     self.env.process(self.guarded(self.inspect(identity,cell,entrance)))
@@ -155,7 +157,8 @@ class TwinPlant(Plant):
         v=self.c['speeds']['transfer_m_s'];tool=f'REJECT-PUSHER-{cell}'
         yield from self.move([identity,tool],[[9,BED+self.H/2,z+1.25],[9,BED+.045,z+1.25-self.D/2-.012]],f'cell_{cell}_router','Side pusher sends non-approved brick to common discard',v)
         yield from self.move([tool],[[9,BED+.045,z-self.D/2-.012]],f'cell_{cell}_router','Retract guided side ejector',v)
-        yield from self.move([identity],[[6.8,.65,center+side*k*.3]],f'cell_{cell}_router','Travel down guided discard chute',.6)
+        yield from self.move([identity],[[7.06,.65,center+side*k*.3]],f'cell_{cell}_router','Travel down supported full-length discard chute',.6)
+        yield from self.move([identity],[[6.8,.65,center+side*k*.3]],f'cell_{cell}_router','Enter flush collector receiving rollers',.6)
         self.material[identity]['location']='discard_transit';self.material[identity]['discard_reason']=decision
         self.inspect_zones[cell][-1].release(inspection_reservation);self.notify()
         self.env.process(self.guarded(self.collect_discard(identity,line,side,k,reservation)))
@@ -184,6 +187,7 @@ class TwinPlant(Plant):
         old=f'DISCARD-CART-{line}-{number}';ids=self.cart_pack[line][:];moving=ids+[old];v=self.c['logistics']['cart_m_s']
         self.emit('cart_gate_command',f'discard_cart_{line}',cart=old,opened=False,duration=.4)
         yield from self.pause(f'discard_cart_{line}','Close cart gate before collection',.4)
+        self.emit('cart_route_state',f'discard_cart_{line}',cart=old,state='Loaded departure',line=line)
         self.emit('discard_swap_start',f'discard_cart_{line}',line=line,cart=old,bricks=len(ids))
         yield from self.move(moving,[[p[0]-4.2,p[1],p[2]] for p in (self.positions[i] for i in moving)],f'discard_cart_{line}','Collect loaded discard cart into service lane',v)
         yield from self.move(moving,[[p[0],p[1],p[2]+side*1.4] for p in (self.positions[i] for i in moving)],f'discard_cart_{line}','Clear cart exchange intersection',v)
@@ -203,12 +207,15 @@ class TwinPlant(Plant):
         self.cart_index[line]=next_number;self.cart_pack[line]=self.cart_payloads[empty]
         self.emit('cart_gate_command',f'discard_cart_{line}',cart=empty,opened=True,duration=.4)
         yield from self.pause(f'discard_cart_{line}','Open receiving gate after cart-present confirmation',.4)
+        self.emit('cart_route_state',f'discard_cart_{line}',cart=empty,state='Receiving dock confirmed',line=line)
         self.emit('discard_swap_complete',f'discard_cart_{line}',line=line,cart=empty);self.notify()
 
     def remove_cart(self,moving,line,number):
         z=self.line_z[line];side=-1 if line==0 else 1;cart=moving[-1];ids=moving[:-1];v=self.c['logistics']['cart_m_s'];depot=z+side*11
         dz=depot-self.positions[cart][2]
         yield from self.move(moving,[[p[0],p[1],p[2]+dz] for p in (self.positions[i] for i in moving)],f'cart_collection_{line}','Transport loaded cart to designated unloading area',v)
+        yield from self.pause(f'cart_collection_{line}','Automatic depot docking sensor confirmation',.25)
+        self.emit('cart_route_state',f'cart_collection_{line}',cart=cart,state='Automatic unloading',line=line)
         self.emit('discard_cart_removed',f'cart_collection_{line}',line=line,cart=cart)
         self.emit('cart_gate_command',f'cart_collection_{line}',cart=cart,opened=True,duration=.4)
         yield from self.pause(f'cart_collection_{line}','Open cart gate inside unloading area',.4)
@@ -220,6 +227,7 @@ class TwinPlant(Plant):
         yield from self.pause(f'cart_collection_{line}','Close empty cart gate before return',.4)
         self.disposal_ids[line].extend(ids);self.cart_payloads[cart].clear()
         self.emit('discard_cart_emptied',f'cart_collection_{line}',line=line,cart=cart,bricks=len(ids))
+        self.emit('cart_route_state',f'cart_collection_{line}',cart=cart,state='Empty return',line=line)
         # Empty carts return on a separate lane; the FIFO queue never overtakes.
         yield from self.move([cart],[[3.0,0,depot]],f'cart_collection_{line}','Transfer empty cart onto return lane',v)
         with self.staging_lock[line].request() as request:
@@ -228,6 +236,8 @@ class TwinPlant(Plant):
             yield from self.move([cart],[[3.0,0,target_z]],f'cart_collection_{line}','Return empty cart behind queued spares',v)
             yield from self.move([cart],[[1.6,0,target_z]],f'cart_collection_{line}','Park empty cart at tail of spare queue',v)
             yield self.empty_carts[line].put(number)
+        yield from self.pause(f'cart_collection_{line}','Automatic spare-bay presence confirmation',.25)
+        self.emit('cart_route_state',f'cart_collection_{line}',cart=cart,state='Available spare',line=line)
         self.emit('discard_cart_returned',f'cart_collection_{line}',line=line,cart=cart);self.services_pending-=1;self.notify()
 
     def prepare_pallet(self,line,index):
@@ -330,7 +340,7 @@ class TwinPlant(Plant):
         r['kpis']['discard_cart_exchanges']=sum(e['kind']=='discard_swap_complete' for e in self.events)
         r['kpis']['output_cart_dispatched']=self.output_cart_departed
         r['scope'][:1]=['The batch represents four stacks, not the full 36-stack industrial kiln cart; the 800/560-brick stack/pallet interfaces are preserved.','One common discard stream for off-spec and unresolved observations; the reason remains in the trace. No automatic reinsertion.',
-            'Discard collection includes finite carts and scheduled replacement; manual cart transport described by the mentor is an auxiliary logistics service, not a human classification station.',
+            'Discard carts follow an autonomous concept route: interlocked exchange, automatic unloading, separate empty return, FIFO spare docking and presence confirmation. No operator is modeled; industrial AGV navigation and contact dynamics require qualification.',
             'Internal settling inside enclosed carts is abstracted, not contact-simulated. Bulk fork, rail carts and full-stack crane require separate load validation.']
         for layer in r['layers']:layer['line']=layer['cell']//4
         return r

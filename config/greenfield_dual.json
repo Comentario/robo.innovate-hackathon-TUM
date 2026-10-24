@@ -72,7 +72,7 @@
     "official": "UTUM Brick Coloration slide 18: 800 input, 560 output, 10x4x20 to 10x4x14; dimensions 245x67x69 mm.",
     "mass": "1.8 kg engineering assumption, not verified ACME SKU. Comparable US Brick King: 3.36-4.2 lb.",
     "timing": "Selected engineering speeds and dwell, not measured factory cycles. Derived per movement; no acceleration/contact dynamics. Source offered rate 7500/h is a target, not achieved capacity. Eight cells and 1.0 m/s high-load gantry profile are the scaled candidate; compare equal profiles across cell counts.",
-    "autonomy": "Classification and correction require no human review. Discard cart collection/unloading is modeled as scheduled auxiliary service, compatible with the manual logistics described by the mentor.",
+    "autonomy": "Automatic discard-cart service circuit with docking confirmations, finite spares and interlocked exchange; no human transport or review is modeled. Navigation/control hardware integration remains a concept.",
     "baseline": "Labor shortage, not verified labor savings. Mentor estimate 20-25 workers/shift; no human station modeled, no headcount removal or ROI claim."
   },
   "layout": "dual",
@@ -80,7 +80,7 @@
     "cart_m_s": 0.4,
     "bridge_xy_m_s": 0.6,
     "bridge_z_m_s": 0.35,
-    "fork_tool_kg": 200,
+    "fork_tool_kg": 300,
     "bridge_capacity_kg": 2000,
     "rail_cart_capacity_kg": 8000,
     "discard_cart_capacity": 120,

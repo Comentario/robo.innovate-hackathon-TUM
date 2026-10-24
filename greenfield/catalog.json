@@ -4,12 +4,15 @@
     "model": "Gudel FP-4, high-load reference",
     "url": "https://www.gudel.com/products/linearaxis/fp",
     "nominal": {
-      "payload_force_N": 2000,
-      "xy_speed_m_s": 1.25,
-      "long_axis_stroke_m": 50.08,
-      "cross_axis_stroke_m": 6.192
+      "Axis reference": "FP-4",
+      "Reference payload force": "2,000 N",
+      "Reference XY speed": "1.25 m/s",
+      "Modeled layer + tool": "102 kg",
+      "Modeled XY / Z": "1.0 / 0.7 m/s"
     },
-    "scope": "Reference axis envelope, not an approved configured machine. Long axis maps to world Z; EOAT, vertical axis, dynamics, temperature and full stroke need integrator validation."
+    "scope": "Reference axis envelope, not an approved configured machine. Long axis maps to world Z; EOAT, vertical axis, dynamics, temperature and full stroke need integrator validation.",
+    "image_asset": "gantry.png",
+    "image_credit": "G\u00fcdel \u00b7 FP family manufacturer image (FP-7 pictured; not the selected FP-4)"
   },
   {
     "id": "pallet_belt",
@@ -28,22 +31,31 @@
     "model": "Basler ace 2 a2A2600-64ucBAS",
     "url": "https://docs.baslerweb.com/a2a2600-64ucbas",
     "nominal": {
-      "fps_default": 65,
-      "pixels": [
-        2600,
-        2160
-      ]
+      "Resolution": "2600 \u00d7 2160 pixels",
+      "Frame rate": "65 fps (default)",
+      "Shutter": "Global shutter",
+      "Color interface": "USB 3.0 color",
+      "Trigger": "Hardware trigger"
     },
-    "scope": "Color, global shutter, hardware trigger. Exposure/inference/rejection errors are assumptions; no rendered-image perception is executed."
+    "scope": "Color, global shutter, hardware trigger. Exposure/inference/rejection errors are assumptions; no rendered-image perception is executed.",
+    "image_asset": "camera.jpg",
+    "image_credit": "Basler \u00b7 ace 2 USB color, official product documentation"
   },
   {
     "id": "presence",
-    "model": "SICK WTB4C-3Pxxx",
-    "url": "https://www.sick.com/media/docs/7/97/097/operating_instructions_wtb4c_3pxxx_axx_de_en_fr_pt_es_it_ja_zh_ru_im0070097.pdf",
+    "model": "SICK WTB4-3P2162 \u00b7 miniature photoelectric sensor",
+    "url": "https://www.sick.com/media/pdf/2/92/992/dataSheet_WTB4-3P2162_1028084_es.pdf",
     "nominal": {
-      "response_s": 0.0005
+      "Supply": "10\u201330 V DC",
+      "Sensing range": "15\u2013150 mm",
+      "Response": "0.5 ms",
+      "Output": "PNP, 100 mA maximum",
+      "Light": "Visible red, 650 nm",
+      "Protection": "IP67"
     },
-    "scope": "Virtual position/presence reference; not a safety component or connected sensor."
+    "scope": "Background-suppression proximity sensor, mounted above the brick with a short downward sensing path. Red beam is illustrative. Not a safety protective sensor.",
+    "image_asset": "sensor.png",
+    "image_credit": "SICK \u00b7 official product datasheet, illustration may differ"
   },
   {
     "id": "formation",
@@ -74,5 +86,37 @@
       "family_payload_max_kg": 3200
     },
     "scope": "Family reference for overhead area handling only. Selected 2000 kg bulk lifting, 200 kg fork, travel speeds, building superstructure, long span/multiple supports and retention remain design assumptions requiring qualification. It is separate from the 102 kg layer tools."
+  },
+  {
+    "id": "cell_axis",
+    "model": "Festo ELGC-TB-80 \u00b7 guided toothed-belt axis",
+    "url": "https://ftp.festo.com/Public/PNEUMATIC/SOFTWARE_SERVICE/Documentation/2019/EN/ELGC-TB_EN.PDF",
+    "image_asset": "cell-axis.jpg",
+    "image_credit": "Festo \u00b7 ELGC-TB official catalog, family illustration",
+    "nominal": {
+      "Maximum feed force": "250 N",
+      "Maximum speed": "1.5 m/s",
+      "Repeatability": "\u00b10.1 mm",
+      "Available reference strokes": "200\u20132,000 mm",
+      "Guide": "Recirculating ball bearing",
+      "Protection": "IP40"
+    },
+    "scope": "Reference for singulation, side ejection and selector axes. Custom multi-axis carriage, paddle, motor, selected stroke, contamination protection, acceleration and force limits require sizing. Force/speed maxima do not establish a valid operating point."
+  },
+  {
+    "id": "pallet_fork",
+    "model": "KINSHOFER KM 401-2000-600 \u00b7 retained-fork reference",
+    "url": "https://kinshofer.com/images/pdf_cra_en/Kinshofer_crane-catalog_en.pdf#page=21",
+    "image_asset": "pallet-fork.png",
+    "image_credit": "KINSHOFER \u00b7 crane attachments catalog, KM 401 family illustration",
+    "nominal": {
+      "Fork payload": "2,000 kg",
+      "Tine length": "1,150 mm",
+      "Tine spread": "475\u2013815 mm",
+      "Clear height": "1,050\u20131,650 mm",
+      "Fork self-weight": "205 kg",
+      "Modeled EOAT incl. retention": "300 kg (assumed)"
+    },
+    "scope": "Catalog fork principle; manufacturer requires a protection trellis/net for loose material. This scene adds a custom retractable retaining cage and automated bridge interface. Neither the cage nor the integrated crane is a certified KINSHOFER configuration."
   }
 ]

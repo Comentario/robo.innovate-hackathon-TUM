@@ -1,6 +1,6 @@
 """Material and track audits plus source-qualified reference-envelope checks."""
 from pathlib import Path
-import json,math
+import json,math,base64,mimetypes
 
 
 def audit(report):
@@ -81,7 +81,13 @@ def render_view(report,folder,study=None):
     template=Path(__file__).with_name('viewer'+suffix+'.html').read_text()
     code=Path(__file__).with_name('viewer'+suffix+'.js').read_text()
     library=Path(__file__).parents[1]/'third_party/three/three.min.js'
-    payload=json.dumps(visual_payload(report),separators=(',',':')).replace('<','\\u003c')
+    view=visual_payload(report)
+    view['catalog']=[dict(row) for row in report.get('catalog',[])]
+    for row in view['catalog']:
+        if row.get('image_asset'):
+            asset=Path(__file__).with_name('assets')/row['image_asset']
+            if asset.is_file():row['image']='data:'+str(mimetypes.guess_type(asset.name)[0])+';base64,'+base64.b64encode(asset.read_bytes()).decode('ascii')
+    payload=json.dumps(view,separators=(',',':')).replace('<','\\u003c')
     template=template.replace('__STUDY__',json.dumps(study or [])).replace('__THREE__',library.read_text()).replace('__REPORT__',payload).replace('__CODE__',code)
     (Path(folder)/'index.html').write_text(template)
 

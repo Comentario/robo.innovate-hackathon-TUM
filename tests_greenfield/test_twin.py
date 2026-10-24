@@ -1,7 +1,7 @@
 """Logistics invariants for the two-line layout, independent of graphics."""
 from copy import deepcopy
 from pathlib import Path
-import json, unittest
+import json, unittest, os
 from greenfield.twin import TwinPlant
 from greenfield.report import audit
 from greenfield.clearance import pose,sampled_material_clearance
@@ -10,7 +10,9 @@ class TwinTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.config=json.loads((Path(__file__).parents[1]/'config/greenfield_dual.json').read_text())
-        cls.base=TwinPlant(cls.config).run()
+        cached=os.environ.get('GREENFIELD_TEST_REPORT')
+        cls.base=json.loads(Path(cached).read_text()) if cached else TwinPlant(cls.config).run()
+        if cached and cls.base['config']!=cls.config:raise AssertionError('Cached run configuration differs from tested configuration')
 
     def test_inventory_arrives_on_one_cart_before_fork_delivery(self):
         r=self.base;m=r['mechanics'];arrived=next(e['t'] for e in r['events'] if e['kind']=='inventory_arrived')
@@ -99,5 +101,59 @@ class TwinTests(unittest.TestCase):
         layer=next(x for x in r['layers'] if x['index']==2)
         for identity in layer['ids']:
             self.assertFalse(any(s['station'].startswith('stacker_') for s in r['mechanics']['tracks'][identity]))
+
+    def test_pusher_is_raised_during_every_new_row_arrival(self):
+        r=self.base;m=r['mechanics'];L,H,D=m['brick_m']
+        for b in r['material']:
+            cell=b.get('cell')
+            if cell is None:continue
+            for stroke in m['tracks'][b['id']]:
+                if stroke['label']!='Powered row discharge to infeed':continue
+                for u in [0,.25,.5,.75,1]:
+                    t=stroke['t0']+(stroke['t1']-stroke['t0'])*u
+                    tool=pose(m,f'INFEED-{cell}',t);brick=pose(m,b['id'],t)
+                    collision=abs(tool[0]-brick[0])<L/2+.012-1e-6 and abs(tool[1]-brick[1])<H/2+.045-1e-6 and abs(tool[2]-brick[2])<D/2+.025-1e-6
+                    self.assertFalse(collision,(b['id'],t,tool,brick))
+
+    def test_every_push_is_at_brick_height_and_rear_face_contact(self):
+        r=self.base;m=r['mechanics'];count=0
+        for b in r['material']:
+            for stroke in m['tracks'][b['id']]:
+                if stroke['label']!='Pusher singulates one brick':continue
+                cell=b['cell'];count+=1
+                for u in [0,.25,.5,.75,1]:
+                    t=stroke['t0']+(stroke['t1']-stroke['t0'])*u
+                    paddle=pose(m,f'INFEED-{cell}',t);brick=pose(m,b['id'],t)
+                    self.assertAlmostEqual(paddle[0]+.012,brick[0]-m['brick_m'][0]/2,places=5)
+                    self.assertAlmostEqual(paddle[1]-.045,1.25,places=5)
+                    self.assertAlmostEqual(paddle[2],brick[2],places=5)
+        self.assertEqual(count,len(r['material']))
+
+    def test_discard_chute_finishes_at_supported_collector_entry(self):
+        r=self.base;m=r['mechanics'];count=0
+        for b in r['material']:
+            seq=m['tracks'][b['id']]
+            for k,s in enumerate(seq):
+                if s['label']!='Travel down supported full-length discard chute':continue
+                count+=1;next_s=seq[k+1]
+                self.assertEqual(s['to'],next_s['from']);self.assertAlmostEqual(s['to'][0],7.06)
+                self.assertEqual(next_s['label'],'Enter flush collector receiving rollers')
+                self.assertEqual(next_s['to'],[6.8,.65,s['to'][2]])
+                # 30 mm bridge to the collector edge: less than a brick's support length.
+                self.assertLess(7.06-(6.8+.46/2),m['brick_m'][0])
+        self.assertEqual(count,r['kpis']['discard_bricks'])
+
+    def test_retention_and_automatic_cart_cycle_are_recorded(self):
+        r=self.base;events=r['events']
+        cmds=[e for e in events if e['kind']=='retention_command']
+        self.assertEqual([e['closed'] for e in cmds],[True,False]*4)
+        for stroke in r['mechanics']['tracks']['INVENTORY-FORK']:
+            if stroke['label'] not in ('Lift complete 800-brick stack above local gantries','Lower stack onto receiving dock') and not stroke['label'].startswith('Transfer retained stack'):continue
+            last=max((e for e in cmds if e['t']<=stroke['t0']),key=lambda e:e['t'])
+            self.assertTrue(last['closed']);self.assertGreaterEqual(stroke['t0']+1e-6,last['t']+last['duration'])
+        for e in events:
+            if e['kind']!='discard_cart_returned':continue
+            states=[x['state'] for x in events if x['kind']=='cart_route_state' and x['cart']==e['cart'] and x['t']<=e['t']]
+            self.assertEqual(states[-4:],['Loaded departure','Automatic unloading','Empty return','Available spare'])
 
 if __name__=='__main__':unittest.main()
