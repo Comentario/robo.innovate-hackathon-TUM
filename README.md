@@ -2,21 +2,20 @@
 
 Preparación para el reto #8: Intelligent Brick Blending and Palletizing.
 
-## Tarea 3 · concepto 1: instalación nueva autónoma
+## Tarea 3 · ocho células en dos líneas paralelas
 
 ```bash
-python3 scripts/greenfield_demo.py --compare --output-dir artifacts/greenfield_03
+python3 scripts/greenfield_demo.py --compare --output-dir artifacts/greenfield_04
 ```
 
-Abrir `artifacts/greenfield_03/index.html`: ocho células, transportadores por zonas,
-shuttles, topes y empujadores sincronizados, cámaras virtuales ampliables y apilado descendente. Sin estación de
-clasificación humana. KPIs de producto **liberado** frente a material formado,
-actividad de transferencias, meta y brecha de capacidad. Mecánica, cambios y límites: [greenfield v2](docs/greenfield_v2.md).
-Base inicial: [concepto greenfield](docs/greenfield.md).
+Abrir `artifacts/greenfield_04/index.html`. Carro de inventario, puente de entrega,
+dos dehackers, dos apiladores y salida común sobre carro. Un solo descarte con
+carros que se recogen, vacían y retornan. El panel de cámaras es desplegable y
+Layer history permite inspeccionar todas las capas formadas.
 
-Comparación con 2, 4, 6 y 8 células y cinco escenarios de incertidumbre/fallos en
-`comparison.html`. Son estimaciones sintéticas, no rendimiento industrial validado.
-El prototipo previo queda intacto en `plant_sim` y su commit `86b820d`.
+Arquitectura, supuestos y límites: [doble línea](docs/greenfield_dual.md).
+Punto de retorno anterior: `6e912e2`, `artifacts/greenfield_03/index.html`.
+Antecedentes: [greenfield v2](docs/greenfield_v2.md).
 
 ## Tarea 3: prototipo anterior de planta 3D con SimPy
 

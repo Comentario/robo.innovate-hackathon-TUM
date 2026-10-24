@@ -32,7 +32,7 @@ def audit(report):
 
 def equipment_checks(c):
     mass=c['brick_mass_kg'];g=c['geometry'];layer=40*mass+c['layer_tool_mass_kg']
-    return [
+    checks=[
         {'component':'Layer gantry','selected':f'{layer:.1f} kg including assumed tool',
          'reference':'2000 N high-load axis envelope (~204 kg); selected X/Z speed <= 1.25 m/s',
          'within_envelope':layer<=2000/9.80665 and c['speeds']['gantry_xy_m_s']<=1.25},
@@ -46,6 +46,19 @@ def equipment_checks(c):
          'reference':'Same pallet-conveyor envelope; support distribution still requires verification',
          'within_envelope':560*mass+25<=3000 and (560*mass+25)/1.2<=1250},
     ]
+    if c.get('layout')=='dual':
+        checks=[row for row in checks if row['component']!='Input pallet conveyor']
+        log=c['logistics'];stack=800*mass+25
+        checks.extend([
+            {'component':'Complete-stack bridge','selected':f'{stack+log["fork_tool_kg"]:.1f} kg including assumed fork',
+             'reference':f'{log["bridge_capacity_kg"]} kg design target; Demag family is a principle reference, not span/EOAT certification',
+             'within_envelope':stack+log['fork_tool_kg']<=log['bridge_capacity_kg']},
+            {'component':'Inventory rail cart','selected':f'{c["input_stacks"]*stack+1000:.1f} kg including assumed 1000 kg cart',
+             'reference':f'{log["rail_cart_capacity_kg"]} kg custom design target; configuration not supplier-qualified',
+             'within_envelope':c['input_stacks']*stack+1000<=log['rail_cart_capacity_kg']},
+        ])
+    return checks
+
 
 
 def visual_payload(report):
@@ -58,14 +71,15 @@ def visual_payload(report):
     m['stop_commands']=[[e['t'],lookup[e['zone']],int(e['opened'])] for e in report['events'] if e['kind']=='stop_command']
     def visible(e):
         if e['kind'] in ('stop_command','buffer_admitted','attach','detach'):return False
-        return e['kind']!='step' or e['station'] in ('dehack','stacker','elevator','guide_gate','pallet_out','dock') or e['station'].endswith('_former')
+        return e['kind']!='step' or e['station'] in ('dehack','stacker','elevator','guide_gate','pallet_out','dock') or e['station'].startswith(('dehack_','stacker_','elevator_','guide_gate_','inventory_','output_','pallet_out_')) or e['station'].endswith('_former')
     view['events']=[e for e in report['events'] if visible(e)]
     return view
 
 
 def render_view(report,folder,study=None):
-    template=Path(__file__).with_name('viewer.html').read_text()
-    code=Path(__file__).with_name('viewer.js').read_text()
+    suffix='_dual' if report['mechanics'].get('layout')=='dual' else ''
+    template=Path(__file__).with_name('viewer'+suffix+'.html').read_text()
+    code=Path(__file__).with_name('viewer'+suffix+'.js').read_text()
     library=Path(__file__).parents[1]/'third_party/three/three.min.js'
     payload=json.dumps(visual_payload(report),separators=(',',':')).replace('<','\\u003c')
     template=template.replace('__STUDY__',json.dumps(study or [])).replace('__THREE__',library.read_text()).replace('__REPORT__',payload).replace('__CODE__',code)

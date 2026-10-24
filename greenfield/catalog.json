@@ -65,5 +65,14 @@
       "gear_ratio": "30:1"
     },
     "scope": "35 W 30:1 reference: 0.60 m/s, 350 N with drive head. Independent zones, modeled 80 ms stop actuation. Custom 300 mm zones, small abrasive bricks, roller spacing, torque, dust and 0\u201340 \u00b0C suitability require validation. Not a complete conveyor qualification."
+  },
+  {
+    "id": "bulk_bridge",
+    "model": "Complete-stack bridge / Demag KBK principle reference",
+    "url": "https://www.demagcranes.com/en-au/products/cranes/kbk-light-crane-system/kbk-double-girder-suspension-cranes",
+    "nominal": {
+      "family_payload_max_kg": 3200
+    },
+    "scope": "Family reference for overhead area handling only. Selected 2000 kg bulk lifting, 200 kg fork, travel speeds, building superstructure, long span/multiple supports and retention remain design assumptions requiring qualification. It is separate from the 102 kg layer tools."
   }
 ]

@@ -187,7 +187,7 @@ class Plant:
         starts=[self.positions[i][:] for i in ids];x=sum(p[0] for p in starts)/len(ids);z=sum(p[2] for p in starts)/len(ids)
         xt=sum(p[0] for p in targets)/len(ids);zt=sum(p[2] for p in targets)/len(ids)
         top=max(p[1] for p in starts)+self.H/2;top_t=max(p[1] for p in targets)+self.H/2
-        clear=max(2.35,top+.15,top_t+.15);home=[0,2.6,0] if tool=='dehack' else [(21+self.tail_shift),2.6,0]
+        clear=max(2.35,top+.15,top_t+.15);home=getattr(self,'tool_homes',{}).get(tool,[0,2.6,0] if tool=='dehack' else [(21+self.tail_shift),2.6,0])
         yield from self.move([aux],[[x,2.6,z]],tool,'Approach above source',speed['gantry_xy_m_s'])
         yield from self.move([aux],[[x,top,z]],tool,'Lower to grip',speed['gantry_z_m_s'])
         yield from self.pause(tool,'Grip confirmation',dwell['grip_s'])
@@ -334,6 +334,9 @@ class Plant:
                     yield from self.pause(f'cell_{cell}_router','Automatic home check',.4)
                     yield from self.move([identity],[p],f'cell_{cell}_router','Retry confirmed transfer',.1)
                     self.stats['recoveries']+=1;self.emit('recovery_complete',f'cell_{cell}_router',brick=identity)
+                if decision!='accepted' and hasattr(self,'discard'):
+                    yield from self.discard(identity,cell,decision,reservation)
+                    return
                 if decision!='accepted':
                     capacity=self.c[decision+'_capacity']
                     if self.stats[decision]>=capacity:raise Hold(decision+' container full')
