@@ -279,3 +279,5 @@ Abrir `artifacts/greenfield_05/index.html`: estructuras reforzadas, Inspection p
 Última demostración con ciclos corregidos: `artifacts/greenfield_06/index.html`. Incluye empujador con despeje/contacto modelados, chute conectado, retención del stack, circuito automático visible (`Watch cart cycle`) e imágenes de fabricante en las fichas. Ver `docs/greenfield_dual.md` para resultados, referencias y límites.
 
 Vista actual: `artifacts/greenfield_07/index.html`. Retención de rejilla metálica, boca abierta del chute y dos carros de descarte fijos en los extremos. Se retiró el circuito de recogida de la escena. Los KPIs corresponden al nuevo lote simulado; ver `docs/greenfield_dual.md`.
+
+Ajuste visual actual: `artifacts/greenfield_08/index.html` (chapa plana de unión y carros orientados hacia la descarga; mismo lote y KPIs de greenfield_07).

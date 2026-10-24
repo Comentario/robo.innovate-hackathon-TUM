@@ -123,3 +123,7 @@ Se ejecutó un lote nominal nuevo porque cambió el recorrido de recogida. Se ve
 Resultado del lote: 3459.141 conformes/h expedidos, 62 capas completas, 4 pallets expedidos, 240 piezas en pallets parciales y 324 en WIP. Los 396 descartes permanecen en los dos carros; no hay intercambios ni vaciado. El cambio de flujo actualiza el KPI respecto a los 3.597,208/h anteriores.
 
 La revisión de navegador usa el lote nuevo y comprueba 3.200 piezas, ocho cámaras, 62 capas, dos carros fijos, ausencia del control del circuito y las fichas con imágenes. Evidencia: `artifacts/greenfield_07/verification/`.
+
+## Ajuste visual de unión y orientación (greenfield_08)
+
+Se reutiliza sin cambios el lote de `greenfield_07`. La mesa recibe una chapa de transferencia plana a la cota de las bolas, conectada a la boca abierta del chute. Ambos carros de descarte se giran 180°; la abertura local se ajusta con el giro para que su entrada permanezca orientada al transportador. No se modifican posiciones de almacenamiento, tiempos ni KPIs. Vista: `artifacts/greenfield_08/index.html`.

@@ -121,7 +121,9 @@ for(let cell=0;cell<c.cells;cell++){
  box(8.5,2.32,z,.10,.06,.95,steel);box(8.5,2.275,z,.07,.06,.06,steel);const body=box(8.5,2.21,z,.14,.12,.13,dark);tag(body,'vision');body.userData.cameraCell=cell;cylinder(8.5,2.12,z,.035,.065,dark);
  photoeye(8.5,z,cell,'Camera trigger');
  // The receiving deck and movable cross-belt tray leave a real open shuttle slot.
- bedTable(8.94,z+.425,.58,1.25,B-.05);for(let xx=8.70;xx<9.23;xx+=.08)for(let zz=z-.14;zz<z+1.03;zz+=.08){const ball=new T.Mesh(ballGeometry,steel);ball.position.set(xx,B-.025,zz);scene.add(ball);}for(const xx of [9.20,9.70]){box(xx,B-.35,z,.035,.07,2.36,steel);for(const zz of [z-1.16,z+1.16])box(xx,(B-.385)/2,zz,.05,B-.385,.05,green);}
+ bedTable(8.94,z+.425,.58,1.25,B-.05);
+ // Flat stainless transfer lip, flush with the ball tops and the open chute mouth.
+ box(8.94,B-.0125,z+1.055,.58,.025,.060,steel);for(let xx=8.70;xx<9.23;xx+=.08)for(let zz=z-.14;zz<z+1.03;zz+=.08){const ball=new T.Mesh(ballGeometry,steel);ball.position.set(xx,B-.025,zz);scene.add(ball);}for(const xx of [9.20,9.70]){box(xx,B-.35,z,.035,.07,2.36,steel);for(const zz of [z-1.16,z+1.16])box(xx,(B-.385)/2,zz,.05,B-.385,.05,green);}
  tray('sorter_'+cell,9.45,z,.38,.27);const sorterTruck=machines['sorter_'+cell].carriage;box(0,-.27,0,.56,.06,.24,steel,sorterTruck);box(0,-.19,0,.10,.18,.20,steel,sorterTruck);for(const xx of [-.25,.25])for(const zz of [-.08,.08]){const w=new T.Mesh(cyl,dark);w.scale.set(.05,.035,.05);w.rotation.z=Math.PI/2;w.position.set(xx,-.29,zz);sorterTruck.add(w);}for(let lane=0;lane<3;lane++)conveyor(9.8325,z+lane-1,.335,.29);
  for(let lane=0;lane<3;lane++){const zz=z+lane-1;zoned(10.15,zz,c.buffer_cells_per_shade,cell,lane,'tone');label((cell<4?'A':'B')+(cell%4+1)+' · '+c.shades[lane],[13.5,1.52,zz],true);}
  bedTable(9.75,z+2.12,1.35,1.3);picker(cell,z);
@@ -170,11 +172,12 @@ for(const zz of [-2.2,2.2])box(34,.015,zz,10,.025,.055,steel);label('COMMON OUTP
 function railCart(id,deck){const group=new T.Group();scene.add(group);box(0,deck-.045,0,1.50,.09,5.4,green,group);for(const x of [-.58,-.25,.25,.58])for(const z of [-2.2,2.2]){const wheel=new T.Mesh(cyl,dark);wheel.scale.set(.18,.10,.18);wheel.rotation.x=Math.PI/2;wheel.position.set(x,.09,z);group.add(wheel);}for(const z of [-2.62,2.62])box(0,deck+.03,z,1.50,.06,.06,yellow,group);carts[id]=group;}
 railCart('KILN-CART',.20);railCart('OUTPUT-CART',.154);
 for(const[id,aux]of Object.entries(m.auxiliaries))if(aux.kind==='discard_cart'){
- const group=new T.Group();scene.add(group);box(0,FIXED_DISCARD?.10:.20,0,1.1,.10,.96,steel,group);box(-.55,FIXED_DISCARD?.52:.57,0,.04,FIXED_DISCARD?.75:.65,1.0,red,group);for(const zz of [-.50,.50]){const line=Number(id.split('-')[2]),side=line?-1:1;if(FIXED_DISCARD&&zz===-side*.50){for(const xx of [-.40,.40])box(xx,.52,zz,.30,.75,.04,red,group);}else box(0,FIXED_DISCARD?.52:.57,zz,1.1,FIXED_DISCARD?.75:.65,.04,red,group);}box(.55,.24,0,.035,.12,1.0,red,group);
+ const group=new T.Group();scene.add(group);box(0,FIXED_DISCARD?.10:.20,0,1.1,.10,.96,steel,group);box(-.55,FIXED_DISCARD?.52:.57,0,.04,FIXED_DISCARD?.75:.65,1.0,red,group);for(const zz of [-.50,.50]){const line=Number(id.split('-')[2]),side=line?-1:1;if(FIXED_DISCARD&&zz===side*.50){for(const xx of [-.40,.40])box(xx,.52,zz,.30,.75,.04,red,group);}else box(0,FIXED_DISCARD?.52:.57,zz,1.1,FIXED_DISCARD?.75:.65,.04,red,group);}box(.55,.24,0,.035,.12,1.0,red,group);
  const gate=box(.55,FIXED_DISCARD?.52:.62,0,.035,FIXED_DISCARD?.75:.65,1.0,yellow,group);if(!FIXED_DISCARD)cartGates[id]=gate;
  for(const xx of [-.38,.38])for(const zz of [-.35,.35]){const wheel=new T.Mesh(cyl,dark);wheel.scale.set(.16,.08,.16);wheel.rotation.x=Math.PI/2;wheel.position.set(xx,.08,zz);group.add(wheel);}if(!FIXED_DISCARD)box(-.75,.35,0,.40,.035,.05,steel,group);if(!FIXED_DISCARD){
 // Powered omnidirectional base: no unmodeled human pushing is implied.
 box(0,.11,0,.90,.14,.78,dark,group);for(const xx of [-.38,.38])for(const zz of [-.35,.35]){box(xx,.11,zz,.22,.13,.15,green,group);for(const k of [-1,0,1]){const roller=box(xx+k*.045,.075,zz,.025,.025,.13,steel,group);roller.rotation.z=.65;}}box(0,.29,0,.32,.05,.24,yellow,group);}
+if(FIXED_DISCARD)group.rotation.y=Math.PI;
 carts[id]=group;
 }
 const pallets={};for(const[id,aux]of Object.entries(m.auxiliaries)){if(aux.kind!=='pallet')continue;const group=new T.Group();scene.add(group);for(let k=0;k<3;k++)box(0,-.015,(k-1)*.4,1.2,.09,.10,wood,group);for(let k=0;k<5;k++)box(0,.0525,(k-2)*.2,1.2,.035,.15,wood,group);pallets[id]=group;}
