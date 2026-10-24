@@ -86,7 +86,7 @@ class Plant:
         if c['accepted_overflow_capacity']//c['cells']>50 or c['accepted_overflow_capacity']%c['cells']:
             raise ValueError('Approved reserve layout supports at most 50 pockets per cell, equally divided')
         if c['buffer_cells_per_shade']<14:raise ValueError('Each tone queue must support the largest 40-brick layer quota')
-        if c['buffer_cells_per_shade'] not in (20,30):raise ValueError('Supported physical tone layouts have 20 or 30 zones per shade')
+        if c['buffer_cells_per_shade'] not in (20,30) and not(c.get('accumulation_mode')=='zpa' and 20<=c['buffer_cells_per_shade']<=30):raise ValueError('Supported physical tone layouts: 20/30, or intermediate ZPA layouts from 20 to 30')
         if c['brick_mass_kg']*9.80665>350:raise ValueError('Selected driven roller load envelope exceeded')
         if c['speeds']['belt_m_s']>.6 or c['speeds']['buffer_m_s']>.6:raise ValueError('Selected 35 W 30:1 roller profile exceeded')
         if not .1<=c['speeds']['pallet_m_s']<=.5:raise ValueError('Reference pallet conveyor speed exceeded')
@@ -164,6 +164,7 @@ class Plant:
         gate=None
         if len(ids)==1 and ids[0] in self.material and targets[0][0]>self.positions[ids[0]][0]+.05:
             gate=self.zone_key(self.positions[ids[0]])
+        if self.c.get('accumulation_mode')=='zpa':gate=None
         if gate:
             self.emit('stop_command',station,zone=gate,opened=True,duration=.08)
             yield from self.pause(station,'Retract accumulation stop',.08)

@@ -1,6 +1,6 @@
-# Mecánica de transferencias: revisión 10
+# Mecánica de transferencias: revisión 11
 
-Demo: `artifacts/greenfield_10/index.html`. Checkpoint previo: `44cf2e6`. Mantiene ocho células, dos dehackers, dos palletizadores y los dos carros de descarte fijos. No modifica la percepción ni los grupos de persona 1.
+Demo: `artifacts/greenfield_11/index.html`. Checkpoint previo: `8683301`. Mantiene ocho células, dos dehackers, dos palletizadores y los dos carros de descarte fijos. No modifica la percepción ni los grupos de persona 1.
 
 ## 1. Mesa verde y descarga
 
@@ -33,7 +33,7 @@ Los puntos de transferencia se representan con puentes metálicos apoyados, supe
 |---|---|---|
 | Mesa de capa → cassette | Puente de 69 mm hasta el borde de los rodillos; fila y resto del paquete apoyados | Posición de docking alcanzada; sujeción confirmada antes de separar |
 | Cassette → intake | Puente de 25 mm en las posiciones de salida | Célula receptora reservada |
-| Zonas individuales | Chapa de 8 mm cubriendo la separación entre módulos | Reserva de zona y retirada del tope |
+| Zonas individuales | Chapa de 8 mm cubriendo la separación entre módulos | Reserva de zona y permiso del motor de rodillos |
 | Cola de tonos → selector | Puente de 80 mm hasta el borde de la cassette | Cola y cassette sincronizadas |
 | Selector → formador | Puente de 60 mm hacia la mesa de entrada | Empujador aparcado arriba mientras llegan piezas |
 | Pallet → carro de transferencia | Puentes de apoyo, rodillos, guías laterales y carro retenido sobre raíles | Recurso de merge exclusivo |
@@ -58,7 +58,7 @@ La escena añade motorreductor, eje, apoyos de ruedas, conductor de alimentació
 
 ## 7. Desalineación, guiado y límites
 
-Los carriles individuales tienen guías junto a la pieza, con 8 mm de holgura lateral nominal por lado, en lugar de dejar todo el ancho de la mesa libre. Se añaden guías a las cassettes y a las filas formadas. Las transiciones de pallets tienen contención lateral.
+Los carriles individuales tienen guías junto a la pieza, con 20 mm de holgura lateral nominal por lado, en lugar de dejar todo el ancho de la mesa libre. Se añaden guías a las cassettes y a las filas formadas. Las transiciones de pallets tienen contención lateral.
 
 Se inyecta una desviación angular **sintética de 8°** en B00000, una vez aislado en la mesa de singulación: mordazas opuestas centran la pieza antes de entrar al carril estrecho. La escena interpola ese giro durante el centrado y representa la bajada/apertura de las mordazas. Si el valor supera ±10°, el proceso se detiene antes de la entrada. Se probó explícitamente el caso de 90°. No se afirma que la cámara de persona 1 esté midiendo esa orientación.
 
@@ -71,4 +71,40 @@ La geometría y la lógica representan contención y detección de fallos del pr
 - **3.569,822 conformes/h expedidos**, frente a 3.459,141/h en la revisión anterior. Tiempo y KPIs provienen de las secuencias nuevas; no de un valor objetivo impuesto.
 - **46 pruebas** pasaron, incluyendo la regresión anterior, indexado de todas las piezas restantes, filas traseras inmóviles durante extracción, carreras ortogonales, despeje del formador y fallos de sujeción/orientación. Se reutilizó el lote nominal para evitar simularlo una vez por prueba; los fallos necesarios se ejecutaron aparte.
 - Navegador offline: WebGL, veinte accionamientos de cassettes, ocho sujeciones de paquete, vástagos sin rotación diagonal, desviación angular visible, ficha del carro con imagen, ocho cámaras, 3.200 piezas y 61 tarjetas de capas. Ancho móvil 430 px sin desbordamiento.
-- Evidencia: `artifacts/greenfield_10/verification/`.
+- Evidencia: `artifacts/greenfield_11/verification/`.
+
+
+## Secuencia explícita y componentes de revisión 11
+
+1. El transportador del paquete y los rodillos receptores avanzan sincronizados: se desplazan todas las piezas restantes.
+2. Ambos se detienen. La sujeción superior baja sobre la fila siguiente y se confirma su posición. No se introduce ninguna cuchilla entre ladrillos.
+3. Solo los rodillos independientes de extracción avanzan la fila delantera 100 mm. El resto permanece sobre el transportador detenido, con la fila siguiente retenida.
+4. Se detiene la extracción y se verifica la separación; entonces se permite el desplazamiento lateral de la cassette. La sujeción sube antes de indexar de nuevo.
+
+La última fila no requiere sujetar otra fila inexistente. Los eventos `feed_phase` permiten reconstruir esta secuencia. Confirmaciones y separación son sintéticas, no medidas en una máquina. Es necesario validar fuerza de sujeción, frenado, tolerancias y aceleración con ladrillos reales.
+
+Las zonas posteriores utilizan **ZPA**: cada zona reserva la siguiente antes de activar sus rodillos, y queda detenida cuando no hay espacio. Las guías grises son fijas, con 20 mm de holgura lateral por lado. No son cientos de topes amarillos accionados verticalmente. Esto ahorra cilindros, pero exige motores de zona, sensores y control. [Interroll MultiControl](https://www.interroll.com/fileadmin/Downloads/User_Manuals/Controls/MultiControl/MultiControl_Supplement_EN.pdf) documenta control de hasta cuatro zonas y liberación ZPA; la aptitud para ladrillos calientes/polvorientos queda pendiente.
+
+El empujador tiene dos movimientos separados: un cilindro vertical baja el bastidor que soporta la guía horizontal; el carro horizontal mueve una pala de vástago rígido. Después se retrae y sube el bastidor para dejar entrar material. Cuerpos y vástagos mantienen dimensiones constantes. Las cadenas portacables son eslabones rígidos guiados en una bandeja con retorno en U. El transporte de pallets muestra motorreductor, piñón y cremallera fija; HORSTMANN se mantiene como referencia de carro sobre raíles, no como fabricante de esta variante propia de cremallera.
+
+El descarte conserva mesa verde a nivel y bolas de transferencia. Una banda transversal enrasada conduce hacia una rampa con boca ensanchada y guías rojas continuas, sin muro atravesado en la entrada. Las bolas pasivas no generan movimiento por sí mismas. No se simulan fricción ni deslizamiento.
+
+La retención anterior telescópica queda sustituida por una **cesta rígida de fondo abierto que se eleva completa**, basada en [Eichinger 1059](https://eichinger.de/de/ladegabeln-schutzkoerbe/): cesta arriba para recoger, abajo durante transporte. No se deforma, escala ni se construye alrededor de la carga. Se añaden cuatro maniobras de cuatro segundos por stack: abrir antes de insertar horquillas, cerrar antes de elevar, abrir después del apoyo y cerrar vacía antes del desplazamiento elevado. La mecanización, bloqueo, dimensiones y masa de 400 kg son supuestos propios; no constituyen una configuración certificada del fabricante. Carga total supuesta: 1.865 kg bajo un objetivo de puente de 2 t. La fotografía oficial permite distinguir el producto de referencia de nuestra adaptación.
+
+## Comparación reproducible de capacidad y hardware
+
+Mismo lote sintético de 3.200 piezas, ocho células y misma semilla. El caudal corresponde a piezas conformes **expedidas en pallets completos**, dividido por el tiempo del lote; no es una medición de régimen permanente.
+
+| Zonas por tono | Motores de zona | Controladores de cuatro zonas | Cilindros de tope vertical | Conformes expedidos/h |
+|---|---:|---:|---:|---:|
+| 20 | 544 | 136 | 0 | 2.990,739 |
+| **24 (referencia)** | **640** | **160** | **0** | **3.530,974** |
+| 30 | 784 | 196 | 0 | 3.558,934 |
+
+Se seleccionan 24: 144 motores menos que 30, con caudal 0,79 % menor en este lote. No es un óptimo global ni un análisis económico sin cotizaciones. Cuatro pallets completos (2.240 piezas), 280 piezas en pallets parciales y 284 WIP; 396 piezas descartadas en dos depósitos fijos. Balance íntegro, cero piezas malas colocadas en la verdad sintética, sin filas/columnas monocromáticas. No significa rendimiento perfecto de percepción real.
+
+Evidencia: `artifacts/greenfield_11/run.json`, `comparison.json`, comparativas de 20/30 zonas y capturas de navegador en `verification/`. Los resultados anteriores de esta página describen checkpoints históricos; esta sección y el informe 11 son la referencia vigente.
+
+Para reproducir las tres variantes en una carpeta nueva: `python3 scripts/greenfield_demo.py --compare-zpa --output-dir artifacts/greenfield_zpa_study`. Para actualizar únicamente el visor con resultados existentes: `python3 scripts/greenfield_refresh_view.py artifacts/greenfield_11 --output-dir artifacts/greenfield_11`.
+
+Verificación de revisión 11: 46 pruebas previas más tres pruebas de secuencia/ZPA/cesta superadas. Navegador Edge offline: WebGL activo, 3.200 IDs, 63 capas, ocho cámaras, 20 ejes transversales, ocho sujeciones y dos depósitos fijos; ancho móvil 430 px sin desbordamiento. Comprobados vástagos de dimensiones constantes y determinante unitario de las transformaciones de todos los eslabones en tres instantes.

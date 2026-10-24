@@ -80,4 +80,33 @@ class TransferMechanicsTests(unittest.TestCase):
         self.assertEqual(r['kpis']['bad_placed'],0);self.assertEqual(r['kpis']['discard_cart_exchanges'],0)
         self.assertTrue(all(len(cart['ids'])<=240 for cart in r['discard_cart_state']))
 
-if __name__=='__main__':unittest.main()
+
+    def test_zpa_uses_drives_instead_of_lifting_stop_cylinders(self):
+        r=self.r;self.assertEqual(r['config']['accumulation_mode'],'zpa')
+        self.assertFalse(any(e['kind']=='stop_command' for e in r['events']))
+        self.assertEqual(r['mechanics']['vertical_zone_stops'],0)
+        self.assertEqual(r['mechanics']['zone_drives'],640)
+        self.assertEqual(r['mechanics']['zone_controllers'],160)
+
+    def test_feed_phase_order_stops_pack_before_holding_and_pull_off(self):
+        events=self.r['events']
+        for bay in range(4):
+            phases=[e['phase'] for e in events if e['kind']=='feed_phase' and e['bay']==bay]
+            self.assertEqual(len(phases),320)
+            for k in range(0,len(phases),4):
+                self.assertEqual(phases[k:k+2],['Pack + receiving rollers ON','Pack rollers STOPPED'])
+                self.assertIn(phases[k+2],['Top hold confirmed; pull-off rollers ON','Last row; pull-off rollers ON'])
+                self.assertEqual(phases[k+3],'Pull-off STOPPED; cross-travel permitted')
+
+    def test_rigid_guard_is_open_only_during_low_level_pickup_or_release(self):
+        r=self.r;m=r['mechanics'];commands=[e for e in r['events'] if e['kind']=='retention_command']
+        self.assertEqual([e['closed'] for e in commands],[False,True,False,True]*4)
+        self.assertTrue(all(e['duration']==4 for e in commands))
+        for e in commands:
+            if not e['closed']:self.assertLess(pose(m,'INVENTORY-FORK',e['t'])[1],.4)
+        for s in m['tracks']['INVENTORY-FORK']:
+            if s['label']=='Insert fork into pallet pockets':
+                last=max((e for e in commands if e['t']<=s['t0']),key=lambda e:e['t'])
+                self.assertFalse(last['closed']);self.assertGreaterEqual(s['t0']+1e-6,last['t']+last['duration'])
+
+if __name__ == "__main__":unittest.main()

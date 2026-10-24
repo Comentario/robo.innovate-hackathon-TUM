@@ -9,6 +9,7 @@ def main():
     p=argparse.ArgumentParser(description='Autonomous brick plant: eight cells, two parallel lines')
     p.add_argument('--config',type=Path,default=Path('config/greenfield_dual.json'))
     p.add_argument('--output-dir',type=Path,default=Path('artifacts/greenfield_04'))
+    p.add_argument('--compare-zpa',action='store_true',help='Compare 20/24/30 ZPA zones per shade with the same batch')
     p.add_argument('--compare',action='store_true');p.add_argument('--cells',type=int,choices=(2,4,6,8))
     args=p.parse_args()
     if args.output_dir.exists():p.error('Select a new output directory; previous evidence is preserved')
@@ -17,7 +18,10 @@ def main():
         if dual and args.cells!=8:p.error('The dual layout keeps eight cells. Use the prior config for another cell count.')
         c['cells']=args.cells;c['accepted_overflow_capacity']=50*args.cells
     scenarios=[('Two parallel lines' if dual else 'Single-line reference',{})]
-    if args.compare and dual:
+    if args.compare_zpa:
+        if not dual or c.get('accumulation_mode')!='zpa':p.error('--compare-zpa requires the dual ZPA configuration')
+        scenarios=[(f'ZPA · {n} buffer zones per shade',{'buffer_cells_per_shade':n}) for n in (24,20,30)]
+    elif args.compare and dual:
         scenarios.extend([
             ('Previous layout · different logistics',{'layout':'single'}),
             ('Slower inventory bridge',{'logistics':{**c['logistics'],'bridge_xy_m_s':.3,'bridge_z_m_s':.2}}),

@@ -284,4 +284,6 @@ Ajuste visual actual: `artifacts/greenfield_08/index.html` (chapa plana de unió
 
 Última corrección: `artifacts/greenfield_09/index.html`. Plataforma plana de 730×600 mm conectada a la mesa; ambos carros con cara receptora abierta hacia el transportador. Incluye primeros planos en `artifacts/greenfield_09/verification/`.
 
-Revisión mecánica actual: `artifacts/greenfield_10/index.html`. Indexado del paquete completo con sujeción superior, extracción de fila, accionamientos visibles, puentes/guías, palas rígidas y centrado de una desviación angular. Explicación de las transferencias y límites físicos: [docs/transfer_mechanics.md](docs/transfer_mechanics.md).
+Revisión mecánica actual: `artifacts/greenfield_11/index.html`. Indexado del paquete completo con sujeción superior, extracción de fila, accionamientos visibles, puentes/guías, palas rígidas y centrado de una desviación angular. Explicación de las transferencias y límites físicos: [docs/transfer_mechanics.md](docs/transfer_mechanics.md).
+
+Revisión 11: ZPA sin cilindros de tope por zona, bastidor elevable y empujador independientes, cadena portacables articulada, accionamiento de salida por cremallera, descarte conectado y cesta rígida elevable con referencia Eichinger. Configuración de 24 zonas por tono: 3.530,974 conformes expedidos/h en el lote sintético; comparar 20/24/30 en `artifacts/greenfield_11/comparison.html`. Checkpoint previo `8683301`.

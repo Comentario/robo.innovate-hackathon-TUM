@@ -36,7 +36,7 @@
   "reinspection_resolution": 0.85,
   "false_accept_rate": 0.0,
   "false_reject_rate": 0.0,
-  "buffer_cells_per_shade": 30,
+  "buffer_cells_per_shade": 24,
   "reject_capacity": 500,
   "quarantine_capacity": 200,
   "accepted_overflow_capacity": 400,
@@ -77,14 +77,14 @@
     "timing": "Selected engineering speeds and dwell, not measured factory cycles. Derived per movement; no acceleration/contact dynamics. Source offered rate 7500/h is a target, not achieved capacity. Eight cells and 1.0 m/s high-load gantry profile are the scaled candidate; compare equal profiles across cell counts.",
     "autonomy": "Automatic brick sorting into two stationary finite discard bins. Cart removal/emptying is outside the modeled batch; full-bin interlock stops upstream collection.",
     "baseline": "Labor shortage, not verified labor savings. Mentor estimate 20-25 workers/shift; no human station modeled, no headcount removal or ROI claim.",
-    "mechanical_revision": "10: independently driven nests, whole-pack indexing, top hold-down and external row pull-off; orthogonal pushers; reserved-zone admission without redundant fixed dwell; nominal pose-centering injection."
+    "mechanical_revision": "11: rigid cage raised/lowered as one body, separate frame lift and pusher drives, ZPA motor control without vertical stops, visible rack drive and energy chains."
   },
   "layout": "dual",
   "logistics": {
     "cart_m_s": 0.4,
     "bridge_xy_m_s": 0.6,
     "bridge_z_m_s": 0.35,
-    "fork_tool_kg": 300,
+    "fork_tool_kg": 400,
     "bridge_capacity_kg": 2000,
     "rail_cart_capacity_kg": 8000,
     "discard_cart_capacity": 240,
@@ -92,5 +92,6 @@
     "unload_service_s": 20,
     "discard_collection_available": true,
     "discard_mode": "fixed"
-  }
+  },
+  "accumulation_mode": "zpa"
 }

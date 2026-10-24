@@ -147,7 +147,7 @@ class TwinTests(unittest.TestCase):
     def test_retention_and_automatic_cart_cycle_are_recorded(self):
         r=self.base;events=r['events']
         cmds=[e for e in events if e['kind']=='retention_command']
-        self.assertEqual([e['closed'] for e in cmds],[True,False]*4)
+        self.assertEqual([e['closed'] for e in cmds],[False,True,False,True]*4)
         for stroke in r['mechanics']['tracks']['INVENTORY-FORK']:
             if stroke['label'] not in ('Lift complete 800-brick stack above local gantries','Lower stack onto receiving dock') and not stroke['label'].startswith('Transfer retained stack'):continue
             last=max((e for e in cmds if e['t']<=stroke['t0']),key=lambda e:e['t'])

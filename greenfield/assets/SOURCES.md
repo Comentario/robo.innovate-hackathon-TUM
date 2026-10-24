@@ -11,3 +11,5 @@ Small reference images are embedded in the offline equipment inspector. Credit a
 Retrieved 2026-10-24. Thumbnail resizing/compression only; no AI-generated product images.
 
 - `pallet-transfer-car.jpg`: HORSTMANN, official VWG transfer-car reference photo. https://www.horstmann-anlagentechnik.de/wp-content/uploads/2022/04/Verschiebewagen-2-scaled.jpg (product: https://www.horstmann-anlagentechnik.de/project/transfer-car/?lang=en). Retrieved 2026-10-25; resized for the offline reference card. Supplier installation shown differs from the custom scene.
+
+- `lift-guard.jpg`: Eichinger 1059 manufacturer image, https://eichinger.de/wp-content/uploads/2017/01/1059_web.jpg ; mechanism https://eichinger.de/de/ladegabeln-schutzkoerbe/ . Reference product differs from custom powered integration.

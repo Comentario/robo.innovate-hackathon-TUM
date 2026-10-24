@@ -76,7 +76,7 @@
       "power_W": 35,
       "gear_ratio": "30:1"
     },
-    "scope": "35 W 30:1 reference: 0.60 m/s, 350 N with drive head. Independent zones, modeled 80 ms stop actuation. Custom 300 mm zones, small abrasive bricks, roller spacing, torque, dust and 0\u201340 \u00b0C suitability require validation. Not a complete conveyor qualification."
+    "scope": "Motor-driven roller accumulation with occupancy sensors and downstream availability. No vertical stop actuators in this revision. Custom 300 mm zones and abrasive hot bricks require validation; this is not a complete qualified conveyor."
   },
   {
     "id": "bulk_bridge",
@@ -85,7 +85,7 @@
     "nominal": {
       "family_payload_max_kg": 3200
     },
-    "scope": "Family reference for overhead area handling only. Selected 2000 kg bulk lifting, 200 kg fork, travel speeds, building superstructure, long span/multiple supports and retention remain design assumptions requiring qualification. It is separate from the 102 kg layer tools."
+    "scope": "Family reference for overhead area handling only. Selected 2000 kg bulk lifting, 400 kg EOAT, travel speeds, building superstructure, long span/multiple supports and retention remain design assumptions requiring qualification. It is separate from the 102 kg layer tools."
   },
   {
     "id": "cell_axis",
@@ -114,10 +114,9 @@
       "Tine length": "1,150 mm",
       "Tine spread": "475\u2013815 mm",
       "Clear height": "1,050\u20131,650 mm",
-      "Fork self-weight": "205 kg",
-      "Modeled EOAT incl. retention": "300 kg (assumed)"
+      "Fork self-weight": "205 kg"
     },
-    "scope": "Catalog fork principle; manufacturer requires a protection trellis/net for loose material. This scene adds a custom retractable retaining cage and automated bridge interface. Neither the cage nor the integrated crane is a certified KINSHOFER configuration."
+    "scope": "Historical fork reference only. Current scene uses the Eichinger rigid raised/lowered guard principle; powered integration is custom."
   },
   {
     "id": "pallet_transfer_car",
@@ -134,5 +133,21 @@
     "scope": "Industrial reference for an onboard conveyor on a rail carriage, with geared wheel drive, guide rollers and track buffers. The rendered low-profile chassis, geometry and integration remain custom. Does not qualify the full installation.",
     "image_asset": "pallet-transfer-car.jpg",
     "image_credit": "HORSTMANN \u00b7 official transfer-car reference photo; installation shown differs from this custom scene"
+  },
+  {
+    "id": "lift_guard",
+    "model": "Eichinger 1059 \u00b7 lifting fork with rigid raised/lowered guard",
+    "url": "https://eichinger.de/de/ladegabeln-schutzkoerbe/",
+    "nominal": {
+      "Reference load classes": "600 / 1,000 / 1,500 / 2,000 / 3,000 kg",
+      "Adjustable tine spacing": "450\u20131,000 mm",
+      "Real mechanism": "Guard raised for pickup, lowered for transport",
+      "Modeled guard lift": "1,600 mm as one rigid body",
+      "Assumed total EOAT mass": "400 kg",
+      "Modeled moving load incl. stack": "1,865 kg"
+    },
+    "scope": "Manufacturer mechanism reference, not a telescoping mesh. Scene dimensions, powered lifting/locking and 400 kg assembly mass are engineering assumptions requiring supplier configuration and integration validation.",
+    "image_asset": "lift-guard.jpg",
+    "image_credit": "Eichinger \u00b7 official 1059 lifting-fork photo; powered integration and scene size are custom"
   }
 ]

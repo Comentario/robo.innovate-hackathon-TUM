@@ -101,19 +101,23 @@ class TwinPlant(Plant):
         yield from self.move([tool],[[p[0],3.48,p[2]]],'inventory_bridge','Raise empty fork to travel plane',vz)
         yield from self.move([tool],[[source[0]-1.45,3.48,source[2]]],'inventory_bridge','Approach inventory from fork-pocket side',v)
         yield from self.move([tool],[[source[0]-1.45,source[1]+.02,source[2]]],'inventory_bridge','Lower fork outside the stack',vz)
+        self.emit('retention_command','inventory_bridge',closed=False,duration=4.0)
+        yield from self.pause('inventory_bridge','Raise complete rigid cage clear of the pallet',4.0)
         yield from self.move([tool],[[source[0],source[1]+.02,source[2]]],'inventory_bridge','Insert fork into pallet pockets',v)
-        self.emit('retention_command','inventory_bridge',closed=True,duration=.6)
-        yield from self.pause('inventory_bridge','Close retention net and confirm load secured',.6)
+        self.emit('retention_command','inventory_bridge',closed=True,duration=4.0)
+        yield from self.pause('inventory_bridge','Lower rigid cage and confirm load containment',4.0)
         self.emit('bulk_attach','inventory_bridge',stack=stack,line=line)
         lift=3.46-source[1]
         yield from self.move(ids+[tool],[[self.positions[i][0],self.positions[i][1]+lift,self.positions[i][2]] for i in ids]+[[source[0],3.48,source[2]]],'inventory_bridge','Lift complete 800-brick stack above local gantries',vz)
         dx=-source[0];dz=z-source[2]
         yield from self.move(ids+[tool],[[self.positions[i][0]+dx,self.positions[i][1],self.positions[i][2]+dz] for i in ids]+[[0,3.48,z]],'inventory_bridge',f'Transfer retained stack to dehacking line {line+1}',v)
         yield from self.move(ids+[tool],[[self.positions[i][0],self.positions[i][1]-3.2,self.positions[i][2]] for i in ids]+[[0,.28,z]],'inventory_bridge','Lower stack onto receiving dock',vz)
-        self.emit('retention_command','inventory_bridge',closed=False,duration=.6)
-        yield from self.pause('inventory_bridge','Retract retention screens after dock load confirmation',.6)
+        self.emit('retention_command','inventory_bridge',closed=False,duration=4.0)
+        yield from self.pause('inventory_bridge','Raise rigid cage after dock support confirmation',4.0)
         self.emit('stack_delivered','inventory_bridge',stack=stack,line=line)
         yield from self.move([tool],[[-1.45,.28,z]],'inventory_bridge','Withdraw empty fork from pallet pockets',v)
+        self.emit('retention_command','inventory_bridge',closed=True,duration=4.0)
+        yield from self.pause('inventory_bridge','Lower empty cage before overhead travel',4.0)
         yield from self.move([tool],[[-1.45,3.48,z]],'inventory_bridge','Retract fork clear of production',vz)
 
     def source_line(self,line):
@@ -151,14 +155,18 @@ class TwinPlant(Plant):
                 rz=sum(self.positions[i][2] for i in row)/10
                 yield from self.move([shuttle],[[4.7,BED,rz]],f'feeder_{bay}','Dock empty roller shuttle',v)
                 dx=4.64-self.positions[row[0]][0]
+                self.emit('feed_phase',f'feeder_{bay}',bay=bay,nest=nest,phase='Pack + receiving rollers ON')
                 self.emit('pack_index_start',f'feeder_{bay}',bay=bay,nest=nest,ids=remaining[:],row=row[:])
                 yield from self.move(remaining,[[self.positions[i][0]+dx,self.positions[i][1],self.positions[i][2]] for i in remaining],f'feeder_{bay}','Synchronously index complete remaining pack and receiving rollers',v)
+                self.emit('feed_phase',f'feeder_{bay}',bay=bay,nest=nest,phase='Pack rollers STOPPED')
                 if row_number:
                     yield from self.move([hold],[[4.395,BED+self.H+.025,rz]],f'feeder_{bay}','Lower force-limited top hold-down on next row',vz)
                     if self.c['faults'].get('hold_down_fault_bay')==bay:raise Hold('Pack hold-down confirmation missing; extraction inhibited')
                     self.emit('hold_down_confirmed',f'feeder_{bay}',bay=bay,nest=nest,held_ids=ids[:row_number*10])
+                self.emit('feed_phase',f'feeder_{bay}',bay=bay,nest=nest,phase='Top hold confirmed; pull-off rollers ON' if row_number else 'Last row; pull-off rollers ON')
                 yield from self.move(row,[[4.74,self.positions[i][1],self.positions[i][2]] for i in row],f'feeder_{bay}','Independent pull-off rollers create measured row separation',v)
                 gap=.10 if row_number else None
+                self.emit('feed_phase',f'feeder_{bay}',bay=bay,nest=nest,phase='Pull-off STOPPED; cross-travel permitted')
                 self.emit('row_gap_verified',f'feeder_{bay}',bay=bay,nest=nest,row=row[:],gap_m=gap)
                 target=[[4.74,BED+self.H/2,z+(k-4.5)*self.D] for k in range(10)]
                 yield from self.move(row+[shuttle],target+[[4.7,BED,z]],f'feeder_{bay}','Supported row shuttle cross-travel',v)
@@ -464,7 +472,7 @@ class TwinPlant(Plant):
 
     def report(self):
         r=super().report();r['schema_version']='3.0';r['concept']='Dual-line autonomous dehacking'
-        r['mechanics'].update(line_z=self.line_z,layout='dual',transfer_revision=10,collector_x=6.8,collector_y=.65,discard_mode='fixed' if self.fixed_discard else 'mobile')
+        r['mechanics'].update(line_z=self.line_z,layout='dual',transfer_revision=11,retention_design='rigid_lift_cage',collector_x=6.8,collector_y=.65,discard_mode='fixed' if self.fixed_discard else 'mobile')
         r['discard_cart_state']=[{'id':f'DISCARD-CART-{line}-{n}','line':line,'capacity':self.c['logistics']['discard_cart_capacity'],
             'ids':self.cart_payloads[f'DISCARD-CART-{line}-{n}'][:]}
             for line in range(2) for n in range(self.c['logistics']['discard_carts_per_line'])]
@@ -472,6 +480,9 @@ class TwinPlant(Plant):
         r['kpis']['discard_carts_emptied']=sum(e['kind']=='discard_cart_emptied' for e in self.events)
         r['delivered_pallets']=self.delivered_pallets;r['discard_carts']=self.discard_carts
         r['kpis']['discard_bricks']=r['kpis']['reject_bricks']+r['kpis']['quarantine_bricks']
+        r['mechanics']['zone_drives']=self.c['cells']*(8+3*self.c['buffer_cells_per_shade'])
+        r['mechanics']['zone_controllers']=(r['mechanics']['zone_drives']+3)//4
+        r['mechanics']['vertical_zone_stops']=0 if self.c.get('accumulation_mode')=='zpa' else r['mechanics']['zone_drives']
         r['kpis']['discard_cart_exchanges']=sum(e['kind']=='discard_swap_complete' for e in self.events)
         r['kpis']['output_cart_dispatched']=self.output_cart_departed
         r['scope'][:1]=['The batch represents four stacks, not the full 36-stack industrial kiln cart; the 800/560-brick stack/pallet interfaces are preserved.','One common discard stream for off-spec and unresolved observations; the reason remains in the trace. No automatic reinsertion.',

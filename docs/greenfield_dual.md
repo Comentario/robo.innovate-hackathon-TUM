@@ -141,3 +141,7 @@ Pasaron cinco pruebas focalizadas: almacenamiento y capacidad de los carros, dir
 ## Revisión mecánica actual (greenfield_10)
 
 La revisión de `44cf2e6` queda conservada. La lógica y las máquinas de transferencia cambian según [transfer_mechanics.md](transfer_mechanics.md): ocho nidos independientes de alimentación, indexado solidario del paquete restante, sujeción superior y separación de fila de 100 mm, cassettes con accionamientos visibles, puentes y guías, palas rígidas elevadas durante carga y centrado angular sintético. Resultado: 3.569,822 conformes/h, 61 capas, cuatro pallets expedidos, 200 piezas en pallets parciales y 364 WIP. Pasaron 46 pruebas y la revisión del navegador.
+
+## Revisión vigente (greenfield_11)
+
+La retención telescópica y cifras de masa anteriores son históricas. Ahora se utiliza cesta rígida elevable completa (referencia Eichinger 1059), EOAT supuesto de 400 kg, carga total de 1.865 kg. ZPA sustituye los topes elevables; 24 zonas por tono seleccionadas tras comparar 20/24/30. Caudal del lote sintético: 3.530,974 conformes expedidos/h. Detalle de secuencias, recuentos de hardware y límites: [transfer_mechanics.md](transfer_mechanics.md).
