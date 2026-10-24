@@ -283,3 +283,5 @@ Vista actual: `artifacts/greenfield_07/index.html`. Retención de rejilla metál
 Ajuste visual actual: `artifacts/greenfield_08/index.html` (chapa plana de unión y carros orientados hacia la descarga; mismo lote y KPIs de greenfield_07).
 
 Última corrección: `artifacts/greenfield_09/index.html`. Plataforma plana de 730×600 mm conectada a la mesa; ambos carros con cara receptora abierta hacia el transportador. Incluye primeros planos en `artifacts/greenfield_09/verification/`.
+
+Revisión mecánica actual: `artifacts/greenfield_10/index.html`. Indexado del paquete completo con sujeción superior, extracción de fila, accionamientos visibles, puentes/guías, palas rígidas y centrado de una desviación angular. Explicación de las transferencias y límites físicos: [docs/transfer_mechanics.md](docs/transfer_mechanics.md).

@@ -118,5 +118,21 @@
       "Modeled EOAT incl. retention": "300 kg (assumed)"
     },
     "scope": "Catalog fork principle; manufacturer requires a protection trellis/net for loose material. This scene adds a custom retractable retaining cage and automated bridge interface. Neither the cage nor the integrated crane is a certified KINSHOFER configuration."
+  },
+  {
+    "id": "pallet_transfer_car",
+    "model": "HORSTMANN VWG \u00b7 rail-guided transfer-car reference",
+    "url": "https://www.horstmann-anlagentechnik.de/project/transfer-car/?lang=en",
+    "nominal": {
+      "Reference payload": "1,200 kg",
+      "Modeled pallet incl. wood": "1,033 kg",
+      "Drive": "Reversible gearmotor driving one wheel axle",
+      "Guidance": "Running rails + horizontal side guide rollers",
+      "Rail options": "A45 / S20",
+      "Modeled travel speed": "0.25 m/s"
+    },
+    "scope": "Industrial reference for an onboard conveyor on a rail carriage, with geared wheel drive, guide rollers and track buffers. The rendered low-profile chassis, geometry and integration remain custom. Does not qualify the full installation.",
+    "image_asset": "pallet-transfer-car.jpg",
+    "image_credit": "HORSTMANN \u00b7 official transfer-car reference photo; installation shown differs from this custom scene"
   }
 ]

@@ -9,3 +9,5 @@ Small reference images are embedded in the offline equipment inspector. Credit a
 - `gantry.png`: Güdel FP family; manufacturer image depicts FP-7, not a photograph of the referenced FP-4 configuration. https://www.gudel.com/product/fp/2463/image-thumb__2463__text-image/fp-7-teaser.7b200221.png (product: https://www.gudel.com/products/linearaxis/fp).
 
 Retrieved 2026-10-24. Thumbnail resizing/compression only; no AI-generated product images.
+
+- `pallet-transfer-car.jpg`: HORSTMANN, official VWG transfer-car reference photo. https://www.horstmann-anlagentechnik.de/wp-content/uploads/2022/04/Verschiebewagen-2-scaled.jpg (product: https://www.horstmann-anlagentechnik.de/project/transfer-car/?lang=en). Retrieved 2026-10-25; resized for the offline reference card. Supplier installation shown differs from the custom scene.

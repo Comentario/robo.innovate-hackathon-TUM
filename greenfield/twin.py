@@ -5,7 +5,7 @@ The class reuses the cell/perception contracts; only plant logistics differ.
 from collections import Counter
 import math
 import simpy
-from .model import Plant, Hold, BED
+from .model import Plant, Hold, BED, pattern
 
 
 class RoutedStore:
@@ -79,12 +79,15 @@ class TwinPlant(Plant):
             for number in range(self.c['logistics']['discard_carts_per_line']):
                 p=[6.8,0,z+side*8.5] if self.fixed_discard else ([5.8,0,z] if number==0 else [1.6,0,z-side*number*1.4])
                 self.add_aux(f'DISCARD-CART-{line}-{number}',p,'discard_cart')
+        for bay,zz in enumerate(self.bay_z):
+            for nest in range(2):self.add_aux(f'HOLD-DOWN-{bay}-{nest}',[4.395,BED+.35,zz+(nest-.5)*1.1],'pack_hold_down')
         self.add_aux('KILN-CART',[-12,0,0],'kiln_cart')
         self.add_aux('INVENTORY-FORK',[-9.2,3.48,0],'pallet_fork')
         self.add_aux('OUTPUT-SHUTTLE',[28,.154,0],'pallet_shuttle')
         self.add_aux('OUTPUT-CART',[31.5,0,0],'output_cart')
         for cell,z in enumerate(self.cell_z):
             key=f'INFEED-{cell}';self.positions[key]=[5.30,BED+.30,z];self.initial[key]=self.positions[key][:]
+            key=f'ROW-PUSHER-{cell}';self.positions[key][1]=BED+.30;self.initial[key]=self.positions[key][:]
 
     def inventory_delivery(self):
         ids=list(self.material)+[f'P-IN-{s}' for s in range(self.c['input_stacks'])]+['KILN-CART']
@@ -137,6 +140,36 @@ class TwinPlant(Plant):
             self.input_empties[line].append(wood)
         self.source_done+=1;self.source_finished=self.source_done==2;self.emit('source_finished',f'dehack_{line}',line=line);self.notify()
 
+    def feeder(self,bay):
+        """Index the complete remaining pack; hold from above, never insert a knife."""
+        shuttle=f'ROW-SHUTTLE-{bay}';v=self.c['speeds']['transfer_m_s'];vz=self.c['speeds']['gantry_z_m_s']
+        while True:
+            layer,nest,ids=yield self.layers[bay].get();hold=f'HOLD-DOWN-{bay}-{nest}'
+            for row_number in (3,2,1,0):
+                cell=yield self.free_cells[bay].get();z=self.cell_z[cell]
+                row=ids[row_number*10:(row_number+1)*10];remaining=ids[:(row_number+1)*10]
+                rz=sum(self.positions[i][2] for i in row)/10
+                yield from self.move([shuttle],[[4.7,BED,rz]],f'feeder_{bay}','Dock empty roller shuttle',v)
+                dx=4.64-self.positions[row[0]][0]
+                self.emit('pack_index_start',f'feeder_{bay}',bay=bay,nest=nest,ids=remaining[:],row=row[:])
+                yield from self.move(remaining,[[self.positions[i][0]+dx,self.positions[i][1],self.positions[i][2]] for i in remaining],f'feeder_{bay}','Synchronously index complete remaining pack and receiving rollers',v)
+                if row_number:
+                    yield from self.move([hold],[[4.395,BED+self.H+.025,rz]],f'feeder_{bay}','Lower force-limited top hold-down on next row',vz)
+                    if self.c['faults'].get('hold_down_fault_bay')==bay:raise Hold('Pack hold-down confirmation missing; extraction inhibited')
+                    self.emit('hold_down_confirmed',f'feeder_{bay}',bay=bay,nest=nest,held_ids=ids[:row_number*10])
+                yield from self.move(row,[[4.74,self.positions[i][1],self.positions[i][2]] for i in row],f'feeder_{bay}','Independent pull-off rollers create measured row separation',v)
+                gap=.10 if row_number else None
+                self.emit('row_gap_verified',f'feeder_{bay}',bay=bay,nest=nest,row=row[:],gap_m=gap)
+                target=[[4.74,BED+self.H/2,z+(k-4.5)*self.D] for k in range(10)]
+                yield from self.move(row+[shuttle],target+[[4.7,BED,z]],f'feeder_{bay}','Supported row shuttle cross-travel',v)
+                yield from self.move(row,[[5.6,p[1],p[2]] for p in target],f'feeder_{bay}','Powered row discharge to infeed',v)
+                self.locate(row,f'cell_{cell}_intake')
+                for identity in row:self.material[identity]['cell']=cell
+                yield self.intakes[cell].put(row)
+                if row_number:yield from self.move([hold],[[4.395,BED+.35,rz]],f'feeder_{bay}','Raise hold-down before next pack index',vz)
+                yield from self.pause(f'feeder_{bay}','Row-clear sensor confirmation',self.c['dwell']['sensor_s'])
+            yield self.tray_slots.put((bay,nest));self.notify()
+
     def intake(self,cell):
         z=self.cell_z[cell];v=self.c['speeds']['transfer_m_s'];tool=f'INFEED-{cell}'
         while True:
@@ -146,14 +179,27 @@ class TwinPlant(Plant):
                     yield request;entrance=self.inspect_zones[cell][0].request();yield entrance
                     p=self.positions[identity][:]
                     yield from self.move([tool],[[5.30,BED+.30,p[2]]],f'cell_{cell}_infeed','Traverse raised pusher behind incoming row',v)
-                    yield from self.move([tool],[[5.6-self.L/2-.012,BED+.045,p[2]]],f'cell_{cell}_infeed','Lower paddle behind rear face with clear approach',v)
+                    yield from self.move([tool],[[5.6-self.L/2-.012,BED+.30,p[2]]],f'cell_{cell}_infeed','Position rigid X slide above rear face',v)
+                    yield from self.move([tool],[[5.6-self.L/2-.012,BED+.045,p[2]]],f'cell_{cell}_infeed','Lower independent vertical paddle slide',self.c['speeds']['gantry_z_m_s'])
                     yield from self.move([identity,tool],[[5.95,p[1],p[2]],[5.95-self.L/2-.012,BED+.045,p[2]]],f'cell_{cell}_infeed','Pusher singulates one brick',v)
-                    yield from self.move([tool],[[5.30,BED+.30,p[2]]],f'cell_{cell}_infeed','Lift and retract paddle above row loading envelope',v)
+                    yield from self.move([tool],[[5.95-self.L/2-.012,BED+.30,p[2]]],f'cell_{cell}_infeed','Raise vertical paddle before X return',self.c['speeds']['gantry_z_m_s'])
+                    yield from self.move([tool],[[5.30,BED+.30,p[2]]],f'cell_{cell}_infeed','Return raised rigid X slide',v)
                     yield from self.move([identity],[[5.95,p[1],z]],f'cell_{cell}_infeed','Align separated brick with lane',v)
+                    yield from self.check_piece_alignment(identity,cell)
                     yield from self.move([identity],[[6.4,BED+self.H/2,z]],f'cell_{cell}_infeed','Meter across connected roller bridge',v)
                     self.env.process(self.guarded(self.inspect(identity,cell,entrance)))
-                    yield from self.pause(f'cell_{cell}_infeed','Maintain inspection pitch',.3/self.c['speeds']['belt_m_s'])
+                    yield from self.pause(f'cell_{cell}_infeed','Confirm entry sensor; next admission waits for reserved zone',self.c['dwell']['sensor_s'])
             yield self.free_cells[cell//2].put(cell)
+
+    def check_piece_alignment(self,identity,cell):
+        yaw=self.c['faults'].get('piece_yaw_deg',8.0) if identity==self.c['faults'].get('piece_pose_fault') else 0.0
+        self.emit('piece_pose_check',f'cell_{cell}_infeed',brick=identity,yaw_deg=yaw)
+        if abs(yaw)>10:raise Hold('Piece orientation outside centering range; inspection entry inhibited')
+        if yaw:
+            duration=self.c['dwell']['centering_s']
+            self.emit('piece_centering_start',f'cell_{cell}_infeed',brick=identity,cell=cell,yaw_deg=yaw,duration=duration)
+            yield from self.pause(f'cell_{cell}_infeed','Close opposed centering guides and confirm alignment',duration)
+            self.emit('piece_centering_complete',f'cell_{cell}_infeed',brick=identity,cell=cell)
 
     def discard(self,identity,cell,decision,inspection_reservation):
         self.discard_pending+=1;line=cell//4;z=self.cell_z[cell];center=self.line_z[line]
@@ -272,6 +318,63 @@ class TwinPlant(Plant):
         self.emit('cart_route_state',f'cart_collection_{line}',cart=cart,state='Available spare',line=line)
         self.emit('discard_cart_returned',f'cart_collection_{line}',line=line,cart=cart);self.services_pending-=1;self.notify()
 
+    def builder(self,cell):
+        z=self.cell_z[cell];selector=f'SELECTOR-{cell}';speed=self.c['speeds'];dwell=self.c['dwell']
+        while True:
+            index=self.reserved_layers;self.reserved_layers+=1;q=self.quota(index)
+            desired=pattern(4,10,q,index%3);ids_by_slot={};row_ids=[]
+            request=self.formation[cell].request();yield request
+            for r in range(4):
+                need=Counter(self.c['shades'][v] for v in desired[r*10:r*10+10])
+                while any(self.inventory[cell,shade]<n for shade,n in need.items()):
+                    if self.inspected==len(self.material) and self.source_finished:
+                        remaining=Counter(b['shade'] for b in self.material.values() if b.get('cell')==cell and b['observed']=='accepted' and b['location'] in ('accepted_buffer','accepted_reserve',f'cell_{cell}_intake'))
+                        if any(remaining[shade]<n for shade,n in need.items()):
+                            self.locate(list(ids_by_slot.values()),'unfinished_layer')
+                            self.emit('partial_layer_retained',f'cell_{cell}_former',bricks=len(ids_by_slot),reason='End-of-batch stock cannot complete the next compliant row')
+                            self.formation[cell].release(request);self.builders_finished+=1;self.notify();return
+                    yield self.changed | self.env.timeout(.25)
+                for shade,n in need.items():self.inventory[cell,shade]-=n
+                self.emit('row_started',f'cell_{cell}_former',layer=index,row=r)
+                for col in range(9,-1,-1):
+                    # Move the already formed row by one short-edge pitch before admitting the next brick.
+                    if row_ids:
+                        target=[[self.positions[i][0],self.positions[i][1],self.positions[i][2]+self.D] for i in row_ids]
+                        yield from self.move(row_ids,target,f'cell_{cell}_former','Index row by one brick',speed['transfer_m_s'])
+                    shade=self.c['shades'][desired[r*10+col]]
+                    identity,selected=yield self.ready[cell,shade].get()
+                    self.locate([identity],'forming');ids_by_slot[r*10+col]=identity
+                    zz=self.positions[identity][2]
+                    yield from self.move([selector],[[(16.25+self.tail_shift),BED,zz]],f'cell_{cell}_selector','Select required tone queue',speed['selector_m_s'])
+                    yield from self.move([identity],[[(16.25+self.tail_shift),BED+self.H/2,zz]],f'cell_{cell}_selector','Feed confirmed brick onto shuttle',speed['transfer_m_s'])
+                    selected.succeed();self.notify()
+                    yield from self.move([identity,selector],[[(16.25+self.tail_shift),BED+self.H/2,z-.3015],[(16.25+self.tail_shift),BED,z-.3015]],f'cell_{cell}_selector','Align with row inlet',speed['selector_m_s'])
+                    yield from self.move([identity],[[(16.65+self.tail_shift),BED+self.H/2,z-.3015]],f'cell_{cell}_selector','Feed row inlet',speed['transfer_m_s'])
+                    yield from self.pause(f'cell_{cell}_selector','Confirm inlet clear',dwell['sensor_s'])
+                    row_ids.append(identity)
+                row_x=(18.2+self.tail_shift)+(1.5-r)*self.L
+                target=[[row_x,BED+self.H/2,self.positions[i][2]] for i in row_ids]
+                pusher=f'ROW-PUSHER-{cell}'
+                yield from self.move([pusher],[[(16.65+self.tail_shift)-self.L/2-.012,BED+.045,z]],f'cell_{cell}_former','Lower row paddle after complete-row confirmation',speed['gantry_z_m_s'])
+                yield from self.move(row_ids+[pusher],target+[[row_x-self.L/2-.012,BED+.045,z]],f'cell_{cell}_former','Push complete row across roller deck',speed['transfer_m_s'])
+                yield from self.move([pusher],[[row_x-self.L/2-.012,BED+.30,z]],f'cell_{cell}_former','Raise row paddle clear of loaded material',speed['gantry_z_m_s'])
+                yield from self.move([pusher],[[(16.65+self.tail_shift)-self.L/2-.012,BED+.30,z]],f'cell_{cell}_former','Retract raised row pusher to home limit',speed['transfer_m_s'])
+                yield from self.pause(f'cell_{cell}_former','Pusher home confirmation',dwell['sensor_s'])
+                row_ids=[]
+            ids=[ids_by_slot[k] for k in range(self.n)]
+            # Slots are reversed in X relative to input, but the spatial pattern remains explicit.
+            shade_grid=[self.material[i]['shade'] for i in ids]
+            mono_rows=sum(len(set(shade_grid[r*10:r*10+10]))==1 for r in range(4))
+            mono_cols=sum(len({shade_grid[r*10+c] for r in range(4)})==1 for c in range(10))
+            if mono_rows or mono_cols:raise AssertionError('Invalid spatial mix')
+            self.layer_results.append({'index':index,'cell':cell,'ids':ids,'counts':dict(Counter(shade_grid)),
+                'monochrome_rows':mono_rows,'monochrome_columns':mono_cols})
+            self.emit('layer_formed',f'cell_{cell}_former',index=index,ids=ids,counts=dict(Counter(shade_grid)))
+            self.locate(ids,'formed_layer');pickup=self.env.event()
+            yield self.full_layers.put((cell,index,ids,pickup))
+            yield pickup
+            self.formation[cell].release(request);self.notify()
+
     def prepare_pallet(self,line,index):
         x=21+self.tail_shift;z=self.line_z[line];wood=f'P-OUT-{line+2*index}';gate=f'GUIDE-GATE-{line}'
         yield from self.move([wood],[[x,.214,z]],f'pallet_in_{line}','Feed empty wooden pallet into open guided well',self.c['speeds']['pallet_m_s'])
@@ -361,7 +464,7 @@ class TwinPlant(Plant):
 
     def report(self):
         r=super().report();r['schema_version']='3.0';r['concept']='Dual-line autonomous dehacking'
-        r['mechanics'].update(line_z=self.line_z,layout='dual',collector_x=6.8,collector_y=.65,discard_mode='fixed' if self.fixed_discard else 'mobile')
+        r['mechanics'].update(line_z=self.line_z,layout='dual',transfer_revision=10,collector_x=6.8,collector_y=.65,discard_mode='fixed' if self.fixed_discard else 'mobile')
         r['discard_cart_state']=[{'id':f'DISCARD-CART-{line}-{n}','line':line,'capacity':self.c['logistics']['discard_cart_capacity'],
             'ids':self.cart_payloads[f'DISCARD-CART-{line}-{n}'][:]}
             for line in range(2) for n in range(self.c['logistics']['discard_carts_per_line'])]

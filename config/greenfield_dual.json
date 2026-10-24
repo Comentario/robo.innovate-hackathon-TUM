@@ -65,7 +65,10 @@
     "alignment_layer": 5,
     "alignment_error_m": 0.008,
     "disabled_cells": [],
-    "critical_sensor_layer": null
+    "critical_sensor_layer": null,
+    "piece_pose_fault": "B00000",
+    "piece_yaw_deg": 8.0,
+    "hold_down_fault_bay": null
   },
   "max_simulation_seconds": 20000,
   "provenance": {
@@ -73,7 +76,8 @@
     "mass": "1.8 kg engineering assumption, not verified ACME SKU. Comparable US Brick King: 3.36-4.2 lb.",
     "timing": "Selected engineering speeds and dwell, not measured factory cycles. Derived per movement; no acceleration/contact dynamics. Source offered rate 7500/h is a target, not achieved capacity. Eight cells and 1.0 m/s high-load gantry profile are the scaled candidate; compare equal profiles across cell counts.",
     "autonomy": "Automatic brick sorting into two stationary finite discard bins. Cart removal/emptying is outside the modeled batch; full-bin interlock stops upstream collection.",
-    "baseline": "Labor shortage, not verified labor savings. Mentor estimate 20-25 workers/shift; no human station modeled, no headcount removal or ROI claim."
+    "baseline": "Labor shortage, not verified labor savings. Mentor estimate 20-25 workers/shift; no human station modeled, no headcount removal or ROI claim.",
+    "mechanical_revision": "10: independently driven nests, whole-pack indexing, top hold-down and external row pull-off; orthogonal pushers; reserved-zone admission without redundant fixed dwell; nominal pose-centering injection."
   },
   "layout": "dual",
   "logistics": {
