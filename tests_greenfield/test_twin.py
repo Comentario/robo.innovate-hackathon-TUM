@@ -135,9 +135,9 @@ class TwinTests(unittest.TestCase):
         for b in r['material']:
             seq=m['tracks'][b['id']]
             for k,s in enumerate(seq):
-                if s['label']!='Travel down supported full-length discard chute':continue
+                if s['label']!='Lower supported discard elevator':continue
                 count+=1;next_s=seq[k+1]
-                self.assertEqual(s['to'],next_s['from']);self.assertAlmostEqual(s['to'][0],7.06)
+                self.assertEqual(s['to'],next_s['from']);self.assertAlmostEqual(s['to'][0],7.25)
                 self.assertEqual(next_s['label'],'Enter flush collector receiving rollers')
                 self.assertEqual(next_s['to'],[6.8,.65,s['to'][2]])
                 # 30 mm bridge to the collector edge: less than a brick's support length.
@@ -146,7 +146,7 @@ class TwinTests(unittest.TestCase):
 
     def test_retention_and_automatic_cart_cycle_are_recorded(self):
         r=self.base;events=r['events']
-        cmds=[e for e in events if e['kind']=='retention_command']
+        cmds=[e for e in events if e['kind']==('pack_clamp_command' if self.config.get('stack_grip_mode')=='supported_side_clamp' else 'retention_command')]
         self.assertEqual([e['closed'] for e in cmds],[False,True,False,True]*4)
         for stroke in r['mechanics']['tracks']['INVENTORY-FORK']:
             if stroke['label'] not in ('Lift complete 800-brick stack above local gantries','Lower stack onto receiving dock') and not stroke['label'].startswith('Transfer retained stack'):continue
@@ -208,7 +208,7 @@ class FixedDiscardTests(unittest.TestCase):
                 self.assertAlmostEqual(stroke['from'][1],1.2845)
                 self.assertEqual(stroke['from'][1:],stroke['to'][1:])
                 self.assertEqual(seq[k+1]['from'],stroke['to'])
-                self.assertEqual(seq[k+1]['label'],'Travel down supported full-length discard chute')
+                self.assertEqual(seq[k+1]['label'],'Level red belt feeds docked discard elevator')
         self.assertEqual(count,r['kpis']['discard_bricks'])
 
     def test_full_stationary_bin_stops_without_synthetic_emptying(self):

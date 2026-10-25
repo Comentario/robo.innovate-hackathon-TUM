@@ -2,6 +2,7 @@
 from bisect import bisect_right
 from itertools import product
 import math
+from .motion import fraction
 
 
 def pose(m,identity,t,index=None):
@@ -10,6 +11,7 @@ def pose(m,identity,t,index=None):
     k=bisect_right(starts,t)-1
     if k<0:return m['initial'][identity]
     s=seq[k];u=max(0,min(1,(t-s['t0'])/(s['t1']-s['t0'])))
+    if s.get('motion'):u=fraction(t-s['t0'],s['motion'])
     return [a+(b-a)*u for a,b in zip(s['from'],s['to'])]
 
 

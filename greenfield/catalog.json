@@ -74,9 +74,14 @@
       "drive_head_load_N": 350,
       "selected_profile_max_m_s": 0.6,
       "power_W": 35,
-      "gear_ratio": "30:1"
+      "gear_ratio": "30:1",
+      "selected_speed_m_s": 0.3,
+      "selected_acceleration_m_s2": 1.0,
+      "zone_pitch_m": 0.3,
+      "stop_distance_plus_10ms_m": 0.048,
+      "minimum_roller_support": "At least three rollers under a 245 mm brick"
     },
-    "scope": "Motor-driven roller accumulation with occupancy sensors and downstream availability. No vertical stop actuators in this revision. Custom 300 mm zones and abrasive hot bricks require validation; this is not a complete qualified conveyor."
+    "scope": "Motor-driven roller accumulation with occupancy sensors and downstream availability. No vertical stop actuators in this revision. Custom 300 mm zones and abrasive hot bricks require validation; this is not a complete qualified conveyor. Short transfer bridges use a separate 18:1 drive reference (35 W, maximum 1.00 m/s); buffer zones retain 30:1. Thermal suitability, torque and grip remain unvalidated."
   },
   {
     "id": "bulk_bridge",
@@ -99,24 +104,11 @@
       "Repeatability": "\u00b10.1 mm",
       "Available reference strokes": "200\u20132,000 mm",
       "Guide": "Recirculating ball bearing",
-      "Protection": "IP40"
+      "Protection": "IP40",
+      "Reference maximum acceleration": "15 m/s\u00b2",
+      "Modeled acceleration": "3 m/s\u00b2, load and moment validation pending"
     },
     "scope": "Reference for singulation, side ejection and selector axes. Custom multi-axis carriage, paddle, motor, selected stroke, contamination protection, acceleration and force limits require sizing. Force/speed maxima do not establish a valid operating point."
-  },
-  {
-    "id": "pallet_fork",
-    "model": "KINSHOFER KM 401-2000-600 \u00b7 retained-fork reference",
-    "url": "https://kinshofer.com/images/pdf_cra_en/Kinshofer_crane-catalog_en.pdf#page=21",
-    "image_asset": "pallet-fork.png",
-    "image_credit": "KINSHOFER \u00b7 crane attachments catalog, KM 401 family illustration",
-    "nominal": {
-      "Fork payload": "2,000 kg",
-      "Tine length": "1,150 mm",
-      "Tine spread": "475\u2013815 mm",
-      "Clear height": "1,050\u20131,650 mm",
-      "Fork self-weight": "205 kg"
-    },
-    "scope": "Historical fork reference only. Current scene uses the Eichinger rigid raised/lowered guard principle; powered integration is custom."
   },
   {
     "id": "pallet_transfer_car",
@@ -135,19 +127,46 @@
     "image_credit": "HORSTMANN \u00b7 official transfer-car reference photo; installation shown differs from this custom scene"
   },
   {
-    "id": "lift_guard",
-    "model": "Eichinger 1059 \u00b7 lifting fork with rigid raised/lowered guard",
-    "url": "https://eichinger.de/de/ladegabeln-schutzkoerbe/",
+    "id": "stack_clamp",
+    "model": "Industrial supported pack clamp \u00b7 custom hybrid",
+    "url": "https://www.kinshofer.com/us/crane/general-construction/brick-stack-grapples",
     "nominal": {
-      "Reference load classes": "600 / 1,000 / 1,500 / 2,000 / 3,000 kg",
-      "Adjustable tine spacing": "450\u20131,000 mm",
-      "Real mechanism": "Guard raised for pickup, lowered for transport",
-      "Modeled guard lift": "1,600 mm as one rigid body",
-      "Assumed total EOAT mass": "400 kg",
-      "Modeled moving load incl. stack": "1,865 kg"
+      "Mechanism reference": "Parallel synchronized hydraulic jaws with replaceable rubber pads",
+      "Catalog KM332-1300": "1,600 kg at 1,300 mm plunge (configuration dependent)",
+      "Our stack": "1,465 kg incl. assumed wooden pallet; 1,380 mm brick height",
+      "Our support": "Forks carry weight; side pads restrain loose bricks",
+      "Important difference": "Custom full-height pads and automatic bridge interface; not a selected KM332"
     },
-    "scope": "Manufacturer mechanism reference, not a telescoping mesh. Scene dimensions, powered lifting/locking and 400 kg assembly mass are engineering assumptions requiring supplier configuration and integration validation.",
-    "image_asset": "lift-guard.jpg",
-    "image_credit": "Eichinger \u00b7 official 1059 lifting-fork photo; powered integration and scene size are custom"
+    "scope": "KM332 data demonstrate the parallel-jaw principle only. Its catalog cautions that ratings depend on product and do not apply to low-profile unbundled items. Our hybrid requires supplier validation, load/support sensing, pressure limits and loss-of-pressure protection.",
+    "image_asset": "stack-clamp.jpg",
+    "image_credit": "KINSHOFER \u00b7 official KM332-V reference image; our supported full-height restraint is a custom hybrid"
+  },
+  {
+    "id": "zpa_control",
+    "model": "Interroll MultiControl AI",
+    "url": "https://www.interroll.com/products/controls/multicontrol-ai",
+    "nominal": {
+      "Controlled zones": "Up to 4 RollerDrive zones / controller",
+      "Supply": "24 or 48 V DC",
+      "Rated drive options": "20 / 35 / 50 W",
+      "Protection": "IP54",
+      "Ambient": "-30 to +40 \u00b0C",
+      "Zone assembly": "One motor roller coupled to idlers; one occupancy sensor per zone"
+    },
+    "scope": "Controller datasheet; not a complete brick conveyor qualification. Product surface temperature, contamination, stopping distance, roller support and custom 300 mm zones require validation."
+  },
+  {
+    "id": "roller_manual",
+    "model": "Interroll EC5000 \u00b7 drive ratios and ramps",
+    "url": "https://www.interroll.com/fileadmin/Downloads/User_Manuals/RollerDrive/User_Manual_EC5000_EN.pdf",
+    "nominal": {
+      "35 W 30:1 maximum speed": "0.60 m/s",
+      "35 W 18:1 maximum speed": "1.00 m/s",
+      "30:1 reference acceleration": "3.965 m/s\u00b2 speed mode; positioning limits differ",
+      "Our buffer selection": "0.30 m/s, 1.0 m/s\u00b2, speed mode",
+      "Stopping estimate": "v\u00b2/(2a) + v \u00d7 0.010 s = 48 mm",
+      "Sensor-to-zone-end allowance": "50 mm design allowance; commissioning needed"
+    },
+    "scope": "Manufacturer values at 20 \u00b0C. Ramp setting is not proof against brick slip or tipping. Motor torque, surface temperature and abrasive duty require trials."
   }
 ]

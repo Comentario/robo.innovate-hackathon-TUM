@@ -21,12 +21,24 @@ def audit(report):
         if len({material[i]['product_id'] for i in pallet})!=1:raise AssertionError('Product mixing')
     for layer in report['layers']:
         if layer['monochrome_rows'] or layer['monochrome_columns']:raise AssertionError('Invalid layer mix')
+    if report['config'].get('max_same_shade_run')==2:
+        def triples(grid,rows,cols):
+            return sum(grid[r*cols+c]==grid[r*cols+c+1]==grid[r*cols+c+2] for r in range(rows) for c in range(cols-2))+sum(grid[r*cols+c]==grid[(r+1)*cols+c]==grid[(r+2)*cols+c] for r in range(rows-2) for c in range(cols))
+        for layer in report['layers']:
+            if triples([material[i]['shade'] for i in layer['ids']],4,10):raise AssertionError('Three adjacent equal shades in formed layer')
+        by_layer={layer['index']:layer['ids'] for layer in report['layers']};stacks={}
+        for event in report['events']:
+            if event['kind']=='layer_stacked':stacks.setdefault(event.get('pallet',0),[]).append(by_layer[event['layer']])
+        for rows in stacks.values():
+            grids=[[material[i]['shade'] for i in row] for row in rows]
+            if any(grids[n][k]==grids[n+1][k]==grids[n+2][k] for n in range(len(grids)-2) for k in range(40)):raise AssertionError('Three vertically adjacent equal shades')
     for e in report['events']:
         if e['kind']=='step' and e['speed_m_s'] is not None:
-            if not math.isclose(e['duration'],e['distance_m']/e['speed_m_s'],rel_tol=1e-9):raise AssertionError('Stroke time not derived')
+            expected=e['motion']['duration'] if e.get('motion') else e['distance_m']/e['speed_m_s']
+            if not math.isclose(e['duration'],expected,rel_tol=1e-9):raise AssertionError('Stroke time not derived')
     return {'material_identity_unique':True,'continuous_tracks':True,'single_motion_per_identity':True,
         'no_duplicate_shipment':True,'pallets_560_each':True,'layer_mix_valid':True,
-        'stroke_time_distance_over_speed':True,'mass_balance':report['kpis']['material_balance_ok'],
+        'stroke_time_matches_declared_profile':True,'mass_balance':report['kpis']['material_balance_ok'],
         'scope':'Identity, sequence and kinematic accounting; not full tool/brick collision or gripping validation.'}
 
 
@@ -64,14 +76,14 @@ def equipment_checks(c):
 def visual_payload(report):
     """Preserve every physical trajectory; omit engineering-only repetition."""
     view=dict(report);m=dict(report['mechanics']);view['mechanics']=m
-    m['tracks']={identity:[{key:stroke[key] for key in ('t0','t1','from','to')} for stroke in seq]
+    m['tracks']={identity:[{key:stroke[key] for key in ('t0','t1','from','to','motion') if key in stroke} for stroke in seq]
                  for identity,seq in m['tracks'].items()}
     keys=sorted({e['zone'] for e in report['events'] if e['kind']=='stop_command'});lookup={key:i for i,key in enumerate(keys)}
     m['stop_keys']=keys
     m['stop_commands']=[[e['t'],lookup[e['zone']],int(e['opened'])] for e in report['events'] if e['kind']=='stop_command']
     def visible(e):
         if e['kind'] in ('stop_command','buffer_admitted','attach','detach'):return False
-        return e['kind']!='step' or e['station'] in ('dehack','stacker','elevator','guide_gate','pallet_out','dock') or e['station'].startswith(('dehack_','stacker_','elevator_','guide_gate_','inventory_','output_','pallet_out_')) or e['station'].endswith('_former')
+        return e['kind']!='step' or e['station'] in ('dehack','stacker','elevator','guide_gate','pallet_out','dock') or e['station'].startswith(('dehack_','stacker_','elevator_','guide_gate_','inventory_','output_','pallet_out_')) or e['station'].endswith(('_former','_reserve'))
     view['events']=[e for e in report['events'] if visible(e)]
     return view
 

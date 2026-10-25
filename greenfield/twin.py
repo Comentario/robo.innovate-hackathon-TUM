@@ -31,9 +31,10 @@ class TwinPlant(Plant):
         super().__init__(config)
         self.bridge=simpy.Resource(self.env,capacity=1);self.inventory_arrived=self.env.event()
         self.input_empties=[[],[]];self.source_done=0;self.outputs_pending=0;self.discard_pending=0;self.services_pending=0
+        self.discard_transfer=[simpy.Resource(self.env,capacity=1) for _ in range(config['cells'])]
         self.merge=simpy.Resource(self.env,capacity=1)
         self.branch_slots=[simpy.Resource(self.env,capacity=1) for _ in range(2)]
-        self.line_layers=[simpy.Store(self.env) for _ in range(2)]
+        self.line_layers=[simpy.FilterStore(self.env) for _ in range(2)]
         self.full_layers=RoutedStore(self.line_layers,lambda item:item[0]//4)
         self.line_trays=[simpy.Store(self.env) for _ in range(2)]
         for line,store in enumerate(self.line_trays):store.items.extend((bay,nest) for bay in range(line*2,line*2+2) for nest in (0,1))
@@ -86,6 +87,8 @@ class TwinPlant(Plant):
         self.add_aux('OUTPUT-SHUTTLE',[28,.154,0],'pallet_shuttle')
         self.add_aux('OUTPUT-CART',[31.5,0,0],'output_cart')
         for cell,z in enumerate(self.cell_z):
+            center=self.line_z[cell//4];side=1 if z+1.25>=center else -1;k=max(1,min(25,math.floor(abs(z+1.25-center)/.3+.5)))
+            self.add_aux(f'DISCARD-LIFT-{cell}',[7.25,BED,center+side*k*.3],'discard_elevator')
             key=f'INFEED-{cell}';self.positions[key]=[5.30,BED+.30,z];self.initial[key]=self.positions[key][:]
             key=f'ROW-PUSHER-{cell}';self.positions[key][1]=BED+.30;self.initial[key]=self.positions[key][:]
 
@@ -98,26 +101,27 @@ class TwinPlant(Plant):
         tool='INVENTORY-FORK';v=self.c['logistics']['bridge_xy_m_s'];vz=self.c['logistics']['bridge_z_m_s'];z=self.line_z[line]
         ids=[f'B{i:05}' for i in range(stack*800,(stack+1)*800)]+[f'P-IN-{stack}']
         source=self.positions[f'P-IN-{stack}'][:];p=self.positions[tool][:]
+        clamp_time=(self.c['logistics'].get('clamp_stroke_m',.17)/self.c['logistics'].get('clamp_m_s',.10)+self.c['logistics'].get('clamp_confirm_s',.30)) if self.c.get('stack_grip_mode')=='supported_side_clamp' else 4.0
         yield from self.move([tool],[[p[0],3.48,p[2]]],'inventory_bridge','Raise empty fork to travel plane',vz)
         yield from self.move([tool],[[source[0]-1.45,3.48,source[2]]],'inventory_bridge','Approach inventory from fork-pocket side',v)
         yield from self.move([tool],[[source[0]-1.45,source[1]+.02,source[2]]],'inventory_bridge','Lower fork outside the stack',vz)
-        self.emit('retention_command','inventory_bridge',closed=False,duration=4.0)
-        yield from self.pause('inventory_bridge','Raise complete rigid cage clear of the pallet',4.0)
+        self.emit('pack_clamp_command' if self.c.get('stack_grip_mode')=='supported_side_clamp' else 'retention_command','inventory_bridge',closed=False,duration=clamp_time)
+        yield from self.pause('inventory_bridge',('Open side restraint before supported fork pickup' if self.c.get('stack_grip_mode')=='supported_side_clamp' else 'Raise complete rigid cage clear of the pallet'),clamp_time)
         yield from self.move([tool],[[source[0],source[1]+.02,source[2]]],'inventory_bridge','Insert fork into pallet pockets',v)
-        self.emit('retention_command','inventory_bridge',closed=True,duration=4.0)
-        yield from self.pause('inventory_bridge','Lower rigid cage and confirm load containment',4.0)
+        self.emit('pack_clamp_command' if self.c.get('stack_grip_mode')=='supported_side_clamp' else 'retention_command','inventory_bridge',closed=True,duration=clamp_time)
+        yield from self.pause('inventory_bridge',('Close full-height side restraints and confirm support' if self.c.get('stack_grip_mode')=='supported_side_clamp' else 'Lower rigid cage and confirm load containment'),clamp_time)
         self.emit('bulk_attach','inventory_bridge',stack=stack,line=line)
         lift=3.46-source[1]
         yield from self.move(ids+[tool],[[self.positions[i][0],self.positions[i][1]+lift,self.positions[i][2]] for i in ids]+[[source[0],3.48,source[2]]],'inventory_bridge','Lift complete 800-brick stack above local gantries',vz)
         dx=-source[0];dz=z-source[2]
         yield from self.move(ids+[tool],[[self.positions[i][0]+dx,self.positions[i][1],self.positions[i][2]+dz] for i in ids]+[[0,3.48,z]],'inventory_bridge',f'Transfer retained stack to dehacking line {line+1}',v)
         yield from self.move(ids+[tool],[[self.positions[i][0],self.positions[i][1]-3.2,self.positions[i][2]] for i in ids]+[[0,.28,z]],'inventory_bridge','Lower stack onto receiving dock',vz)
-        self.emit('retention_command','inventory_bridge',closed=False,duration=4.0)
-        yield from self.pause('inventory_bridge','Raise rigid cage after dock support confirmation',4.0)
+        self.emit('pack_clamp_command' if self.c.get('stack_grip_mode')=='supported_side_clamp' else 'retention_command','inventory_bridge',closed=False,duration=clamp_time)
+        yield from self.pause('inventory_bridge',('Open side restraints after dock support confirmation' if self.c.get('stack_grip_mode')=='supported_side_clamp' else 'Raise rigid cage after dock support confirmation'),clamp_time)
         self.emit('stack_delivered','inventory_bridge',stack=stack,line=line)
         yield from self.move([tool],[[-1.45,.28,z]],'inventory_bridge','Withdraw empty fork from pallet pockets',v)
-        self.emit('retention_command','inventory_bridge',closed=True,duration=4.0)
-        yield from self.pause('inventory_bridge','Lower empty cage before overhead travel',4.0)
+        self.emit('pack_clamp_command' if self.c.get('stack_grip_mode')=='supported_side_clamp' else 'retention_command','inventory_bridge',closed=True,duration=clamp_time)
+        yield from self.pause('inventory_bridge',('Close empty side restraints before overhead travel' if self.c.get('stack_grip_mode')=='supported_side_clamp' else 'Lower empty cage before overhead travel'),clamp_time)
         yield from self.move([tool],[[-1.45,3.48,z]],'inventory_bridge','Retract fork clear of production',vz)
 
     def source_line(self,line):
@@ -211,16 +215,24 @@ class TwinPlant(Plant):
 
     def discard(self,identity,cell,decision,inspection_reservation):
         self.discard_pending+=1;line=cell//4;z=self.cell_z[cell];center=self.line_z[line]
-        side=1 if z+1.25>=center else -1;k=min(25,max(1,round(abs(z+1.25-center)/.3)))
+        side=1 if z+1.25>=center else -1;k=min(25,max(1,math.floor(abs(z+1.25-center)/.3+.5)))
         resource=self.collectors[line,side,k];reservation=resource.request();yield reservation
+        transfer=self.discard_transfer[cell].request();yield transfer
         v=self.c['speeds']['transfer_m_s'];tool=f'REJECT-PUSHER-{cell}'
         yield from self.move([identity,tool],[[9,BED+self.H/2,z+1.25],[9,BED+.045,z+1.25-self.D/2-.012]],f'cell_{cell}_router','Side pusher sends non-approved brick to common discard',v)
         yield from self.move([tool],[[9,BED+.045,z-self.D/2-.012]],f'cell_{cell}_router','Retract guided side ejector',v)
         yield from self.move([identity],[[8.50,BED+self.H/2,z+1.25]],f'cell_{cell}_router','Cross flat receiving deck at inspection height',.6)
-        yield from self.move([identity],[[7.06,.65,center+side*k*.3]],f'cell_{cell}_router','Travel down supported full-length discard chute',.6)
-        yield from self.move([identity],[[6.8,.65,center+side*k*.3]],f'cell_{cell}_router','Enter flush collector receiving rollers',.6)
         self.material[identity]['location']='discard_transit';self.material[identity]['discard_reason']=decision
         self.inspect_zones[cell][-1].release(inspection_reservation);self.notify()
+        self.env.process(self.guarded(self.lower_discard(identity,cell,line,side,k,reservation,transfer)))
+
+    def lower_discard(self,identity,cell,line,side,k,reservation,transfer):
+        lift=f'DISCARD-LIFT-{cell}';end_z=self.line_z[line]+side*k*.3;station=f'cell_{cell}_discard_lift'
+        yield from self.move([lift],[[7.25,BED,end_z]],station,'Raise empty discard elevator and confirm upper dock',.4)
+        yield from self.move([identity],[[7.25,BED+self.H/2,end_z]],station,'Level red belt feeds docked discard elevator',.6)
+        yield from self.move([identity,lift],[[7.25,.65,end_z],[7.25,.65-self.H/2,end_z]],station,'Lower supported discard elevator',.4)
+        yield from self.move([identity],[[6.8,.65,end_z]],station,'Enter flush collector receiving rollers',.6)
+        self.discard_transfer[cell].release(transfer)
         self.env.process(self.guarded(self.collect_discard(identity,line,side,k,reservation)))
 
     def collect_discard(self,identity,line,side,k,reservation):
@@ -330,7 +342,7 @@ class TwinPlant(Plant):
         z=self.cell_z[cell];selector=f'SELECTOR-{cell}';speed=self.c['speeds'];dwell=self.c['dwell']
         while True:
             index=self.reserved_layers;self.reserved_layers+=1;q=self.quota(index)
-            desired=pattern(4,10,q,index%3);ids_by_slot={};row_ids=[]
+            desired=pattern(4,10,q,index%3,self.c.get('max_same_shade_run'));ids_by_slot={};row_ids=[]
             request=self.formation[cell].request();yield request
             for r in range(4):
                 need=Counter(self.c['shades'][v] for v in desired[r*10:r*10+10])
@@ -394,7 +406,10 @@ class TwinPlant(Plant):
         speed=self.c['speeds'];dwell=self.c['dwell'];x=21+self.tail_shift;z=self.line_z[line];pack=[];pallet_index=0;matrix=[]
         yield from self.prepare_pallet(line,0)
         while True:
-            cell,index,ids,pickup=yield self.line_layers[line].get()
+            def compatible(item):
+                if self.c.get('max_same_shade_run')!=2 or len(matrix)<2:return True
+                return all(not(self.material[matrix[-1][k]]['shade']==self.material[matrix[-2][k]]['shade']==self.material[item[2][k]]['shade']) for k in range(40))
+            cell,index,ids,pickup=yield self.line_layers[line].get(compatible)
             target=[[x+(1.5-k//10)*self.L,BED+self.H/2,z+(k%10-4.5)*self.D] for k in range(40)]
             if self.c['faults']['critical_sensor_layer']==index:
                 yield from self.pause(f'stacker_{line}','Bounded source confirmation timeout',2)
@@ -472,7 +487,7 @@ class TwinPlant(Plant):
 
     def report(self):
         r=super().report();r['schema_version']='3.0';r['concept']='Dual-line autonomous dehacking'
-        r['mechanics'].update(line_z=self.line_z,layout='dual',transfer_revision=11,retention_design='rigid_lift_cage',collector_x=6.8,collector_y=.65,discard_mode='fixed' if self.fixed_discard else 'mobile')
+        r['mechanics'].update(line_z=self.line_z,layout='dual',transfer_revision=12,retention_design=self.c.get('stack_grip_mode','rigid_lift_cage'),collector_x=6.8,collector_y=.65,discard_mode='fixed' if self.fixed_discard else 'mobile')
         r['discard_cart_state']=[{'id':f'DISCARD-CART-{line}-{n}','line':line,'capacity':self.c['logistics']['discard_cart_capacity'],
             'ids':self.cart_payloads[f'DISCARD-CART-{line}-{n}'][:]}
             for line in range(2) for n in range(self.c['logistics']['discard_carts_per_line'])]

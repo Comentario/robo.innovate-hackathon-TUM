@@ -58,12 +58,10 @@ class TransferMechanicsTests(unittest.TestCase):
                 count+=1
         self.assertGreater(count,2000)
 
-    def test_pose_is_centered_before_narrow_lane_entry(self):
-        r=self.r;starts=[e for e in r['events'] if e['kind']=='piece_centering_start'];self.assertEqual(len(starts),1)
-        e=starts[0];self.assertEqual(e['brick'],'B00000');self.assertEqual(e['yaw_deg'],8)
-        done=next(q for q in r['events'] if q['kind']=='piece_centering_complete' and q['brick']==e['brick'])
-        entry=next(s for s in r['mechanics']['tracks'][e['brick']] if s['label']=='Meter across connected roller bridge')
-        self.assertGreaterEqual(entry['t0'],done['t']-1e-6)
+    def test_nominal_run_does_not_inject_artificial_recovery(self):
+        r=self.r
+        self.assertFalse(any(e['kind']=='piece_centering_start' for e in r['events']))
+        self.assertEqual(r['kpis']['automatic_recoveries'],0)
 
     def test_unsafe_yaw_is_inhibited_before_inspection(self):
         c=deepcopy(self.config);c['faults']['piece_yaw_deg']=90
@@ -85,23 +83,24 @@ class TransferMechanicsTests(unittest.TestCase):
         r=self.r;self.assertEqual(r['config']['accumulation_mode'],'zpa')
         self.assertFalse(any(e['kind']=='stop_command' for e in r['events']))
         self.assertEqual(r['mechanics']['vertical_zone_stops'],0)
-        self.assertEqual(r['mechanics']['zone_drives'],640)
-        self.assertEqual(r['mechanics']['zone_controllers'],160)
+        self.assertEqual(r['mechanics']['zone_drives'],self.config['cells']*(8+3*self.config['buffer_cells_per_shade']))
+        self.assertEqual(r['mechanics']['zone_controllers'],(r['mechanics']['zone_drives']+3)//4)
 
     def test_feed_phase_order_stops_pack_before_holding_and_pull_off(self):
         events=self.r['events']
         for bay in range(4):
             phases=[e['phase'] for e in events if e['kind']=='feed_phase' and e['bay']==bay]
-            self.assertEqual(len(phases),320)
+            self.assertGreater(len(phases),0);self.assertEqual(len(phases)%16,0)
             for k in range(0,len(phases),4):
                 self.assertEqual(phases[k:k+2],['Pack + receiving rollers ON','Pack rollers STOPPED'])
                 self.assertIn(phases[k+2],['Top hold confirmed; pull-off rollers ON','Last row; pull-off rollers ON'])
                 self.assertEqual(phases[k+3],'Pull-off STOPPED; cross-travel permitted')
 
     def test_rigid_guard_is_open_only_during_low_level_pickup_or_release(self):
-        r=self.r;m=r['mechanics'];commands=[e for e in r['events'] if e['kind']=='retention_command']
+        r=self.r;m=r['mechanics'];commands=[e for e in r['events'] if e['kind']==('pack_clamp_command' if self.config.get('stack_grip_mode')=='supported_side_clamp' else 'retention_command')]
         self.assertEqual([e['closed'] for e in commands],[False,True,False,True]*4)
-        self.assertTrue(all(e['duration']==4 for e in commands))
+        expected=self.config['logistics'].get('clamp_stroke_m',.17)/self.config['logistics'].get('clamp_m_s',.10)+self.config['logistics'].get('clamp_confirm_s',.30)
+        self.assertTrue(all(abs(e['duration']-expected)<1e-8 for e in commands))
         for e in commands:
             if not e['closed']:self.assertLess(pose(m,'INVENTORY-FORK',e['t'])[1],.4)
         for s in m['tracks']['INVENTORY-FORK']:

@@ -13,3 +13,5 @@ Retrieved 2026-10-24. Thumbnail resizing/compression only; no AI-generated produ
 - `pallet-transfer-car.jpg`: HORSTMANN, official VWG transfer-car reference photo. https://www.horstmann-anlagentechnik.de/wp-content/uploads/2022/04/Verschiebewagen-2-scaled.jpg (product: https://www.horstmann-anlagentechnik.de/project/transfer-car/?lang=en). Retrieved 2026-10-25; resized for the offline reference card. Supplier installation shown differs from the custom scene.
 
 - `lift-guard.jpg`: Eichinger 1059 manufacturer image, https://eichinger.de/wp-content/uploads/2017/01/1059_web.jpg ; mechanism https://eichinger.de/de/ladegabeln-schutzkoerbe/ . Reference product differs from custom powered integration.
+
+- `stack-clamp.jpg`: KINSHOFER KM332-V official photo, https://www.kinshofer.com/images/crane/KM332-V_01.jpg . Principle reference; not the qualified design of this custom hybrid.
