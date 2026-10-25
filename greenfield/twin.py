@@ -236,7 +236,8 @@ class TwinPlant(Plant):
         v=self.c['speeds']['transfer_m_s'];tool=f'REJECT-PUSHER-{cell}'
         yield from self.move([identity,tool],[[9,BED+self.H/2,z+1.25],[9,BED+.045,z+1.25-self.D/2-.012]],f'cell_{cell}_router','Side pusher sends non-approved brick to common discard',v)
         yield from self.move([tool],[[9,BED+.045,z-self.D/2-.012]],f'cell_{cell}_router','Retract guided side ejector',v)
-        yield from self.move([identity],[[8.50,BED+self.H/2,z+1.25]],f'cell_{cell}_router','Cross flat receiving deck at inspection height',.6)
+        if not self.fixed_discard:
+            yield from self.move([identity],[[8.50,BED+self.H/2,z+1.25]],f'cell_{cell}_router','Cross flat receiving deck at inspection height',.6)
         self.material[identity]['location']='discard_transit';self.material[identity]['discard_reason']=decision
         self.inspect_zones[cell][-1].release(inspection_reservation);self.notify()
         self.env.process(self.guarded(self.lower_discard(identity,cell,line,side,k,reservation,transfer)))
@@ -244,7 +245,7 @@ class TwinPlant(Plant):
     def lower_discard(self,identity,cell,line,side,k,reservation,transfer):
         lift=f'DISCARD-LIFT-{cell}';end_z=self.line_z[line]+side*k*.3;station=f'cell_{cell}_discard_lift'
         yield from self.move([lift],[[7.25,BED,end_z]],station,'Raise empty discard elevator and confirm upper dock',.4)
-        yield from self.move([identity],[[7.25,BED+self.H/2,end_z]],station,'Level red belt feeds docked discard elevator',.6)
+        yield from self.move([identity],[[7.25,BED+self.H/2,end_z]],station,('Continuous diagonal reject belt feeds docked elevator' if self.fixed_discard else 'Level red belt feeds docked discard elevator'),.6)
         yield from self.move([identity,lift],[[7.25,.65,end_z],[7.25,.65-self.H/2,end_z]],station,'Lower supported discard elevator',.4)
         yield from self.move([identity],[[6.8,.65,end_z]],station,'Enter flush collector receiving rollers',.6)
         self.discard_transfer[cell].release(transfer)

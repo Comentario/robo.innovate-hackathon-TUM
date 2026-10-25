@@ -197,18 +197,19 @@ class FixedDiscardTests(unittest.TestCase):
                 self.assertLessEqual(p[1]+.069/2,.65)
         self.assertEqual(count,r['kpis']['discard_bricks']);self.assertEqual(r['status'],'completed_with_residual_stock')
 
-    def test_discard_crosses_full_flat_deck_before_descending(self):
+    def test_diagonal_discard_is_continuous_and_stays_level_until_docked(self):
         r=self.base;count=0
         for identity,seq in r['mechanics']['tracks'].items():
             for k,stroke in enumerate(seq):
-                if stroke['label']!='Cross flat receiving deck at inspection height':continue
+                if stroke['label']!='Continuous diagonal reject belt feeds docked elevator':continue
                 count+=1
                 self.assertAlmostEqual(stroke['from'][0],9.0)
-                self.assertAlmostEqual(stroke['to'][0],8.5)
+                self.assertAlmostEqual(stroke['to'][0],7.25)
                 self.assertAlmostEqual(stroke['from'][1],1.2845)
-                self.assertEqual(stroke['from'][1:],stroke['to'][1:])
+                self.assertAlmostEqual(stroke['from'][1],stroke['to'][1])
                 self.assertEqual(seq[k+1]['from'],stroke['to'])
-                self.assertEqual(seq[k+1]['label'],'Level red belt feeds docked discard elevator')
+                self.assertEqual(seq[k+1]['label'],'Lower supported discard elevator')
+                self.assertGreaterEqual(seq[k+1]['t0'],stroke['t1'])
         self.assertEqual(count,r['kpis']['discard_bricks'])
 
     def test_full_stationary_bin_stops_without_synthetic_emptying(self):

@@ -53,7 +53,7 @@ class MotionAndSceneTests(unittest.TestCase):
         self.assertGreater(count,100)
         for e in r['events']:
             if e['kind']=='coordinated_zone_release' and e['end_speed']>0:self.assertTrue(e['braking_zone_reserved'])
-    @unittest.skipUnless(os.environ.get('GREENFIELD_SCENE_REPORT'),'Needs exported scene geometry')
+    @unittest.skipUnless(os.environ.get('GREENFIELD_SCENE_REPORT') and os.environ.get('GREENFIELD_SCENE_GEOMETRY'),'Needs report and exported scene geometry')
     def test_actual_material_and_reserve_paths_clear_exported_static_scene(self):
         r=json.loads(Path(os.environ['GREENFIELD_SCENE_REPORT']).read_text());scene=json.loads(Path(os.environ['GREENFIELD_SCENE_GEOMETRY']).read_text())
         result=audit_scene(r,scene);self.assertTrue(result['passed'],result['examples'])

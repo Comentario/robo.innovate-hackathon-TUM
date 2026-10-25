@@ -293,3 +293,5 @@ Revisión vigente: `artifacts/greenfield_12/index.html`. Ocho células, buffers 
 Vista actual: `artifacts/greenfield_13/index.html`. Liberación coordinada con reserva de frenado: 2.050/h estimados, +5,03 % con el mismo hardware. Objetivo de diseño: 3.000/h; referencia del mentor: 1.500/h. La revisión 12 sigue como punto de comparación.
 
 Vista vigente: `artifacts/greenfield_14/index.html`. Sin pórticos de reserva: filas incrementales, bandas reversibles al nivel de la línea y reparto por acumulación. Estimación de referencia 2.218/h; tres distribuciones completadas. Explicación y límites: [docs/flow_optimization_14.md](docs/flow_optimization_14.md).
+
+Revisión 15: `artifacts/greenfield_15/index.html`. Banda diagonal continua de descarte, sin parada intermedia: 2.264 conformes expedidos/h en el lote sintético. Checkpoint anterior `d56c3b7`. Ver [transferencia y alcance](docs/diagonal_transfer_15.md).
