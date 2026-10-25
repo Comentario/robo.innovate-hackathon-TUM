@@ -315,3 +315,5 @@ Current transfer-station demo: `artifacts/greenfield_21/index.html`. [Powered re
 Current visual refinement: `artifacts/greenfield_22/index.html`. [Guided actuator mount and flared row entry](docs/guided_mount_22.md). Production timing is unchanged.
 
 Latest separator fix: `artifacts/greenfield_23/index.html`; [visual correction and checks](docs/separator_fix_23.md).
+
+Current loop seam correction: `artifacts/greenfield_24/index.html`; [continuous guide joints](docs/loop_rail_seams_24.md).
