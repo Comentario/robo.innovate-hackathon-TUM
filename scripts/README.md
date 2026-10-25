@@ -7,3 +7,86 @@ Color-estimator diagnostics:
 
 - `analyze_lab_distribution.py`: visualize measured Lab distributions.
 - `experiment_lab_cluster_count.py`: compare K=1, K=2, and K=3 candidates.
+
+Hackathon dataset annotation:
+
+- `run_grounding_dino.py`: run Grounding DINO (`grounding-dino-tiny`, prompt
+  `bricks`) locally on the clean `*_NS.jpg` brick scenes and write previews,
+  per-image JSON and `detections.json` to `outputs2/grounding_dino/`. Boxes are
+  stored both at the 1280 px detection size (`box`) and in original pixels
+  (`bbox_px`).
+- `clean_grounding_dino_boxes.py`: turn the raw Grounding DINO boxes into one
+  box per brick (removes stack-level boxes, merges crack fragments in the same
+  column, recovers bricks only covered by the stack box) and write previews and
+  `detections_clean.json` to `outputs2/grounding_dino_clean/`.
+- `clean_grounding_dino_fragments.py`: rebuild whole lying bricks from
+  fragmented Grounding DINO boxes in top-down views using the brick aspect
+  ratio (removes stack boxes, merges fragment pairs, extends lone fragments) and
+  write `outputs2/second_dataset/grounding_dino_clean/`.
+- `analyze_second_dataset_colors.py`: per-brick color features for
+  `Second_Dataset_Bricks/` measured inside the corrected boxes (a hand-written
+  grid only assigns labels), feature separability, plots, and a
+  leave-one-scene-out good-prototype check, written to
+  `outputs2/second_dataset/color_analysis/`. Run `run_grounding_dino.py`
+  (`--images Second_Dataset_Bricks --output outputs2/second_dataset/grounding_dino`)
+  and `clean_grounding_dino_fragments.py` first.
+- `predict_good_prototype.py`: prototype A (distance to the mean good brick in
+  L*-minus-wood, chroma, and L*/chroma spread). Leave-one-scene-out predictions,
+  metrics, overlays, the final `prototype.json` and `variant_comparison.json`
+  (spread variants V0-V4 under the same protocol) go to
+  `outputs2/second_dataset/prototype_a/`. Run after `analyze_second_dataset_colors.py`.
+- `run_mobile_sam.py`: segment each corrected box with MobileSAM (ultralytics,
+  weights in the git-ignored `models/`), drop pixels claimed by two masks, erode,
+  and write label maps and previews to `outputs2/first_dataset/mobile_sam/`.
+- `evaluate_prototype_first_dataset.py`: test prototype V4 on the first dataset:
+  direct transfer of the second-dataset prototype and leave-one-physical-brick-out,
+  with box vs MobileSAM regions and table vs wall references. Outputs in
+  `outputs2/first_dataset/prototype_v4/`.
+- `capture_bricks.py`: capture `GOOD_xx`/`BAD_xx`/`MIX_xx` photos into
+  `Third_Dataset_Bricks/` with the camera driver settings dialog (to disable auto
+  white balance, exposure and focus), a clipped-pixel warning, and per-photo
+  camera properties.
+- `split_brick_row.py`: one box per standing brick for rows of touching bricks
+  (darkness profile of the joints + dynamic programming over brick widths);
+  uses the Grounding DINO boxes directly when the bricks stand apart. Writes
+  `outputs2/third_dataset/row_split/`.
+- `evaluate_third_dataset.py`: color classifiers on `Third_Dataset_Bricks/`
+  (fixed camera) with MobileSAM regions, leave-one-photo-out; labels from the
+  photo name and the hand-read "G" marks. Writes `outputs2/third_dataset/evaluation/`.
+  Pipeline: `run_grounding_dino.py --images Third_Dataset_Bricks --pattern
+  '^(?:GOOD|BAD|MIX)_\d+\.jpg$' --output outputs2/third_dataset/grounding_dino`,
+  `split_brick_row.py`, `run_mobile_sam.py --detections
+  outputs2/third_dataset/row_split/detections_clean.json --images
+  Third_Dataset_Bricks --output outputs2/third_dataset/mobile_sam`, then this script.
+- `live_brick_classifier.py`: the whole pipeline in one script (Grounding DINO
+  -> row split -> MobileSAM -> color -> 1-NN against the third-dataset reference).
+  `--calibrate` first photographs the labeled sample bricks in the test scene
+  (saved to `outputs2/calibration/<session>/calibration.json`) and uses them as
+  the reference; `--reference calibration.json` reuses one. The preview shows the
+  scene lightness (table L*) against the reference and warns when it is too dark
+  or bright, or when camera settings differ from the calibration. Feature sets:
+  raw, table (L* minus table) and table_ratio (L* with the table as white, the
+  default for new calibrations); `--features` overrides the stored one.
+  `--method band` classifies with a lightness band instead (good if LOW <= L* mode
+  <= HIGH, fitted on the calibration or set with `--band LOW HIGH`) and shows each
+  brick's L* mode and its distance to the band. Camera mode: space
+  classifies the current frame, then g/b enters the true label of each brick for
+  the log. `--image photo.jpg` classifies a saved photo. Logs (frames, result
+  images, `log.jsonl`, `log.csv`) go to `outputs2/live/<session>/`.
+- `analyze_live_session.py outputs2/live/<session>`: re-run the pipeline on a
+  logged live session and plot why bricks were misclassified (feature space vs
+  reference, scene brightness and gain, per-capture distances, holes), plus
+  alternative feature sets scored on the live labels. Writes `<session>/analysis/`.
+- `analyze_calibrated_session.py <calibration> <live session>`: feature metrics of a
+  calibration, live accuracy per feature set (raw, table difference, table
+  ratio), and a memorization check (unseen calibration capture vs. live with and
+  without the closest calibration capture). Writes `<session>/calibration_analysis/`.
+- `visualize_pipeline_steps.py photo.jpg [--reference calibration.json]`: save every
+  pipeline step for one photo (Grounding DINO boxes, row split, boxes, MobileSAM
+  raw and final masks, measurement regions, per-pixel L* and C* maps, per-brick
+  distributions and numbers) to `outputs2/pipeline_steps/<photo>/`.
+- `evaluate_calibration_features.py <calibration> <live session>`: re-measure every
+  calibration and live brick from saved frames and boxes (median and mode of L*
+  and C*, a*, hue, table difference and ratio) and score nearest-neighbor feature
+  sets and a lightness "band" rule: honest (unseen capture), live, and live
+  without its twin. Writes `<calibration>/feature_evaluation/`.

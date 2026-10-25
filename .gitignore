@@ -11,3 +11,5 @@ install/
 log/
 *.egg-info/
 .pytest_cache/
+
+models/
