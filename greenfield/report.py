@@ -88,6 +88,8 @@ def visual_payload(report):
         if e['kind'] in ('stop_command','buffer_admitted','attach','detach'):return False
         return e['kind']!='step' or e['station'] in ('dehack','stacker','elevator','guide_gate','pallet_out','dock') or e['station'].startswith(('dehack_','stacker_','elevator_','guide_gate_','inventory_','output_','pallet_out_')) or e['station'].endswith(('_former','_reserve'))
     view['events']=[e for e in report['events'] if visible(e)]
+    if report['config'].get('flow_loop'):
+        view['junctions']=[{'cell':int(e['station'].split('_')[1]),'kind':'inlet' if e['label']=='Continuously feed accepted brick to reserved merge slot' else 'outlet','t':e['t']} for e in report['events'] if e['kind']=='step' and e['label'] in ('Continuously feed accepted brick to reserved merge slot','Fixed selected-tone outlet aligns outside the loop bend')]
     return view
 
 
