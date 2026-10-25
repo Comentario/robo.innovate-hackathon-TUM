@@ -63,19 +63,19 @@ function junctionMechanisms(cell,z,x1,rad){
  const mountX=x1+.24,mountZ=z-rad+.42;
  box(mountX,(B+.64)/2,mountZ,.07,B+.64,.07,green);box(mountX,.025,mountZ,.22,.05,.22,steel);box(mountX,B+.64,z-rad+.25,.10,.07,.40,steel);
  box(mountX,B+.53,z-rad+.10,.12,.22,.12,yellow);const rod=box(mountX,B+.30,z-rad+.10,.035,.35,.035,steel);dynamicMeshes.add(rod);
- box(mountX,B+.10,z-rad+.07,.10,.05,.13,steel,cam);
+
  // Twin guides take side loads; the cylinder drives a bolted carriage, not the guide directly.
  for(const sign of [-1,1]){
-  cylinder(mountX+sign*.085,B+.38,z-rad+.18,.012,.44,steel);
-  box(mountX+sign*.085,B+.25,z-rad+.18,.055,.09,.065,dark,cam);
-  box(mountX+sign*.085,B+.17,z-rad+.13,.025,.16,.10,steel,cam);
-  for(const dx of [-.012,.012])box(mountX+sign*.085+dx,B+.25,z-rad+.217,.010,.012,.012,steel,cam);
+  cylinder(mountX+sign*.085,B+.38,z-rad+.21,.012,.44,steel);
+  box(mountX+sign*.085,B+.23,z-rad+.21,.055,.09,.065,dark,cam);
+  box(mountX+sign*.085,B+.16,z-rad+.08,.025,.14,.04,steel,cam);box(mountX+sign*.085,B+.21,z-rad+.135,.035,.035,.19,steel,cam);
+  for(const dx of [-.012,.012])box(mountX+sign*.085+dx,B+.23,z-rad+.249,.010,.012,.012,steel,cam);
  }
  box(mountX,B+.615,z-rad+.18,.27,.05,.16,steel);
- box(mountX,B+.15,z-rad+.18,.27,.03,.14,steel);
- box(mountX,B+.25,z-rad+.18,.27,.065,.11,steel,cam);
- box(mountX,B+.10,z-rad+.07,.18,.05,.14,dark,cam);
- for(const dx of [-.06,.06])box(mountX+dx,B+.127,z-rad+.07,.014,.014,.014,steel,cam);
+ box(mountX,B+.14,z-rad+.33,.27,.03,.26,steel);
+ box(mountX,B+.22,z-rad+.21,.27,.065,.10,steel,cam);box(mountX,B+.235,z-rad+.14,.08,.035,.16,steel,cam);
+ box(mountX,B+.095,z-rad+.05,.18,.05,.14,dark,cam);
+ for(const dx of [-.06,.06])box(mountX+dx,B+.122,z-rad+.07,.014,.014,.014,steel,cam);
  junctionActors.push({cell,blade,cam,rod});
 }
 function transferCurve(a,b,reach,n=48){const p=[a,[a[0]+reach,a[1]],[b[0]-reach,b[1]],b],out=[];for(let k=0;k<=n;k++){const t=k/n,v=1-t;out.push([0,1].map(j=>v*v*v*p[0][j]+3*v*v*t*p[1][j]+3*v*t*t*p[2][j]+t*t*t*p[3][j]));}return out;}
@@ -348,7 +348,7 @@ function piecePitch(id,t){const es=pitchEvents[id]||[];let angle=0;for(const e o
 function pieceYaw(id,t){if(FLOW){const s=segment(m.tracks[id]||[],t);if(s&&s.path){let u=Math.min(1,Math.max(0,(t-s.t0)/(s.t1-s.t0)));if(s.motion){const p=s.motion,tt=Math.max(0,Math.min(p.duration,t-s.t0)),ta=p.accel_time??p.ramp,td=p.decel_time??p.ramp,v0=p.start_speed||0,v1=p.end_speed||0,x=tt<ta?v0*tt+.5*p.acceleration*tt*tt:tt>p.duration-td?p.distance-v1*(p.duration-tt)-.5*p.acceleration*(p.duration-tt)**2:v0*ta+.5*p.acceleration*ta*ta+p.peak*(tt-ta);u=Math.max(0,Math.min(1,x/p.distance));}return pathPose(s,u)[3];}if(s&&s.loop_s0!==undefined){let u=Math.min(1,Math.max(0,(t-s.t0)/(s.t1-s.t0)));if(s.motion){const p=s.motion,dt=Math.min(p.duration,Math.max(0,t-s.t0));u=(p.start_speed*dt-.5*p.acceleration*dt*dt)/p.distance;if(p.start_speed===p.end_speed)u=dt/p.duration;}return loopPoint(s.loop_s0+(s.loop_s1-s.loop_s0)*u,s.loop_cell).yaw;}}const e=centeringEvents.find(e=>e.brick===id&&t>=e.t&&t<=e.t+e.duration);if(!e)return 0;const u=(t-e.t)/e.duration;return e.yaw_deg*Math.PI/180*(1-Math.min(1,Math.max(0,(u-.25)/.50)));}
 const junctionSignals=r.junctions||[],junctionMap={};for(const e of junctionSignals)(junctionMap[e.cell+':'+e.kind]??=[]).push(e);
 function junctionState(cell,kind,t){const es=junctionMap[cell+':'+kind]||[],lead=kind==='inlet'?.12:0;let a=0,b=es.length;while(a<b){const k=(a+b)>>1;if(es[k].t-lead<=t)a=k+1;else b=k;}if(!a)return 0;const e=es[a-1],begin=e.t-lead,finish=e.t+(kind==='inlet'?.80:.17);if(t<=finish)return Math.min(1,Math.max(0,(t-begin)/.08));return Math.max(0,1-(t-finish)/.08);}
-function render(){for(const a of junctionActors){const input=junctionState(a.cell,'inlet',time),output=junctionState(a.cell,'outlet',time);for(const roller of a.blade.children)roller.rotation.z=.30*output;a.cam.position.y=.16*(1-output);const bottom=B+.12+a.cam.position.y,top=B+.42;a.rod.position.y=(bottom+top)/2;a.rod.scale.y=Math.max(.03,top-bottom);}for(const q of zones){q.present=false;q.moving=false;q.released=false;}for(const sensor of sensors)sensor.present=false;currentPositions=[];for(let i=0;i<r.material.length;i++){const p=position(r.material[i].id,time);currentPositions.push(p);updateZones(r.material[i].id,p);for(const q of sensors){if(Math.abs(p[0]-q.x)<L/2+.03&&Math.abs(p[2]-q.z)<.24&&p[1]>B&&p[1]<B+.2)q.present=true;}dummy.position.set(...p);dummy.rotation.set(0,pieceYaw(r.material[i].id,time),piecePitch(r.material[i].id,time));dummy.updateMatrix();bricks.setMatrixAt(i,dummy.matrix);}bricks.instanceMatrix.needsUpdate=true;
+function render(){for(const a of junctionActors){const input=junctionState(a.cell,'inlet',time),output=junctionState(a.cell,'outlet',time);for(const roller of a.blade.children)roller.rotation.z=.30*output;a.cam.position.y=.16*(1-output);const bottom=B+.2525+a.cam.position.y,top=B+.42;a.rod.position.y=(bottom+top)/2;a.rod.scale.y=Math.max(.004,top-bottom);}for(const q of zones){q.present=false;q.moving=false;q.released=false;}for(const sensor of sensors)sensor.present=false;currentPositions=[];for(let i=0;i<r.material.length;i++){const p=position(r.material[i].id,time);currentPositions.push(p);updateZones(r.material[i].id,p);for(const q of sensors){if(Math.abs(p[0]-q.x)<L/2+.03&&Math.abs(p[2]-q.z)<.24&&p[1]>B&&p[1]<B+.2)q.present=true;}dummy.position.set(...p);dummy.rotation.set(0,pieceYaw(r.material[i].id,time),piecePitch(r.material[i].id,time));dummy.updateMatrix();bricks.setMatrixAt(i,dummy.matrix);}bricks.instanceMatrix.needsUpdate=true;
  for(const name of ['dehack_0','dehack_1','stacker_0','stacker_1']){const p=position('TOOL-'+name,time),o=machines[name];o.bridge.position.x=p[0];o.carriage.position.set(p[0],2.77,p[2]);let len=Math.max(.12,2.7-p[1]);o.rod.position.set(p[0],p[1]+len/2,p[2]);o.rod.scale.y=len;o.head.position.set(...p);}
  for(let i=0;i<c.cells;i++){
  for(const [name,id] of [...(FLOW?[]:[['selector','SELECTOR'],['sorter','SORTER']]),['infeed','INFEED'],['former','ROW-PUSHER'],['reject','REJECT-PUSHER']])machines[name+'_'+i].carriage.position.set(...position(id+'-'+i,time));

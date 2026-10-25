@@ -313,3 +313,5 @@ Latest recalculated demo: `artifacts/greenfield_20_checked/index.html`. [Guided 
 Current transfer-station demo: `artifacts/greenfield_21/index.html`. [Powered receiving transport, wider outlet, guided divert actuator and support checks](docs/transfer_station_21.md).
 
 Current visual refinement: `artifacts/greenfield_22/index.html`. [Guided actuator mount and flared row entry](docs/guided_mount_22.md). Production timing is unchanged.
+
+Latest separator fix: `artifacts/greenfield_23/index.html`; [visual correction and checks](docs/separator_fix_23.md).
