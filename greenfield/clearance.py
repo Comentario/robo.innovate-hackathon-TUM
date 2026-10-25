@@ -12,6 +12,9 @@ def pose(m,identity,t,index=None):
     if k<0:return m['initial'][identity]
     s=seq[k];u=max(0,min(1,(t-s['t0'])/(s['t1']-s['t0'])))
     if s.get('motion'):u=fraction(t-s['t0'],s['motion'])
+    if 'loop_s0' in s:
+        from .flow import loop_pose
+        return loop_pose(s['loop_s0']+(s['loop_s1']-s['loop_s0'])*u,m['cell_z'][s['loop_cell']],m['loop_geometry']['x1'])[0]
     return [a+(b-a)*u for a,b in zip(s['from'],s['to'])]
 
 

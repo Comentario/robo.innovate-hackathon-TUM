@@ -27,7 +27,7 @@ class TwinPlant(Plant):
         self.isolated_cells=set()
         if self.fixed_discard and log['discard_carts_per_line']!=1:raise ValueError('Fixed layout requires exactly one stationary bin per line')
         self.line_z=[-8.0,8.0];self.lines=2
-        self.tool_homes={f'{kind}_{line}':[1.5 if kind=='dehack' else 21+(config['buffer_cells_per_shade']-20)*.3,2.6,z]
+        self.tool_homes={f'{kind}_{line}':[1.5 if kind=='dehack' else 21+config.get('transport_extension_m',(config['buffer_cells_per_shade']-20)*.3),2.6,z]
                          for line,z in enumerate(self.line_z) for kind in ('dehack','stacker')}
         super().__init__(config)
         self.bridge=simpy.Resource(self.env,capacity=1);self.inventory_arrived=self.env.event()
@@ -93,7 +93,7 @@ class TwinPlant(Plant):
                 self.add_aux(f'DISCARD-LIFT-{cell}',[7.25,BED,center+side*k*.3],'discard_elevator')
             key=f'INFEED-{cell}';self.positions[key]=[5.30,BED+.30,z];self.initial[key]=self.positions[key][:]
             key=f'ROW-PUSHER-{cell}';self.positions[key][1]=BED+.30;self.initial[key]=self.positions[key][:]
-            if self.c.get('reserve_mode')=='reversible_belts':
+            if self.c.get('reserve_mode') in ('reversible_belts','flow_loop'):
                 key=f'PICKER-{cell}';self.aux.pop(key,None);self.positions.pop(key,None);self.initial.pop(key,None)
 
     def inventory_delivery(self):
@@ -184,8 +184,9 @@ class TwinPlant(Plant):
                 gap=.10 if row_number else None
                 self.emit('feed_phase',f'feeder_{bay}',bay=bay,nest=nest,phase='Pull-off STOPPED; cross-travel permitted')
                 self.emit('row_gap_verified',f'feeder_{bay}',bay=bay,nest=nest,row=row[:],gap_m=gap)
-                target=[[4.74,BED+self.H/2,z+(k-4.5)*self.D] for k in range(10)]
-                yield from self.move(row+[shuttle],target+[[4.7,BED,z]],f'feeder_{bay}','Supported row shuttle cross-travel',v)
+                offset=.3015 if self.c.get('batch_row_intake') else 0.
+                target=[[4.74,BED+self.H/2,z+offset+(k-4.5)*self.D] for k in range(10)]
+                yield from self.move(row+[shuttle],target+[[4.7,BED,z+offset]],f'feeder_{bay}','Supported row shuttle cross-travel',v)
                 yield from self.move(row,[[5.6,p[1],p[2]] for p in target],f'feeder_{bay}','Powered row discharge to infeed',v)
                 self.locate(row,f'cell_{cell}_intake')
                 for identity in row:self.material[identity]['cell']=cell
@@ -207,10 +208,13 @@ class TwinPlant(Plant):
                     yield from self.move([tool],[[5.6-self.L/2-.012,BED+.045,p[2]]],f'cell_{cell}_infeed','Lower independent vertical paddle slide',self.c['speeds']['gantry_z_m_s'])
                     yield from self.move([identity,tool],[[5.95,p[1],p[2]],[5.95-self.L/2-.012,BED+.045,p[2]]],f'cell_{cell}_infeed','Pusher singulates one brick',v)
                     yield from self.move([tool],[[5.95-self.L/2-.012,BED+.30,p[2]]],f'cell_{cell}_infeed','Raise vertical paddle before X return',self.c['speeds']['gantry_z_m_s'])
-                    yield from self.move([tool],[[5.30,BED+.30,p[2]]],f'cell_{cell}_infeed','Return raised rigid X slide',v)
+                    retract=self.move([tool],[[5.30,BED+.30,p[2]]],f'cell_{cell}_infeed','Return raised rigid X slide',v)
+                    if self.c.get('flow_loop'):retract=self.env.process(retract)
+                    else:yield from retract
                     yield from self.move([identity],[[5.95,p[1],z]],f'cell_{cell}_infeed','Align separated brick with lane',v)
                     yield from self.check_piece_alignment(identity,cell)
                     yield from self.move([identity],[[6.4,BED+self.H/2,z]],f'cell_{cell}_infeed','Meter across connected roller bridge',v)
+                    if self.c.get('flow_loop'):yield retract
                     self.env.process(self.guarded(self.inspect(identity,cell,entrance)))
                     yield from self.pause(f'cell_{cell}_infeed','Confirm entry sensor; next admission waits for reserved zone',self.c['dwell']['sensor_s'])
             yield self.free_cells[cell//2].put(cell)
@@ -235,6 +239,7 @@ class TwinPlant(Plant):
         resource=self.collectors[line,side,k];reservation=resource.request();yield reservation
         transfer=self.discard_transfer[cell].request();yield transfer
         v=self.c['speeds']['transfer_m_s'];tool=f'REJECT-PUSHER-{cell}'
+        if self.c.get('flow_loop'):self.loop_release_approach(cell)
         yield from self.move([identity,tool],[[9,BED+self.H/2,z+1.25],[9,BED+.045,z+1.25-self.D/2-.012]],f'cell_{cell}_router','Side pusher sends non-approved brick to common discard',v)
         yield from self.move([tool],[[9,BED+.045,z-self.D/2-.012]],f'cell_{cell}_router','Retract guided side ejector',v)
         if not self.fixed_discard:
@@ -386,7 +391,7 @@ class TwinPlant(Plant):
         self.emit('discard_cart_returned',f'cart_collection_{line}',line=line,cart=cart);self.services_pending-=1;self.notify()
 
     def builder(self,cell):
-        z=self.cell_z[cell];selector=f'SELECTOR-{cell}';speed=self.c['speeds'];dwell=self.c['dwell']
+        z=self.cell_z[cell]+self.c.get('row_forming_offset_m',0.);selector=f'SELECTOR-{cell}';speed=self.c['speeds'];dwell=self.c['dwell']
         while True:
             index=self.reserved_layers;self.reserved_layers+=1;q=self.quota(index)
             desired=pattern(4,10,q,index%3,self.c.get('max_same_shade_run'));ids_by_slot={};row_ids=[]
@@ -423,15 +428,19 @@ class TwinPlant(Plant):
                             yield self.changed | self.env.timeout(.25)
                         if self.env.now>wait_start:self.emit('mix_wait_end',f'cell_{cell}_former',layer=index,shade=shade,wait_s=self.env.now-wait_start)
                         self.inventory[cell,shade]-=1
-                    identity,selected=yield self.ready[cell,shade].get()
-                    self.locate([identity],'forming');ids_by_slot[r*10+col]=identity
-                    zz=self.positions[identity][2]
-                    yield from self.move([selector],[[(16.25+self.tail_shift),BED,zz]],f'cell_{cell}_selector','Select required tone queue',speed['selector_m_s'])
-                    yield from self.move([identity],[[(16.25+self.tail_shift),BED+self.H/2,zz]],f'cell_{cell}_selector','Feed confirmed brick onto shuttle',speed['transfer_m_s'])
-                    selected.succeed();self.notify()
-                    yield from self.move([identity,selector],[[(16.25+self.tail_shift),BED+self.H/2,z-.3015],[(16.25+self.tail_shift),BED,z-.3015]],f'cell_{cell}_selector','Align with row inlet',speed['selector_m_s'])
-                    yield from self.move([identity],[[(16.65+self.tail_shift),BED+self.H/2,z-.3015]],f'cell_{cell}_selector','Feed row inlet',speed['transfer_m_s'])
-                    yield from self.pause(f'cell_{cell}_selector','Confirm inlet clear',dwell['sensor_s'])
+                    if self.c.get('flow_loop'):
+                        identity=yield from self.loop_take(cell,shade,self.c['shades'][desired[r*10+col-1]] if col else None)
+                        self.locate([identity],'forming');ids_by_slot[r*10+col]=identity
+                    else:
+                        identity,selected=yield self.ready[cell,shade].get()
+                        self.locate([identity],'forming');ids_by_slot[r*10+col]=identity
+                        zz=self.positions[identity][2]
+                        yield from self.move([selector],[[(16.25+self.tail_shift),BED,zz]],f'cell_{cell}_selector','Select required tone queue',speed['selector_m_s'])
+                        yield from self.move([identity],[[(16.25+self.tail_shift),BED+self.H/2,zz]],f'cell_{cell}_selector','Feed confirmed brick onto shuttle',speed['transfer_m_s'])
+                        selected.succeed();self.notify()
+                        yield from self.move([identity,selector],[[(16.25+self.tail_shift),BED+self.H/2,z-.3015],[(16.25+self.tail_shift),BED,z-.3015]],f'cell_{cell}_selector','Align with row inlet',speed['selector_m_s'])
+                        yield from self.move([identity],[[(16.65+self.tail_shift),BED+self.H/2,z-.3015]],f'cell_{cell}_selector','Feed row inlet',speed['transfer_m_s'])
+                        yield from self.pause(f'cell_{cell}_selector','Confirm inlet clear',dwell['sensor_s'])
                     row_ids.append(identity)
                 row_x=(18.2+self.tail_shift)+(1.5-r)*self.L
                 target=[[row_x,BED+self.H/2,self.positions[i][2]] for i in row_ids]

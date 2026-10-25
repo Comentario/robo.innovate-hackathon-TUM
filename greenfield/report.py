@@ -58,6 +58,9 @@ def equipment_checks(c):
          'reference':'Same pallet-conveyor envelope; support distribution still requires verification',
          'within_envelope':560*mass+25<=3000 and (560*mass+25)/1.2<=1250},
     ]
+    if c.get('flow_loop'):
+        checks[1]['component']='Inspection roller zones'
+        checks[1]['selected']=f"{mass:.1f} kg/zone; 0.50 m reference roller; {c['speeds']['belt_m_s']} m/s"
     if c.get('layout')=='dual':
         checks=[row for row in checks if row['component']!='Input pallet conveyor']
         log=c['logistics'];stack=800*mass+25
@@ -76,7 +79,7 @@ def equipment_checks(c):
 def visual_payload(report):
     """Preserve every physical trajectory; omit engineering-only repetition."""
     view=dict(report);m=dict(report['mechanics']);view['mechanics']=m
-    m['tracks']={identity:[{key:stroke[key] for key in ('t0','t1','from','to','motion') if key in stroke} for stroke in seq]
+    m['tracks']={identity:[{key:stroke[key] for key in ('t0','t1','from','to','motion','loop_s0','loop_s1','loop_cell') if key in stroke} for stroke in seq]
                  for identity,seq in m['tracks'].items()}
     keys=sorted({e['zone'] for e in report['events'] if e['kind']=='stop_command'});lookup={key:i for i,key in enumerate(keys)}
     m['stop_keys']=keys

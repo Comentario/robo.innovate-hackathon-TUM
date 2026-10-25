@@ -3,17 +3,19 @@ from pathlib import Path
 from copy import deepcopy
 from .model import Plant
 from .twin import TwinPlant
+from .flow import FlowPlant
 from .report import write_report,render_view
 
 def main():
     p=argparse.ArgumentParser(description='Autonomous brick plant: eight cells, two parallel lines')
-    p.add_argument('--config',type=Path,default=Path('config/greenfield_dual.json'))
-    p.add_argument('--output-dir',type=Path,default=Path('artifacts/greenfield_04'))
+    p.add_argument('--config',type=Path,default=Path('config/greenfield_flow.json'))
+    p.add_argument('--output-dir',type=Path,default=Path('artifacts/greenfield_flow'))
     p.add_argument('--compare-zpa',action='store_true',help='Compare 20/24/30 ZPA zones per shade with the same batch')
     p.add_argument('--compare',action='store_true');p.add_argument('--cells',type=int,choices=(2,4,6,8))
     args=p.parse_args()
     if args.output_dir.exists():p.error('Select a new output directory; previous evidence is preserved')
     c=json.loads(args.config.read_text());dual=c.get('layout')=='dual'
+    if c.get('flow_loop') and (args.compare or args.compare_zpa):p.error('Historical comparisons require an explicit legacy configuration; the continuous-flow demo uses its own topology.')
     if args.cells:
         if dual and args.cells!=8:p.error('The dual layout keeps eight cells. Use the prior config for another cell count.')
         c['cells']=args.cells;c['accepted_overflow_capacity']=50*args.cells
@@ -33,7 +35,7 @@ def main():
         ])
     results=[];folders=[]
     for i,(name,changes) in enumerate(scenarios):
-        config=deepcopy(c);config.update(changes);model=TwinPlant if config.get('layout')=='dual' else Plant
+        config=deepcopy(c);config.update(changes);model=FlowPlant if config.get('flow_loop') else TwinPlant if config.get('layout')=='dual' else Plant
         r=model(config).run();folder=args.output_dir if i==0 else args.output_dir/f'scenario_{i}'
         write_report(r,folder);folders.append(folder)
         results.append({'scenario':name,'link':'index.html' if not i else f'scenario_{i}/index.html','status':r['status'],'cells':config['cells'],**r['kpis'],'discard_bricks':r['kpis']['reject_bricks']+r['kpis']['quarantine_bricks']})

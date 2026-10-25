@@ -300,3 +300,6 @@ Revisión 15: `artifacts/greenfield_15/index.html`. Banda diagonal continua de d
 Última bajada de descarte: `artifacts/greenfield_16_final/index.html`, con pendiente real y sin ocho ascensores. Configuración: `config/greenfield_decline.json`. Ver [alcance y reproducción](docs/descending_discard_16.md).
 
 Estudio de capacidad por capas: `artifacts/layer_repair_capacity_04/index.html`. Evalúa dos estaciones de inspección/corrección selectiva, conservando dehacking y apilado; incluye un carro completo de 28.800 ladrillos, repuestos y mezcla sin tres tonos iguales. Es un modelo de capacidad separado, no un caudal ya validado en el 3D. Ver [supuestos, resultados y referencias](docs/selective_layer_repair.md).
+
+
+Demo vigente: `artifacts/greenfield_17_final/index.html`. Transporte continuo sin almacenes por tonos ni bandas de reserva; alimentación por filas y salidas fijas. Tres distribuciones completadas: 4.074–4.237 ladrillos conformes expedidos/h. El objetivo visible de 5.000/h sigue siendo un objetivo. Para generar un lote nuevo: `python3 scripts/greenfield_demo.py --output-dir artifacts/my_flow_demo`. Ver [apertura, cambios y verificación](docs/demo_flow_17.md).

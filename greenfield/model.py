@@ -46,7 +46,7 @@ class Plant(ReversibleSurge):
         self.pallet_mix=[];self.pack_layers=[]
         self.surge_stock=defaultdict(list);self.surge_peaks=Counter()
         self.builders_finished=0;self.produced_layers=0;self.reserved_layers=0;self.timing=defaultdict(lambda:Counter())
-        self.tail_shift=(c['buffer_cells_per_shade']-20)*.3
+        self.tail_shift=c.get('transport_extension_m',(c['buffer_cells_per_shade']-20)*.3)
         self.bays=(c['cells']+1)//2;self.cell_z=[(i-(c['cells']-1)/2)*4.0 for i in range(c['cells'])]
         self.bay_z=[sum(self.cell_z[2*b:2*b+2])/len(self.cell_z[2*b:2*b+2]) for b in range(self.bays)]
         self.tray_slots=simpy.Store(self.env);self.tray_slots.items.extend((b,k) for b in range(self.bays) for k in (0,1))
@@ -79,7 +79,7 @@ class Plant(ReversibleSurge):
         if g['rows']!=4 or g['columns']!=10 or g['output_layers']!=14 or g['input_layers']!=20:
             raise ValueError('This concept preserves the organizer 10x4x20 -> 10x4x14 layout')
         for k in ('input_stacks','buffer_cells_per_shade','reject_capacity','quarantine_capacity','accepted_overflow_capacity'):
-            if type(c[k]) is not int or c[k]<=0:raise ValueError(k+' must be a positive integer')
+            if type(c[k]) is not int or (c[k]<0 if k=='accepted_overflow_capacity' and c.get('flow_loop') else c[k]<=0):raise ValueError(k+' must be a positive integer (zero overflow is allowed in loop mode)')
         for k in ('defect_rate','uncertain_rate','reinspection_resolution','false_accept_rate','false_reject_rate'):
             if not 0<=c[k]<=1:raise ValueError(k+' must be a probability')
         if len(c['shades'])!=3 or len(set(c['shades']))!=3:raise ValueError('Three accepted shade reservoirs are required')
@@ -179,7 +179,7 @@ class Plant(ReversibleSurge):
         if distance<1e-10:return
         motion=None
         if self.c.get('motion_acceleration'):
-            limits=self.c['motion_acceleration'];kind='bulk' if station.startswith(('inventory_','output_','pallet_','elevator_')) else 'servo' if station.endswith(('_selector','_infeed','_former','_reserve')) or station.startswith(('dehack_','stacker_','feeder_')) else 'roller'
+            limits=self.c['motion_acceleration'];kind='bulk' if station.startswith(('inventory_','output_','pallet_','elevator_')) else 'servo' if station.endswith(('_selector','_infeed','_former','_reserve','_loop_inlet')) or station.startswith(('dehack_','stacker_','feeder_')) else 'roller'
             if any(i.startswith(('SHUTTLE-','SELECTOR-','REJECT-PUSHER-','SORTER-')) for i in ids):kind='servo'
             motion=profile(distance,speed,limits[kind],start_speed,end_speed)
         duration=motion['duration'] if motion else distance/speed;t=self.env.now
@@ -355,9 +355,13 @@ class Plant(ReversibleSurge):
             b['observed']=decision
             self.emit('inspection',f'cell_{cell}_vision',brick=identity,decision=decision,shade=b['shade'])
             self.inspected+=1;self.notify()
+            if self.c.get('flow_loop'):
+                self.scan[cell].release(req)
+                yield from self.loop_pre_route(identity,cell,reservation)
             with self.router[cell].request() as route:
                 yield route
-                yield from self.move([identity],[[9.0,BED+self.H/2,z]],f'cell_{cell}_router','Clear inspection arch before diverting',self.c['speeds']['transfer_m_s'])
+                if not self.c.get('flow_loop'):
+                    yield from self.move([identity],[[9.0,BED+self.H/2,z]],f'cell_{cell}_router','Clear inspection arch before diverting',self.c['speeds']['transfer_m_s'])
                 self.stats[f'cell_{cell}_seen']+=1
                 fault=self.c['faults']
                 if cell==fault['jam_cell'] and self.stats[f'cell_{cell}_seen']==fault['jam_at_piece'] and 'jam' not in self.faults_used:
@@ -387,6 +391,8 @@ class Plant(ReversibleSurge):
                     yield from self.move([identity],[[xx,.65,z+1.6]],f'cell_{cell}_router','Travel down supported collection chute',.6)
                     yield from self.move([identity],target,f'cell_{cell}_router','Contained collection; settling abstracted',1.0)
                     b['location']=decision;self.emit('routed',f'cell_{cell}_router',brick=identity,destination=decision);self.inspect_zones[cell][-1].release(reservation);self.notify();return
+                if self.c.get('flow_loop'):
+                    yield from self.loop_admit(identity,cell,reservation);return
                 shade=b['shade'];s=self.c['shades'].index(shade);zz=z+(s-1)*1.0
                 # Admission to a finite physical buffer is reserved before transfer.
                 resources=self.queue_cells[cell,shade]
