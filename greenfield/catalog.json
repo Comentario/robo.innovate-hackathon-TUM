@@ -168,5 +168,33 @@
       "Sensor-to-zone-end allowance": "50 mm design allowance; commissioning needed"
     },
     "scope": "Manufacturer values at 20 \u00b0C. Ramp setting is not proof against brick slip or tipping. Motor torque, surface temperature and abrasive duty require trials."
+  },
+  {
+    "id": "long_axis",
+    "model": "Festo ELGA-TB-KF-70 \u00b7 longer horizontal sorter axis reference",
+    "url": "https://media.festo.com/media/202997_documentation.pdf",
+    "nominal": {
+      "Reference stroke": "50\u20135,000 mm (size 70)",
+      "Reference maximum feed force": "350 N",
+      "Reference maximum speed": "5 m/s",
+      "Reference maximum acceleration": "50 m/s\u00b2",
+      "Modeled rail travel": "3,750 mm",
+      "Modeled speed / acceleration": "1.0 m/s / 3.0 m/s\u00b2"
+    },
+    "scope": "Manufacturer family envelope only. Rail supports, belt tension, carriage load, moment loads, contamination and integrated drive require sizing. No overhead reserve axis is used."
+  },
+  {
+    "id": "surge_belt",
+    "model": "Compact reversible belt staging \u00b7 custom assembly",
+    "url": "https://www.interroll.com/products/controls/multicontrol-ai",
+    "nominal": {
+      "Capacity": "24 same-shade bricks per belt; 3 belts per cell",
+      "Drive principle": "One reversible motor per complete belt",
+      "Belt speed": "0.30 m/s selected assumption",
+      "Index pitch": "300 mm; all stored pieces move together",
+      "Control": "Entry detection + encoder indexing + occupancy count",
+      "Retrieval": "Same-height horizontal sorter; no overhead manipulator"
+    },
+    "scope": "Custom supported conveyor concept, not an Interroll product selection. The linked source documents drive/control principles; belt material, hot/abrasive duty, encoder and motor sizing remain to be selected."
   }
 ]

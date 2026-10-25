@@ -8,6 +8,7 @@ from copy import deepcopy
 import math,random
 import simpy
 from .motion import profile
+from .surge import ReversibleSurge
 
 BED=1.25
 L=.245;D=.067;H=.069
@@ -33,7 +34,7 @@ def pattern(rows,cols,quotas,offset,max_run=None):
     if not search(0):raise Hold('No valid spatial mix for configured quantities')
     return out
 
-class Plant:
+class Plant(ReversibleSurge):
     def __init__(self,config):
         self.c=deepcopy(config);self.validate();c=self.c;g=c['geometry']
         self.L,self.D,self.H=[v/1000 for v in g['brick_mm']];self.n=g['rows']*g['columns'];self.env=simpy.Environment()
@@ -43,6 +44,7 @@ class Plant:
         self.placed=[];self.shipped=[];self.pallets=[];self.layer_results=[];self.faults_used=set()
         self.source_finished=False;self.inspected=0;self.inventory=defaultdict(int);self.candidates=defaultdict(list)
         self.pallet_mix=[];self.pack_layers=[]
+        self.surge_stock=defaultdict(list);self.surge_peaks=Counter()
         self.builders_finished=0;self.produced_layers=0;self.reserved_layers=0;self.timing=defaultdict(lambda:Counter())
         self.tail_shift=(c['buffer_cells_per_shade']-20)*.3
         self.bays=(c['cells']+1)//2;self.cell_z=[(i-(c['cells']-1)/2)*4.0 for i in range(c['cells'])]
@@ -85,8 +87,10 @@ class Plant:
         if len(c['recipe'])!=3 or not math.isclose(sum(c['recipe']),1) or min(c['recipe'])<=0:raise ValueError('Invalid recipe')
         for v in [c['brick_mass_kg'],c['input_bricks_per_hour'],c['max_simulation_seconds'],*c['speeds'].values(),*c['dwell'].values()]:
             if not math.isfinite(v) or v<=0:raise ValueError('Engineering inputs must be positive and finite')
-        if c['accepted_overflow_capacity']//c['cells']>50 or c['accepted_overflow_capacity']%c['cells']:
+        if (c.get('reserve_mode')!='reversible_belts' and c['accepted_overflow_capacity']//c['cells']>50) or c['accepted_overflow_capacity']%c['cells']:
             raise ValueError('Approved reserve layout supports at most 50 pockets per cell, equally divided')
+        if c.get('reserve_mode')=='reversible_belts' and (type(c.get('surge_slots_per_shade')) is not int or not 1<=c['surge_slots_per_shade']<=24):raise ValueError('Surge belts support 1..24 fixed-pitch positions')
+        if c.get('reserve_mode')=='reversible_belts' and c['accepted_overflow_capacity']!=3*c['cells']*c['surge_slots_per_shade']:raise ValueError('Surge capacity must match three physical belts per cell')
         if c['buffer_cells_per_shade']<14:raise ValueError('Each tone queue must support the largest 40-brick layer quota')
         if c['buffer_cells_per_shade'] not in (20,30) and not(c.get('accumulation_mode')=='zpa' and 20<=c['buffer_cells_per_shade']<=30):raise ValueError('Supported physical tone layouts: 20/30, or intermediate ZPA layouts from 20 to 30')
         if c['brick_mass_kg']*9.80665>350:raise ValueError('Selected driven roller load envelope exceeded')
@@ -176,7 +180,7 @@ class Plant:
         motion=None
         if self.c.get('motion_acceleration'):
             limits=self.c['motion_acceleration'];kind='bulk' if station.startswith(('inventory_','output_','pallet_','elevator_')) else 'servo' if station.endswith(('_selector','_infeed','_former','_reserve')) or station.startswith(('dehack_','stacker_','feeder_')) else 'roller'
-            if any(i.startswith(('SHUTTLE-','SELECTOR-','REJECT-PUSHER-')) for i in ids):kind='servo'
+            if any(i.startswith(('SHUTTLE-','SELECTOR-','REJECT-PUSHER-','SORTER-')) for i in ids):kind='servo'
             motion=profile(distance,speed,limits[kind],start_speed,end_speed)
         duration=motion['duration'] if motion else distance/speed;t=self.env.now
         self.emit('step',station,label=label,duration=duration,distance_m=distance,speed_m_s=speed,motion=motion)
@@ -387,6 +391,9 @@ class Plant:
                 # Admission to a finite physical buffer is reserved before transfer.
                 resources=self.queue_cells[cell,shade]
                 if all(zone.count for zone in resources):
+                    if self.c.get('reserve_mode')=='reversible_belts':
+                        yield from self.surge_store(identity,cell,shade,reservation)
+                        return
                     clearance=self.env.event() if self.c.get('decoupled_reserve') else None
                     self.env.process(self.guarded(self.overflow(identity,cell,shade,reservation,clearance)))
                     if clearance:yield clearance
@@ -397,7 +404,7 @@ class Plant:
                 yield from self.move([shuttle],[[9.45,BED,z]],f'cell_{cell}_router','Return cross-belt shuttle to receive',v)
                 yield from self.move([identity],[[9.45,BED+self.H/2,z]],f'cell_{cell}_router','Load cross-belt shuttle',v)
                 yield from self.move([identity,shuttle],[[9.45,BED+self.H/2,zz],[9.45,BED,zz]],f'cell_{cell}_router','Shuttle to accepted shade lane',v)
-                yield from self.move([identity],[[10.15,BED+self.H/2,zz]],f'cell_{cell}_router','Powered discharge into shade lane',v)
+                yield from self.move([identity],[[10.15,BED+self.H/2,zz]],f'cell_{cell}_router','Powered discharge into shade lane',min(v,.6))
                 self.inventory[cell,shade]+=1;b['location']='accepted_buffer';self.emit('buffer_admitted',f'cell_{cell}_buffer',brick=identity,shade=shade);self.notify()
                 self.inspect_zones[cell][-1].release(reservation)
                 self.env.process(self.guarded(self.buffer(identity,cell,shade,buffer_reservation)))
@@ -604,7 +611,7 @@ class Plant:
            **{key:round(value,3) for key,value in rates.items()}}
         activity=[]
         for cell in range(self.c['cells']):
-            stations={f'cell_{cell}_router',f'cell_{cell}_reserve'}
+            stations={f'cell_{cell}_router',f'cell_{cell}_reserve',f'cell_{cell}_surge'}
             intervals=sorted((e['t'],min(t,e['t']+e['duration'])) for e in self.events if e['kind']=='step' and e['station'] in stations)
             busy=0;end=0
             for start,stop in intervals:

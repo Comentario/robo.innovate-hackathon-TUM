@@ -63,10 +63,20 @@ class TransferMechanicsTests(unittest.TestCase):
         self.assertFalse(any(e['kind']=='piece_centering_start' for e in r['events']))
         self.assertEqual(r['kpis']['automatic_recoveries'],0)
 
-    def test_unsafe_yaw_is_inhibited_before_inspection(self):
-        c=deepcopy(self.config);c['faults']['piece_yaw_deg']=90
-        r=TwinPlant(c).run();self.assertEqual(r['status'],'safe_hold');self.assertIn('orientation outside',r['reason'])
+    def test_unsafe_yaw_is_inhibited_locally_while_other_cells_continue(self):
+        c=deepcopy(self.config);c['faults']['piece_yaw_deg']=90;c['max_simulation_seconds']=600
+        r=TwinPlant(c).run();self.assertEqual(r['status'],'partial_with_local_isolation');affected=next(b['cell'] for b in r['material'] if b['id']=='B00000');self.assertEqual(r['isolated_cells'],[affected])
         self.assertFalse(any(s['label']=='Meter across connected roller bridge' for s in r['mechanics']['tracks']['B00000']))
+        isolated=next(e for e in r['events'] if e['kind']=='cell_isolated')
+        self.assertTrue(any(e['kind']=='inspection' and e['t']>isolated['t'] and e['station']!=f'cell_{affected}_vision' for e in r['events']))
+        self.assertFalse(any(e['kind']=='safe_hold' for e in r['events']))
+
+    def test_small_pose_error_is_corrected_at_the_inlet_without_global_stop(self):
+        c=deepcopy(self.config);c['faults']['piece_yaw_deg']=8;c['max_simulation_seconds']=600
+        r=TwinPlant(c).run();starts=[e for e in r['events'] if e['kind']=='piece_centering_start'];done=[e for e in r['events'] if e['kind']=='piece_centering_complete']
+        self.assertEqual(len(starts),1);self.assertEqual(len(done),1);self.assertAlmostEqual(done[0]['t']-starts[0]['t'],c['dwell']['centering_s'])
+        self.assertFalse(any(e['kind'] in ('safe_hold','cell_isolated') for e in r['events']))
+        entry=next(s for s in r['mechanics']['tracks']['B00000'] if s['label']=='Meter across connected roller bridge');self.assertGreaterEqual(entry['t0'],done[0]['t'])
 
     def test_missing_hold_down_confirmation_inhibits_extraction(self):
         c=deepcopy(self.config);c['faults']['hold_down_fault_bay']=0

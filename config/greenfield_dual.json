@@ -39,7 +39,7 @@
   "buffer_cells_per_shade": 20,
   "reject_capacity": 500,
   "quarantine_capacity": 200,
-  "accepted_overflow_capacity": 400,
+  "accepted_overflow_capacity": 576,
   "speeds": {
     "belt_m_s": 0.3,
     "buffer_m_s": 0.3,
@@ -77,7 +77,7 @@
     "timing": "Selected engineering speeds and dwell, not measured factory cycles. Derived per movement; no acceleration/contact dynamics. Source offered rate 7500/h is a target, not achieved capacity. Eight cells and 1.0 m/s high-load gantry profile are the scaled candidate; compare equal profiles across cell counts.",
     "autonomy": "Automatic brick sorting into two stationary finite discard bins. Cart removal/emptying is outside the modeled batch; full-bin interlock stops upstream collection.",
     "baseline": "Labor shortage, not verified labor savings. Mentor estimate 20-25 workers/shift; no human station modeled, no headcount removal or ROI claim.",
-    "mechanical_revision": "12: supported side-clamp stack tool, clearance-routed reserve handling, no-three spatial mix and scene-envelope audit. Capacity remains an unvalidated engineering estimate.",
+    "mechanical_revision": "14: incremental row admission, same-height reversible surge belts and shared horizontal selector; no aerial reserve picker.",
     "motion": "Configured ramps remain active. Consecutive zones preserve boundary speed only with a downstream braking zone already reserved; stops remain rest-to-rest when blocked. Not commissioned throughput.",
     "capacity_revision": "Eight cells, 20 zones per tone selected for hardware efficiency. 544 inspection/tone drives; reject, reserve and selector are separate physical resources. Compare equal-condition 20/24/30-zone runs."
   },
@@ -111,5 +111,11 @@
   "timing_basis": "coordinated zone release with acceleration and reserved braking distance",
   "stretch_target_conforming_bricks_per_hour": 3000,
   "coordinated_zpa": true,
-  "mentor_reference_bricks_per_hour": 1500
+  "mentor_reference_bricks_per_hour": 1500,
+  "incremental_row_admission": true,
+  "reserve_mode": "reversible_belts",
+  "surge_slots_per_shade": 24,
+  "surge_belt_m_s": 0.3,
+  "local_alignment_isolation": true,
+  "balanced_row_dispatch": true
 }

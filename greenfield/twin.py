@@ -24,6 +24,7 @@ class TwinPlant(Plant):
             if not math.isfinite(log[key]) or log[key]<=0:raise ValueError('Positive finite logistics inputs required')
         if log.get('discard_mode','mobile') not in ('fixed','mobile'):raise ValueError('Unknown discard collection mode')
         self.fixed_discard=log.get('discard_mode')=='fixed'
+        self.isolated_cells=set()
         if self.fixed_discard and log['discard_carts_per_line']!=1:raise ValueError('Fixed layout requires exactly one stationary bin per line')
         self.line_z=[-8.0,8.0];self.lines=2
         self.tool_homes={f'{kind}_{line}':[1.5 if kind=='dehack' else 21+(config['buffer_cells_per_shade']-20)*.3,2.6,z]
@@ -91,6 +92,8 @@ class TwinPlant(Plant):
             self.add_aux(f'DISCARD-LIFT-{cell}',[7.25,BED,center+side*k*.3],'discard_elevator')
             key=f'INFEED-{cell}';self.positions[key]=[5.30,BED+.30,z];self.initial[key]=self.positions[key][:]
             key=f'ROW-PUSHER-{cell}';self.positions[key][1]=BED+.30;self.initial[key]=self.positions[key][:]
+            if self.c.get('reserve_mode')=='reversible_belts':
+                key=f'PICKER-{cell}';self.aux.pop(key,None);self.positions.pop(key,None);self.initial.pop(key,None)
 
     def inventory_delivery(self):
         ids=list(self.material)+[f'P-IN-{s}' for s in range(self.c['input_stacks'])]+['KILN-CART']
@@ -148,12 +151,20 @@ class TwinPlant(Plant):
             self.input_empties[line].append(wood)
         self.source_done+=1;self.source_finished=self.source_done==2;self.emit('source_finished',f'dehack_{line}',line=line);self.notify()
 
+    def dispatch_pressure(self,cell):
+        counts=Counter(b['shade'] for b in self.material.values() if b.get('cell')==cell and b['observed']=='accepted' and b['location'] in ('accepted_buffer','accepted_reserve'))
+        return (max(counts.values(),default=0),sum(counts.values()),self.work_in_progress(cell=cell),cell)
+
     def feeder(self,bay):
         """Index the complete remaining pack; hold from above, never insert a knife."""
         shuttle=f'ROW-SHUTTLE-{bay}';v=self.c['speeds']['transfer_m_s'];vz=self.c['speeds']['gantry_z_m_s']
         while True:
             layer,nest,ids=yield self.layers[bay].get();hold=f'HOLD-DOWN-{bay}-{nest}'
             for row_number in (3,2,1,0):
+                available=self.free_cells[bay].items
+                if self.c.get('balanced_row_dispatch') and len(available)>1:
+                    available.sort(key=self.dispatch_pressure)
+                    self.emit('balanced_row_dispatch',f'feeder_{bay}',bay=bay,choice=available[0],candidates=[{'cell':i,'pressure':list(self.dispatch_pressure(i))} for i in available])
                 cell=yield self.free_cells[bay].get();z=self.cell_z[cell]
                 row=ids[row_number*10:(row_number+1)*10];remaining=ids[:(row_number+1)*10]
                 rz=sum(self.positions[i][2] for i in row)/10
@@ -206,7 +217,11 @@ class TwinPlant(Plant):
     def check_piece_alignment(self,identity,cell):
         yaw=self.c['faults'].get('piece_yaw_deg',8.0) if identity==self.c['faults'].get('piece_pose_fault') else 0.0
         self.emit('piece_pose_check',f'cell_{cell}_infeed',brick=identity,yaw_deg=yaw)
-        if abs(yaw)>10:raise Hold('Piece orientation outside centering range; inspection entry inhibited')
+        if abs(yaw)>10:
+            if not self.c.get('local_alignment_isolation'):raise Hold('Piece orientation outside centering range; inspection entry inhibited')
+            self.isolated_cells.add(cell);self.emit('cell_isolated',f'cell_{cell}_infeed',cell=cell,brick=identity,reason='Pose outside local centering range; other cells remain enabled')
+            yield self.env.event()  # Deliberate local hold; never admit the rotated brick.
+            return
         if yaw:
             duration=self.c['dwell']['centering_s']
             self.emit('piece_centering_start',f'cell_{cell}_infeed',brick=identity,cell=cell,yaw_deg=yaw,duration=duration)
@@ -345,16 +360,17 @@ class TwinPlant(Plant):
             desired=pattern(4,10,q,index%3,self.c.get('max_same_shade_run'));ids_by_slot={};row_ids=[]
             request=self.formation[cell].request();yield request
             for r in range(4):
-                need=Counter(self.c['shades'][v] for v in desired[r*10:r*10+10])
-                while any(self.inventory[cell,shade]<n for shade,n in need.items()):
-                    if self.inspected==len(self.material) and self.source_finished:
-                        remaining=Counter(b['shade'] for b in self.material.values() if b.get('cell')==cell and b['observed']=='accepted' and b['location'] in ('accepted_buffer','accepted_reserve',f'cell_{cell}_intake'))
-                        if any(remaining[shade]<n for shade,n in need.items()):
-                            self.locate(list(ids_by_slot.values()),'unfinished_layer')
-                            self.emit('partial_layer_retained',f'cell_{cell}_former',bricks=len(ids_by_slot),reason='End-of-batch stock cannot complete the next compliant row')
-                            self.formation[cell].release(request);self.builders_finished+=1;self.notify();return
-                    yield self.changed | self.env.timeout(.25)
-                for shade,n in need.items():self.inventory[cell,shade]-=n
+                if not self.c.get('incremental_row_admission'):
+                    need=Counter(self.c['shades'][v] for v in desired[r*10:r*10+10])
+                    while any(self.inventory[cell,shade]<n for shade,n in need.items()):
+                        if self.inspected==len(self.material) and self.source_finished:
+                            remaining=Counter(b['shade'] for b in self.material.values() if b.get('cell')==cell and b['observed']=='accepted' and b['location'] in ('accepted_buffer','accepted_reserve',f'cell_{cell}_intake'))
+                            if any(remaining[shade]<n for shade,n in need.items()):
+                                self.locate(list(ids_by_slot.values()),'unfinished_layer')
+                                self.emit('partial_layer_retained',f'cell_{cell}_former',bricks=len(ids_by_slot),reason='End-of-batch stock cannot complete the next compliant row')
+                                self.formation[cell].release(request);self.builders_finished+=1;self.notify();return
+                        yield self.changed | self.env.timeout(.25)
+                    for shade,n in need.items():self.inventory[cell,shade]-=n
                 self.emit('row_started',f'cell_{cell}_former',layer=index,row=r)
                 for col in range(9,-1,-1):
                     # Move the already formed row by one short-edge pitch before admitting the next brick.
@@ -362,6 +378,19 @@ class TwinPlant(Plant):
                         target=[[self.positions[i][0],self.positions[i][1],self.positions[i][2]+self.D] for i in row_ids]
                         yield from self.move(row_ids,target,f'cell_{cell}_former','Index row by one brick',speed['transfer_m_s'])
                     shade=self.c['shades'][desired[r*10+col]]
+                    if self.c.get('incremental_row_admission'):
+                        wait_start=self.env.now
+                        if self.inventory[cell,shade]<1:self.emit('mix_wait_start',f'cell_{cell}_former',layer=index,row=r,column=col,shade=shade,stock={tone:self.inventory[cell,tone] for tone in self.c['shades']})
+                        while self.inventory[cell,shade]<1:
+                            if self.inspected==len(self.material) and self.source_finished:
+                                remaining=sum(b.get('cell')==cell and b['shade']==shade and b['observed']=='accepted' and b['location'] in ('accepted_buffer','accepted_reserve',f'cell_{cell}_intake') for b in self.material.values())
+                                if not remaining:
+                                    self.locate(list(ids_by_slot.values()),'unfinished_layer')
+                                    self.emit('partial_layer_retained',f'cell_{cell}_former',bricks=len(ids_by_slot),reason='No accepted stock remains for next compliant slot')
+                                    self.formation[cell].release(request);self.builders_finished+=1;self.notify();return
+                            yield self.changed | self.env.timeout(.25)
+                        if self.env.now>wait_start:self.emit('mix_wait_end',f'cell_{cell}_former',layer=index,shade=shade,wait_s=self.env.now-wait_start)
+                        self.inventory[cell,shade]-=1
                     identity,selected=yield self.ready[cell,shade].get()
                     self.locate([identity],'forming');ids_by_slot[r*10+col]=identity
                     zz=self.positions[identity][2]
@@ -480,21 +509,28 @@ class TwinPlant(Plant):
     def run(self):
         processes=[self.inventory_delivery(),self.monitor(),*(self.source_line(i) for i in range(2)),*(self.stacker_line(i) for i in range(2)),
                    *(self.feeder(i) for i in range(4)),*(self.intake(i) for i in range(8)),*(self.builder(i) for i in range(8))]
+        if self.c.get('reserve_mode')=='reversible_belts':processes.extend(self.surge_worker(i) for i in range(8))
         for process in processes:self.env.process(self.guarded(process))
         self.env.run(until=self.done|self.env.timeout(self.c['max_simulation_seconds']))
-        if self.status=='running':self.status='safe_hold';self.reason='Process horizon reached with material retained'
+        if self.status=='running':
+            self.status='partial_with_local_isolation' if self.isolated_cells else 'safe_hold'
+            self.reason='Isolated cell retains material; other cells remained enabled' if self.isolated_cells else 'Process horizon reached with material retained'
         self.emit('run_finished',status=self.status,reason=self.reason);return self.report()
 
     def report(self):
         r=super().report();r['schema_version']='3.0';r['concept']='Dual-line autonomous dehacking'
-        r['mechanics'].update(line_z=self.line_z,layout='dual',transfer_revision=12,retention_design=self.c.get('stack_grip_mode','rigid_lift_cage'),collector_x=6.8,collector_y=.65,discard_mode='fixed' if self.fixed_discard else 'mobile')
+        r['mechanics'].update(line_z=self.line_z,layout='dual',transfer_revision=14 if self.c.get('reserve_mode')=='reversible_belts' else 13,retention_design=self.c.get('stack_grip_mode','rigid_lift_cage'),collector_x=6.8,collector_y=.65,discard_mode='fixed' if self.fixed_discard else 'mobile')
         r['discard_cart_state']=[{'id':f'DISCARD-CART-{line}-{n}','line':line,'capacity':self.c['logistics']['discard_cart_capacity'],
             'ids':self.cart_payloads[f'DISCARD-CART-{line}-{n}'][:]}
             for line in range(2) for n in range(self.c['logistics']['discard_carts_per_line'])]
         r['disposal_ids']=self.disposal_ids
+        r['isolated_cells']=sorted(self.isolated_cells)
+        r['surge_peaks']=[{'cell':cell,'shade':shade,'peak':count} for (cell,shade),count in self.surge_peaks.items()]
         r['kpis']['discard_carts_emptied']=sum(e['kind']=='discard_cart_emptied' for e in self.events)
         r['delivered_pallets']=self.delivered_pallets;r['discard_carts']=self.discard_carts
         r['kpis']['discard_bricks']=r['kpis']['reject_bricks']+r['kpis']['quarantine_bricks']
+        r['kpis']['overhead_reserve_pickups']=sum(e['kind']=='grip_closed' and e.get('tool','').startswith('PICKER-') for e in self.events)
+        r['mechanics']['surge_belt_drives']=3*self.c['cells'] if self.c.get('reserve_mode')=='reversible_belts' else 0
         r['mechanics']['zone_drives']=self.c['cells']*(8+3*self.c['buffer_cells_per_shade'])
         r['mechanics']['zone_controllers']=(r['mechanics']['zone_drives']+3)//4
         r['mechanics']['vertical_zone_stops']=0 if self.c.get('accumulation_mode')=='zpa' else r['mechanics']['zone_drives']
