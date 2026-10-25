@@ -196,5 +196,18 @@
       "Retrieval": "Same-height horizontal sorter; no overhead manipulator"
     },
     "scope": "Custom supported conveyor concept, not an Interroll product selection. The linked source documents drive/control principles; belt material, hot/abrasive duty, encoder and motor sizing remain to be selected."
+  },
+  {
+    "id": "decline_belt",
+    "model": "mk GUF belt conveyor \u2014 decline principle reference",
+    "url": "https://www.mk-group.com/en/products/conveyor-technology/belt-conveyors.html",
+    "nominal": {
+      "Typical incline/decline": "Up to approximately 20 degrees, product/belt/drive dependent",
+      "Selected slope": "19.9 degrees",
+      "Selected belt speed": "0.60 m/s (engineering assumption)",
+      "Selected brick mass": "1.8 kg (unverified SKU assumption)",
+      "Drives": "One per reject lane; no vertical lift"
+    },
+    "scope": "Custom concept. Manufacturer describes typical decline capability, not an approved ACME installation. High-friction belt, controlled retention, nose radii, dust and temperature require product trials. No quoted motor power or validated slip margin."
   }
 ]

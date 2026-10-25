@@ -89,7 +89,8 @@ class TwinPlant(Plant):
         self.add_aux('OUTPUT-CART',[31.5,0,0],'output_cart')
         for cell,z in enumerate(self.cell_z):
             center=self.line_z[cell//4];side=1 if z+1.25>=center else -1;k=max(1,min(25,math.floor(abs(z+1.25-center)/.3+.5)))
-            self.add_aux(f'DISCARD-LIFT-{cell}',[7.25,BED,center+side*k*.3],'discard_elevator')
+            if not self.c.get('declining_discard'):
+                self.add_aux(f'DISCARD-LIFT-{cell}',[7.25,BED,center+side*k*.3],'discard_elevator')
             key=f'INFEED-{cell}';self.positions[key]=[5.30,BED+.30,z];self.initial[key]=self.positions[key][:]
             key=f'ROW-PUSHER-{cell}';self.positions[key][1]=BED+.30;self.initial[key]=self.positions[key][:]
             if self.c.get('reserve_mode')=='reversible_belts':
@@ -243,6 +244,36 @@ class TwinPlant(Plant):
         self.env.process(self.guarded(self.lower_discard(identity,cell,line,side,k,reservation,transfer)))
 
     def lower_discard(self,identity,cell,line,side,k,reservation,transfer):
+        if self.c.get('declining_discard'):
+            end_z=self.line_z[line]+side*k*.3
+            # A high-friction powered decline, not free fall or a gravity-only chute.
+            angle=math.atan2(BED-(.65-self.H/2),8.85-7.10)
+            lift_offset=self.H/(2*math.cos(angle))-self.H/2
+            yield from self.move([identity],[[8.85,BED+self.H/2,self.positions[identity][2]]],f'cell_{cell}_decline','Powered flat entry to decline nose',.6)
+            self.emit('decline_pitch',f'cell_{cell}_decline',brick=identity,angle=angle,duration=.20,enter=True)
+            yield from self.pause(f'cell_{cell}_decline','Conform to entry nose radius',.20)
+            yield from self.move([identity],[[8.85,BED+self.H/2+lift_offset,self.positions[identity][2]]],f'cell_{cell}_decline','Supported entry nose transition',.20)
+            self.tracks[identity][-1]['pitch_from']=angle;self.tracks[identity][-1]['pitch_to']=angle
+            slope=math.tan(angle);toe=.65-self.H/2
+            yield from self.move([identity],[[7.25,toe+.15*slope+self.H/(2*math.cos(angle)),end_z]],f'cell_{cell}_decline','Powered downward diagonal reject transfer',.6)
+            # Approximate the supported nose with four short poses; do not lower a
+            # tilted brick into the flat collector rollers.
+            for n in range(1,5):
+                u=n/4;phi=angle*(1-u);x=7.25-.30*u;co,si=math.cos(phi),math.sin(phi)
+                def surface(xx):return min(BED,max(toe,toe+(xx-7.10)*slope))
+                y=max(surface(x+dx*co-dy*si)-(dx*si+dy*co) for dx in (-self.L/2,self.L/2) for dy in (-self.H/2,self.H/2))+.001
+                old=self.positions[identity][:]
+                event={'brick':identity,'angle':phi,'from_angle':angle*(1-(n-1)/4),'to_angle':phi,'x0':old[0],'x1':x,'duration':1.}
+                self.emit('decline_pitch',f'cell_{cell}_decline',**event)
+                marker=self.events[-1]
+                yield from self.move([identity],[[x,y,end_z]],f'cell_{cell}_decline','Supported discharge nose transition',.2)
+                stroke=self.tracks[identity][-1];stroke['pitch_from']=event['from_angle'];stroke['pitch_to']=phi
+                marker['duration']=stroke['t1']-stroke['t0']
+            yield from self.move([identity],[[6.95,.65,end_z]],f'cell_{cell}_decline','Settle flat onto collector transfer plate',.2)
+            yield from self.move([identity],[[6.8,.65,end_z]],f'cell_{cell}_decline','Enter flush collector receiving rollers',.6)
+            self.discard_transfer[cell].release(transfer)
+            self.env.process(self.guarded(self.collect_discard(identity,line,side,k,reservation)))
+            return
         lift=f'DISCARD-LIFT-{cell}';end_z=self.line_z[line]+side*k*.3;station=f'cell_{cell}_discard_lift'
         yield from self.move([lift],[[7.25,BED,end_z]],station,'Raise empty discard elevator and confirm upper dock',.4)
         yield from self.move([identity],[[7.25,BED+self.H/2,end_z]],station,('Continuous diagonal reject belt feeds docked elevator' if self.fixed_discard else 'Level red belt feeds docked discard elevator'),.6)
@@ -535,6 +566,7 @@ class TwinPlant(Plant):
         r['mechanics']['zone_drives']=self.c['cells']*(8+3*self.c['buffer_cells_per_shade'])
         r['mechanics']['zone_controllers']=(r['mechanics']['zone_drives']+3)//4
         r['mechanics']['vertical_zone_stops']=0 if self.c.get('accumulation_mode')=='zpa' else r['mechanics']['zone_drives']
+        r['mechanics']['discard_elevators']=0 if self.c.get('declining_discard') else self.c['cells']
         r['kpis']['discard_cart_exchanges']=sum(e['kind']=='discard_swap_complete' for e in self.events)
         r['kpis']['output_cart_dispatched']=self.output_cart_departed
         r['scope'][:1]=['The batch represents four stacks, not the full 36-stack industrial kiln cart; the 800/560-brick stack/pallet interfaces are preserved.','One common discard stream for off-spec and unresolved observations; the reason remains in the trace. No automatic reinsertion.',

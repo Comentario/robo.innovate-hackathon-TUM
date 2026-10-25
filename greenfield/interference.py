@@ -8,20 +8,21 @@ from collections import defaultdict
 from itertools import product
 import math
 
-def sweep_hit(p,q,half,obstacle,tolerance=1e-4):
+def sweep_hit(p,q,half,obstacle,tolerance=1e-4,moving_axes=None):
+    broad_half=half if moving_axes is None else [sum(abs(moving_axes[k][a])*half[k] for k in range(3)) for a in range(3)]
     start,end=0.,1.
     for a in range(3):
-        low=obstacle['min'][a]-half[a]+tolerance;high=obstacle['max'][a]+half[a]-tolerance;delta=q[a]-p[a]
+        low=obstacle['min'][a]-broad_half[a]+tolerance;high=obstacle['max'][a]+broad_half[a]-tolerance;delta=q[a]-p[a]
         if abs(delta)<1e-10:
             if not low<p[a]<high:return None
         else:
             lo,hi=sorted(((low-p[a])/delta,(high-p[a])/delta));start=max(start,lo);end=min(end,hi)
             if start>=end:return None
-    if all(max(abs(v) for v in axis)>1-1e-9 for axis in obstacle.get('axes',[[1,0,0],[0,1,0],[0,0,1]])):return start
+    if moving_axes is None and all(max(abs(v) for v in axis)>1-1e-9 for axis in obstacle.get('axes',[[1,0,0],[0,1,0],[0,0,1]])):return start
     axes=obstacle.get('axes',[[1,0,0],[0,1,0],[0,0,1]])
     center=obstacle.get('center',[(lo+hi)/2 for lo,hi in zip(obstacle['min'],obstacle['max'])])
     extents=obstacle.get('half',[(hi-lo)/2 for lo,hi in zip(obstacle['min'],obstacle['max'])])
-    world=[[1,0,0],[0,1,0],[0,0,1]]
+    world=moving_axes or [[1,0,0],[0,1,0],[0,0,1]]
     def dot(a,b):return sum(x*y for x,y in zip(a,b))
     tests=world+axes+[[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]] for u in world for v in axes]
     start,end=0.,1.
@@ -29,7 +30,7 @@ def sweep_hit(p,q,half,obstacle,tolerance=1e-4):
         norm=math.sqrt(dot(axis,axis))
         if norm<1e-9:continue
         axis=[v/norm for v in axis]
-        radius=sum(abs(axis[a])*half[a] for a in range(3))+sum(abs(dot(axis,axes[a]))*extents[a] for a in range(3))-tolerance
+        radius=sum(abs(dot(axis,world[a]))*half[a] for a in range(3))+sum(abs(dot(axis,axes[a]))*extents[a] for a in range(3))-tolerance
         origin=dot([p[a]-center[a] for a in range(3)],axis);delta=dot([q[a]-p[a] for a in range(3)],axis)
         if abs(delta)<1e-10:
             if abs(origin)>=radius:return None
@@ -59,11 +60,27 @@ def audit_scene(report,scene,reserve_only=False):
             strokes+=1
             for part,offset,half in specs:
                 p=[stroke['from'][a]+offset[a] for a in range(3)];q=[stroke['to'][a]+offset[a] for a in range(3)]
+                tilt=None;broad_half=half
+                if stroke['label']=='Powered downward diagonal reject transfer':
+                    angle=math.atan2(p[1]-q[1],p[0]-q[0]);co,si=math.cos(angle),math.sin(angle)
+                    tilt=[[co,si,0],[-si,co,0],[0,0,1]]
+                    broad_half=[sum(abs(tilt[k][a])*half[k] for k in range(3)) for a in range(3)]
+                if 'pitch_from' in stroke:
+                    broad_half=[.13,.09,.034]
                 candidates=set()
-                for key in cells([min(p[a],q[a])-half[a] for a in range(3)],[max(p[a],q[a])+half[a] for a in range(3)]):candidates.update(grid.get(key,()))
+                for key in cells([min(p[a],q[a])-broad_half[a] for a in range(3)],[max(p[a],q[a])+broad_half[a] for a in range(3)]):candidates.update(grid.get(key,()))
                 for n in candidates:
-                    checks+=1;u=sweep_hit(p,q,half,scene[n])
+                    # Nose rotation/contact is a separate approximation, not a translating-box proof.
+                    if scene[n].get('support_contact') and stroke['station'].endswith('_decline'):continue
+                    checks+=1
+                    if 'pitch_from' in stroke:
+                        u=None
+                        for sample in range(33):
+                            f=sample/32;phi=stroke['pitch_from']+(stroke['pitch_to']-stroke['pitch_from'])*f;co,si=math.cos(phi),math.sin(phi)
+                            point=[p[a]+(q[a]-p[a])*f for a in range(3)]
+                            if sweep_hit(point,point,half,scene[n],moving_axes=[[co,si,0],[-si,co,0],[0,0,1]]) is not None:u=f;break
+                    else:u=sweep_hit(p,q,half,scene[n],moving_axes=tilt)
                     if u is not None:
                         counts[part+' / '+stroke['label']]+=1
                         if sum(x['label']==stroke['label'] for x in hits)<2:hits.append({'identity':identity,'part':part,'label':stroke['label'],'stroke_start':stroke['t0'],'path_fraction':u,'obstacle':scene[n]})
-    return {'passed':not counts,'scene_boxes':len(scene),'pair_checks':checks,'strokes':strokes,'intersections':sum(counts.values()),'counts':dict(counts),'examples':hits,'scope':'Continuous straight-path SAT tests (material AABB / static oriented bounds) against exported static meshes. Moving obstacles, inter-object dynamic collisions, cables and contact are not certified. Enclosed-bin settling excluded. Faces touching within 0.1 mm are allowed.'}
+    return {'passed':not counts,'scene_boxes':len(scene),'pair_checks':checks,'strokes':strokes,'intersections':sum(counts.values()),'counts':dict(counts),'examples':hits,'scope':'Continuous straight-path SAT tests (material AABB / static oriented bounds) against exported static meshes. Moving obstacles, inter-object dynamic collisions, cables and contact are not certified. Enclosed-bin settling excluded. Decline belt support contact and nose pitch transitions are not contact-certified; other static obstacles remain checked, with an oriented brick on the straight slope. Varying-pitch nose paths use 33 oriented-box samples per short segment, not a continuous rotating-body proof. Faces touching within 0.1 mm are allowed.'}
