@@ -164,7 +164,7 @@ class Plant(ReversibleSurge):
                 return f'tone:{cell}:{lane}:{zone}'
         return None
 
-    def move(self,ids,targets,station,label,speed,start_speed=0.,end_speed=0.):
+    def move(self,ids,targets,station,label,speed,start_speed=0.,end_speed=0.,path=None):
         if not ids:return
         if any(i in self.active for i in ids):raise AssertionError('Material double booking')
         gate=None
@@ -176,6 +176,9 @@ class Plant(ReversibleSurge):
             yield from self.pause(station,'Retract accumulation stop',.08)
         starts=[self.positions[i][:] for i in ids]
         distance=max(max(abs(a-b) for a,b in zip(p,q)) for p,q in zip(starts,targets))
+        if path:
+            from .junctions import length
+            distance=length(path)
         if distance<1e-10:return
         motion=None
         if self.c.get('motion_acceleration'):
@@ -186,7 +189,7 @@ class Plant(ReversibleSurge):
         self.emit('step',station,label=label,duration=duration,distance_m=distance,speed_m_s=speed,motion=motion)
         self.timing[station]['travel_s']+=duration;self.timing[station]['moves']+=1
         for identity,p,q in zip(ids,starts,targets):
-            self.tracks[identity].append({'t0':t,'t1':t+duration,'from':p,'to':q[:],'station':station,'label':label,**({'motion':motion} if motion else {})})
+            self.tracks[identity].append({'t0':t,'t1':t+duration,'from':p,'to':q[:],'station':station,'label':label,**({'motion':motion} if motion else {}),**({'path':path} if path else {})})
             self.positions[identity]=q[:];self.active.add(identity)
         yield self.env.timeout(duration)
         for identity in ids:self.active.remove(identity)

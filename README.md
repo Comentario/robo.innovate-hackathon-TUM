@@ -307,3 +307,5 @@ Demo vigente: `artifacts/greenfield_17_final/index.html`. Transporte continuo si
 Current visual update: `artifacts/greenfield_18/index.html`. See [supported transfers, inlet/outlet guides and verification](docs/visual_junctions_18.md). The recorded production run and KPIs are unchanged.
 
 Latest junction cleanup: `artifacts/greenfield_19/index.html`; see [revision 19 checks and scope](docs/visual_junctions_19.md).
+
+Latest recalculated demo: `artifacts/greenfield_20_checked/index.html`. [Guided transfers, manufacturer principles and verification](docs/guided_transfers_20.md). Estimated conforming shipped rate: 3,888.672 bricks/h for the revised synthetic cycle.

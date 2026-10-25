@@ -239,9 +239,13 @@ class TwinPlant(Plant):
         resource=self.collectors[line,side,k];reservation=resource.request();yield reservation
         transfer=self.discard_transfer[cell].request();yield transfer
         v=self.c['speeds']['transfer_m_s'];tool=f'REJECT-PUSHER-{cell}'
-        if self.c.get('flow_loop'):self.loop_release_approach(cell)
+        if self.c.get('flow_loop'):
+            yield from self.move([tool],[[9,BED+.045,z-self.D/2-.012]],f'cell_{cell}_router','Lower reject paddle behind stopped brick',self.c['speeds']['gantry_z_m_s'])
+            self.loop_release_approach(cell)
         yield from self.move([identity,tool],[[9,BED+self.H/2,z+1.25],[9,BED+.045,z+1.25-self.D/2-.012]],f'cell_{cell}_router','Side pusher sends non-approved brick to common discard',v)
-        yield from self.move([tool],[[9,BED+.045,z-self.D/2-.012]],f'cell_{cell}_router','Retract guided side ejector',v)
+        if self.c.get('flow_loop'):
+            yield from self.move([tool],[[9,BED+.30,z+1.25-self.D/2-.012]],f'cell_{cell}_router','Raise reject paddle above approved flow',self.c['speeds']['gantry_z_m_s'])
+        yield from self.move([tool],[[9,BED+(.30 if self.c.get('flow_loop') else .045),z-self.D/2-.012]],f'cell_{cell}_router','Retract guided side ejector',v)
         if not self.fixed_discard:
             yield from self.move([identity],[[8.50,BED+self.H/2,z+1.25]],f'cell_{cell}_router','Cross flat receiving deck at inspection height',.6)
         self.material[identity]['location']='discard_transit';self.material[identity]['discard_reason']=decision

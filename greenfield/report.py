@@ -79,7 +79,7 @@ def equipment_checks(c):
 def visual_payload(report):
     """Preserve every physical trajectory; omit engineering-only repetition."""
     view=dict(report);m=dict(report['mechanics']);view['mechanics']=m
-    m['tracks']={identity:[{key:stroke[key] for key in ('t0','t1','from','to','motion','loop_s0','loop_s1','loop_cell') if key in stroke} for stroke in seq]
+    m['tracks']={identity:[{key:stroke[key] for key in ('t0','t1','from','to','motion','loop_s0','loop_s1','loop_cell','path') if key in stroke} for stroke in seq]
                  for identity,seq in m['tracks'].items()}
     keys=sorted({e['zone'] for e in report['events'] if e['kind']=='stop_command'});lookup={key:i for i,key in enumerate(keys)}
     m['stop_keys']=keys
@@ -89,7 +89,7 @@ def visual_payload(report):
         return e['kind']!='step' or e['station'] in ('dehack','stacker','elevator','guide_gate','pallet_out','dock') or e['station'].startswith(('dehack_','stacker_','elevator_','guide_gate_','inventory_','output_','pallet_out_')) or e['station'].endswith(('_former','_reserve'))
     view['events']=[e for e in report['events'] if visible(e)]
     if report['config'].get('flow_loop'):
-        view['junctions']=[{'cell':int(e['station'].split('_')[1]),'kind':'inlet' if e['label']=='Continuously feed accepted brick to reserved merge slot' else 'outlet','t':e['t']} for e in report['events'] if e['kind']=='step' and e['label'] in ('Continuously feed accepted brick to reserved merge slot','Fixed selected-tone outlet aligns outside the loop bend')]
+        view['junctions']=[{'cell':int(e['station'].split('_')[1]),'kind':'inlet' if e['label']=='Guided servo merge into reserved loop gap' else 'outlet','t':e['t']} for e in report['events'] if e['kind']=='step' and e['label'] in ('Guided servo merge into reserved loop gap','Fixed selected-tone outlet aligns outside the loop bend')]
     return view
 
 
@@ -113,7 +113,9 @@ def write_report(report,folder):
     folder=Path(folder);folder.mkdir(parents=True,exist_ok=False)
     from .clearance import sampled_material_clearance
     report['sampled_clearance']=sampled_material_clearance(report,96)
-    if not report['sampled_clearance']['passed']:raise AssertionError('Sampled brick envelope intersection; inspect mechanics before publishing')
+    if not report['sampled_clearance']['passed']:
+        (folder/'failed-clearance.json').write_text(json.dumps(report['sampled_clearance'],indent=2))
+        raise AssertionError('Sampled brick envelope intersection; inspect mechanics before publishing')
     report['audit']=audit(report);report['equipment_checks']=equipment_checks(report['config'])
     report['catalog']=json.loads(Path(__file__).with_name('catalog.json').read_text())
     (folder/'run.json').write_text(json.dumps(report,indent=2))

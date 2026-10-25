@@ -47,7 +47,7 @@ def audit_scene(report,scene,reserve_only=False):
         return product(*(range(math.floor(lo[a]/.4),math.floor(hi[a]/.4)+1) for a in range(3)))
     for n,o in enumerate(scene):
         for key in cells(o['min'],o['max']):grid[key].append(n)
-    hits=[];checks=strokes=0;counts=defaultdict(int);checked_loops=set()
+    hits=[];checks=strokes=0;counts=defaultdict(int);checked_loops=set();checked_paths=set()
     excluded_labels=('Contained collection; settling abstracted','Contained discard cart collection; settling abstracted','Contained disposal area unloading; settling abstracted')
     for identity,seq in report['mechanics']['tracks'].items():
         if identity.startswith('PICKER-'):
@@ -75,6 +75,22 @@ def audit_scene(report,scene,reserve_only=False):
                             counts['brick / Continuous common-drive mixing conveyor']+=1
                             if len(hits)<12:hits.append({'identity':identity,'part':'brick','label':stroke['label'],'loop_cell':cell,'distance_m':k*perimeter/math.ceil(perimeter/.05),'obstacle':scene[n]})
                 continue
+            if 'path' in stroke:
+                signature=tuple(tuple(p) for p in stroke['path'])
+                if signature in checked_paths:continue
+                checked_paths.add(signature)
+                from .junctions import at
+                half=[.1225,.0345,.0335]
+                for k in range(65):
+                    pose=at(stroke['path'],k/64);point=pose[:3];co,si=math.cos(pose[3]),math.sin(pose[3]);axes=[[co,0,-si],[0,1,0],[si,0,co]]
+                    candidates=set()
+                    for key in cells([point[a]-(.13 if a!=1 else .0345) for a in range(3)],[point[a]+(.13 if a!=1 else .0345) for a in range(3)]):candidates.update(grid.get(key,()))
+                    for n in candidates:
+                        checks+=1
+                        if sweep_hit(point,point,half,scene[n],moving_axes=axes) is not None:
+                            counts['brick / '+stroke['label']]+=1
+                            if len(hits)<12:hits.append({'identity':identity,'label':stroke['label'],'path_fraction':k/64,'obstacle':scene[n]})
+                continue
             for part,offset,half in specs:
                 p=[stroke['from'][a]+offset[a] for a in range(3)];q=[stroke['to'][a]+offset[a] for a in range(3)]
                 tilt=None;broad_half=half
@@ -100,4 +116,4 @@ def audit_scene(report,scene,reserve_only=False):
                     if u is not None:
                         counts[part+' / '+stroke['label']]+=1
                         if sum(x['label']==stroke['label'] for x in hits)<2:hits.append({'identity':identity,'part':part,'label':stroke['label'],'stroke_start':stroke['t0'],'path_fraction':u,'obstacle':scene[n]})
-    return {'passed':not counts,'loop_paths_sampled':len(checked_loops),'scene_boxes':len(scene),'pair_checks':checks,'strokes':strokes,'intersections':sum(counts.values()),'counts':dict(counts),'examples':hits,'scope':'Continuous straight-path SAT tests (material AABB / static oriented bounds) against exported static meshes. Moving obstacles, inter-object dynamic collisions, cables and contact are not certified. Enclosed-bin settling excluded. Decline belt support contact and nose pitch transitions are not contact-certified; other static obstacles remain checked, with an oriented brick on the straight slope. Varying-pitch nose paths use 33 oriented-box samples per short segment, not a continuous rotating-body proof. Shared-drive loop paths are checked once per cell at <=50 mm intervals with oriented bricks; identical encoder paths are reused for every loop occupant. This is a sampled curve audit, not a continuous curve proof. Faces touching within 0.1 mm are allowed.'}
+    return {'passed':not counts,'loop_paths_sampled':len(checked_loops),'scene_boxes':len(scene),'pair_checks':checks,'strokes':strokes,'intersections':sum(counts.values()),'counts':dict(counts),'examples':hits,'scope':'Continuous straight-path SAT tests (material AABB / static oriented bounds) against exported static meshes. Moving obstacles, inter-object dynamic collisions, cables and contact are not certified. Enclosed-bin settling excluded. Decline belt support contact and nose pitch transitions are not contact-certified; other static obstacles remain checked, with an oriented brick on the straight slope. Varying-pitch nose paths use 33 oriented-box samples per short segment, not a continuous rotating-body proof. Guided transfer curves use 65 arc-length samples with tangent-oriented bricks. Shared-drive loop paths are checked once per cell at <=50 mm intervals with oriented bricks; identical encoder paths are reused for every loop occupant. This is a sampled curve audit, not a continuous curve proof. Faces touching within 0.1 mm are allowed.'}

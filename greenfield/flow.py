@@ -8,6 +8,7 @@ import simpy
 from .twin import TwinPlant
 from .model import BED
 from .motion import profile
+from .junctions import curve,length
 
 X0=10.8;X1=15.2;R=2/math.pi;PITCH=.4;SLOTS=32;PERIMETER=12.8
 
@@ -28,11 +29,13 @@ class FlowPlant(TwinPlant):
         self.dispatch_shift=max(0.,self.tail_shift-2.8);self.merge_x=28+self.dispatch_shift
         for key in ('OUTPUT-SHUTTLE','OUTPUT-CART'):
             self.positions[key][0]+=self.dispatch_shift;self.initial[key]=self.positions[key][:]
-        self.loop_end=X1+self.tail_shift;self.loop_slots=32+round(2*self.tail_shift/PITCH);self.loop_exit=11+round(self.tail_shift/PITCH)
+        self.merge_ticks=math.ceil(profile(length(curve([9.,BED+self.H/2,0],[X0,BED+self.H/2,-R],.72)),c['loop_m_s'],1.,0.,c['loop_m_s'])['duration']/(PITCH/c['loop_m_s']));self.loop_end=X1+self.tail_shift;self.loop_slots=32+round(2*self.tail_shift/PITCH);self.loop_exit=11+round(self.tail_shift/PITCH)
         self.loop_stock=[{} for _ in range(8)];self.loop_pending=[None]*8;self.loop_merging=[None]*8
         self.loop_prefetch=[None]*8;self.loop_demands=[None]*8;self.loop_exit_busy=[False]*8
         self.route_approach=[simpy.Resource(self.env,capacity=1) for _ in range(8)];self.approach_tokens=[None]*8
         self.entry_dock=[simpy.Resource(self.env,capacity=1) for _ in range(8)]
+        for cell,z in enumerate(self.cell_z):
+            key=f'REJECT-PUSHER-{cell}';self.positions[key][1]=BED+.30;self.initial[key]=self.positions[key][:]
         self.loop_peaks=[0]*8;self.loop_backpressure=0
         for cell in range(8):
             for prefix in ('PICKER-','SORTER-','SELECTOR-'):
@@ -61,14 +64,13 @@ class FlowPlant(TwinPlant):
 
     def loop_load(self,identity,cell,clear,reservation):
         z=self.cell_z[cell];speed=self.c['loop_m_s'];tick=PITCH/speed
-        first=profile(1.51,1.,1.,0.,1.)['duration']
-        last=profile(.29,speed,self.c['motion_acceleration']['servo'],1.,speed)['duration']
-        ticks=math.ceil((first+last)/tick)
-        yield self.env.timeout(ticks*tick-first-last)
+        inlet=curve([9.,BED+self.H/2,z],[X0,BED+self.H/2,z-R],.72)
+        first=profile(length(inlet),speed,1.,0.,speed)['duration']
+        ticks=self.merge_ticks
+        yield self.env.timeout(ticks*tick-first)
         self.loop_release_approach(cell)
-        yield from self.move([identity],[[10.51,BED+self.H/2,z-R-.15]],f'cell_{cell}_router','Continuously feed accepted brick to reserved merge slot',1.,end_speed=1.)
+        yield from self.move([identity],[[X0,BED+self.H/2,z-R]],f'cell_{cell}_router','Guided servo merge into reserved loop gap',speed,end_speed=speed,path=inlet)
         clear.succeed();self.notify()
-        yield from self.move([identity],[[X0,BED+self.H/2,z-R]],f'cell_{cell}_loop_inlet','Synchronized continuous inlet-to-loop handoff',speed,start_speed=1.,end_speed=speed)
 
     def loop_take(self,cell,shade,next_shade=None):
         prefetched=self.loop_prefetch[cell]
@@ -90,7 +92,7 @@ class FlowPlant(TwinPlant):
     def loop_extract(self,identity,cell,event):
         z=self.cell_z[cell];self.locate([identity],'forming')
         # Diagonal fixed belt leaves the loop on the outside of its bend.
-        yield from self.move([identity],[[16.25+self.tail_shift,BED+self.H/2,z-.95]],f'cell_{cell}_outlet','Fixed selected-tone outlet aligns outside the loop bend',self.c['loop_m_s'],start_speed=self.c['loop_m_s'],end_speed=.8)
+        yield from self.move([identity],[[16.25+self.tail_shift,BED+self.H/2,z-.95]],f'cell_{cell}_outlet','Fixed selected-tone outlet aligns outside the loop bend',self.c['loop_m_s'],start_speed=self.c['loop_m_s'],end_speed=.8,path=curve(self.positions[identity][:],[16.25+self.tail_shift,BED+self.H/2,z-.95],.38))
         yield from self.move([identity],[[16.65+self.tail_shift,BED+self.H/2,z-.95]],f'cell_{cell}_outlet','Straight nose transfer into separated row pocket',.8,start_speed=.8)
         self.loop_exit_busy[cell]=False;event.succeed(identity);self.notify()
 
@@ -126,9 +128,9 @@ class FlowPlant(TwinPlant):
             if demand and identity and identity.startswith('B') and not self.loop_exit_busy[cell] and self.material[identity]['shade']==demand[0]:
                 stock.pop(self.loop_exit);self.loop_demands[cell]=None;self.loop_exit_busy[cell]=True
                 self.env.process(self.guarded(self.loop_extract(identity,cell,demand[1])))
-            if self.loop_pending[cell] and not self.loop_merging[cell] and ((self.loop_slots-math.ceil((profile(1.51,1.,1.,0.,1.)['duration']+profile(.29,speed,self.c['motion_acceleration']['servo'],1.,speed)['duration'])/(PITCH/speed)))%self.loop_slots not in stock) and sum(v.startswith('B') for v in stock.values())<self.c['loop_capacity']:
+            if self.loop_pending[cell] and not self.loop_merging[cell] and ((self.loop_slots-self.merge_ticks)%self.loop_slots not in stock) and sum(v.startswith('B') for v in stock.values())<self.c['loop_capacity']:
                 identity,dock,clear,reservation=self.loop_pending[cell];self.loop_pending[cell]=None
-                ticks=math.ceil((profile(1.51,1.,1.,0.,1.)['duration']+profile(.29,speed,self.c['motion_acceleration']['servo'],1.,speed)['duration'])/(PITCH/speed))
+                ticks=self.merge_ticks
                 stock[(self.loop_slots-ticks)%self.loop_slots]='GAP-'+identity
                 process=self.env.process(self.loop_load(identity,cell,clear,reservation))
                 self.loop_merging[cell]=[identity,dock,ticks,process]
