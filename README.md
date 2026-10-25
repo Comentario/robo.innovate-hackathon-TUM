@@ -305,3 +305,5 @@ Estudio de capacidad por capas: `artifacts/layer_repair_capacity_04/index.html`.
 Demo vigente: `artifacts/greenfield_17_final/index.html`. Transporte continuo sin almacenes por tonos ni bandas de reserva; alimentación por filas y salidas fijas. Tres distribuciones completadas: 4.074–4.237 ladrillos conformes expedidos/h. El objetivo visible de 5.000/h sigue siendo un objetivo. Para generar un lote nuevo: `python3 scripts/greenfield_demo.py --output-dir artifacts/my_flow_demo`. Ver [apertura, cambios y verificación](docs/demo_flow_17.md).
 
 Current visual update: `artifacts/greenfield_18/index.html`. See [supported transfers, inlet/outlet guides and verification](docs/visual_junctions_18.md). The recorded production run and KPIs are unchanged.
+
+Latest junction cleanup: `artifacts/greenfield_19/index.html`; see [revision 19 checks and scope](docs/visual_junctions_19.md).
