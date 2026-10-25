@@ -1,8 +1,11 @@
 """Classify bricks as good or bad from the camera (or a saved photo), and log it.
 
-One pipeline, models loaded once:
-  frame -> Grounding DINO (row extent) -> split_brick_row (one box per brick)
-  -> MobileSAM (brick mask) -> color features -> classifier.
+One pipeline, models loaded once. Two detectors (--detector):
+  grounding_dino (default): Grounding DINO (row extent) -> split_brick_row
+      (one box per brick) -> MobileSAM (brick mask);
+  yolo: the YOLO11n-seg brick detector trained on our photos
+      (train_brick_detector.py), box and mask in one fast step.
+Then, for both: color features -> classifier.
 
 Classifiers (--method):
   knn   1-nearest-neighbor against the labeled reference bricks (default);
@@ -11,6 +14,12 @@ Classifiers (--method):
         mortar stains). The band is fitted on the calibration, or given with
         --band LOW HIGH. Each brick shows its L* mode and how far it is from
         the band, so bricks outside the expected range are easy to spot.
+
+Unknown rules (both methods): a face with large light stains (contamination,
+e.g. mortar) or a perforated face is reported as "unknown" with a hint to show
+the other face, instead of a guess. During calibration those faces are flagged
+and left out of the band fit. Holes and the lit top edge are excluded from the
+stain measure, and hole pixels from the color measure.
 
 Reference bricks come from one of:
   --calibrate            photograph the labeled sample bricks first, in the
@@ -60,7 +69,7 @@ from scripts.analyze_second_dataset_colors import bgr_to_lab, brick_features
 from scripts.capture_bricks import HEIGHT, WIDTH, camera_properties, open_camera, read_frame, settings_line
 from scripts.evaluate_third_dataset import MIN_MASK_COVERAGE, PHOTO_GROUPS, box_region, table_reference
 from scripts.run_grounding_dino import BOX_THRESHOLD, MAX_SIDE, MODEL_ID, PROMPT, TEXT_THRESHOLD, detect, normalize_prompt
-from scripts.run_mobile_sam import MODEL_PATH, segment, to_corners
+from scripts.run_mobile_sam import ERODE_PX, MODEL_PATH, segment, to_corners
 from scripts.split_brick_row import split_scene
 
 
@@ -80,14 +89,34 @@ DEFAULT_REFERENCE_FEATURES = "table"
 # so table_ratio is kept unless another set is clearly better.
 PREFERRED_FEATURES = "table_ratio"
 PREFERENCE_MARGIN = 0.05
-LOGGED_FEATURES = ["L_med", "L_mode", "dL_wood", "rel_L", "C_med", "C_mode"]
+LOGGED_FEATURES = ["L_med", "L_mode", "dL_wood", "rel_L", "C_med", "C_mode", "stain_share", "holes_share"]
 METHOD = "knn"
+DETECTOR = "grounding_dino"
+YOLO_WEIGHTS = PROJECT_ROOT / "outputs2" / "yolo_runs" / "brick_seg" / "weights" / "best.pt"
+YOLO_CONFIDENCE = 0.5
 BAND_OVERRIDE: tuple[float, float] | None = None
 # Fitted on calibration 20261024_202203 (scene L* ~53); only used without a calibration.
 DEFAULT_BAND = (24.5, 27.5)
+# Lightness used by the band rule: L_mode (most frequent L*) or L_med (median L*).
+# Set with --band-feature; L_med was more stable on calibration 20261025_201100.
 BAND_FEATURE = "L_mode"
 # Confidence of the band rule grows with the distance to the nearest band edge.
 BAND_CONFIDENCE_SCALE = 5.0
+# Light stains: pixels this much lighter than the brick base (L* mode).
+STAIN_L_RISE = 12.0
+# A face with more stain area than this is reported as unknown (contaminated).
+STAIN_UNKNOWN_SHARE = 0.12
+# Wall seen through holes is close to the wall lightness and far above the brick;
+# mortar stains stay well below it (checked on calibration 20261025_104739).
+HOLE_BELOW_WALL = 12.0
+HOLE_ABOVE_BASE = 15.0
+HOLE_DILATE_PX = 15
+# A face is perforated when this share of its inner box shows wall through holes.
+PERFORATED_HOLE_SHARE = 0.02
+# The lit top edge of a standing brick looks like a stain; skip this share of its height.
+TOP_EDGE_SHARE = 0.06
+PERFORATED_POLICY = "unknown"
+MIN_BAND_PER_CLASS = 3
 MIN_CALIBRATION_PER_CLASS = 3
 FEATURE_OVERRIDE: str | None = None
 CALIBRATION_WARN_ACCURACY = 0.9
@@ -132,6 +161,46 @@ def histogram_mode(values: np.ndarray, width: float = 1.0) -> float:
     counts = np.convolve(counts, np.ones(3) / 3, mode="same")
     peak = int(np.argmax(counts))
     return float((edges[peak] + edges[peak + 1]) / 2)
+
+
+def surface_features(frame: np.ndarray, region: np.ndarray, bbox: dict) -> dict:
+    """Base color without holes, face type and light-stain share of one brick."""
+    x, y, w, h = bbox["x"], bbox["y"], bbox["width"], bbox["height"]
+    lab = bgr_to_lab(frame[y:y + h, x:x + w].reshape(-1, 3)).reshape(h, w, 3)
+    region = region[y:y + h, x:x + w]
+    L = lab[..., 0]
+    C = np.hypot(lab[..., 1], lab[..., 2])
+    base = histogram_mode(L[region])
+
+    wall = frame[max(0, y - 120):max(0, y - 20), x:x + w]
+    wall_L = float(np.median(bgr_to_lab(wall.reshape(-1, 3))[:, 0])) if wall.size else base + 30
+    hole_level = max(wall_L - HOLE_BELOW_WALL, base + HOLE_ABOVE_BASE)
+    mx, my = round(w * 0.15), round(h * 0.08)
+    holes_share = float((L[my:h - my, mx:w - mx] > hole_level).mean())
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * HOLE_DILATE_PX + 1, 2 * HOLE_DILATE_PX + 1))
+    hole_zone = cv2.dilate((L > hole_level).astype(np.uint8), kernel).astype(bool)
+    clean = region & ~hole_zone
+    if clean.sum() < 0.3 * region.sum():
+        clean = region
+    L_mode = histogram_mode(L[clean])
+
+    rows = np.nonzero(region.any(axis=1))[0]
+    body = clean.copy()
+    if rows.size:
+        body[:int(rows.min() + TOP_EDGE_SHARE * (rows.max() - rows.min()))] = False
+    stain_share = float((L[body] > L_mode + STAIN_L_RISE).mean()) if body.any() else 0.0
+    return {"L_mode": L_mode, "C_mode": histogram_mode(C[clean]), "stain_share": stain_share,
+            "holes_share": holes_share,
+            "face": "perforated" if holes_share >= PERFORATED_HOLE_SHARE else "solid"}
+
+
+def unknown_reason(features: dict) -> str | None:
+    """Why this face should not be classified, or None."""
+    if features.get("stain_share", 0.0) >= STAIN_UNKNOWN_SHARE:
+        return f"stains {features['stain_share']:.0%}: show another face"
+    if features.get("face") == "perforated" and PERFORATED_POLICY == "unknown":
+        return "perforated face: show the solid face"
+    return None
 
 
 def fit_band(rows: list[dict], key: str) -> tuple[float, float]:
@@ -205,14 +274,33 @@ class Reference:
         }
 
 
-class BandReference:
-    """Lightness band rule: good if low <= L* mode <= high."""
+def band_rows(rows: list[dict], face: str) -> list[dict]:
+    """Calibration faces usable to fit the band of one face type (no contamination)."""
+    return [r for r in rows if r.get("face", "solid") == face
+            and r.get("stain_share", 0.0) < STAIN_UNKNOWN_SHARE and usable(r, [BAND_FEATURE])]
 
-    def __init__(self, low: float, high: float, name: str, key: str = BAND_FEATURE,
+
+def fit_face_bands(rows: list[dict]) -> dict[str, tuple[float, float] | None]:
+    """One band per face type, when that face has enough good and bad examples."""
+    bands = {}
+    for face in ("solid", "perforated"):
+        subset = band_rows(rows, face)
+        goods = sum(r["label"] == "good" for r in subset)
+        enough = goods >= MIN_BAND_PER_CLASS and len(subset) - goods >= MIN_BAND_PER_CLASS
+        bands[face] = fit_band(subset, BAND_FEATURE) if enough else None
+    return bands
+
+
+class BandReference:
+    """Lightness band rule per face type: good if low <= L* mode <= high."""
+
+    def __init__(self, bands: dict[str, tuple[float, float] | None], name: str, key: str | None = None,
                  rows: list[dict] | None = None) -> None:
-        self.low, self.high, self.key = low, high, key
+        key = key or BAND_FEATURE
+        self.bands, self.key = bands, key
         self.keys = [key]
-        self.feature_set = f"band {key} [{low:.1f}, {high:.1f}]"
+        self.feature_set = "band " + ", ".join(
+            f"{face} [{b[0]:.1f}, {b[1]:.1f}]" for face, b in bands.items() if b)
         self.name = name
         self.rows = rows or []
         self.camera: dict | None = None
@@ -225,27 +313,35 @@ class BandReference:
         key = BAND_FEATURE if all(usable(r, [BAND_FEATURE]) for r in rows) else "L_med"
         if key != BAND_FEATURE:
             print(f"   note: {path} has no {BAND_FEATURE} (older calibration); the band uses L_med")
-        low, high = BAND_OVERRIDE or fit_band(rows, key)
-        reference = cls(low, high, str(path), key, rows)
+            bands = {"solid": fit_band(rows, key), "perforated": None}
+        else:
+            bands = fit_face_bands(rows)
+        if BAND_OVERRIDE:
+            bands["solid"] = BAND_OVERRIDE
+        reference = cls(bands, str(path), key, rows)
         reference.camera = data.get("camera")
         reference.scene_lightness = data.get("scene_lightness")
         return reference
 
     def predict(self, features: dict) -> dict:
         value = features.get(self.key)
-        if value is None or not math.isfinite(value):
+        face = features.get("face", "solid")
+        band = self.bands.get(face) or (self.bands.get("solid") if face == "solid" else None)
+        if value is None or not math.isfinite(value) or band is None:
             return {"prediction": "unknown", "nearest_reference": None, "distance_to_good": None,
-                    "distance_to_bad": None, "confidence": 0.0, "band_offset": None}
-        if value < self.low:
-            offset = value - self.low
-        elif value > self.high:
-            offset = value - self.high
+                    "distance_to_bad": None, "confidence": 0.0, "band_offset": None,
+                    "unknown_reason": f"no band for {face} faces in the calibration"}
+        low, high = band
+        if value < low:
+            offset = value - low
+        elif value > high:
+            offset = value - high
         else:
             offset = 0.0
-        edge = min(value - self.low, self.high - value) if offset == 0 else abs(offset)
+        edge = min(value - low, high - value) if offset == 0 else abs(offset)
         return {
             "prediction": "good" if offset == 0 else "bad",
-            "nearest_reference": f"band {self.low:.1f}-{self.high:.1f}",
+            "nearest_reference": f"{face} band {low:.1f}-{high:.1f}",
             "distance_to_good": None,
             "distance_to_bad": None,
             "confidence": round(0.5 + min(edge, BAND_CONFIDENCE_SCALE) / (2 * BAND_CONFIDENCE_SCALE), 3),
@@ -263,20 +359,49 @@ def load_reference(path: Path | None):
             return BandReference.from_calibration(path)
         low, high = BAND_OVERRIDE or DEFAULT_BAND
         print(f"   band without calibration: [{low}, {high}] (only valid with the same light; calibrate if possible)")
-        return BandReference(low, high, "fixed band")
+        return BandReference({"solid": (low, high), "perforated": None}, "fixed band")
     return Reference.load(path) if path else None
 
 
 class BrickClassifier:
     """Detection, segmentation and color classification with models loaded once."""
 
-    def __init__(self, reference: Reference | None = None, exclude_photo: str | None = None) -> None:
+    def __init__(self, reference: Reference | None = None, exclude_photo: str | None = None,
+                 detector: str | None = None) -> None:
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.processor = AutoProcessor.from_pretrained(MODEL_ID)
-        self.detector = AutoModelForZeroShotObjectDetection.from_pretrained(MODEL_ID).to(self.device).eval()
-        self.segmenter = SAM(str(MODEL_PATH))
-        self.prompt = normalize_prompt(PROMPT)
+        self.detector_name = detector or DETECTOR
+        if self.detector_name == "yolo":
+            from ultralytics import YOLO
+            self.yolo = YOLO(str(YOLO_WEIGHTS))
+        else:
+            self.processor = AutoProcessor.from_pretrained(MODEL_ID)
+            self.detector = AutoModelForZeroShotObjectDetection.from_pretrained(MODEL_ID).to(self.device).eval()
+            self.segmenter = SAM(str(MODEL_PATH))
+            self.prompt = normalize_prompt(PROMPT)
         self.reference = reference or Reference.third_dataset(exclude_photo)
+
+    def yolo_boxes_and_masks(self, frame: np.ndarray) -> tuple[list[dict], np.ndarray]:
+        """YOLO boxes (left to right) and a label map built like segment() does."""
+        result = self.yolo.predict(frame, conf=YOLO_CONFIDENCE, retina_masks=True, verbose=False)[0]
+        if result.masks is None:
+            return [], np.zeros(frame.shape[:2], np.uint8)
+        masks = result.masks.data.cpu().numpy().astype(bool)
+        corners = result.boxes.xyxy.cpu().numpy().round().astype(int)
+        order = np.argsort(corners[:, 0])
+        claimed = masks.sum(axis=0)
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * ERODE_PX + 1, 2 * ERODE_PX + 1))
+        label_map = np.zeros(frame.shape[:2], np.uint8)
+        boxes = []
+        for index, k in enumerate(order, 1):
+            x1, y1, x2, y2 = (int(v) for v in corners[k])
+            x1, y1 = max(0, x1), max(0, y1)
+            x2, y2 = min(frame.shape[1], x2), min(frame.shape[0], y2)
+            boxes.append({"x": x1, "y": y1, "width": x2 - x1, "height": y2 - y1})
+            inside = np.zeros(frame.shape[:2], bool)
+            inside[y1:y2, x1:x2] = True
+            exclusive = (masks[k] & inside & (claimed == 1)).astype(np.uint8)
+            label_map[cv2.erode(exclusive, kernel).astype(bool)] = index
+        return boxes, label_map
 
     def detect_boxes(self, frame: np.ndarray) -> list[dict]:
         image = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
@@ -300,21 +425,29 @@ class BrickClassifier:
         timings = {}
         if frame.mean() < MIN_FRAME_MEAN:
             return {"bricks": [], "timings": timings, "raw_detections": 0, "warning": "frame too dark"}
-        start = time.monotonic()
-        raw_boxes = self.detect_boxes(frame)
-        timings["detection_s"] = round(time.monotonic() - start, 2)
-        if not raw_boxes:
-            return {"bricks": [], "timings": timings, "raw_detections": 0}
+        if self.detector_name == "yolo":
+            start = time.monotonic()
+            boxes, label_map = self.yolo_boxes_and_masks(frame)
+            timings["detection_segmentation_s"] = round(time.monotonic() - start, 2)
+            raw_boxes = boxes
+            if not boxes:
+                return {"bricks": [], "timings": timings, "raw_detections": 0}
+        else:
+            start = time.monotonic()
+            raw_boxes = self.detect_boxes(frame)
+            timings["detection_s"] = round(time.monotonic() - start, 2)
+            if not raw_boxes:
+                return {"bricks": [], "timings": timings, "raw_detections": 0}
 
-        start = time.monotonic()
-        boxes = [d["bbox_px"] for d in split_scene(frame, raw_boxes)["detections"]]
-        timings["split_s"] = round(time.monotonic() - start, 2)
-        if not boxes:
-            return {"bricks": [], "timings": timings, "raw_detections": len(raw_boxes)}
+            start = time.monotonic()
+            boxes = [d["bbox_px"] for d in split_scene(frame, raw_boxes)["detections"]]
+            timings["split_s"] = round(time.monotonic() - start, 2)
+            if not boxes:
+                return {"bricks": [], "timings": timings, "raw_detections": len(raw_boxes)}
 
-        start = time.monotonic()
-        label_map = segment(self.segmenter, frame, [to_corners(b) for b in boxes])
-        timings["segmentation_s"] = round(time.monotonic() - start, 2)
+            start = time.monotonic()
+            label_map = segment(self.segmenter, frame, [to_corners(b) for b in boxes])
+            timings["segmentation_s"] = round(time.monotonic() - start, 2)
 
         start = time.monotonic()
         table = table_reference(frame, boxes)
@@ -329,9 +462,7 @@ class BrickClassifier:
             use_mask = coverage >= MIN_MASK_COVERAGE
             region = mask if use_mask else box_region(bbox, frame.shape[:2])
             features = add_relative_lightness(brick_features(frame[region], table))
-            lab = bgr_to_lab(frame[region])
-            features["L_mode"] = histogram_mode(lab[:, 0])
-            features["C_mode"] = histogram_mode(np.hypot(lab[:, 1], lab[:, 2]))
+            features.update(surface_features(frame, region, bbox))
             bricks.append({
                 "position": len(bricks) + 1,
                 "mask_index": index,
@@ -351,7 +482,14 @@ class BrickClassifier:
             features = brick.pop("all_features")
             brick["features"] = {k: round(features[k], 3) if math.isfinite(features[k]) else None
                                  for k in LOGGED_FEATURES}
-            brick.update(self.reference.predict(features))
+            brick["face"] = features["face"]
+            reason = unknown_reason(features)
+            if reason:
+                brick.update({"prediction": "unknown", "nearest_reference": None, "distance_to_good": None,
+                              "distance_to_bad": None, "confidence": 0.0, "band_offset": None,
+                              "unknown_reason": reason})
+            else:
+                brick.update(self.reference.predict(features))
         result["reference"] = self.reference.name
         result["feature_set"] = self.reference.feature_set
         return result
@@ -376,7 +514,9 @@ def draw_result(frame: np.ndarray, result: dict, pending: int | None = None) -> 
     """Brick outlines colored by prediction; green/red once the true label is known."""
     canvas = frame.copy()
     for brick in result["bricks"]:
-        if brick["true_label"] is None:
+        if brick["prediction"] == "unknown":
+            color = PENDING_BGR
+        elif brick["true_label"] is None:
             color = GOOD_BGR if brick["prediction"] == "good" else BAD_BGR
         else:
             color = CORRECT_BGR if brick["true_label"] == brick["prediction"] else ERROR_BGR
@@ -384,6 +524,8 @@ def draw_result(frame: np.ndarray, result: dict, pending: int | None = None) -> 
                                        cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         cv2.drawContours(canvas, contours, -1, color, 6)
         lines = [f"{brick['position']}: {brick['prediction'].upper()}", f"conf {brick['confidence']:.2f}"]
+        if brick.get("unknown_reason"):
+            lines = [f"{brick['position']}: UNKNOWN", brick["unknown_reason"]]
         if brick.get("band_offset") is not None:
             offset = brick["band_offset"]
             where = "in band" if offset == 0 else f"{'below' if offset < 0 else 'above'} {abs(offset):.1f}"
@@ -408,7 +550,11 @@ def draw_calibration(frame: np.ndarray, result: dict, pending: int | None = None
         contours, _ = cv2.findContours(brick_region(frame, result, brick).astype(np.uint8),
                                        cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         cv2.drawContours(canvas, contours, -1, color, 6)
-        lines = [f"{brick['position']}: {label.upper() if label else '?'}"]
+        f = brick["all_features"]
+        lines = [f"{brick['position']}: {label.upper() if label else '?'}",
+                 f"{f['face']}  stains {f['stain_share']:.0%}"]
+        if unknown_reason(f):
+            lines.append("NOT USED: " + unknown_reason(f))
         if pending == brick["position"]:
             lines.append("g good / b bad / n skip")
         draw_text_lines(canvas, brick["bbox_px"], lines, color)
@@ -571,8 +717,9 @@ def calibration_self_check(rows: list[dict]) -> dict:
     return scores
 
 
-def band_self_check(rows: list[dict]) -> float | None:
-    """Leave-one-capture-out accuracy of the lightness band rule."""
+def band_self_check(rows: list[dict], face: str = "solid") -> float | None:
+    """Leave-one-capture-out accuracy of the band of one face type (clean faces only)."""
+    rows = band_rows(rows, face)
     correct = total = 0
     for capture in sorted({r["photo"] for r in rows}):
         train = [r for r in rows if r["photo"] != capture]
@@ -633,9 +780,12 @@ def run_calibration(capture: cv2.VideoCapture, classifier: BrickClassifier) -> P
                 continue
             scores = calibration_self_check(rows)
             feature_set = choose_feature_set(scores)
-            band = fit_band(rows, BAND_FEATURE)
+            bands = fit_face_bands(rows)
+            band = bands["solid"] or fit_band(rows, BAND_FEATURE)
             data = {"created": time.strftime("%Y-%m-%d %H:%M:%S"), "camera": camera_properties(capture),
                     "band_" + BAND_FEATURE: [band[0], band[1]], "band_self_check": band_self_check(rows),
+                    "bands_by_face": {k: (list(v) if v else None) for k, v in bands.items()},
+                    "band_self_check_perforated": band_self_check(rows, "perforated"),
                     "scene_lightness": round(float(np.median([r["scene_lightness"] for r in rows])), 1),
                     "feature_set": feature_set, "self_check": scores,
                     "good_bricks": goods, "bad_bricks": bads, "rows": rows}
@@ -645,13 +795,20 @@ def run_calibration(capture: cv2.VideoCapture, classifier: BrickClassifier) -> P
             for name, s in scores.items():
                 print(f"   self-check {name:5s}: accuracy {s['accuracy']} on {s['checked_bricks']} bricks")
             print(f"   using feature set: {feature_set}; scene lightness L* {data['scene_lightness']}")
-            print(f"   band rule: good if {band[0]:.1f} <= {BAND_FEATURE} <= {band[1]:.1f}; "
-                  f"self-check accuracy {data['band_self_check']}")
-            for r in sorted(rows, key=lambda r: r[BAND_FEATURE]):
-                inside = band[0] <= r[BAND_FEATURE] <= band[1]
-                if inside != (r["label"] == "good"):
-                    print(f"   OUTSIDE EXPECTATION: {r['photo']}#{r['position']} {r['label']} "
-                          f"{BAND_FEATURE} {r[BAND_FEATURE]:.1f} ({'inside' if inside else 'outside'} the band)")
+            for face, b in bands.items():
+                used = band_rows(rows, face)
+                check = data["band_self_check" if face == "solid" else "band_self_check_perforated"]
+                print(f"   {face} faces: {len(used)} clean ({sum(r['label'] == 'good' for r in used)} good); "
+                      + (f"band {b[0]:.1f} <= {BAND_FEATURE} <= {b[1]:.1f}, self-check {check}" if b
+                         else "not enough examples for a band"))
+                for r in sorted(used, key=lambda r: r[BAND_FEATURE]):
+                    if b and (b[0] <= r[BAND_FEATURE] <= b[1]) != (r["label"] == "good"):
+                        print(f"      OUTSIDE EXPECTATION: {r['photo']}#{r['position']} {r['label']} "
+                              f"{BAND_FEATURE} {r[BAND_FEATURE]:.1f}")
+            for r in rows:
+                if r.get("stain_share", 0.0) >= STAIN_UNKNOWN_SHARE:
+                    print(f"   CONTAMINATED (left out of the band): {r['photo']}#{r['position']} {r['label']} "
+                          f"stains {r['stain_share']:.0%}")
             conflicts = label_conflicts(rows)
             for a, b in conflicts:
                 print(f"   CHECK LABELS: {a['photo']}#{a['position']} {a['label']} and "
@@ -691,7 +848,7 @@ class SessionLog:
 
     CSV_FIELDS = ["capture_id", "time", "position", "prediction", "true_label", "correct",
                   "confidence", "distance_to_good", "distance_to_bad", "nearest_reference",
-                  *LOGGED_FEATURES, "band_offset", "region", "mask_coverage"]
+                  *LOGGED_FEATURES, "face", "unknown_reason", "band_offset", "region", "mask_coverage"]
 
     def __init__(self) -> None:
         self.root = LOG_ROOT / time.strftime("%Y%m%d_%H%M%S")
@@ -700,6 +857,7 @@ class SessionLog:
         self.count = 0
         self.labeled = 0
         self.correct = 0
+        self.unknown = 0
         with (self.root / "log.csv").open("w", newline="", encoding="utf-8") as handle:
             csv.DictWriter(handle, self.CSV_FIELDS).writeheader()
 
@@ -721,7 +879,10 @@ class SessionLog:
         with (self.root / "log.csv").open("a", newline="", encoding="utf-8") as handle:
             writer = csv.DictWriter(handle, self.CSV_FIELDS)
             for b in result["bricks"]:
-                correct = None if b["true_label"] is None else b["true_label"] == b["prediction"]
+                correct = (None if b["true_label"] is None or b["prediction"] == "unknown"
+                           else b["true_label"] == b["prediction"])
+                if b["prediction"] == "unknown":
+                    self.unknown += 1
                 if correct is not None:
                     self.labeled += 1
                     self.correct += int(correct)
@@ -730,15 +891,17 @@ class SessionLog:
                                  "correct": correct, "confidence": b["confidence"],
                                  "distance_to_good": b["distance_to_good"], "distance_to_bad": b["distance_to_bad"],
                                  "nearest_reference": b["nearest_reference"], **b["features"],
+                                 "face": b.get("face"), "unknown_reason": b.get("unknown_reason"),
                                  "band_offset": b.get("band_offset"),
                                  "region": b["region"], "mask_coverage": b["mask_coverage"]})
         return capture_id
 
     def summary(self) -> str:
+        unknown = f", {self.unknown} unknown" if self.unknown else ""
         if not self.labeled:
-            return f"{self.count} captures, no labeled bricks yet"
-        return (f"{self.count} captures, {self.correct}/{self.labeled} labeled bricks correct "
-                f"({self.correct / self.labeled:.0%})")
+            return f"{self.count} captures, no labeled bricks yet{unknown}"
+        return (f"{self.count} captures, {self.correct}/{self.labeled} classified bricks correct "
+                f"({self.correct / self.labeled:.0%}){unknown}")
 
 
 def print_result(capture_id: str, result: dict) -> None:
@@ -753,7 +916,10 @@ def print_result(capture_id: str, result: dict) -> None:
         band = ""
         if b.get("band_offset") is not None:
             band = f"  {b['band_key']} {b['band_value']:.1f} offset {b['band_offset']:+.1f}"
-        print(f"   {b['position']}: {b['prediction']:4s} conf {b['confidence']:.2f}  "
+        if b.get("unknown_reason"):
+            print(f"   {b['position']}: UNKNOWN ({b['unknown_reason']}){truth}")
+            continue
+        print(f"   {b['position']}: {b['prediction']:4s} conf {b['confidence']:.2f}  {b.get('face', '')}  "
               f"nearest {b['nearest_reference']}{band}{truth}")
 
 
@@ -834,6 +1000,8 @@ def classify_loop(capture: cv2.VideoCapture, classifier: BrickClassifier, camera
 
 
 def main() -> None:
+    global FEATURE_OVERRIDE, METHOD, BAND_OVERRIDE, PERFORATED_POLICY, STAIN_UNKNOWN_SHARE, DETECTOR, YOLO_WEIGHTS
+    global BAND_FEATURE
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--camera", type=int, default=0, help="camera index (0, 1, ...)")
     parser.add_argument("--image", type=Path, help="classify a saved photo instead of the camera")
@@ -843,10 +1011,24 @@ def main() -> None:
                         help="override the feature set stored in the calibration")
     parser.add_argument("--method", choices=["knn", "band"], default="knn",
                         help="knn: nearest calibration brick; band: good if L* mode is inside a band")
+    parser.add_argument("--band-feature", choices=["L_mode", "L_med"], default="L_mode",
+                        help="lightness used by the band: L_mode (most frequent L*) or L_med (median L*)")
     parser.add_argument("--band", type=float, nargs=2, metavar=("LOW", "HIGH"),
-                        help="fixed L* mode band instead of the one fitted on the calibration")
+                        help="fixed L* mode band (solid faces) instead of the one fitted on the calibration")
+    parser.add_argument("--detector", choices=["grounding_dino", "yolo"], default="grounding_dino",
+                        help="grounding_dino: Grounding DINO + row split + MobileSAM (default); "
+                             "yolo: trained YOLO11n-seg brick detector (fast)")
+    parser.add_argument("--yolo-weights", type=Path, default=YOLO_WEIGHTS)
+    parser.add_argument("--perforated", choices=["unknown", "classify"], default="unknown",
+                        help="perforated faces: report unknown (default) or classify with their own band")
+    parser.add_argument("--stain-unknown", type=float, default=STAIN_UNKNOWN_SHARE,
+                        help="stain share above which a face is reported unknown (default %(default)s)")
     args = parser.parse_args()
-    global FEATURE_OVERRIDE, METHOD, BAND_OVERRIDE
+    PERFORATED_POLICY = args.perforated
+    BAND_FEATURE = args.band_feature
+    DETECTOR = args.detector
+    YOLO_WEIGHTS = args.yolo_weights
+    STAIN_UNKNOWN_SHARE = args.stain_unknown
     FEATURE_OVERRIDE = args.features
     METHOD = args.method
     BAND_OVERRIDE = tuple(args.band) if args.band else None

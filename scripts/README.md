@@ -69,7 +69,13 @@ Hackathon dataset annotation:
   default for new calibrations); `--features` overrides the stored one.
   `--method band` classifies with a lightness band instead (good if LOW <= L* mode
   <= HIGH, fitted on the calibration or set with `--band LOW HIGH`) and shows each
-  brick's L* mode and its distance to the band. Camera mode: space
+  brick's L* mode and its distance to the band. `--band-feature L_med` uses the median L*
+  instead of the mode.
+  Faces with large light stains (`--stain-unknown`, default 0.12) or perforated
+  faces (`--perforated unknown|classify`) are reported as UNKNOWN with a hint to
+  show another face; calibration flags them and fits one band per face type.
+  `--detector yolo` uses the trained YOLO11n-seg brick detector instead of
+  Grounding DINO + row split + MobileSAM (`--detector grounding_dino`, default). Camera mode: space
   classifies the current frame, then g/b enters the true label of each brick for
   the log. `--image photo.jpg` classifies a saved photo. Logs (frames, result
   images, `log.jsonl`, `log.csv`) go to `outputs2/live/<session>/`.
@@ -90,3 +96,32 @@ Hackathon dataset annotation:
   and C*, a*, hue, table difference and ratio) and score nearest-neighbor feature
   sets and a lightness "band" rule: honest (unseen capture), live, and live
   without its twin. Writes `<calibration>/feature_evaluation/`.
+- `diagnose_band_outliers.py <calibration> <live session> [--band LOW HIGH]`: per-brick
+  diagnosis of the L* mode (face type, light stains, dark specks, scene light,
+  position) with galleries sorted by lightness and a factors chart. Writes
+  `<session>/band_diagnosis/`.
+- `benchmark_pipeline.py [photos] [--runs N] [--cpu]`: time each pipeline step
+  (Grounding DINO, row split, MobileSAM, color) on this machine.
+- `build_yolo_dataset.py [--from-cache]`: YOLO segmentation dataset (class brick)
+  auto-labeled by the current pipeline from calibration/live frames and the
+  standing-brick datasets, with review sheets and an `exclude.txt` list. Writes
+  `outputs2/yolo_dataset/` (data.yaml, images/, labels/, review/).
+- `train_brick_detector.py [--epochs N]`: train YOLO11n-seg on `outputs2/yolo_dataset`
+  (weights in `outputs2/yolo_runs/<name>/weights/best.pt`).
+- `compare_brick_detector.py [--run brick_seg]`: YOLO vs pipeline labels on the
+  validation sessions (missed/extra bricks, mask IoU), unseen stress photos and
+  speed. Writes `outputs2/yolo_runs/<run>/comparison/`.
+- `diagnose_feature_separation.py <calibration> <live session>`: re-measure every
+  labeled brick (L*, C*, a*, b*, hue, stains, specks, spread), rank features by
+  good/bad separability and plot feature pairs. Writes `<session>/feature_separation/`.
+- `evaluate_two_face_rules.py <calibration> [--extra calNNN=brick]`: classify each
+  brick from both solid faces (ordered 4-captures-per-brick calibration) with
+  several band rules, evaluated leave-one-brick-out.
+- `capture_top_view.py [--output Top_View_Dataset] [--exposure E] [--focus F]`:
+  capture a top-view dataset (GOOD/BAD/MIX/IMG photos) with fixed camera settings,
+  live light measures (frame, center, border L*, clipped share), one JSON per
+  photo and a session `log.csv`.
+- `build_yolo_dataset.py --view top`: same auto-labeling for the top-view photos in
+  `Top_View_Dataset/` (no row split; stack and nested boxes removed), written to
+  `outputs2/yolo_dataset_top/`. `outputs2/yolo_dataset_combined.yaml` joins both
+  views for `train_brick_detector.py --data`.
