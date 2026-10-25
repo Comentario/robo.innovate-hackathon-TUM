@@ -33,6 +33,26 @@ class MotionAndSceneTests(unittest.TestCase):
         k=2**-.5;o={'min':[.06,.06,-.05],'max':[.94,.94,.05],'center':[.5,.5,0],'half':[.6,.02,.05],'axes':[[k,k,0],[-k,k,0],[0,0,1]]}
         self.assertIsNone(sweep_hit([0,.7,0],[.1,.7,0],[.01]*3,o))
         self.assertIsNotNone(sweep_hit([.2,.2,0],[.8,.8,0],[.01]*3,o))
+    def test_through_running_profile_preserves_velocity_without_stopping(self):
+        p=profile(.3,.3,1,.3,.3)
+        self.assertAlmostEqual(p['duration'],1);self.assertEqual(p['accel_time'],0);self.assertEqual(p['decel_time'],0)
+        for t in [0,.2,.5,.9,1]:self.assertAlmostEqual(fraction(t,p),t)
+    def test_stop_profile_keeps_real_braking_distance(self):
+        p=profile(.3,.3,1,.3,0)
+        self.assertAlmostEqual(p['duration'],1.15);self.assertAlmostEqual(p['decel_time'],.3)
+        with self.assertRaises(ValueError):profile(.01,.3,1,.3,0)
+    @unittest.skipUnless(os.environ.get('GREENFIELD_SCENE_REPORT'),'Needs coordinated report')
+    def test_nonzero_boundary_speed_has_continuous_time_and_reserved_braking_zone(self):
+        r=json.loads(Path(os.environ['GREENFIELD_SCENE_REPORT']).read_text());count=0
+        for identity,seq in r['mechanics']['tracks'].items():
+            for k,s in enumerate(seq[:-1]):
+                if not s.get('motion',{}).get('end_speed'):continue
+                nxt=seq[k+1];count+=1
+                self.assertAlmostEqual(nxt['t0'],s['t1'],places=6)
+                self.assertAlmostEqual(s['motion']['end_speed'],nxt['motion']['start_speed'])
+        self.assertGreater(count,100)
+        for e in r['events']:
+            if e['kind']=='coordinated_zone_release' and e['end_speed']>0:self.assertTrue(e['braking_zone_reserved'])
     @unittest.skipUnless(os.environ.get('GREENFIELD_SCENE_REPORT'),'Needs exported scene geometry')
     def test_actual_material_and_reserve_paths_clear_exported_static_scene(self):
         r=json.loads(Path(os.environ['GREENFIELD_SCENE_REPORT']).read_text());scene=json.loads(Path(os.environ['GREENFIELD_SCENE_GEOMETRY']).read_text())

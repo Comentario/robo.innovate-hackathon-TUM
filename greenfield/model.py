@@ -160,7 +160,7 @@ class Plant:
                 return f'tone:{cell}:{lane}:{zone}'
         return None
 
-    def move(self,ids,targets,station,label,speed):
+    def move(self,ids,targets,station,label,speed,start_speed=0.,end_speed=0.):
         if not ids:return
         if any(i in self.active for i in ids):raise AssertionError('Material double booking')
         gate=None
@@ -177,7 +177,7 @@ class Plant:
         if self.c.get('motion_acceleration'):
             limits=self.c['motion_acceleration'];kind='bulk' if station.startswith(('inventory_','output_','pallet_','elevator_')) else 'servo' if station.endswith(('_selector','_infeed','_former','_reserve')) or station.startswith(('dehack_','stacker_','feeder_')) else 'roller'
             if any(i.startswith(('SHUTTLE-','SELECTOR-','REJECT-PUSHER-')) for i in ids):kind='servo'
-            motion=profile(distance,speed,limits[kind])
+            motion=profile(distance,speed,limits[kind],start_speed,end_speed)
         duration=motion['duration'] if motion else distance/speed;t=self.env.now
         self.emit('step',station,label=label,duration=duration,distance_m=distance,speed_m_s=speed,motion=motion)
         self.timing[station]['travel_s']+=duration;self.timing[station]['moves']+=1
@@ -311,17 +311,35 @@ class Plant:
                     yield from self.pause(f'cell_{cell}_infeed','Maintain inspection pitch',pitch/self.c['speeds']['belt_m_s'])
             yield self.free_cells[cell//2].put(cell)
 
+    def convey_zones(self,identity,resources,reservation,x0,z,station,label,speed):
+        """Reserve a braking zone ahead; preserve speed only with confirmed space."""
+        lookahead=None;velocity=0.
+        for index in range(1,len(resources)):
+            nxt=lookahead if lookahead is not None else resources[index].request()
+            yield nxt;lookahead=None;end_speed=0.
+            if index+1<len(resources) and not resources[index+1].count and not resources[index+1].queue:
+                lookahead=resources[index+1].request()
+                if not lookahead.triggered:raise AssertionError('Lookahead must be granted before continuous motion')
+                end_speed=speed
+            self.emit('coordinated_zone_release',station,brick=identity,zone=index,start_speed=velocity,end_speed=end_speed,braking_zone_reserved=lookahead is not None)
+            yield from self.move([identity],[[x0+index*.3,BED+self.H/2,z]],station,label,speed,start_speed=velocity,end_speed=end_speed)
+            resources[index-1].release(reservation);reservation=nxt;velocity=end_speed
+        return reservation
+
     def inspect(self,identity,cell,entrance):
         b=self.material[identity];d=self.c['dwell'];z=self.cell_z[cell]
         # Independent deterministic per-brick observations, unchanged by lane count.
         rng=random.Random(f'{self.c["seed"]}:{identity}:inspection')
         uncertain=rng.random()<self.c['uncertain_rate']
         reject=(rng.random()>=self.c['false_accept_rate']) if not b['good'] else (rng.random()<self.c['false_reject_rate'])
-        reservation=entrance
-        for zone in range(1,8):
-            nxt=self.inspect_zones[cell][zone].request();yield nxt
-            yield from self.move([identity],[[6.4+zone*.3,BED+self.H/2,z]],f'cell_{cell}_vision','Advance to free inspection zone',self.c['speeds']['belt_m_s'])
-            self.inspect_zones[cell][zone-1].release(reservation);reservation=nxt
+        if self.c.get('coordinated_zpa'):
+            reservation=yield from self.convey_zones(identity,self.inspect_zones[cell],entrance,6.4,z,f'cell_{cell}_vision','Advance to free inspection zone',self.c['speeds']['belt_m_s'])
+        else:
+            reservation=entrance
+            for zone in range(1,8):
+                nxt=self.inspect_zones[cell][zone].request();yield nxt
+                yield from self.move([identity],[[6.4+zone*.3,BED+self.H/2,z]],f'cell_{cell}_vision','Advance to free inspection zone',self.c['speeds']['belt_m_s'])
+                self.inspect_zones[cell][zone-1].release(reservation);reservation=nxt
         with self.scan[cell].request() as req:
             yield req
             yield from self.pause(f'cell_{cell}_vision','Trigger + exposure + inference',d['sensor_s']+d['exposure_s']+d['inference_s'])
@@ -422,10 +440,13 @@ class Plant:
 
     def buffer(self,identity,cell,shade,reservation):
         resources=self.queue_cells[cell,shade];z=self.cell_z[cell]+(self.c['shades'].index(shade)-1)
-        for index in range(1,len(resources)):
-            nxt=resources[index].request();yield nxt
-            yield from self.move([identity],[[10.15+index*.3,BED+self.H/2,z]],f'cell_{cell}_buffer','Advance to next free accumulation zone',self.c['speeds']['buffer_m_s'])
-            resources[index-1].release(reservation);reservation=nxt
+        if self.c.get('coordinated_zpa'):
+            reservation=yield from self.convey_zones(identity,resources,reservation,10.15,z,f'cell_{cell}_buffer','Advance to next free accumulation zone',self.c['speeds']['buffer_m_s'])
+        else:
+            for index in range(1,len(resources)):
+                nxt=resources[index].request();yield nxt
+                yield from self.move([identity],[[10.15+index*.3,BED+self.H/2,z]],f'cell_{cell}_buffer','Advance to next free accumulation zone',self.c['speeds']['buffer_m_s'])
+                resources[index-1].release(reservation);reservation=nxt
         selected=self.env.event();yield self.ready[cell,shade].put((identity,selected));self.notify()
         yield selected
         # Selector owns the piece; the tail may advance after it has left this zone.

@@ -20,7 +20,7 @@
   "input_stacks": 4,
   "cells": 8,
   "input_bricks_per_hour": 7500,
-  "target_conforming_bricks_per_hour": 1500,
+  "target_conforming_bricks_per_hour": 3000,
   "shades": [
     "Warm",
     "Copper",
@@ -78,7 +78,7 @@
     "autonomy": "Automatic brick sorting into two stationary finite discard bins. Cart removal/emptying is outside the modeled batch; full-bin interlock stops upstream collection.",
     "baseline": "Labor shortage, not verified labor savings. Mentor estimate 20-25 workers/shift; no human station modeled, no headcount removal or ROI claim.",
     "mechanical_revision": "12: supported side-clamp stack tool, clearance-routed reserve handling, no-three spatial mix and scene-envelope audit. Capacity remains an unvalidated engineering estimate.",
-    "motion": "Selected rest-to-rest ramps: roller 1.0, servo 3.0, bulk 0.3 m/s\u00b2. No friction/contact dynamics; timing sensitivity, not commissioned plant performance.",
+    "motion": "Configured ramps remain active. Consecutive zones preserve boundary speed only with a downstream braking zone already reserved; stops remain rest-to-rest when blocked. Not commissioned throughput.",
     "capacity_revision": "Eight cells, 20 zones per tone selected for hardware efficiency. 544 inspection/tone drives; reject, reserve and selector are separate physical resources. Compare equal-condition 20/24/30-zone runs."
   },
   "layout": "dual",
@@ -108,6 +108,8 @@
     "bulk": 0.3
   },
   "decoupled_reserve": true,
-  "timing_basis": "engineering cycle with configured start/stop ramps",
-  "stretch_target_conforming_bricks_per_hour": 3000
+  "timing_basis": "coordinated zone release with acceleration and reserved braking distance",
+  "stretch_target_conforming_bricks_per_hour": 3000,
+  "coordinated_zpa": true,
+  "mentor_reference_bricks_per_hour": 1500
 }

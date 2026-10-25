@@ -47,3 +47,14 @@ python3 scripts/greenfield_scene_audit.py artifacts/new_run/run.json scene.json 
 ```
 
 Los 56 tests de la revisión seleccionada pasan, incluida la geometría exportada. La prueba de escena es continua por segmentos, no solo dos capturas. Evidencia local: `artifacts/greenfield_12/verification/`. La animación y las decisiones de cámara siguen siendo sintéticas; no se modifica persona 1.
+
+
+## Revisión 13: liberar zonas sin detener cada pieza
+
+Checkpoint base `cfe2a03`; vista actual `artifacts/greenfield_13/index.html`. El objetivo de diseño es 3.000/h; 1.500/h queda como referencia del mentor. No se replica otra instalación en esta demo.
+
+El control reserva una zona adicional de frenado antes de permitir velocidad no nula al cruzar una frontera. Si esa reserva no está disponible, desacelera hasta detenerse. El último tramo antes de cámara/selección siempre termina detenido. Las velocidades y aceleraciones máximas se conservan. Es una interpretación del principio de liberación coordinada documentado por Interroll, no su programa PLC certificado.
+
+Resultado con los mismos 544 accionamientos de inspección/tonos: **2.049,799 conformes expedidos/h**, frente a 1.951,694 con parada completa en cada frontera: **+5,03 % sin hardware adicional**. No se confunde con los 3.602,021/h de la referencia nominal que no resuelve rampas. No se afirma haber alcanzado aún 3.000/h con estas rampas.
+
+Se verifica continuidad de velocidad y tiempo en cada frontera que se cruza en movimiento, reserva de frenado, mezcla y conservación. El cálculo de perfil admite velocidades inicial/final no nulas y comprueba distancia mínima de frenado. El siguiente aumento debe basarse en los mecanismos que realmente limitan la línea; aumentar cola o motores indiscriminadamente dio poco rendimiento en la comparación de revisión 12.
