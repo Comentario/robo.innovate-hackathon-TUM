@@ -295,3 +295,8 @@ Vista actual: `artifacts/greenfield_13/index.html`. Liberación coordinada con r
 Vista vigente: `artifacts/greenfield_14/index.html`. Sin pórticos de reserva: filas incrementales, bandas reversibles al nivel de la línea y reparto por acumulación. Estimación de referencia 2.218/h; tres distribuciones completadas. Explicación y límites: [docs/flow_optimization_14.md](docs/flow_optimization_14.md).
 
 Revisión 15: `artifacts/greenfield_15/index.html`. Banda diagonal continua de descarte, sin parada intermedia: 2.264 conformes expedidos/h en el lote sintético. Checkpoint anterior `d56c3b7`. Ver [transferencia y alcance](docs/diagonal_transfer_15.md).
+
+
+Última bajada de descarte: `artifacts/greenfield_16_final/index.html`, con pendiente real y sin ocho ascensores. Configuración: `config/greenfield_decline.json`. Ver [alcance y reproducción](docs/descending_discard_16.md).
+
+Estudio de capacidad por capas: `artifacts/layer_repair_capacity_04/index.html`. Evalúa dos estaciones de inspección/corrección selectiva, conservando dehacking y apilado; incluye un carro completo de 28.800 ladrillos, repuestos y mezcla sin tres tonos iguales. Es un modelo de capacidad separado, no un caudal ya validado en el 3D. Ver [supuestos, resultados y referencias](docs/selective_layer_repair.md).
