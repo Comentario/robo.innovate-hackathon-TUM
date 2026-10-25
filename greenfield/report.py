@@ -99,6 +99,8 @@ def render_view(report,folder,study=None):
     code=Path(__file__).with_name('viewer'+suffix+'.js').read_text()
     library=Path(__file__).parents[1]/'third_party/three/three.min.js'
     view=visual_payload(report)
+    from .presentation import build_presentation
+    if report['mechanics'].get('layout')=='dual':view['presentation']=build_presentation(report)
     view['catalog']=json.loads(Path(__file__).with_name('catalog.json').read_text())
     for row in view['catalog']:
         if row.get('image_asset'):
