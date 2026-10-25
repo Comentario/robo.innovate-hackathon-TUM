@@ -317,3 +317,5 @@ Current visual refinement: `artifacts/greenfield_22/index.html`. [Guided actuato
 Latest separator fix: `artifacts/greenfield_23/index.html`; [visual correction and checks](docs/separator_fix_23.md).
 
 Current loop seam correction: `artifacts/greenfield_24/index.html`; [continuous guide joints](docs/loop_rail_seams_24.md).
+
+Current equipment-reference demo: `artifacts/greenfield_25/index.html`. [Official images, published specifications, custom integration scope and inspector verification](docs/equipment_inspector_25.md). Hover and click functional assemblies; production data and dashboard layout are unchanged.

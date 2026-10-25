@@ -15,3 +15,7 @@ Retrieved 2026-10-24. Thumbnail resizing/compression only; no AI-generated produ
 - `lift-guard.jpg`: Eichinger 1059 manufacturer image, https://eichinger.de/wp-content/uploads/2017/01/1059_web.jpg ; mechanism https://eichinger.de/de/ladegabeln-schutzkoerbe/ . Reference product differs from custom powered integration.
 
 - `stack-clamp.jpg`: KINSHOFER KM332-V official photo, https://www.kinshofer.com/images/crane/KM332-V_01.jpg . Principle reference; not the qualified design of this custom hybrid.
+
+## Equipment inspector expansion — 2026-10-25
+
+New product images and official datasheet illustrations are attributed in `equipment-image-sources.json`, including source URLs, retrieval dates where recorded and SHA-256 hashes. Product-reference captions are shown in each equipment card. Cropping, thumbnail resizing and white-background compositing of transparency only; no generated product photos. The KMF/GUF images are official mk North America product photographs; the DFM/ELGA images are Festo catalog family illustrations. BAUER collection and LINGL formation images depict reference installations/products, not the custom simulated assemblies.
