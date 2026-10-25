@@ -64,6 +64,18 @@ function junctionMechanisms(cell,z,x1,rad){
  box(mountX,(B+.64)/2,mountZ,.07,B+.64,.07,green);box(mountX,.025,mountZ,.22,.05,.22,steel);box(mountX,B+.64,z-rad+.25,.10,.07,.40,steel);
  box(mountX,B+.53,z-rad+.10,.12,.22,.12,yellow);const rod=box(mountX,B+.30,z-rad+.10,.035,.35,.035,steel);dynamicMeshes.add(rod);
  box(mountX,B+.10,z-rad+.07,.10,.05,.13,steel,cam);
+ // Twin guides take side loads; the cylinder drives a bolted carriage, not the guide directly.
+ for(const sign of [-1,1]){
+  cylinder(mountX+sign*.085,B+.38,z-rad+.18,.012,.44,steel);
+  box(mountX+sign*.085,B+.25,z-rad+.18,.055,.09,.065,dark,cam);
+  box(mountX+sign*.085,B+.17,z-rad+.13,.025,.16,.10,steel,cam);
+  for(const dx of [-.012,.012])box(mountX+sign*.085+dx,B+.25,z-rad+.217,.010,.012,.012,steel,cam);
+ }
+ box(mountX,B+.615,z-rad+.18,.27,.05,.16,steel);
+ box(mountX,B+.15,z-rad+.18,.27,.03,.14,steel);
+ box(mountX,B+.25,z-rad+.18,.27,.065,.11,steel,cam);
+ box(mountX,B+.10,z-rad+.07,.18,.05,.14,dark,cam);
+ for(const dx of [-.06,.06])box(mountX+dx,B+.127,z-rad+.07,.014,.014,.014,steel,cam);
  junctionActors.push({cell,blade,cam,rod});
 }
 function transferCurve(a,b,reach,n=48){const p=[a,[a[0]+reach,a[1]],[b[0]-reach,b[1]],b],out=[];for(let k=0;k<=n;k++){const t=k/n,v=1-t;out.push([0,1].map(j=>v*v*v*p[0][j]+3*v*v*t*p[1][j]+3*v*t*t*p[2][j]+t*t*t*p[3][j]));}return out;}
@@ -79,9 +91,15 @@ function mixingLoop(cell,z){const g=m.loop_geometry,x0=g.x0,x1=g.x1,rad=g.radius
  deckPolygon(input,flowMats.input);deckPolygon(input,green,.12,B-.04);deckPolygon(output,flowMats.output);deckPolygon(output,green,.12,B-.04);
  // Outer rails end at the shared transfer apron rather than crossing the circular belt.
  const incoming=transferCurve([9,z],[x0,z-rad],.72),outgoing=transferCurve([x1,z-rad],[16.25+SHIFT,z-.95],.38).concat([[16.65+SHIFT-.20,z-.95]]);
- for(const [path,width,circleX] of [[incoming,.39,x0],[outgoing,.33,x1]]){const rim=stripPolygon(path,width);for(let k=0;k<rim.length;k++){const a=rim[k],b=rim[(k+1)%rim.length];if(k===path.length-1||k===rim.length-1)continue;if(Math.min(a[0],b[0])<9.28)continue;if(Math.min(Math.hypot(a[0]-circleX,a[1]-z),Math.hypot(b[0]-circleX,b[1]-z))<rad+.24)continue;edgeGuide(a,b);}}
+ for(const [path,width,circleX] of [[incoming,.39,x0],[outgoing,.33,x1]]){const rim=stripPolygon(path,width);for(let k=0;k<rim.length;k++){const a=rim[k],b=rim[(k+1)%rim.length];if(k===path.length-1||k===rim.length-1)continue;if(path===outgoing&&Math.max(a[0],b[0])>16.65+SHIFT-.40)continue;if(Math.min(a[0],b[0])<9.28)continue;if(Math.min(Math.hypot(a[0]-circleX,a[1]-z),Math.hypot(b[0]-circleX,b[1]-z))<rad+.24)continue;edgeGuide(a,b);}}
  for(const [x,zz] of [[9.65,z-.34],[10.15,z-.64],[x1+.70,z-rad-.20],[x1+1.08,z-.95]])floorSupport(x,zz);
  bridgePlate(16.65+SHIFT-.19,16.65+SHIFT-.17,z-.95,.30);
+ // Flared outside datum accepts lateral error without a sharp yellow corner at the nose.
+ const pocket=16.65+SHIFT,entryZ=z-.95;
+ edgeGuide([pocket-.40,entryZ-.165],[pocket+.065,entryZ-.0585]);
+ edgeGuide([pocket-.40,entryZ+.165],[pocket-.20,entryZ+.165]);
+ box(pocket-.29,B-.08,entryZ-.15,.16,.06,.12,steel);
+ // Indexing side remains open: a fixed funnel there would obstruct the growing row.
  // Small nose roller and its bearing blocks join the receiving row table flush.
  cylinder(16.65+SHIFT-.235,B-.025,z-.95,.025,.28,steel,'z');for(const sign of [-1,1])box(16.65+SHIFT-.235,B-.07,z-.95+sign*.18,.07,.09,.07,green);
  box(x0+.60,B-.21,z+rad,.24,.18,.28,dark);box(x0+.60,B-.13,z+rad-.15,.06,.08,.11,steel);
@@ -248,7 +266,7 @@ for(let xx=8.70;xx<9.23;xx+=.08)for(let zz=z-.14;zz<z+.84;zz+=.08){if(Math.abs(z
  tray('selector_'+cell,(16.25+SHIFT),z-.3015,.34,.26);guidedSlide('selector_'+cell,16.25+SHIFT,z,2.90,.22);for(let lane=0;lane<3;lane++)bridgePlate(16.0+SHIFT,16.08+SHIFT,z+lane-1,.11);bridgePlate(16.42+SHIFT,16.48+SHIFT,z-.3015,.11);box(0,-.27,0,.52,.06,.24,steel,machines['selector_'+cell].carriage);box(0,-.19,0,.10,.18,.20,steel,machines['selector_'+cell].carriage);box(0,-.31,0,.08,.10,.12,dark,machines['selector_'+cell].carriage);for(const xx of [-.22,.22])for(const zz of [-.08,.08]){const w=new T.Mesh(cyl,dark);w.scale.set(.05,.035,.05);w.rotation.z=Math.PI/2;w.position.set(xx,-.29,zz);machines['selector_'+cell].carriage.add(w);}
  }
  const fz=z+(FLOW?c.row_forming_offset_m:0);
- for(const zz of [fz-.36,fz+.36])box((16.65+SHIFT)+.08,B+.055,zz,.18,.10,.018,yellow);
+ for(const sign of [-1,1])box((16.65+SHIFT)+(FLOW&&sign<0?.1175:.08),B+.055,fz+sign*.36,FLOW&&sign<0?.105:.18,.10,.018,yellow);
  conveyor((17.85+SHIFT),fz,2.0,.9);bedTable((16.65+SHIFT),fz,.34,1.05,B-.10);rollers((16.65+SHIFT),fz,.34,1.05,B,'z');pusher('former_'+cell,(16.65+SHIFT)-L/2-.012,fz,.69);for(const sign of [-1,1])box(17.875+SHIFT,B+.05,fz+sign*.36,1.89,.09,.014,yellow);
  label((cell<4?'A':'B')+(cell%4+1)+' · ROW FORMING',[(17.7+SHIFT),1.75,z],true);
 }
@@ -441,7 +459,7 @@ for(let i=0;i<c.cells;i++){
  if(BELT_SURGE)for(let lane=0;lane<3;lane++)component(name+' · '+c.shades[lane]+' reversible surge belt','transport','surge_belt',[10.15+(c.surge_slots_per_shade-1)*.15,B-.06,z+1.55+.4*lane],[(c.surge_slots_per_shade-1)*.3+L+.16,.22,.29],'One reversible belt moves all its stored bricks together. Entry/exit reversals are coordinated with the sorter; stored pitch remains 300 mm. Same-shade LIFO staging, finite '+c.surge_slots_per_shade+'-piece capacity, supported docking to the existing horizontal sorter. No aerial pickup or individual-pocket motion. Overflow is temporary stock imbalance, not a jam-recovery animation.');
  if(!FLOW)for(let lane=0;lane<3;lane++)component(name+' · '+c.shades[lane]+' accumulator','transport','zpa',[10.15+(c.buffer_cells_per_shade-1)*.15,B-.13,z+lane-1],[c.buffer_cells_per_shade*.3,.23,.55],'Approved-shade buffer: '+c.buffer_cells_per_shade+' individually reserved zones. Roller start/stop follows occupancy and downstream reservation. Side guides are fixed and do not lift.');
 }
-for(const a of junctionActors){component('Cell '+(a.cell+1)+' · synchronized inlet drive','actuator',null,[9.16,B-.10,m.cell_z[a.cell]],[.22,.36,.32],'An under-deck servo drive meters the next brick into a reserved encoder gap. The receiving deck has no extra stop in the reject-pusher envelope. Blue infeed and dark mixing loop are separate conveyors.');component('Cell '+(a.cell+1)+' · liftable curved divert guide','actuator',null,[m.loop_geometry.x1+.24,B+.35,m.cell_z[a.cell]-m.loop_geometry.radius+.15],[.40,.75,.55],'A visible vertical actuator lowers the shaped guide beside the selected brick during the extraction window. The guide lifts clear for recirculating product; the roller cassette provides underside traction. Custom kinematic concept; contact forces are not simulated.');component('Cell '+(a.cell+1)+' · powered outlet roller diverter','actuator',null,[m.loop_geometry.x1-.10,B-.04,m.cell_z[a.cell]-m.loop_geometry.radius+.15],[.32,.38,.30],'A flush steerable-roller cassette drives the underside of the selected brick toward the guided amber outlet. Unselected bricks follow the curved loop. Rollers follow recorded extraction commands. This is an engineering concept based on merge/divert conveyor principles, not supplier-certified brick handling.');}
+for(const a of junctionActors){component('Cell '+(a.cell+1)+' · synchronized inlet drive','actuator',null,[9.16,B-.10,m.cell_z[a.cell]],[.22,.36,.32],'An under-deck servo drive meters the next brick into a reserved encoder gap. The receiving deck has no extra stop in the reject-pusher envelope. Blue infeed and dark mixing loop are separate conveyors.');component('Cell '+(a.cell+1)+' · liftable curved divert guide','actuator',null,[m.loop_geometry.x1+.24,B+.35,m.cell_z[a.cell]-m.loop_geometry.radius+.15],[.40,.75,.55],'A twin-guide carriage, crosshead and bolted backing bracket carry the shaped guide. The vertical cylinder supplies motion while the guides take lateral loads. The assembly lowers beside the selected brick during the extraction window. The guide lifts clear for recirculating product; the roller cassette provides underside traction. Custom kinematic concept; contact forces are not simulated.');component('Cell '+(a.cell+1)+' · powered outlet roller diverter','actuator',null,[m.loop_geometry.x1-.10,B-.04,m.cell_z[a.cell]-m.loop_geometry.radius+.15],[.32,.38,.30],'A flush steerable-roller cassette drives the underside of the selected brick toward the guided amber outlet. Unselected bricks follow the curved loop. Rollers follow recorded extraction commands. This is an engineering concept based on merge/divert conveyor principles, not supplier-certified brick handling.');}
 for(const q of zones)component((q.cell<4?'A':'B')+(q.cell%4+1)+' · zone presence sensor','sensor','presence',[q.x+.10,B+.145,q.z],[.09,.10,.10],'Short-range background-suppression detector, mounted above the brick; the downward reference beam is within the 15–150 mm catalog range. This is not a safety-rated protective sensor.');
 for(const q of sensors)component(q.channel+' · cell '+(q.cell+1),'sensor','presence',[q.x,B+.145,q.z],[.10,.10,.12],(q.channel==='Surge entry'?'Entry detector fixed to the surge belt frame; occupancy is tracked with encoder indexing, not a sensor at every storage position.':'Camera trigger presence detector, physically mounted to the conveyor frame.'));
 for(const[id,group]of Object.entries(carts))component(id.includes('DISCARD')?(FIXED_DISCARD?'Stationary discard bin':'Powered discard cart'):id==='KILN-CART'?'Input inventory rail cart':'Finished pallet rail cart','transport',null,[0,id.includes('DISCARD')?.40:.16,0],id.includes('DISCARD')?[1.3,.95,1.1]:[1.6,.4,5.5],id.includes('DISCARD')?(FIXED_DISCARD?'Stationary wheeled storage bin at the outside end of the collector. Capacity: '+c.logistics.discard_cart_capacity+' pieces; no cart movement, return circuit or unloading is modeled. Full-bin interlock retains upstream material.':'Custom powered omnidirectional base, wheel motors and battery enclosure. Existing XY routes preserved; wheel/motor motion is a visual interpretation, not a validated AGV control or dynamics model.'):'Custom rail transfer cart. Assumed 8 t design target; fixed wheelbase and onboard drive. Load and dispatch timing are unchanged.',group);

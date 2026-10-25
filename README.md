@@ -311,3 +311,5 @@ Latest junction cleanup: `artifacts/greenfield_19/index.html`; see [revision 19 
 Latest recalculated demo: `artifacts/greenfield_20_checked/index.html`. [Guided transfers, manufacturer principles and verification](docs/guided_transfers_20.md). Estimated conforming shipped rate: 3,888.672 bricks/h for the revised synthetic cycle.
 
 Current transfer-station demo: `artifacts/greenfield_21/index.html`. [Powered receiving transport, wider outlet, guided divert actuator and support checks](docs/transfer_station_21.md).
+
+Current visual refinement: `artifacts/greenfield_22/index.html`. [Guided actuator mount and flared row entry](docs/guided_mount_22.md). Production timing is unchanged.
