@@ -41,7 +41,19 @@ function buildScene(){
  conveyor(28.60,28.65,z,.34,B,M.dark,false);box(28.44,B-.055,z+.44,.36,.10,.54,M.green);for(let zz=z+.22;zz<z+.72;zz+=.065)rod(28.44,B-.026,zz,.026,.35,M.steel,'x');
  box(28.44,B+.04,z-.58,.25,.13,.34,M.dark);box(28.44,B-.12,z-.53,.40,.09,.55,M.green);support(28.44,z-.64,B-.15);
  rejectConveyor([[28.44,B,z+.72],[28.44,B,z+.92],[29.2,1.0455,z+1.3],[30.40,.74,z+1.3]],.36);
-  const bin=new T.Group();staticRoot.add(bin);box(31,.12,z+1.3,2.30,.12,.92,M.steel,bin);for(const side of [-1,1])box(31,.68,z+1.3+side*.48,2.34,1.0,.05,M.red,bin);box(32.17,.68,z+1.3,.05,1.0,.98,M.red,bin);for(const xx of [30,32])for(const zz of [z+.96,z+1.64])rod(xx,.11,zz,.10,.07,M.dark,'z',bin);equipment('Lane '+(lane+1)+' · supported reject transfer','actuator','pusher',[28.7,B,z+.15],[1,.5,1.6],'A guided side pusher contacts the brick. The flat receiving table joins a supported downward conveyor into a stationary discard cart.',[['Reject stream','Both extremes / rejected bricks'],['Return','No reinsertion']],lane);
+  // Covered industrial discard cart; its receiving mouth remains aligned to the descending belt.
+ const bin=new T.Group();staticRoot.add(bin);box(31,.12,z+1.3,2.30,.12,.92,M.dark,bin);
+ for(const side of [-1,1]){box(31,.68,z+1.3+side*.48,2.34,1.0,.05,M.red,bin);box(31,1.19,z+1.3+side*.48,2.40,.055,.07,M.dark,bin);for(const xx of [30.1,31.3,32.04])box(xx,.68,z+1.3+side*.514,.055,.88,.035,M.dark,bin)}
+ box(32.17,.68,z+1.3,.055,1.0,.98,M.red,bin);box(29.83,.42,z+1.3,.055,.48,.98,M.red,bin);
+ for(const side of [-1,1])box(29.83,.92,z+1.3+side*.36,.055,.52,.25,M.red,bin);
+ // Main hinged lid plus two front shoulders around a narrow inlet; no open pile is exposed.
+ box(31.37,1.225,z+1.3,1.66,.065,1.02,M.dark,bin);for(const side of [-1,1])box(30.17,1.225,z+1.3+side*.375,.74,.065,.27,M.dark,bin);
+ for(const zz of [z+.97,z+1.63])rod(32.14,1.255,zz,.027,.20,M.steel,'z',bin);
+ for(const zz of [z+1.18,z+1.42])box(31.42,1.29,zz,.055,.09,.035,M.steel,bin);rod(31.42,1.335,z+1.3,.022,.28,M.steel,'z',bin);
+ for(const zz of [z+.96,z+1.64]){rod(32.27,1.30,zz,.024,.38,M.dark,'y',bin);beam([32.17,1.10,zz],[32.27,1.20,zz],.035,M.dark,bin)}rod(32.27,1.49,z+1.3,.024,.73,M.dark,'z',bin);
+ for(const xx of [30,32])for(const zz of [z+.96,z+1.64]){box(xx,.20,zz,.15,.08,.15,M.steel,bin);for(const side of [-1,1])box(xx,.13,zz+side*.065,.035,.14,.035,M.steel,bin);rod(xx,.10,zz,.10,.095,M.dark,'z',bin);rod(xx,.10,zz,.035,.11,M.steel,'z',bin)}
+ equipment('Lane '+(lane+1)+' · covered discard cart','transport','inventory_cart',[31,.85,z+1.3],[2.55,1.55,1.1],'Stationary wheeled steel cart with a hinged cover, push handle and protected belt inlet. Internal pile settling is abstracted beneath the cover.',[['Collection','Rejected bricks only'],['Cover','Hinged steel lid · protected inlet'],['Service','Cart exchange outside this batch']],lane);
+ equipment('Lane '+(lane+1)+' · supported reject transfer','actuator','pusher',[28.7,B,z+.15],[1,.5,1.6],'A guided side pusher contacts the brick. The flat receiving table joins a supported downward conveyor into a stationary discard cart.',[['Reject stream','Both extremes / rejected bricks'],['Return','No reinsertion']],lane);
  tiles(28.65,38.15,z-.90,2.4,'Lane '+(lane+1)+' · horizontal colour reserve',lane);
  tiles(38.15,43.90,z-.2,4.2,'Lane '+(lane+1)+' · 30-position row distributor',lane);
  for(const zz of [z-2.08,z+.28])box(33.40,B+.065,zz,9.5,.10,.025,M.steel);
