@@ -19,10 +19,11 @@ y con Blackwell. El criterio de aceptación es detectar la GPU real en OptiX y
 renderizar un fotograma; la mera presencia de CUDA no basta. Manual:
 https://docs.blender.org/manual/en/4.5/render/cycles/gpu_rendering.html
 
-**Estado:** hay un puente inicial de captura e importación para imágenes fijas.
-Todavía no hay render final de fábrica ni película verificada en la nube.
-No se ha creado ni facturado una instancia desde esta sesión. No hay conexión
-autenticada con Brev disponible en este entorno.
+**Estado actualizado:** el propietario creó `brickflow-cinematic`; el CLI quedó
+autenticado y se instalaron las herramientas en la VM. Ya hay renders de fábrica
+1080p/4K realizados con OptiX, escena USD para Unreal y un tramo de movimiento
+extraído del HTML exacto. Véase [ejecución cloud](cinematic_cloud_run.md) para
+resultados, archivos, verificaciones y dependencias pendientes de Unreal.
 
 ## Lo que tenemos y lo que no se debe confundir
 
@@ -140,12 +141,12 @@ blender -b --python-exit-code 1 --python cinematic/render.py -- \
   --width 640 --samples 8 --cpu
 ```
 
-**Límite actual:** cada exportación congela un estado real del replay. No hay
-exportación temporal del movimiento de máquinas todavía. Una animación de
-cámara sobre ese estado deberá identificarse como estado congelado; no puede
-presentarse como un ciclo industrial ejecutado. El render tampoco valida
-contactos, fuerzas, seguridad o capacidad. Las confirmaciones sintéticas no son
-validación visual independiente.
+Las exportaciones sin `--duration` congelan un estado del replay. Con
+`--duration`, el capturador exporta muestras temporales con visibilidad y matrices
+estables, y `render.py --motion ... --animate` genera la secuencia. La cámara no
+inventa movimiento de máquinas. El render tampoco valida contactos, fuerzas,
+seguridad o capacidad. Las confirmaciones sintéticas no son validación visual
+independiente.
 
 ## Producción propuesta y criterios de aceptación
 

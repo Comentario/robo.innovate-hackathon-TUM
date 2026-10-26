@@ -1,5 +1,5 @@
 /* Read-only snapshot of the actual Three.js replay, including instanced meshes. */
-window.exportFactoryScene = function () {
+window.exportFactoryScene = function ({includeHidden = false} = {}) {
   const demo = window.CART_DEMO;
   if (!demo) throw Error('Full-cart replay is not ready');
   const T = window.THREE, geometries = {}, materials = {}, objects = [];
@@ -20,7 +20,9 @@ window.exportFactoryScene = function () {
     }
     return m.uuid;
   }
-  demo.scene.traverseVisible(o => {
+  const handles = [];
+  function visible(o) { for (let p=o; p; p=p.parent) if (!p.visible) return false; return true; }
+  const visit = o => {
     if (!o.isMesh) return;
     const mats = Array.isArray(o.material) ? o.material : [o.material];
     if (mats.every(m => !m.visible || m.opacity === 0)) return;
@@ -37,12 +39,29 @@ window.exportFactoryScene = function () {
     for (let i = 0; i < (o.isInstancedMesh ? o.count : 1); i++) {
       if (o.isInstancedMesh) { o.getMatrixAt(i, matrix); matrix.premultiply(o.matrixWorld); }
       else matrix.copy(o.matrixWorld);
-      if (Math.abs(matrix.determinant()) < 1e-15) continue;
+      if (!includeHidden && Math.abs(matrix.determinant()) < 1e-15) continue;
       const item = {geometry: g.uuid, materials: ids, matrix: matrix.toArray()};
+      item.hidden = !visible(o) || Math.abs(matrix.determinant()) < 1e-15;
       if (o.instanceColor) { o.getColorAt(i, color); item.color = color.toArray(); }
       objects.push(item);
+      handles.push({object:o, index:i, previous:item.matrix, hidden:item.hidden});
     }
-  });
+  };
+  if (includeHidden) demo.scene.traverse(visit); else demo.scene.traverseVisible(visit);
+  window.sampleFactoryMotion = function (t) {
+    demo.seek(t); demo.scene.updateMatrixWorld(true);
+    const changes = [], m = new T.Matrix4();
+    handles.forEach((h, index) => {
+      const o=h.object;
+      if (o.isInstancedMesh) { o.getMatrixAt(h.index,m); m.premultiply(o.matrixWorld); }
+      else m.copy(o.matrixWorld);
+      const values=m.toArray(), hidden=!visible(o)||Math.abs(m.determinant())<1e-15;
+      if (hidden!==h.hidden || values.some((v,i)=>Math.abs(v-h.previous[i])>1e-8)) {
+        changes.push({index,matrix:values,hidden}); h.previous=values; h.hidden=hidden;
+      }
+    });
+    return changes;
+  };
   return {schema: 'brickflow.render-snapshot.v1', geometries, materials, objects,
     camera: {matrix: demo.camera.matrixWorld.toArray(), fov: demo.camera.fov},
     evidence: {type: 'synthetic engineering replay',
