@@ -107,6 +107,7 @@ def render_view(report,folder,study=None):
             asset=Path(__file__).with_name('assets')/row['image_asset']
             if asset.is_file():row['image']='data:'+str(mimetypes.guess_type(asset.name)[0])+';base64,'+base64.b64encode(asset.read_bytes()).decode('ascii')
     payload=json.dumps(view,separators=(',',':')).replace('<','\\u003c')
+    template=template.replace('__BUFFER_LINK__', '<a href="buffer.html" class="badge">Recipe &amp; buffer workflow ↗</a>' if (Path(folder)/'buffer.html').is_file() else '')
     template=template.replace('__STUDY__',json.dumps(study or [])).replace('__THREE__',library.read_text()).replace('__REPORT__',payload).replace('__CODE__',code)
     (Path(folder)/'index.html').write_text(template)
 

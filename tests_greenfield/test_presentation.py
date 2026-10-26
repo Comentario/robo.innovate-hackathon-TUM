@@ -9,6 +9,7 @@ class PresentationTests(unittest.TestCase):
     def test_hourly_equivalent_uses_shipped_bricks_and_full_batch_time(self):
         original=copy.deepcopy(self.report);p=build_presentation(self.report)
         self.assertAlmostEqual(p['production']['normalized_bph'],3888.6717303143523)
+        self.assertAlmostEqual(p['production']['normalized_pallets_h'],6.944056661275629)
         self.assertEqual(self.report,original)
         self.assertEqual(p['counts']['presence'],188);self.assertEqual(p['counts']['inspection_controllers'],16);self.assertEqual(p['counts']['controllers'],42)
     def test_budget_range_is_counted_once_then_integrated(self):

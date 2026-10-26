@@ -321,3 +321,11 @@ Current loop seam correction: `artifacts/greenfield_24/index.html`; [continuous 
 Current equipment-reference demo: `artifacts/greenfield_25/index.html`. [Official images, published specifications, custom integration scope and inspector verification](docs/equipment_inspector_25.md). Hover and click functional assemblies; production data and dashboard layout are unchanged.
 
 Current executive demo: `artifacts/greenfield_26/index.html`. [Preserved production metrics, investment/energy scenarios, measured envelope and visual presentation](docs/executive_presentation_26.md). Estimated bricks/h remains 3,889; formed/h remains 4,166.
+
+### Recipe-aware buffer workflow (control preview)
+
+The preserved plant in `artifacts/greenfield_27/index.html` now shows **6.94 completed
+pallets/h** alongside the unchanged brick rates. Open its **Recipe & buffer workflow**
+link to review four executable controller sequences. This is a separate control
+validation; new storage routes and their production impact are not yet integrated
+into the physical 3D model. See [workflow and adapter contract](docs/recipe_buffer_workflow_27.md).
