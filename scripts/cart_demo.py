@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output-dir',type=Path,default=ROOT/'artifacts/greenfield_29')
+    parser.add_argument('--output-dir',type=Path,default=ROOT/'artifacts/greenfield_30')
     args=parser.parse_args()
     folder=args.output_dir;folder.mkdir(parents=True,exist_ok=True)
     catalog=json.loads((ROOT/'greenfield/catalog.json').read_text())
