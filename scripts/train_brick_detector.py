@@ -10,6 +10,7 @@ Usage: train_brick_detector.py [--epochs 100] [--name brick_seg] [--batch 8] [--
 """
 
 import argparse
+import os
 from pathlib import Path
 
 from ultralytics import YOLO
@@ -27,25 +28,29 @@ def main() -> None:
     parser.add_argument("--imgsz", type=int, default=640)
     parser.add_argument("--name", default="brick_seg")
     parser.add_argument("--data", type=Path, default=DATA,
-                        help="dataset yaml, e.g. outputs2/yolo_dataset_combined.yaml (standing + top view)")
+                        help="dataset yaml, e.g. outputs2/yolo_dataset_v3/data.yaml")
+    parser.add_argument("--workers", type=int, help="dataloader workers (default: 0 on Windows, 8 elsewhere)")
     args = parser.parse_args()
+    # Absolute yaml path: a relative dataset yaml is then resolved next to the yaml file.
+    data = str(args.data.resolve())
+    workers = args.workers if args.workers is not None else (0 if os.name == "nt" else 8)
 
     model = YOLO(str(BASE_WEIGHTS))
     model.train(
-        data=str(args.data),
+        data=data,
         epochs=args.epochs,
         imgsz=args.imgsz,
         batch=args.batch,
         patience=30,
         # Windows: dataloader workers in subprocesses are fragile and slow to start.
-        workers=0,
+        workers=workers,
         project=str(RUNS),
         name=args.name,
         exist_ok=True,
         seed=0,
         plots=True,
     )
-    metrics = model.val(data=str(args.data), split="val", project=str(RUNS), name=f"{args.name}_val", exist_ok=True)
+    metrics = model.val(data=data, split="val", project=str(RUNS), name=f"{args.name}_val", exist_ok=True)
     print(f"box mAP50 {metrics.box.map50:.3f}  mAP50-95 {metrics.box.map:.3f}")
     print(f"mask mAP50 {metrics.seg.map50:.3f}  mAP50-95 {metrics.seg.map:.3f}")
     print(f"weights: {RUNS / args.name / 'weights' / 'best.pt'}")

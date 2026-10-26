@@ -125,3 +125,45 @@ Hackathon dataset annotation:
   `Top_View_Dataset/` (no row split; stack and nested boxes removed), written to
   `outputs2/yolo_dataset_top/`. `outputs2/yolo_dataset_combined.yaml` joins both
   views for `train_brick_detector.py --data`.
+- `top_view_marks.py`: YOLO crops of every brick in the top-view photos (straightened,
+  full resolution) on contact sheets to read the hand-written G marks, plus
+  `outputs2/top_view/labels.csv` to fill with g / b / ?.
+- `evaluate_top_view.py`: good/bad color separation in the top view (top-view
+  measurement: dark holes, stains, carpet ring), band / ellipse / 1-NN rules
+  in-sample, leave-one-photo-out and leave-one-block-out, compared with the
+  standing calibration. Writes `outputs2/top_view/analysis/`.
+- `build_top_view_reference.py`: calibration file for the live classifier from the
+  labeled top-view photos (same measurement as the live classifier), with a
+  leave-one-photo-out check. Writes `outputs2/top_view/reference/calibration.json`.
+- `capture_brick_faces.py [--bricks 10] [--target 24]`: per-brick, per-face top-view
+  capture for synthetic data and YOLO retraining: brick (n/p), label (g/b), face
+  (1-6), auto capture each time the brick is still after being turned. The brick
+  mask comes from the difference to empty-background photos (k), refined with
+  MobileSAM, so it does not depend on YOLO (YOLO is only logged as a check: number
+  of detections and mask IoU). Writes `Brick_Faces_Dataset/<session>/`.
+- `capture_four_faces.py`: simplest per-brick capture: space takes one photo per face
+  (4 per brick), then g / b labels the brick. Writes `Brick_Faces_Dataset/<session>/`.
+- `label_brick_faces.py [packages]`: brick masks for the one-brick packages
+  (`Brick_Faces_Dataset/brick_faces_*`) with Grounding DINO + MobileSAM, plus review
+  sheets. Writes `outputs2/brick_faces_labels/<package>/`.
+- `build_yolo_dataset_v3.py`: detector dataset v3 (front view, top view on carpet,
+  one-brick photos on wood and carpet, empty-table negatives) with a relative
+  `data.yaml`, so it can be zipped and trained elsewhere. Writes `outputs2/yolo_dataset_v3/`.
+- `compare_detector_versions.py [--old brick_seg_v2] [--new brick_seg_v3]`: two detectors
+  on the v3 validation split per source and on unseen stress sets (overexposed wood,
+  today's live frames, empty table). Writes `outputs2/yolo_runs/<new>/versions_comparison/`.
+- `build_classifier_dataset.py`: straightened, grey-background brick crops for the
+  neural-network classifier. Writes `outputs2/classifier_crops/`.
+- `train_brick_classifier.py --experiment conditions|unseen|light|final
+  [--include-calibrations]`: YOLO11n-cls good/bad classifier without color
+  augmentation; `unseen` = leave-one-brick-out, `light` = leave-one-calibration-out
+  (same bricks, light not seen), `final` = model for the demo. Results and weights in
+  `outputs2/classifier_runs/<name>/`.
+- `web_demo.py`: browser demo (http://localhost:8000): YOLO detector + ByteTrack, vote
+  over frames, classifier switchable in the page (1-NN on a calibration, relative
+  lightness band, neural network), counters in view / session, scene light and
+  clipped-pixel indicators, calibration in the browser (saved like `--calibrate`, with
+  crops and relative lightness) and network retraining after each calibration.
+- `analyze_calibration_separation.py <calibration>`: re-measure every calibration face
+  (top view) and score simple rules (bands, ellipse, logistic, tree, 1-NN)
+  leave-one-capture-out. Writes `<calibration>/separation/`.
