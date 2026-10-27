@@ -634,5 +634,21 @@
     "verified_on": "2026-10-25",
     "reference_level": "Family reference; motor not selected",
     "scope": "Very broad product-family envelope, not a rating of the small box drawn in the demo. Required loop torque, reducer ratio, electrical power, encoder coupling and thermal/dust suitability remain uncalculated. No plant energy or purchase-cost estimate is derived from this family range."
+  },
+  {
+    "id": "autonomous_stacker",
+    "model": "AGILOX OCF · omnidirectional counterbalanced forklift reference",
+    "url": "https://www.agilox.net/media/data_sheet_ocf_a4_en.pdf",
+    "nominal": {
+      "Maximum load": "1,500 kg",
+      "Maximum travel speed": "1.4 m/s",
+      "Maximum lift / station height": "1,600 / 1,450 mm",
+      "Dimensions": "2,784 × 1,200 × 2,566 mm",
+      "Drive system": "Three omnidirectional drive units"
+    },
+    "scope": "Manufacturer mechanism reference. Demo: 1.2 m/s, four vehicles and a configured 1,262 kg pallet assumption; route schedule, docks, forks and cycle times are custom proof-of-concept settings.",
+    "verified_on": "2026-10-27",
+    "image_asset": "agilox-ocf.jpg",
+    "image_credit": "AGILOX OCF official datasheet V03/2023 · embedded manufacturer product photograph"
   }
 ]
