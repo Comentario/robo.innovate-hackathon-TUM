@@ -10,6 +10,7 @@ port="${5:-7891}"
 first="${6:-0}"
 last="${7:-0}"
 adapter=()
+encoding_gpu="${8:-0}"
 if [[ -n "${8:-}" ]]; then
   [[ "$8" =~ ^[0-9]+$ ]] || { echo 'GPU adapter must be a nonnegative integer.'; exit 2; }
   adapter=("-graphicsadapter=$8")
@@ -24,10 +25,10 @@ if [[ "$mode" == stream ]]; then
   ffmpeg -nostdin -hide_banner -loglevel warning -filter_threads 2 -y \
     -f rawvideo -pixel_format bgra -video_size "${width}x${height}" -framerate 30 \
     -i "tcp://127.0.0.1:$port?listen=1" \
-    -map 0:v -c:v h264_nvenc -preset p7 -tune lossless -profile:v high444p \
+    -map 0:v -c:v h264_nvenc -gpu "$encoding_gpu" -preset p7 -tune lossless -profile:v high444p \
     -rc constqp -qp 0 -vf 'scale=in_range=pc:out_range=pc:out_color_matrix=bt709,format=yuv444p' -pix_fmt yuv444p -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc iec61966-2-1 "$output/brickflow-master-444.mkv" \
     -map 0:v -vf 'scale=in_range=pc:out_range=tv:out_color_matrix=bt709,format=yuv420p' \
-    -c:v h264_nvenc -preset p7 -tune hq -profile:v high -rc vbr -cq 16 -b:v 0 \
+    -c:v h264_nvenc -gpu "$encoding_gpu" -preset p7 -tune hq -profile:v high -rc vbr -cq 16 -b:v 0 \
     -spatial-aq 1 -temporal-aq 1 -pix_fmt yuv420p -color_range tv -colorspace bt709 \
     -color_primaries bt709 -color_trc iec61966-2-1 -movflags +faststart "$output/brickflow-review-4k.mp4" \
     > "$output/encoder.log" 2>&1 &

@@ -9,13 +9,18 @@ La instancia original `brickflow-cinematic` se conserva.
 Unreal 5.8.4 se instaló desde el ZIP original del propietario: SHA-256
 `cdff1e0c02010eb4fcf9c38d293cfd0f1afda09272256c146d73db52f570f607`.
 Se copiaron proyecto, assets, configuración y binarios; todos sus hashes
-coinciden. Blender 4.5.3 arranca. El entorno Python requiere actualización
-a 3.12 en esta imagen para recuperar Playwright/Chromium.
+coinciden. Blender 4.5.3 arranca. El entorno virtual se actualizó a Python 3.12:
+Playwright 1.64.1 importa correctamente y Chromium 156.0.8078.4 arranca headless.
 
 Prueba `Saved/Films/four-gpu-smoke-v1-part0` .. `part3`: cada proceso declaró
 `Using device at index N of 4` para N=0,1,2,3, produjo dos frames H264 1080p
 y cerró Unreal y encoder con código 0. Esto prueba asignación y funcionamiento;
 no es una medición del factor de aceleración de un render completo.
+
+Prueba adicional `four-gpu-codec-smoke-v2`: doce frames por tarjeta, todos los
+renders y encoders con código 0. `gpu-codec-processes.csv` registra cuatro UUID
+distintos ejecutando FFmpeg. El índice selecciona tanto el adaptador Vulkan
+como el codificador NVENC, evitando concentrar los cuatro encoders en GPU 0.
 
 Rutas idénticas en ambas VM:
 
