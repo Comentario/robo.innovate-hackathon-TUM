@@ -61,3 +61,22 @@ Compara ambos SHA-256 con los originales remotos y conserva los metadatos.
 `collection.status` indica el estado; `collection.log` está en el directorio
 padre. Un estado de descarga verificada no implica revisión visual terminada.
 El master 4:4:4 permanece en la VM; no se descarga automáticamente.
+
+## Entrega terminada
+
+- `artifacts/unreal_continuous/delivery/brickflow-continuous-4k.mp4`:
+  3840×2160, 30 fps, 11,867 frames, 395.567 s, 3,527,237,541 bytes.
+- `artifacts/unreal_continuous/delivery/brickflow-continuous-1080p.mp4`:
+  1920×1080, mismos frames y duración, 519,016,447 bytes.
+- Ambos hashes coinciden con los originales remotos. La traza del render
+  completo pasó (`cameraAuditOnly=false`); error máximo de pose 1.0303e-12 m.
+- `packet-verification.json` comprueba los 11,867 timestamps del MP4 4K:
+  error máximo 3.34e-7 s frente a la rejilla uniforme de 30 fps y DTS creciente.
+- Se revisaron muestras codificadas de inputs, dehacking, perfil, inspección,
+  apilado, bridge y cierre; están en `delivery/quality-frames/`.
+- Handles: Franka 100.0333 s durante 5 s; detección 129.6333 s durante 7 s.
+
+La concatenación del master MKV emitió advertencias de DTS; ese contenedor
+no tiene la verificación de timestamps del MP4. Los entregables MP4 son los
+archivos verificados para evaluación y presentación. El master conserva los
+segmentos lossless originales por separado para una futura remultiplexación.
