@@ -14,7 +14,7 @@ window.FactoryLogistics=({Resource,B,L,D,H})=>({
   const category=job.shade===null?0:job.shade+1;let slot;
   while(!(slot=this.storage.find(s=>s.category===category&&s.state==='free')))yield this.changed;
   slot.state='reserved';yield this.padLocks[job.lane.id].request();yield this.dispatch.request();
-  const tool='dispatch',ids=job.ids.concat(job.wood),source=this.rec(job.wood).p.slice(),height=.96,target=[58.5,.224,source[2],0];
+  const tool='dispatch',ids=job.ids.concat(job.wood),source=this.rec(job.wood).p.slice(),height=.96,target=[58.5,.224,job.lane.z,0];
   yield* this.move([tool],[[source[0]+1.4,4,source[2],0]],1.25,'finished-frame-approach');
   yield* this.move([tool],[[source[0]+1.4,source[1]+height,source[2],0]],.6,'lower-pallet-lifting-frame');
   yield* this.move([tool],[[source[0],source[1]+height,source[2],0]],.35,'insert-supported-pallet-forks');yield .25;

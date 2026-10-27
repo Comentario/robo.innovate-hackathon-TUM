@@ -28,8 +28,8 @@ window.FactoryWarehouseView=({T,box,rod,beam,support,rollerBed,equipment,label,M
   label('05  CLASSIFIED WAREHOUSE',[75,3.1,0]);label('06  ORDER-DRIVEN SHIPPING',[94,3.1,38]);
  }
  function ledLocal(x,y,z,parent=staticRoot){box(x,y,z,.06,.03,.06,M.led,parent)}
- function amr(){const g=new T.Group();dynamicRoot.add(g);box(.1,.43,0,1.35,.65,1.2,M.dark,g);box(.25,.82,0,1.05,.18,1.14,M.green,g);box(.62,.95,0,.2,.18,.3,M.dark,g);box(.65,1.07,0,.22,.06,.32,M.blue,g);box(-.58,.30,0,.42,.17,1.15,M.steel,g);
-  for(const [x,z]of [[-.25,-.43],[-.25,.43],[.50,0]]){rod(x,.13,z,.13,.16,M.dark,'z',g);box(x,.25,z,.22,.08,.24,M.steel,g)}
+ function amr(){const g=new T.Group();dynamicRoot.add(g);box(.1,.49,0,1.35,.54,1.08,M.dark,g);box(.25,.82,0,1.05,.18,1.14,M.green,g);box(.62,.95,0,.2,.18,.3,M.dark,g);box(.65,1.07,0,.22,.06,.32,M.blue,g);box(-.58,.30,0,.42,.17,1.15,M.steel,g);
+  for(const [x,z]of [[-.25,-.49],[-.25,.49],[.50,0]]){rod(x,.16,z,.16,.18,M.dark,'z',g);rod(x,.16,z,.075,.184,M.steel,'z',g);box(x,.25,z,.22,.08,.24,M.steel,g)}
   for(const z of [-.43,.43])box(-.72,1.30,z,.10,2.53,.11,M.steel,g);box(-.72,2.54,0,.14,.08,.98,M.green,g);for(const z of [-.30,.30])box(-.73,1.35,z,.02,2.30,.025,M.dark,g);
   box(-.65,.43,0,.16,.12,.26,M.dark,g);ledLocal(-.65,.52,0,g);box(.15,.92,-.53,.12,.06,.12,M.red,g);return g;
  }

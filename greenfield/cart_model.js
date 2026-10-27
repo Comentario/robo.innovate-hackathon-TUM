@@ -13,15 +13,15 @@ function cellKey(x,z){return (x+32768)*65536+z+32768}
 function pathLength(points){let d=0;for(let k=1;k<points.length;k++)d+=distance(points[k-1],points[k]);return d}
 function pathAt(points,u){let q=pathLength(points)*u;for(let k=1;k<points.length;k++){const d=distance(points[k-1],points[k]);if(q<=d)return points[k-1].map((a,j)=>a+(points[k][j]-a)*q/d);q-=d}return points.at(-1)}
 class SharedBelt{
- constructor(m,lane){this.m=m;this.lane=lane;this.ids=[];this.reserved=false;this.requests=[];this.pending=null;m.env.process(this.worker())}
+ constructor(m,lane){this.m=m;this.lane=lane;this.ids=[];this.reserved=false;this.requests=[];this.pending=null;this.pitch=.27;m.env.process(this.worker())}
  reserve(){const e=this.m.env.event();this.requests.push(e);this.m.wake();return e}
- load(id){const e=this.m.env.event();if(!this.reserved||this.pending)throw Error('Unreserved belt entry');if(this.step&&this.step.end>this.m.env.now){const dt=this.step.end-this.m.env.now,p=this.m.rec(id).p.slice();p[0]+=.6*dt;this.m.append(id,p,this.m.env.now,dt,'v2',true)}this.ids.push(id);this.reserved=false;e.succeed();this.m.wake();return e}
+ load(id){const e=this.m.env.event();if(!this.reserved||this.pending)throw Error('Unreserved belt entry');const tail=this.ids.at(-1);if(tail!==undefined&&pose(this.m.rec(tail),this.m.env.now)[0]-23<this.pitch-1e-6)throw Error('Insufficient clearance for brick rotation');if(this.step&&this.step.end>this.m.env.now){const dt=this.step.end-this.m.env.now,p=this.m.rec(id).p.slice();p[0]+=.6*dt;this.m.append(id,p,this.m.env.now,dt,'v2',true)}this.ids.push(id);this.reserved=false;e.succeed();this.m.wake();return e}
  *worker(){const m=this.m,z=this.lane.z;while(true){if(this.pending){this.ids.push(this.pending.id);this.pending.e.succeed();this.pending=null;this.reserved=false;m.wake()}
- const tail=this.ids.at(-1),space=tail===undefined||m.rec(tail).p[0]-23>.085-1e-6;
+ const tail=this.ids.at(-1),space=tail===undefined||m.rec(tail).p[0]-23>this.pitch-1e-6;
  if(!this.reserved&&this.requests.length&&space){this.reserved=true;this.requests.shift().succeed()}
  const first=this.ids[0];if(first===undefined){yield m.changed;continue}
  const x=m.rec(first).p[0];if(x>=26-1e-7){if(this.lane.inspect[0].free){this.lane.inspect[0].free--;this.ids.shift();m.env.process(m.inspectBrick(first,this.lane));m.wake();continue}yield m.changed;continue}
- let dx=Math.min(.072,26-x);if(this.requests.length&&!this.reserved&&tail!==undefined&&m.rec(tail).p[0]<23.085)dx=Math.min(dx,23.085-m.rec(tail).p[0]);const ids=this.ids.slice();this.step={end:m.env.now+dx/.6};yield* m.move(ids,ids.map(id=>{const a=m.rec(id).p.slice();a[0]+=dx;const t=Math.max(0,Math.min(1,(a[0]-24)/1.6));a[3]=Math.PI/2*(1-t);return a}),.6,'v2',true);this.step=null;
+ let dx=Math.min(.072,26-x);if(this.requests.length&&!this.reserved&&tail!==undefined&&m.rec(tail).p[0]<23+this.pitch)dx=Math.min(dx,23+this.pitch-m.rec(tail).p[0]);const ids=this.ids.slice();this.step={end:m.env.now+dx/.6};yield* m.move(ids,ids.map(id=>{const a=m.rec(id).p.slice();a[0]+=dx;const t=Math.max(0,Math.min(1,(a[0]-24)/1.6));a[3]=Math.PI/2*(1-t);return a}),.6,'v2',true);this.step=null;
  }}
 }
 class Model{
@@ -144,7 +144,21 @@ Object.assign(Model.prototype,window.FactoryLogistics({Resource,B,L,D,H}));
 function segment(r,t){let a=0,b=r.tracks.length;while(a<b){const k=(a+b)>>1;if(r.tracks[k].t0<=t)a=k+1;else b=k}return a?r.tracks[a-1]:null}
 function pose(r,t){const s=segment(r,t);if(!s)return r.initial;let u=Math.max(0,Math.min(1,(t-s.t0)/(s.t1-s.t0)));if(!s.linear)u=smooth(u);if(s.path){const q=pathAt(s.path,u).concat(s.a[3]+(s.b[3]-s.a[3])*u);if(s.kind==='supported-reject-decline'){let remaining=pathLength(s.path)*u;for(let k=1;k<s.path.length;k++){const a=s.path[k-1],b=s.path[k],len=distance(a,b);if(remaining<=len||k===s.path.length-1){const dx=b[0]-a[0],dy=b[1]-a[1],dz=b[2]-a[2],horizontal=Math.hypot(dx,dz),norm=[-dy*dx/(horizontal*len),horizontal/len,-dy*dz/(horizontal*len)];q[0]+=norm[0]*H/2;q[1]+=(norm[1]-1)*H/2;q[2]+=norm[2]*H/2;return q.concat(norm)}remaining-=len}}return q;}if(s.rigid){const q=s.rigid,a=q.from,b=q.to,yaw=a[3]+(b[3]-a[3])*u,co=Math.cos(yaw),si=Math.sin(yaw),v=q.local;return[a[0]+(b[0]-a[0])*u+co*v[0]+si*v[2],a[1]+(b[1]-a[1])*u+v[1],a[2]+(b[2]-a[2])*u-si*v[0]+co*v[2],yaw+q.yaw]}return s.a.map((v,j)=>v+(s.b[j]-v)*u)}
 /* snapshot-loader */
-function restore(data){if(data.kinds){for(const r of data.records){let previous=r.initial;r.tracks=r.tracks.map(v=>{const s={t0:v[0],t1:v[1],a:previous,b:v.slice(2,6),kind:data.kinds[v[6]],linear:!!v[7]};if(v[8])s.path=v[8];if(v[9])s.rigid=v[9];previous=s.b;return s});r.p=previous}}const m=Object.assign(Object.create(Model.prototype),data);m.records=new Map(data.records.map(r=>[r.id,r]));m.bricks=data.records.filter(r=>r.kind==='brick');m.actors=data.records.filter(r=>r.kind!=='brick');m.env={now:m.total};m.boundaries=[];for(const r of m.bricks){let start=null,end=null;for(const s of r.tracks){if(start===null){start=s.t0;end=s.t1}else if(Math.abs(end-s.t0)<1e-7)end=s.t1;else{m.boundaries.push({t:start,id:r.id},{t:end,id:r.id});start=s.t0;end=s.t1}}if(start!==null)m.boundaries.push({t:start,id:r.id},{t:end,id:r.id})}m.boundaries.sort((a,b)=>a.t-b.t);return m}
-async function cached(mode){const encoded=window.CART_REPLAYS?.[mode];if(!encoded)return null;const bytes=Uint8Array.from(atob(encoded),c=>c.charCodeAt(0));const text=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text();return restore(JSON.parse(text))}
+// Decode only the active brick segment; keep the large replay in its compact form.
+const liveSegment=segment;
+segment=function(r,t){if(!r.trackKinds)return liveSegment(r,t);const cached=r._segment,k0=r._segmentIndex;if(cached&&t>=cached.t0&&(k0+1===r.tracks.length||t<r.tracks[k0+1][0]))return cached;let a=0,b=r.tracks.length;while(a<b){const k=(a+b)>>1;if(r.tracks[k][0]<=t)a=k+1;else b=k}if(!a)return null;const k=a-1,v=r.tracks[k],q={t0:v[0],t1:v[1],a:k?r.tracks[k-1].slice(2,6):r.initial,b:v.slice(2,6),kind:r.trackKinds[v[6]],linear:!!v[7]};if(v[8])q.path=v[8];if(v[9])q.rigid=v[9];r._segmentIndex=k;r._segment=q;return q};
+function restore(data){
+ if(data.kinds)for(const r of data.records){if(r.kind==='brick'){r.trackKinds=data.kinds;r.p=r.tracks.length?r.tracks.at(-1).slice(2,6):r.initial;continue}let previous=r.initial;r.tracks=r.tracks.map(v=>{const s={t0:v[0],t1:v[1],a:previous,b:v.slice(2,6),kind:data.kinds[v[6]],linear:!!v[7]};if(v[8])s.path=v[8];if(v[9])s.rigid=v[9];previous=s.b;return s});r.p=previous}
+ const m=Object.assign(Object.create(Model.prototype),data);m.records=new Map(data.records.map(r=>[r.id,r]));m.bricks=data.records.filter(r=>r.kind==='brick');m.actors=data.records.filter(r=>r.kind!=='brick');m.env={now:m.total};m.boundaries=[];
+ for(const r of m.bricks){let start=null,end=null;for(const s of r.tracks){const t0=Array.isArray(s)?s[0]:s.t0,t1=Array.isArray(s)?s[1]:s.t1;if(start===null){start=t0;end=t1}else if(Math.abs(end-t0)<1e-7)end=t1;else{m.boundaries.push({t:start,id:r.id},{t:end,id:r.id});start=t0;end=t1}}if(start!==null)m.boundaries.push({t:start,id:r.id},{t:end,id:r.id})}m.boundaries.sort((a,b)=>a.t-b.t);return m
+}
+async function cached(mode,onProgress=()=>{}){
+ const encoded=window.CART_REPLAYS?.[mode];if(!encoded)return null;
+ const inflate=async value=>{const bytes=typeof Uint8Array.fromBase64==='function'?Uint8Array.fromBase64(value):Uint8Array.from(atob(value),c=>c.charCodeAt(0));return JSON.parse(await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text())};
+ if(typeof encoded==='string')return restore(await inflate(encoded));
+ if(encoded.format!=='chunks-v1')throw Error('Unsupported replay format');const data=await inflate(encoded.parts[0]);data.records=[];onProgress(1/encoded.parts.length);
+ for(let i=1;i<encoded.parts.length;i++){data.records.push(...await inflate(encoded.parts[i]));onProgress((i+1)/encoded.parts.length)}return restore(data)
+}
+
 return{Model,pose,segment,L,D,H,B,cached};
 })();
