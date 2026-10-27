@@ -1,4 +1,8 @@
-# Objetivo activo: Brickflow nativo en Unreal
+# Checkpoint completado: Brickflow nativo en Unreal
+
+Actualización posterior: la versión de vídeo sin UI y con seguimiento a 1× se
+documenta en `unreal_tracking_film.md`. Las capturas y pruebas de UI de este
+documento corresponden al checkpoint anterior.
 
 Referencia solicitada: `artifacts/greenfield_30/index.html`, SHA-256
 `7573180b519dfa27f1b97b6cd682659b5235f129f1ad7d4f9b73f25db808805b`.

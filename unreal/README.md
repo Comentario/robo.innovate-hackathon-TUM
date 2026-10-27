@@ -40,18 +40,16 @@ En la VM `brickflow-cinematic`, el build está en
 `/home/shadeform/workspace/brickflow-native/Packaged/Linux/`.
 El proyecto editable está en `/home/shadeform/workspace/brickflow-native/`.
 
-El primer lote se calcula antes de habilitar los controles. Cambiar una receta
-recalcula el lote determinista, conserva el tiempo visible y aplica la petición
-en los límites de pallet de la planificación. `Restart batch` inicia un lote
-nuevo con la receta seleccionada más recientemente.
+La versión actual no crea UI ni dashboard. Arranca a 1×; `Space` reproduce o
+pausa. Botón derecho y arrastre orbitan y la rueda cambia la distancia. Las
+teclas `1`–`6` conservan encuadres de evaluación. Las métricas siguen disponibles
+en la evidencia JSON, pero no se dibujan sobre la planta.
 
-- `Space`: reproducción/pausa; `S`: velocidad; `1`–`6`: capítulos.
-- `E`: evidencia; botón derecho y arrastre: órbita; rueda: distancia.
-- Barra temporal: buscar; `Queue recipe`: solicitar receta.
-- Las tasas principales describen el lote completo; inspección y output muestran
-  el estado en el instante visible. El panel Evidence explica la fórmula.
+El vídeo de seguimiento usa `-BrickflowFilm=/ruta/nueva` y calcula su cámara a
+partir de los eventos y poses nativos. Ver `docs/unreal_tracking_film.md` para los
+puntos de inserción de vídeos físicos, cortes de espera y verificación.
 
-## Entregables locales
+## Entregables locales de la versión anterior (con UI)
 
 - `artifacts/unreal_native/brickflow-native-pitch.mp4`: tour 1080p, 24 segundos.
 - `artifacts/unreal_native/brickflow-linux-native.tar.gz`: build Linux completo.
@@ -78,10 +76,10 @@ selecciona el ejecutable independiente. Genera PNG y evidencia JSON con los
 pallets completos, sus IDs y tiempos. `tests_native/compare_unreal.py` contrasta
 esa evidencia con las cachés originales.
 
-El modo `-BrickflowMovie=/ruta/nueva -BrickflowMovieFrames=576` produce un tour
-de 24 segundos a 24 fps, un segundo simulado por frame (24×). Usar una carpeta
-nueva para cada captura. `tools/encode_pitch_cloud.sh` convierte los PNG a MP4.
-Es render offline; no constituye una medida de FPS interactivos.
+El tour anterior de 24 segundos se conserva como histórico. El render vigente
+se genera con `tools/render_film_cloud.sh`: 30 fps, movimientos nativos a 1×,
+sin UI y con master NVENC lossless. El stride debe ser 1 para el vídeo final;
+los strides mayores solo sirven para revisar encuadres.
 
 ## Alcance y evidencia
 

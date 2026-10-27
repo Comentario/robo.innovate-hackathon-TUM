@@ -9,7 +9,6 @@ class UMaterialInstanceDynamic;
 class UMaterialInterface;
 class UStaticMesh;
 class UCameraComponent;
-class SFactoryPresentation;
 class FJsonObject;
 
 UCLASS()
@@ -54,7 +53,24 @@ private:
     TMap<FString,UStaticMesh*> MeshCache;
     TMap<FString,UMaterialInstanceDynamic*> MaterialCache;
     TSharedPtr<FJsonObject> Asset;
-    TSharedPtr<SFactoryPresentation> Presentation;
+    struct FFilmShot {
+        FString Name,View;
+        int32 First=0,Count=0,Subject=-1;
+        double Start=0;
+        bool Freeze=false;
+    };
+    TArray<FFilmShot> FilmShots;
+    FString FilmDirectory,FilmPending;
+    int32 FilmFrame=0,FilmLast=-1,FilmSettle=0,FilmExtraSettle=0,FilmStride=1,FilmAccepted=-1,FilmRejected=-1;
+    double FilmWarmup=0;
+    bool bFilmReady=false;
+    class FSocket* FilmSocket=nullptr;
+    FDelegateHandle FilmScreenshotDelegate;
+    bool bFilmFrameCaptured=false;
+    void CaptureFilmPixels(int32 Width,int32 Height,const TArray<FColor>& Pixels);
+    void BuildFilmPlan();
+    void TickFilm(float DeltaSeconds);
+    void ApplyFilmFrame(int32 Frame);
     std::shared_ptr<brickflow::Simulation> Model;
     std::vector<brickflow::Request> RecipeRequests;
     FString Failure;
@@ -66,7 +82,7 @@ private:
     float CaptureWarmup=0;
     bool bCaptureRequested=false,bExitAfterCapture=false;
     double Time=0;
-    float Speed=12;
+    float Speed=1;
     int32 Chapter=0;
     bool bBusy=true,bPlaying=true,bEvidence=false;
     FVector CameraFrom,CameraTarget,CameraLookFrom,CameraLookTarget;

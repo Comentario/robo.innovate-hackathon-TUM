@@ -1,5 +1,4 @@
 #include "BrickflowStage.h"
-#include "FactoryPresentation.h"
 #include "Async/Async.h"
 #include "Camera/CameraComponent.h"
 #include "Camera/PlayerCameraManager.h"
@@ -38,7 +37,7 @@ void ABrickflowStage::BeginPlay()
     for(const auto& P:Asset->GetObjectField(TEXT("geometries"))->Values)Geometry.Add(FString(*P.Key),P.Value->AsObject());
     for(const auto& P:Asset->GetObjectField(TEXT("materials"))->Values)MaterialData.Add(FString(*P.Key),P.Value->AsObject());
     if(auto* PC=GetWorld()->GetFirstPlayerController()){
-        PC->bAutoManageActiveCameraTarget=false;PC->SetViewTarget(this);Camera->SetActive(true);PC->bShowMouseCursor=true;EnableInput(PC);
+        PC->bAutoManageActiveCameraTarget=false;PC->SetViewTarget(this);Camera->SetActive(true);PC->bShowMouseCursor=false;EnableInput(PC);
         FInputModeGameAndUI Mode;Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);PC->SetInputMode(Mode);
         InputComponent->BindKey(EKeys::SpaceBar,IE_Pressed,this,&ABrickflowStage::TogglePlayback);
         InputComponent->BindKey(EKeys::E,IE_Pressed,this,&ABrickflowStage::ToggleEvidence);
@@ -57,6 +56,12 @@ void ABrickflowStage::BeginPlay()
     FParse::Value(FCommandLine::Get(),TEXT("BrickflowCapture="),CapturePath);
     FParse::Value(FCommandLine::Get(),TEXT("BrickflowMovie="),MovieDirectory);
     FParse::Value(FCommandLine::Get(),TEXT("BrickflowMovieFrames="),MovieFrames);
+    FParse::Value(FCommandLine::Get(),TEXT("BrickflowFilm="),FilmDirectory);
+    FParse::Value(FCommandLine::Get(),TEXT("BrickflowFilmStride="),FilmStride);
+    FilmStride=FMath::Max(1,FilmStride);
+    FParse::Value(FCommandLine::Get(),TEXT("BrickflowFilmFirst="),FilmFrame);
+    FParse::Value(FCommandLine::Get(),TEXT("BrickflowFilmLast="),FilmLast);
+    if(!FilmDirectory.IsEmpty()){bPlaying=false;IFileManager::Get().MakeDirectory(*FilmDirectory,true);}
     MovieStart=InitialTime;
     if(!MovieDirectory.IsEmpty()){
         MovieFrames=FMath::Clamp(MovieFrames,24,2400);
@@ -67,7 +72,6 @@ void ABrickflowStage::BeginPlay()
     if(!CapturePath.IsEmpty())bPlaying=false;
     CreateLighting();SelectChapter(InitialChapter);CameraBlend=1;
     Camera->SetWorldLocation(CameraTarget);Camera->SetWorldRotation((CameraLookTarget-CameraTarget).Rotation());
-    if(GEngine&&GEngine->GameViewport){Presentation=SNew(SFactoryPresentation).Stage(this);GEngine->GameViewport->AddViewportWidgetContent(Presentation.ToSharedRef(),10);}
     RunNative(InitialTime);
 }
 void ABrickflowStage::RunNative(double PreserveTime)
@@ -158,6 +162,7 @@ void ABrickflowStage::Tick(float DeltaSeconds)
         }
         if(bCaptureRequested&&CaptureWarmup>=22&&MovieDirectory.IsEmpty()&&bExitAfterCapture&&IFileManager::Get().FileSize(*CapturePath)>100)FPlatformMisc::RequestExit(false);
     }
+    if(Model&&!bBusy&&!FilmDirectory.IsEmpty())TickFilm(DeltaSeconds);
 }
 void ABrickflowStage::CalcCamera(float DeltaTime,FMinimalViewInfo& OutResult)
 {
@@ -165,8 +170,7 @@ void ABrickflowStage::CalcCamera(float DeltaTime,FMinimalViewInfo& OutResult)
 }
 void ABrickflowStage::EndPlay(const EEndPlayReason::Type Reason)
 {
-    if(Presentation.IsValid()&&GEngine&&GEngine->GameViewport)GEngine->GameViewport->RemoveViewportWidgetContent(Presentation.ToSharedRef());
-    Presentation.Reset();Super::EndPlay(Reason);
+    Super::EndPlay(Reason);
 }
 void ABrickflowStage::SelectChapter(int32 Index)
 {

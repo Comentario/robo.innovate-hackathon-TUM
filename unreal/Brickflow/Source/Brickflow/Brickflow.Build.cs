@@ -10,7 +10,7 @@ public class Brickflow : ModuleRules
         bUseUnity = false;
         PublicDependencyModuleNames.AddRange(new string[] {
             "Core", "CoreUObject", "Engine", "InputCore", "Json", "JsonUtilities",
-            "Slate", "SlateCore", "MeshDescription", "StaticMeshDescription",
+            "Sockets", "MeshDescription", "StaticMeshDescription",
             "RenderCore", "RHI", "ImageWrapper"
         });
         RuntimeDependencies.Add("$(ProjectDir)/Content/Data/...", StagedFileType.NonUFS);
