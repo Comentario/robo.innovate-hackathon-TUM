@@ -72,10 +72,10 @@ independiente de persona 1. Los ACK sintéticos tampoco son validación visual.
 
 - [x] Objetivo fijado y fuente 30 identificada por hash.
 - [x] Archivo Linux Unreal 5.8.4 identificado, 39,819,212,076 bytes.
-- [ ] Transferencia e instalación de Unreal completadas.
+- [x] Transferencia e instalación de Unreal completadas; SHA-256 coincide con el ZIP original.
 - [x] Núcleo C++ de eventos/recursos probado con sanitizadores.
 - [x] Modelo completo C++ contrastado con Mixed/Single (conteos y los 78 pallets).
-- [ ] Escena nativa y UI propias verificadas en Unreal.
+- [x] Escena nativa y UI propias verificadas en Unreal y ejecutable Linux.
 - [ ] Build y material de pitch entregados y respaldados.
 
 Los archivos nuevos del núcleo están bajo `unreal/Brickflow/Source/Brickflow/Core`.
@@ -95,3 +95,45 @@ fijadas. Para Mixed y Single coinciden todos los IDs y su orden dentro de cada
 pallet, lane, carro y posición de salida, conteos y receta. Los errores de
 tiempo son inferiores a 1e-7 s, la tolerancia de comparación. Los resultados se
 guardan en `artifacts/cinematic/reference_30/comparison.json`.
+
+También se compararon 1,218 muestras de poses con la función `pose` del
+JavaScript original (612 Mixed y 606 Single), cubriendo traslación, giro,
+movimientos rígidos y caminos. Error máximo de componente: 1.137e-12.
+El test `tests_native/compare_poses.js` conserva el resultado bajo los artefactos.
+
+El proyecto `unreal/Brickflow/Brickflow.uproject` compila con Unreal 5.8.4 en la VM.
+Usa interfaz Slate original, cámaras, reproducción, búsqueda temporal, recetas
+y geometría instanciada con drivers C++. La configuración exige Skin Cache para
+ray tracing; el primer arranque detectó y corrigió esa omisión. El lanzamiento
+gráfico posterior terminó con código cero y generó captura y evidencia nativas;
+la revisión de imagen y comparación de esa evidencia continúan.
+
+Instalación remota: `/home/shadeform/workspace/brickflow-cinematic/tools/unreal-5.8.4`.
+Proyecto remoto: `/home/shadeform/workspace/brickflow-native`.
+El archivo descargado directamente en cloud se verificó contra el original:
+`cdff1e0c02010eb4fcf9c38d293cfd0f1afda09272256c146d73db52f570f607`.
+Los enlaces de descarga temporales se mantuvieron fuera del repositorio y se
+eliminaron tras verificar el archivo.
+
+El lote Mixed completo pasó también AddressSanitizer, UBSan y LeakSanitizer con
+Clang 20.1.8 (10,152,491 eventos; sin diagnósticos de memoria). La ejecución
+dentro de Unreal coincide con los 42 pallets y los 23,520 IDs expedidos de
+Mixed. El ejecutable Linux empaquetado coincide con los 36 pallets y los
+20,160 IDs expedidos de Single, error máximo de tiempo 9.095e-13 s.
+
+Se revisaron las capturas `artifacts/unreal_native/mixed-chapter0.png` y
+`single-chapter3-packaged.png`: fábrica y UI renderizadas en Vulkan con la GPU
+NVIDIA. La conversión Y/Z ya convierte el winding CCW de Three al CW de Unreal;
+no debe invertirse una segunda vez. La iluminación cubre la longitud de la
+instalación. Los materiales tienen activado el uso con instancias estáticas.
+
+`unreal/tools/package_cloud.sh` genera el ejecutable Linux con BuildCookRun;
+`preview_cloud.sh` acepta `-BrickflowPackaged` para comprobarlo sin editor.
+La preparación Python solo crea assets en el editor, y sus plugins se excluyen
+del target Game. La exportación JSON contiene geometría y bindings, no tracks
+de reproducción. El estado de cada brick lo calcula el núcleo C++.
+
+El modo `-BrickflowMovie=... -BrickflowMovieFrames=576` captura 24 segundos a
+24 fps, con un segundo simulado por fotograma. Recorre los seis capítulos con
+cámaras nativas. Es captura offline acelerada, no prueba de rendimiento a 24 fps.
+La revisión del vídeo y el respaldo del build siguen pendientes.

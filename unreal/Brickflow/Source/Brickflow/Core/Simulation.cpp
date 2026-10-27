@@ -149,8 +149,12 @@ Task Simulation::path(int id,std::vector<Point> points,int matrix,double speed,s
                 mask.cells.push_back(std::to_string(x)+","+std::to_string(z));
         masks.push_back(std::move(mask));
     }
-    auto occupied=[&]{for(const auto& a:masks)for(const auto& c:a.cells)
-        if(table.contains(c+","+std::to_string(int(std::floor((start+a.time)/step)))))return true;return false;};
+    auto occupied=[&]{
+        for(const auto& a:masks)for(const auto& c:a.cells){
+            if(table.contains(c+","+std::to_string(int(std::floor((start+a.time)/step)))))return true;
+        }
+        return false;
+    };
     int trials=0;while(occupied()){start+=step;if(++trials>6000)throw std::runtime_error("No free matrix route");}
     for(const auto& a:masks)for(const auto& c:a.cells)table[c+","+std::to_string(int(std::floor((start+a.time)/step)))]=id;
     if(table.size()>25000) {
