@@ -6,6 +6,30 @@ ni un replay de Python/JavaScript. La referencia fijada es `greenfield_30`.
 
 ## Ejecutar
 
+### Evaluar desde el navegador de este equipo
+
+Acceso interactivo por escritorio remoto noVNC sobre túnel SSH:
+`http://localhost:6080/vnc.html?autoconnect=1&resize=scale&view_only=0&path=websockify`.
+La GPU y Unreal permanecen en Brev. El navegador transmite imagen e inputs;
+el motor sigue siendo el ejecutable nativo. No es un enlace público y solo
+funciona en el equipo donde se abre el túnel.
+
+Para restablecerlo desde WSL si el túnel se cierra:
+
+```bash
+/tmp/brickflow-brev-bin/brev exec brickflow-cinematic @unreal/tools/start_interactive_cloud.sh
+/tmp/brickflow-brev-bin/brev port-forward brickflow-cinematic -p 6080:6080
+```
+
+El escritorio usa Xvfb `:81`, x11vnc en loopback `5901` y websockify/noVNC en
+loopback `6080`. Los PID y logs están en `Saved/Interactive/` en la VM. Las
+dependencias de esta VM son `xvfb x11vnc novnc websockify openbox x11-utils`.
+Se verificó la conexión WebSocket en Chromium y el cambio de cámara mediante
+clics enviados desde el navegador. Se usa transmisión de escritorio para
+evaluación; no se ha medido latencia ni calidad de streaming para un pitch.
+
+### Ejecutable Linux
+
 En Linux con GPU NVIDIA, Vulkan y un escritorio gráfico:
 
 ```bash
