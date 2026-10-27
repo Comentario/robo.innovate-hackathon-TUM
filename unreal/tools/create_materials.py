@@ -27,4 +27,12 @@ if material is None:
 material.set_editor_property('used_with_instanced_static_meshes',True)
 unreal.MaterialEditingLibrary.recompile_material(material)
 unreal.EditorAssetLibrary.save_loaded_asset(material)
+double_path=path+'/M_FactorySurfaceTwoSided'
+double=unreal.load_asset(double_path)
+if double is None:
+    double=unreal.EditorAssetLibrary.duplicate_asset(asset_path,double_path)
+double.set_editor_property('two_sided',True)
+double.set_editor_property('used_with_instanced_static_meshes',True)
+unreal.MaterialEditingLibrary.recompile_material(double)
+unreal.EditorAssetLibrary.save_loaded_asset(double)
 unreal.log('Brickflow native surface material ready. Runtime instances use C++ parameters.')

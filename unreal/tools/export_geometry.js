@@ -21,7 +21,7 @@ window.exportNativeFactory = function () {
   });
   function mat(m) {
     if(materials[m.uuid]) return m.uuid;
-    const out={color:m.color?.toArray()||[1,1,1],opacity:m.opacity};
+    const out={color:m.color?.toArray()||[1,1,1],opacity:m.opacity,doubleSided:m.side===T.DoubleSide};
     if(m.map) {
       const image=m.map.image,canvas=document.createElement('canvas');
       canvas.width=image.width;canvas.height=image.height;canvas.getContext('2d').drawImage(image,0,0);

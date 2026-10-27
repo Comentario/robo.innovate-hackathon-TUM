@@ -32,8 +32,13 @@ UMaterialInstanceDynamic* ABrickflowStage::Material(const FString& ID,const FLin
     FString Key=ID+Tint.ToString();if(auto* Cached=MaterialCache.Find(Key))return *Cached;
     if(!BaseMaterial)BaseMaterial=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Materials/M_FactorySurface.M_FactorySurface"));
     if(!BaseMaterial)BaseMaterial=LoadObject<UMaterialInterface>(nullptr,TEXT("/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial"));
-    auto* MID=UMaterialInstanceDynamic::Create(BaseMaterial,this);
-    auto Source=MaterialData.FindChecked(ID);FLinearColor Base=Color(Source->GetArrayField(TEXT("color")));
+    auto Source=MaterialData.FindChecked(ID);bool DoubleSided=false;
+    Source->TryGetBoolField(TEXT("doubleSided"),DoubleSided);
+    UMaterialInterface* Surface=BaseMaterial;
+    if(DoubleSided)Surface=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Materials/M_FactorySurfaceTwoSided.M_FactorySurfaceTwoSided"));
+    checkf(Surface,TEXT("Required factory surface material is missing"));
+    auto* MID=UMaterialInstanceDynamic::Create(Surface,this);
+    FLinearColor Base=Color(Source->GetArrayField(TEXT("color")));
     float Roughness=.48f,Metallic=0;
     if(Base.Equals(FLinearColor(.5210,.5841,.5776,1),.002f)){Base=FLinearColor(.018,.027,.038,1);Roughness=.32f;}
     else if(Base.Equals(FLinearColor(.2664,.3278,.3419,1),.002f)){Metallic=.8f;Roughness=.29f;}
