@@ -46,7 +46,7 @@ teclas `1`–`6` conservan encuadres de evaluación. Las métricas siguen dispon
 en la evidencia JSON, pero no se dibujan sobre la planta.
 
 El vídeo de seguimiento usa `-BrickflowFilm=/ruta/nueva` y calcula su cámara a
-partir de los eventos y poses nativos. Ver `docs/unreal_tracking_film.md` para los
+partir de los eventos y poses nativos. Ver `docs/unreal_continuous_film.md` para los
 puntos de inserción de vídeos físicos, cortes de espera y verificación.
 
 ## Entregables locales de la versión anterior (con UI)
@@ -77,8 +77,8 @@ pallets completos, sus IDs y tiempos. `tests_native/compare_unreal.py` contrasta
 esa evidencia con las cachés originales.
 
 El tour anterior de 24 segundos se conserva como histórico. El render vigente
-se genera con `tools/render_film_cloud.sh`: 30 fps, movimientos nativos a 1×,
-sin UI y con master NVENC lossless. El stride debe ser 1 para el vídeo final;
+se genera con `tools/render_film_cloud.sh`: 30 fps, reloj continuo sin cortes, rampas a 16× durante la reconstrucción y
+40× en el timelapse final, sin UI y con master NVENC lossless. El stride debe ser 1 para el vídeo final;
 los strides mayores solo sirven para revisar encuadres.
 
 ## Alcance y evidencia

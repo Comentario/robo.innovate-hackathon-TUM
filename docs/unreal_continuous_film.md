@@ -1,0 +1,52 @@
+# Toma continua · segunda revisión de cámara
+
+Esta revisión reemplaza los cortes de la primera película. Se conserva la
+planta nativa fijada a greenfield_30 y sus trayectorias. No se incorporan los
+cambios concurrentes del viewer WebGL.
+
+- El reloj empieza en 0: entrada de los pallets/carro, dehacking de los layers
+  superiores y distribución hacia los loading belts. Después sigue el ID 9568.
+- No hay omisiones de tiempo entre fases. El reloj nativo es una función
+  continua cuya velocidad también es continua. Las pausas entran y salen con
+  rampas suaves; el producto siempre usa `Simulation::pose`.
+- El row se ve de perfil, mirando a lo largo de X hacia el origen, con el
+  subbelt en el lado izquierdo de la imagen. Cámara fija durante toda la
+  extracción, transferencia y pausa Franka. FOV horizontal 55°, observador en
+  UE `(2770, midpointZ-80, 285)` cm, mira a `(2150, midpointZ, 165)` cm.
+  Es una correspondencia del plano de visión de las referencias, no una
+  calibración de intrínsecos/distancias de la cámara física.
+- Todas las perspectivas se enlazan mediante blends quintic con velocidad y
+  aceleración nulas en los extremos. El objetivo seguido se suaviza usando
+  poses nativas cercanas; ese filtro solo afecta a la cámara, nunca al ladrillo.
+- Formación/reconstrucción del pallet: aproximadamente 16×, con rampas de 4 s.
+  Outfeed, elevación, bridge y depósito: 1×, incluyendo las esperas originales.
+- Tras el depósito y liberación, aceleración gradual a 40× mientras la cámara
+  se aleja; luego una órbita completa en plano amplio. Se comprueba que avancen
+  miles de inspecciones en el intervalo nativo mostrado.
+
+`FilmTiming.h` contiene la integral analítica de las rampas; `film_clock_test`
+comprueba monotonía y continuidad de velocidad. La auditoría nativa exporta
+cada pose, cámara, objetivo, lente, velocidad e inspeccionados sin renderizar.
+No sustituye las pruebas de imagen: se usa primero para detectar errores de
+continuidad y se identificará como `cameraAuditOnly`.
+
+## Comprobaciones previas al master
+
+La auditoría final de los 11,867 frames pasó: poses originales con error máximo
+1.0303e-12 m, reloj sin skips, velocidad continua entre fases, cambios de cámara
+sin saltos, perfil fijo en toda la extracción, bridge a 1× y 5,727 inspecciones
+adicionales en el timelapse final. `cameraAuditOnly=true`: todavía no es la
+verificación del archivo de vídeo terminado.
+
+Se revisaron imágenes renderizadas de la entrada, dehacking y perfil. La cámara
+inicial evita la columna que tapaba los pallets; dos rellenos de estudio, sin
+geometría visible, aclaran inputs y transferencia. Se mantienen todas las
+estructuras de la planta. Las transiciones de cámara interpolan objetivo,
+distancia y dirección orbital con curvas quintic, evitando pasar cerca del
+objetivo al cambiar de lado.
+
+Render final: `Saved/Films/continuous-4k-v4-part0` .. `part3` en la VM.
+Rangos `[0,2967)`, `[2967,5934)`, `[5934,8901)`, `[8901,11867)`.
+El ensamblado solo concatena segmentos calculados con el mismo reloj y cámara
+analítica; no introduce cortes de perspectiva ni salta estados. Verificar de
+nuevo la traza completa y los frames codificados antes de entregar.

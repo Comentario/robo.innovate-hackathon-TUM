@@ -58,8 +58,12 @@ private:
         int32 First=0,Count=0,Subject=-1;
         double Start=0;
         bool Freeze=false;
+        double Rate0=1,Rate1=1;
     };
+    struct FFilmCue { double At=0,Blend=0; FString View; };
     TArray<FFilmShot> FilmShots;
+    TArray<FFilmCue> FilmCues;
+    double FilmRevealAt=0;
     FString FilmDirectory,FilmPending;
     int32 FilmFrame=0,FilmLast=-1,FilmSettle=0,FilmExtraSettle=0,FilmStride=1,FilmAccepted=-1,FilmRejected=-1;
     double FilmWarmup=0;
@@ -71,6 +75,7 @@ private:
     void BuildFilmPlan();
     void TickFilm(float DeltaSeconds);
     void ApplyFilmFrame(int32 Frame);
+    double FilmNativeTime(double VideoSeconds) const;
     std::shared_ptr<brickflow::Simulation> Model;
     std::vector<brickflow::Request> RecipeRequests;
     FString Failure;

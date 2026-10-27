@@ -24,7 +24,7 @@ with (out/'trace.csv').open('w',newline='') as f:
 (out/'edit-plan.json').write_text(json.dumps(plans[0],indent=2))
 for kind,filename in [('master','brickflow-master-444.mkv'),('review','brickflow-review-4k.mp4')]:
  (out/f'{kind}-parts.txt').write_text(''.join("file '"+str(p/filename)+"'\n" for p in parts))
-(out/'insert-points.json').write_text(json.dumps([{'name':s['name'],'startSeconds':s['firstFrame']/30,'durationSeconds':s['frames']/30,'nativeSeconds':s['nativeStart']} for s in plans[0]['shots'] if s['freeze']],indent=2))
+(out/'insert-points.json').write_text(json.dumps([{'name':s['name'],'startSeconds':s['firstFrame']/30,'durationSeconds':s['frames']/30,'nativeSeconds':s['nativeStart']} for s in plans[0]['shots'] if s['freeze'] and s['camera'] in ('row-hold','sensor')],indent=2))
 PY
 ffmpeg -nostdin -hide_banner -loglevel warning -y -f concat -safe 0 -i "$output/master-parts.txt" \
   -map 0:v -c copy "$output/brickflow-tracking-master-4k-444.mkv"

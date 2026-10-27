@@ -220,6 +220,15 @@ void ABrickflowStage::CreateLighting()
     for(int32 I=0;I<3;++I){auto* Light=GetWorld()->SpawnActor<ARectLight>(Locations[I],(FVector(Locations[I].X,0,0)-Locations[I]).Rotation());
         auto* Component=Cast<URectLightComponent>(Light->GetLightComponent());Component->SetMobility(EComponentMobility::Movable);
         Component->SetAttenuationRadius(20000);Component->SetIntensity(Powers[I]);Component->SetSourceWidth(Sizes[I]);Component->SetSourceHeight(Sizes[I]);}
+    // Invisible studio bounce fills keep the input stacks and profile view readable.
+    const FVector FillLocations[]={FVector(-800,-600,1000),FVector(2600,-800,650)};
+    const FVector FillTargets[]={FVector(-1300,0,120),FVector(2150,-800,165)};
+    for(int32 I=0;I<2;++I){
+        auto* Light=GetWorld()->SpawnActor<ARectLight>(FillLocations[I],(FillTargets[I]-FillLocations[I]).Rotation());
+        auto* C=Cast<URectLightComponent>(Light->GetLightComponent());C->SetMobility(EComponentMobility::Movable);
+        C->SetAttenuationRadius(I==0?3000:1500);C->SetIntensity(I==0?180000:100000);
+        C->SetSourceWidth(I==0?1400:800);C->SetSourceHeight(600);C->SetCastShadows(false);
+    }
     auto* Sky=GetWorld()->SpawnActor<ASkyLight>();Sky->GetLightComponent()->SetIntensity(.45f);Sky->GetLightComponent()->SetMobility(EComponentMobility::Movable);
     auto* Volume=GetWorld()->SpawnActor<APostProcessVolume>();Volume->bUnbound=true;auto& S=Volume->Settings;
     S.bOverride_AutoExposureMinBrightness=true;S.bOverride_AutoExposureMaxBrightness=true;S.AutoExposureMinBrightness=1;S.AutoExposureMaxBrightness=1;
