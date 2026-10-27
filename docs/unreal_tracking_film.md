@@ -79,3 +79,47 @@ si fuera vídeo a velocidad real.
   tramos. Produce 7,198 frames, 239.933 s a 30 fps, y puntos de inserción JSON.
   La verificación final debe comprobar la continuidad de todos los frames,
   giro de 360°, pausas del reloj y poses antes de declarar la entrega completa.
+
+## Entrega verificada
+
+El render y el ensamblado finalizaron correctamente. Archivos locales:
+
+- `artifacts/unreal_film/delivery/brickflow-tracking-4k.mp4`:
+  3840×2160, 30 fps, 7,198 fotogramas, 239.934 s, 2,438,763,202 bytes.
+- `artifacts/unreal_film/delivery/brickflow-tracking-1080p.mp4`:
+  1920×1080, mismos frames y duración, 359,537,730 bytes.
+- `artifacts/unreal_film/delivery/edit-plan.json`, `trace.csv`,
+  `insert-points.json` y `verification.json`: plan, poses y verificación.
+- `artifacts/unreal_film/delivery/quality-frames/`: planos extraídos del MP4 final
+  para revisión visual. No son imágenes generadas ni sustituyen el metraje.
+
+Puntos para montaje de los vídeos que aporta el equipo:
+
+| Inserción | Inicio en el vídeo | Plano sostenido |
+| --- | --- | --- |
+| Franka / transferencia de fila | 00:55.333 | 5 s |
+| Algoritmo / sistema de inspección | 01:23.700 | 7 s |
+
+Se pueden sustituir o ampliar esos planos en edición. Ningún vídeo físico está
+incluido en esta entrega. Las esperas largas conservan los cortes documentados.
+
+`verify_film.py --complete` comprobó los 7,198 fotogramas, la vuelta de 360° y el
+reloj fijo con movimiento de cámara en ambas pausas. Error máximo de pose
+respecto de los records originales: 1.0303e-12 m. Es acuerdo numérico con la
+referencia sintética, no una validación física. Se revisaron visualmente los
+planos finales de fila, sensor, descarte, apilado, despacho y alejamiento.
+El ejecutable Linux también se reinició y se comprobó sin UI en el escritorio
+remoto. La velocidad interactiva inicial es 1×.
+
+SHA-256 del MP4 4K:
+`cf6b5ea704a2398aeb95aa0c55570211a1eeb754bd9496a8fbb5670c99806d0c`.
+SHA-256 de la copia 1080p:
+`5b444d3ea12e41ebcbed191db96d257ef9475b823925f0d906db55fc9702145f`.
+Los hashes locales coinciden con los remotos.
+
+El master H.264 lossless 4:4:4 de aproximadamente 30 GiB permanece en la VM:
+`/home/shadeform/workspace/brickflow-native/Saved/Films/tracking-4k-v5-delivery/brickflow-tracking-master-4k-444.mkv`.
+La VM permanece activa. El CLI local se conserva además en
+`.deps/brev/bin/brev`, ignorado por Git, para no depender de `/tmp` tras reiniciar
+WSL. La descarga final usó el SSH autorizado porque la API del CLI limitó las
+transferencias paralelas; no se cambiaron las credenciales ni la autenticación.

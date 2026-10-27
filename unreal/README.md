@@ -17,8 +17,8 @@ funciona en el equipo donde se abre el túnel.
 Para restablecerlo desde WSL si el túnel se cierra:
 
 ```bash
-/tmp/brickflow-brev-bin/brev exec brickflow-cinematic @unreal/tools/start_interactive_cloud.sh
-/tmp/brickflow-brev-bin/brev port-forward brickflow-cinematic -p 6080:6080
+./.deps/brev/bin/brev exec brickflow-cinematic @unreal/tools/start_interactive_cloud.sh
+./.deps/brev/bin/brev port-forward brickflow-cinematic -p 6080:6080
 ```
 
 El escritorio usa Xvfb `:81`, x11vnc en loopback `5901` y websockify/noVNC en
