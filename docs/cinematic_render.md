@@ -73,6 +73,10 @@ todavía debe construirse y contrastarse con Marmon.
 
 ## Motor y arquitectura
 
+**Nota de actualización:** esta recomendación corresponde a la primera fase
+Blender/WebGL. La petición posterior se implementó como simulación C++ nativa
+en Unreal 5.8.4; ver `unreal_native_goal.md` y `../unreal/README.md`.
+
 Recomendación: conservar WebGL para la exploración en directo y usar
 **Blender/Cycles/OptiX para el material cinematográfico**. Reutilizar el estado
 de la escena; mantener percepción, planificación y ejecución independientes.

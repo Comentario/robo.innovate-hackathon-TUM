@@ -61,6 +61,7 @@ private:
     FString CapturePath;
     FString MovieDirectory,MoviePending;
     int32 MovieFrames=0,MovieFrame=0,MovieSettle=0;
+    int32 ControlExercise=0;
     double MovieStart=0;
     float CaptureWarmup=0;
     bool bCaptureRequested=false,bExitAfterCapture=false;

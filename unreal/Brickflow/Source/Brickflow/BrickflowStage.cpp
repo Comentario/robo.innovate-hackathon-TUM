@@ -95,6 +95,13 @@ void ABrickflowStage::RunNative(double PreserveTime)
 void ABrickflowStage::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+    if(Model&&!bBusy&&FParse::Param(FCommandLine::Get(),TEXT("BrickflowExerciseControls"))){
+        if(ControlExercise==0){
+            TogglePlayback();TogglePlayback();for(int32 I=0;I<5;++I)CycleSpeed();
+            SelectChapter(3);SeekNormalized(.4f);++ControlExercise;QueueRecipe(TEXT("single"));
+        }else if(ControlExercise==1){++ControlExercise;RestartBatch();}
+        else if(ControlExercise==2){SeekNormalized(.4f);++ControlExercise;}
+    }
     if(auto* PC=GetWorld()->GetFirstPlayerController())if(PC->GetViewTarget()!=this){PC->bAutoManageActiveCameraTarget=false;PC->SetViewTarget(this);}
     if(Model&&!bBusy){if(bPlaying){Time=FMath::Min(Model->total,Time+FMath::Min(DeltaSeconds,.1f)*Speed);if(Time>=Model->total)bPlaying=false;}UpdateScene();}
     if(CameraBlend<1){CameraBlend=FMath::Min(1.f,CameraBlend+DeltaSeconds/.95f);float U=CameraBlend*CameraBlend*(3-2*CameraBlend);
@@ -106,6 +113,7 @@ void ABrickflowStage::Tick(float DeltaSeconds)
             FScreenshotRequest::RequestScreenshot(CapturePath,!FParse::Param(FCommandLine::Get(),TEXT("BrickflowSceneOnly")),false);bCaptureRequested=true;
             auto Evidence=MakeShared<FJsonObject>();Evidence->SetStringField(TEXT("simulationBackend"),TEXT("native-cpp20"));
             Evidence->SetStringField(TEXT("referenceSha256"),Asset->GetStringField(TEXT("referenceSha256")));
+            if(FParse::Param(FCommandLine::Get(),TEXT("BrickflowExerciseControls")))Evidence->SetBoolField(TEXT("controlExerciseComplete"),ControlExercise==3);
             Evidence->SetNumberField(TEXT("batchSeconds"),Model->total);Evidence->SetNumberField(TEXT("bricksPerHour"),Model->bricksPerHour);
             Evidence->SetNumberField(TEXT("palletsPerHour"),Model->palletsPerHour);Evidence->SetNumberField(TEXT("inspected"),Model->inspected);
             Evidence->SetNumberField(TEXT("rejected"),Model->rejected);Evidence->SetNumberField(TEXT("formed"),Model->formed);

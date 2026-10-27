@@ -76,7 +76,7 @@ independiente de persona 1. Los ACK sintéticos tampoco son validación visual.
 - [x] Núcleo C++ de eventos/recursos probado con sanitizadores.
 - [x] Modelo completo C++ contrastado con Mixed/Single (conteos y los 78 pallets).
 - [x] Escena nativa y UI propias verificadas en Unreal y ejecutable Linux.
-- [ ] Build y material de pitch entregados y respaldados.
+- [x] Build Linux y material de pitch entregados y respaldados.
 
 Los archivos nuevos del núcleo están bajo `unreal/Brickflow/Source/Brickflow/Core`.
 El runtime usa coroutines C++20, orden estable de eventos y recursos finitos.
@@ -136,4 +136,28 @@ de reproducción. El estado de cada brick lo calcula el núcleo C++.
 El modo `-BrickflowMovie=... -BrickflowMovieFrames=576` captura 24 segundos a
 24 fps, con un segundo simulado por fotograma. Recorre los seis capítulos con
 cámaras nativas. Es captura offline acelerada, no prueba de rendimiento a 24 fps.
-La revisión del vídeo y el respaldo del build siguen pendientes.
+El vídeo final `artifacts/unreal_native/brickflow-native-pitch.mp4` tiene 576
+fotogramas, 1920×1080, 24 fps y 24 segundos; se revisaron las vistas Overview,
+Perception y Evidence. Se conserva la distinción entre lote completo y métricas
+del instante visible. La captura es silenciosa y deja espacio a la narración
+del presentador.
+
+El build Linux está respaldado localmente en
+`artifacts/unreal_native/brickflow-linux-native.tar.gz` (505 MiB); SHA-256 local
+y remoto coinciden:
+`5a37fd38bb2955c61a089ba5b21bb4eea092d5fbf9fa551eb2d6b7ff1be4ef8b`.
+Corresponde al checkpoint de presentación `4403871`; la prueba automatizada
+posterior añade un flag diagnóstico, sin cambiar el comportamiento normal.
+SHA-256 del vídeo: `644f0fa9ab7e48eb4fc7e229e08ab752dab31e790d1009dd8dbb31ea8355dc95`.
+
+El flag diagnóstico `-BrickflowExerciseControls` llama los mismos handlers que
+usa Slate: alternar reproducción, recorrer velocidades, cambiar capítulo,
+buscar tiempo, solicitar Single durante Mixed y reiniciar. La prueba en el
+editor completó los tres recálculos y recuperó la referencia Single exacta
+(36 pallets, 20,160 IDs). La comprobación equivalente en el ejecutable
+empaquetado también pasó: mismos 36 pallets y 20,160 IDs, error máximo
+9.095e-13 s. Es una prueba automatizada de los handlers nativos; no sustituye
+una prueba manual de usabilidad ni una validación física del proceso.
+
+El proyecto y las herramientas quedan guardados en `persona2/planning`.
+La VM continúa activa a la tarifa indicada de $2.63/h; no se eliminó la instancia.

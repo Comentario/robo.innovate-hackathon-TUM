@@ -27,6 +27,19 @@ nuevo con la receta seleccionada más recientemente.
 - Las tasas principales describen el lote completo; inspección y output muestran
   el estado en el instante visible. El panel Evidence explica la fórmula.
 
+## Entregables locales
+
+- `artifacts/unreal_native/brickflow-native-pitch.mp4`: tour 1080p, 24 segundos.
+- `artifacts/unreal_native/brickflow-linux-native.tar.gz`: build Linux completo.
+- `artifacts/unreal_native/mixed-chapter0.png`: vista general de Unreal.
+- `artifacts/unreal_native/perception-native.png`: detalle de inspección.
+- `artifacts/unreal_native/evidence-native.png`: panel de evidencia.
+- `artifacts/unreal_native/*verification.json`: contrastes numéricos.
+
+Extraer el build con `tar -xzf brickflow-linux-native.tar.gz` y ejecutar
+`Linux/Brickflow.sh`. El ZIP de Unreal y las herramientas pesadas están en la
+VM; el editor no es necesario para ejecutar el build empaquetado.
+
 ## Compilar y capturar en Brev
 
 Los scripts `tools/*_cloud.sh` usan rutas explícitas de esa VM y se ejecutan con
