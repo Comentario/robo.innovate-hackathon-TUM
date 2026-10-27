@@ -50,3 +50,14 @@ Rangos `[0,2967)`, `[2967,5934)`, `[5934,8901)`, `[8901,11867)`.
 El ensamblado solo concatena segmentos calculados con el mismo reloj y cámara
 analítica; no introduce cortes de perspectiva ni salta estados. Verificar de
 nuevo la traza completa y los frames codificados antes de entregar.
+
+## Recogida automática
+
+`unreal/tools/collect_continuous_film.sh`, ejecutado desde la raíz del repo,
+espera al ensamblado, comprueba la traza renderizada completa, genera el review
+1080p y descarga los MP4 en `artifacts/unreal_continuous/delivery/`. Los nombres
+locales son `brickflow-continuous-4k.mp4` y `brickflow-continuous-1080p.mp4`.
+Compara ambos SHA-256 con los originales remotos y conserva los metadatos.
+`collection.status` indica el estado; `collection.log` está en el directorio
+padre. Un estado de descarga verificada no implica revisión visual terminada.
+El master 4:4:4 permanece en la VM; no se descarga automáticamente.
