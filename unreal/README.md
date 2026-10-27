@@ -47,7 +47,13 @@ en la evidencia JSON, pero no se dibujan sobre la planta.
 
 El vídeo de seguimiento usa `-BrickflowFilm=/ruta/nueva` y calcula su cámara a
 partir de los eventos y poses nativos. Ver `docs/unreal_continuous_film.md` para los
-puntos de inserción de vídeos físicos, cortes de espera y verificación.
+puntos de inserción de vídeos físicos, rampas de velocidad y verificación.
+
+La réplica `brickflow-cinematic-4gpu` tiene cuatro RTX PRO 6000; se comprobó
+un render independiente por adaptador Vulkan. El octavo argumento opcional de
+`render_film_cloud.sh` selecciona el adaptador. `launch_four_gpu_cloud.sh`
+reparte un rango de frames entre las cuatro tarjetas sin cambiar el reloj.
+Ver `docs/unreal_four_gpu_vm.md` para recursos, copia y evidencia.
 
 ## Entregables locales de la versión anterior (con UI)
 

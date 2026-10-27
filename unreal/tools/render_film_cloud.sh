@@ -9,6 +9,11 @@ mode="${4:-png}"
 port="${5:-7891}"
 first="${6:-0}"
 last="${7:-0}"
+adapter=()
+if [[ -n "${8:-}" ]]; then
+  [[ "$8" =~ ^[0-9]+$ ]] || { echo 'GPU adapter must be a nonnegative integer.'; exit 2; }
+  adapter=("-graphicsadapter=$8")
+fi
 height=$((width*9/16))
 output="$project/Saved/Films/$label"
 mkdir -p "$output"
@@ -37,6 +42,7 @@ status=0
 xvfb-run -n "$((120+(port-7891)*5))" -a -s "-screen 0 ${width}x${height}x24" \
  "$engine/Engine/Binaries/Linux/UnrealEditor" "$project/Brickflow.uproject" /Engine/Maps/Entry \
  -game -RenderOffscreen -vulkan -preferNvidia -nosound -nosplash -unattended -nop4 \
+ "${adapter[@]}" \
  -Windowed -ForceRes "-ResX=$width" "-ResY=$height" \
  "-BrickflowFilm=$output" "-BrickflowFilmStride=$stride" "-BrickflowFilmFirst=$first" "-BrickflowFilmLast=$last" -BrickflowFilmSettle=8 \
  "${extra[@]}" '-ExecCmds=r.ScreenPercentage 100,r.AntiAliasingMethod 4,sg.ViewDistanceQuality 4,sg.ShadowQuality 4,sg.ReflectionQuality 4,r.MotionBlurQuality 0' \
