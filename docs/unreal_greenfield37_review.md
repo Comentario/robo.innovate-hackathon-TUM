@@ -22,6 +22,22 @@ Esa copia no incluye replay preparado; para observar su modelo se usó el modo
 explícito `?build` de su propio viewer. No se modificó la lógica de la referencia.
 Que sus comprobaciones internas terminen no equivale a validación independiente.
 
+Después se completó el paquete con replay. La copia monolítica
+`1e3f8012f172f2ec2065c8483384721230c2c2586e05ba0053a7c5be65b162a7`
+falló al abrir en Chromium 156 con `Unexpected end of JSON input`; su replay
+expandía a 616,208,537 bytes y el lector Node 18 encontró el límite de cadena.
+El workspace pasó después al formato por bloques `chunks-v1`.
+
+Paquete actual comprobado:
+`14e3dcf6601903e22c28a74eb61d9c82d0d866761aab3513163375e931af43ff`.
+Abrió correctamente en Chromium 156.0.8078.4, sin error. Se compararon sus
+scripts: logística, geometría de almacén, núcleo de simulación anterior al
+loader y funciones geométricas/actualización de actores son iguales a la copia
+de autoría `69997532`. Los cambios son de empaquetado, carga y navegación.
+Sus contadores y tiempo total coinciden con esa ejecución estudiada.
+Evidencias: `artifacts/unreal_migration37/package-compatibility.json` y
+`prepared-browser-check-14e3dcf6.json`. La apertura correcta no valida la planta.
+
 ## Recorrido realizado
 
 Se abrió el ejecutable real de Unreal, se cambió de perspectiva mediante sus
