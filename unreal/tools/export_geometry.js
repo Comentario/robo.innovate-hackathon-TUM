@@ -1,6 +1,21 @@
 /* Offline authoring only. The shipped application uses native C++ state. */
-window.exportNativeFactory = function () {
-  const d=CART_DEMO,T=THREE,roots=new Map(),geometries={},materials={},instances=[];
+window.exportNativeFactory = function (options = {}) {
+  const d=CART_DEMO,T=THREE,roots=new Map(),geometries={},materials={},instances=[],instanceBatches=[];
+  const encodeFloat32 = array => {
+    const bytes=new Uint8Array(array.buffer,array.byteOffset,array.byteLength),pieces=[];
+    for(let i=0;i<bytes.length;i+=32768)pieces.push(String.fromCharCode(...bytes.subarray(i,i+32768)));
+    return btoa(pieces.join(''));
+  };
+  const lodFor = o => {
+    if(!options.reviewLod)return null;
+    for(let child=o,parent=o.parent;parent;child=parent,parent=parent.parent)if(parent.isLOD) {
+      const level=parent.levels.findIndex(entry=>entry.object===child);
+      if(level>=0)return {group:parent.uuid,level,minDistance:parent.levels[level].distance,
+        maxDistance:parent.levels[level+1]?.distance??null,origin:transform(parent.matrixWorld)};
+      break;
+    }
+    return null;
+  };
   const transform = matrix => {
     const p=new T.Vector3(),q=new T.Quaternion(),s=new T.Vector3();matrix.decompose(p,q,s);
     return {position:p.toArray(),rotation:q.toArray(),scale:s.toArray()};
@@ -46,11 +61,22 @@ window.exportNativeFactory = function () {
     // One reusable native pallet prefab instead of one instance per cached pallet.
     if(binding&&binding.record.startsWith('wood-')&&binding.record!=='wood-0')return;
     const inverse=binding?binding.root.matrixWorld.clone().invert():null;
+    if(options.compactInstances&&o.isInstancedMesh) {
+      const parent=o.matrixWorld.clone();if(inverse)parent.premultiply(inverse);
+      const batch={geometry:geometry(o.geometry),materials:mats.map(mat),count:o.count,
+        parentMatrix:parent.toArray(),matrixEncoding:'base64-float32-little-endian-column-major',
+        matrices:encodeFloat32(o.instanceMatrix.array.subarray(0,o.count*16))};
+      if(binding)batch.binding={...binding,root:undefined,base:transform(binding.root.matrixWorld)};
+      const lod=lodFor(o);if(lod)batch.lod=lod;
+      if(o.instanceColor)batch.colors=encodeFloat32(o.instanceColor.array.subarray(0,o.count*3));
+      instanceBatches.push(batch);return;
+    }
     for(let i=0;i<(o.isInstancedMesh?o.count:1);i++) {
       const matrix=new T.Matrix4();
       if(o.isInstancedMesh){o.getMatrixAt(i,matrix);matrix.premultiply(o.matrixWorld);}else matrix.copy(o.matrixWorld);
       if(inverse)matrix.premultiply(inverse);
       const item={geometry:geometry(o.geometry),materials:mats.map(mat),transform:transform(matrix)};
+      const lod=lodFor(o);if(lod)item.lod=lod;
       if(binding) {
         item.binding={...binding,root:undefined,base:transform(binding.root.matrixWorld)};
       }
@@ -59,6 +85,7 @@ window.exportNativeFactory = function () {
     }
   });
   const brick={geometry:geometry(d.bricks.geometry),materials:d.bricks.material.map(mat)};
-  return {schema:'brickflow.native-geometry.v1',geometries,materials,instances,brick,
+  return {schema:options.compactInstances?'brickflow.authoring-geometry.v2':'brickflow.native-geometry.v1',
+    geometries,materials,instances,...(options.compactInstances?{instanceBatches}:{}),brick,
     reference:'greenfield_30',units:'metres',coordinates:'Three.js Y-up; runtime converts to UE centimetres'};
 };
