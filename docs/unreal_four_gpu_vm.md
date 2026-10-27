@@ -64,8 +64,19 @@ suplantando a Jacob.
 y artefactos completos desde la primera VM de cuatro GPU. Reinstala Unreal
 desde el mismo ZIP verificado y recupera Chromium para el entorno copiado.
 No genera otra película. Excluye staging de transferencia, PID y registros
-administrativos que son propios de cada máquina. En este checkpoint la copia
-de Jacob sigue en marcha. Las dos ofertas suman 18.792 USD/h.
+administrativos que son propios de cada máquina. La copia de Jacob terminó:
+176,043,736,781 bytes de artefactos transferidos. Las dos ofertas suman
+18.792 USD/h.
+
+La verificación propia de Jacob comprobó 31 hashes del proyecto y scripts de
+render idénticos. Unreal arrancó en los cuatro adaptadores: cada uno pasó la
+auditoría numérica completa de 11,867 frames (`cameraAuditOnly=true`). También
+pasaron las cuatro pruebas NVENC con salida nula. Blender 4.5.3 y Chromium
+156.0.8078.4 arrancan y el MP4 copiado coincide con su hash original. No se
+generó otra película ni se presenta esa auditoría como validación visual.
+Evidencia: `artifacts/unreal_jacob_four_gpu/jacob-final-verification.json`.
+La clave temporal de copia se revocó al terminar; el acceso Brev de Jacob se
+conserva.
 
 Jacob puede conectar con su cuenta:
 
