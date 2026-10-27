@@ -4,7 +4,6 @@ window.FactoryLogistics=({Resource,B,L,D,H})=>({
  initLogistics(){
   this.stored=0;this.loaded=0;this.shipped=0;this.produced=0;this.productionEnd=0;
   this.stock=[];this.orders=[];this.tasks=[];this.fleetPlans=[];this.fleetCalendar=new Map();
-  this.padLocks=this.lanes.map(()=>new Resource(this));
   this.storage=Array.from({length:4},(_,category)=>Array.from({length:9},(_,i)=>({category,id:category+'-'+i,x:66+category*6,z:-12+i*3,state:'free',pallet:null}))).flat();
   this.docks=Array.from({length:4},(_,category)=>({category,z:26+category*8,order:null,queued:false,lock:new Resource(this)}));
   for(const d of this.docks){this.add('dock-lift-'+d.category,[98,.164,d.z,0],'dockLift');this.ensureTruck(d.category);}
@@ -13,25 +12,28 @@ window.FactoryLogistics=({Resource,B,L,D,H})=>({
  *dispatchPallet(job){
   const category=job.shade===null?0:job.shade+1;let slot;
   while(!(slot=this.storage.find(s=>s.category===category&&s.state==='free')))yield this.changed;
-  slot.state='reserved';yield this.padLocks[job.lane.id].request();yield this.dispatch.request();
-  const tool='dispatch',ids=job.ids.concat(job.wood),source=this.rec(job.wood).p.slice(),height=.96,target=[58.5,.224,job.lane.z,0];
+  slot.state='reserved';yield this.dispatch.request();
+  const tool='dispatch',ids=job.ids.concat(job.wood),source=this.rec(job.wood).p.slice(),height=.96,target=[slot.x,.224,slot.z,0];
   yield* this.move([tool],[[source[0]+1.4,4,source[2],0]],1.25,'finished-frame-approach');
   yield* this.move([tool],[[source[0]+1.4,source[1]+height,source[2],0]],.6,'lower-pallet-lifting-frame');
   yield* this.move([tool],[[source[0],source[1]+height,source[2],0]],.35,'insert-supported-pallet-forks');yield .25;
   yield* this.carry([{head:tool,ids,to:[source[0],4,source[2],0]}],.6,'lift-supported-output-pallet');job.lane.branches[job.well].release();
   yield* this.carry([{head:tool,ids,to:[target[0],4,target[2],0]}],1.25,'finished-pallet-bridge');
-  yield* this.carry([{head:tool,ids,to:[target[0],target[1]+height,target[2],0]}],.6,'lower-pallet-on-handoff');yield .25;
-  const pallet={id:this.pallets.length,t:this.env.now,producedAt:job.completedAt,ids:job.ids.slice(),wood:job.wood,shade:job.shade,category,lane:job.lane.id,well:job.well,state:'handoff',slot:slot.id};
+  // Reserve the low gantry envelope in the same traffic calendar used by AMRs.
+  const descent=4-(target[1]+height),vertical=Math.max(1.5*descent/.6,Math.sqrt(3*descent)),withdraw=Math.max(1.5*1.4/.35,Math.sqrt(3*1.4)),hold=2*vertical+withdraw+.25,centre=[target[0]+1.3,0,target[2],0];
+  const permitted=this.reserveFleet({id:'gantry'},[{from:centre,to:centre,dt:hold}]);if(permitted>this.env.now)yield permitted-this.env.now;
+  yield* this.carry([{head:tool,ids,to:[target[0],target[1]+height,target[2],0]}],.6,'lower-pallet-in-warehouse');yield .25;
+  const pallet={id:this.pallets.length,t:this.env.now,producedAt:job.completedAt,ids:job.ids.slice(),wood:job.wood,shade:job.shade,category,lane:job.lane.id,well:job.well,state:'placing',slot:slot.id};
   this.pallets.push(pallet);this.delivered++;this.mark();
   yield* this.move([tool],[[target[0]+1.4,target[1]+height,target[2],0]],.35,'withdraw-supported-pallet-forks');
   yield* this.move([tool],[[target[0]+1.4,4,target[2],0]],.6,'raise-empty-finished-frame');this.dispatch.release();
-  this.tasks.push({kind:'store',pallet,slot,pad:job.lane.id,created:this.env.now});this.wake();
+  slot.state='stored';slot.pallet=pallet.id;pallet.state='stored';pallet.storedAt=this.env.now;this.stock.push(pallet);this.stored++;this.mark();this.queueShipping();this.wake();
  },
  ensureTruck(category){
   const dock=this.docks[category];if(dock.order)return dock.order;
   const n=this.orders.filter(o=>o.category===category).length+1,id='truck-'+category+'-'+n;
   const order={id,number:n,category,capacity:8,reserved:0,loaded:0,status:'arriving',ready:this.env.event(),ids:[],palletIds:[],dock:category};
-  this.orders.push(order);dock.order=order;this.add(id,[54,0,dock.z,0],'truck');this.env.process(this.arriveTruck(order));return order;
+  this.orders.push(order);dock.order=order;this.add(id,[54,0,dock.z,0],'truck').visible=this.env.now;this.env.process(this.arriveTruck(order));return order;
  },
  *arriveTruck(order){const d=this.docks[order.category];yield* this.move([order.id],[[85,0,d.z,0]],.8,'truck-reverse-to-dock');order.status='awaiting stock';order.ready.succeed();this.mark();this.queueShipping()},
  queueShipping(){
@@ -44,15 +46,6 @@ window.FactoryLogistics=({Resource,B,L,D,H})=>({
   const drive=(points,kind)=>{for(const point of points){const to=[point[0],0,point[1],0],d=Math.hypot(to[0]-at[0],to[2]-at[2]);if(d<1e-6)continue;const dt=Math.max(1.5*d/1.2,Math.sqrt(6*d/.6));steps.push({kind,from:at.slice(),to,dt});at=to;}};
   const lift=(to,kind,onEnd)=>{const dt=Math.max(.7,1.5*Math.abs(to-height)/.2,Math.sqrt(6*Math.abs(to-height)/.6));steps.push({kind,from:at.slice(),to:at.slice(),height:[height,to],dt,onEnd});height=to;};
   const hold=(kind,onEnd)=>steps.push({kind,from:at.slice(),to:at.slice(),dt:.6,onEnd});
-  if(task.kind==='store'){
-   drive([[v.home[0],-17.5],[61.6,-17.5],[61.6,this.lanes[p.lane].z]],'amr-empty-approach');
-   drive([[59.9,this.lanes[p.lane].z]],'amr-fork-insertion');hold('amr-pallet-confirm',()=>{v.cargo=p.ids.concat(p.wood);p.state='to-storage'});lift(.424,'amr-lift-pallet');
-   drive([[61.6,this.lanes[p.lane].z]],'amr-clear-handoff');hold('amr-handoff-clear',()=>this.padLocks[task.pad].release());
-   drive([[61.6,-17.5],[slot.x+2.7,-17.5],[slot.x+2.7,slot.z],[slot.x+1.4,slot.z]],'amr-loaded-to-storage');
-   lift(.224,'amr-place-in-storage',()=>{v.cargo=null});drive([[slot.x+2.7,slot.z]],'amr-fork-withdrawal');
-   hold('warehouse-location-confirm',()=>{slot.state='stored';slot.pallet=p.id;p.state='stored';p.storedAt=this.env.now;this.stock.push(p);this.stored++;this.mark();this.queueShipping()});
-   drive([[slot.x+2.7,-17.5],[v.home[0],-17.5],[v.home[0],v.home[2]]],'amr-return-home');
-  }else{
    drive([[v.home[0],-17.5],[slot.x+2.7,-17.5],[slot.x+2.7,slot.z],[slot.x+1.4,slot.z]],'amr-empty-to-stock');
    hold('amr-pallet-confirm',()=>{v.cargo=p.ids.concat(p.wood);p.state='to-order'});lift(.424,'amr-lift-pallet');drive([[slot.x+2.7,slot.z]],'amr-clear-storage');
    hold('warehouse-slot-release',()=>{slot.state='free';slot.pallet=null;this.mark();this.wakeDemand()});
@@ -60,7 +53,6 @@ window.FactoryLogistics=({Resource,B,L,D,H})=>({
    lift(.224,'amr-place-on-dock',()=>{v.cargo=null;p.state='dock'});drive([[101,task.dock.z]],'amr-clear-dock');
    hold('amr-dock-clear',()=>{this.env.process(this.loadTruck(task));this.mark()});
    drive([[101,-17.5],[v.home[0],-17.5],[v.home[0],v.home[2]]],'amr-return-home');
-  }
   return steps;
  },
  reserveFleet(v,steps){
