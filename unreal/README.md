@@ -17,8 +17,8 @@ funciona en el equipo donde se abre el túnel.
 Para restablecerlo desde WSL si el túnel se cierra:
 
 ```bash
-./.deps/brev/bin/brev exec brickflow-cinematic @unreal/tools/start_interactive_cloud.sh
-./.deps/brev/bin/brev port-forward brickflow-cinematic -p 6080:6080
+./.deps/brev/bin/brev exec brickflow-cinematic-4gpu @unreal/tools/start_interactive_cloud.sh
+./.deps/brev/bin/brev port-forward brickflow-cinematic-4gpu -p 6080:6080
 ```
 
 El escritorio usa Xvfb `:81`, x11vnc en loopback `5901` y websockify/noVNC en
@@ -36,7 +36,7 @@ En Linux con GPU NVIDIA, Vulkan y un escritorio gráfico:
 ./Brickflow.sh -vulkan -ResX=1920 -ResY=1080 -Windowed
 ```
 
-En la VM `brickflow-cinematic`, el build está en
+En la VM `brickflow-cinematic-4gpu`, el build está en
 `/home/shadeform/workspace/brickflow-native/Packaged/Linux/`.
 El proyecto editable está en `/home/shadeform/workspace/brickflow-native/`.
 
@@ -71,7 +71,7 @@ VM; el editor no es necesario para ejecutar el build empaquetado.
 ## Compilar y capturar en Brev
 
 Los scripts `tools/*_cloud.sh` usan rutas explícitas de esa VM y se ejecutan con
-`brev exec brickflow-cinematic @ruta/al/script.sh`. El orden de preparación es
+`brev exec brickflow-cinematic-4gpu @ruta/al/script.sh`. El orden de preparación es
 instalar engine, preparar geometría, crear material en editor, compilar y
 empaquetar. `prepare_geometry.py` requiere Playwright/Chromium, solo al preparar
 assets; el ejecutable no los necesita.

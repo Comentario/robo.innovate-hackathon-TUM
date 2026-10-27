@@ -4,7 +4,8 @@ Instancia `brickflow-cinematic-4gpu`, Brev ID `eztxpn39l`, creada el 27/10/2026.
 Oferta consultada por CLI: `verda_RTXPro6000x4`, 9.396 USD/h; 120 vCPU,
 360 GiB RAM, disco 1 TB, cuatro RTX PRO 6000 Blackwell Server Edition de
 96 GB. El sistema instalado es Ubuntu 24.04.4 y driver NVIDIA 580.126.09.
-La instancia original `brickflow-cinematic` se conserva.
+La instancia original `brickflow-cinematic` (`79khozc7`) fue eliminada de Brev
+después de verificar íntegramente su restauración en esta VM.
 
 Unreal 5.8.4 se instaló desde el ZIP original del propietario: SHA-256
 `cdff1e0c02010eb4fcf9c38d293cfd0f1afda09272256c146d73db52f570f607`.
@@ -43,5 +44,33 @@ No se copiaron las credenciales personales del equipo local.
 Los históricos de `Saved` se trasladan tras cerrar los renders. Los PID y
 archivos temporales `transfer-*` no se restauran. Estado en la VM original:
 `Saved/Migration/copy.status`; log `Saved/Migration/copy.log`.
-En este checkpoint el software ya funciona y la transferencia de históricos
-continúa. Las carpetas `.migration` y `.engine-transfer` son staging temporal.
+La transferencia y restauración terminaron. SHA-256 del archivo de históricos:
+`e04523a1e03d06da56ab7d423ca7b51ba753a1490903c436ea149cc6fc99f2c9`.
+Se comprobaron las 2,333 entradas restauradas, hashes del proyecto y del vídeo,
+traza nativa completa y timestamps del MP4. Evidencia local:
+`artifacts/unreal_four_gpu/final-verification.json` y `source-retirement.json`.
+La clave temporal que usaba la VM anterior se revocó tras eliminarla.
+
+## Segunda VM dedicada a Jacob
+
+`brickflow-cinematic-jacob-4gpu`, ID `f9firmbdt`, misma oferta
+`verda_RTXPro6000x4`, Ubuntu 24.04.4 y driver 580.126.09. El miembro
+`jacob.behrendt03-5174e3` / `jacob.behrendt03@gmail.com` tiene acceso SSH
+confirmado por Brev a `shadeform`. La VM está creada en la organización del
+propietario; no se transfirieron credenciales personales ni se inició sesión
+suplantando a Jacob.
+
+`replicate_peer_cloud.sh` copia software, proyecto, repositorio, configuración
+y artefactos completos desde la primera VM de cuatro GPU. Reinstala Unreal
+desde el mismo ZIP verificado y recupera Chromium para el entorno copiado.
+No genera otra película. Excluye staging de transferencia, PID y registros
+administrativos que son propios de cada máquina. En este checkpoint la copia
+de Jacob sigue en marcha. Las dos ofertas suman 18.792 USD/h.
+
+Jacob puede conectar con su cuenta:
+
+```bash
+brev login
+brev org set a.saldarriaga-6a4314-xdgb
+brev shell brickflow-cinematic-jacob-4gpu
+```
