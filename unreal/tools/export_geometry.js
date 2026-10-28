@@ -53,22 +53,42 @@ window.exportNativeFactory = function (options = {}) {
   }
   d.scene.updateMatrixWorld(true);
   d.scene.traverse(o=>{
-    if(!o.isMesh||o===d.bricks)return;
+    if(!o.isMesh||(o===d.bricks&&!options.snapshotWorld))return;
+    if(options.snapshotWorld) {
+      // A frozen authoring state, including current visibility and brick matrices.
+      // Use nearest LOD consistently; never render both levels over one another.
+      for(let p=o;p;p=p.parent) {
+        if(p.parent?.isLOD) {
+          if(p!==p.parent.levels[0].object)return;
+        } else if(!p.visible)return;
+      }
+    }
     const mats=Array.isArray(o.material)?o.material:[o.material];
     if(mats.every(m=>!m.visible||m.opacity===0))return;
     let binding=null;
-    for(let p=o;p;p=p.parent)if(roots.has(p)){binding=roots.get(p);break;}
+    if(!options.snapshotWorld)for(let p=o;p;p=p.parent)if(roots.has(p)){binding=roots.get(p);break;}
     // One reusable native pallet prefab instead of one instance per cached pallet.
     if(binding&&binding.record.startsWith('wood-')&&binding.record!=='wood-0')return;
     const inverse=binding?binding.root.matrixWorld.clone().invert():null;
     if(options.compactInstances&&o.isInstancedMesh) {
       const parent=o.matrixWorld.clone();if(inverse)parent.premultiply(inverse);
-      const batch={geometry:geometry(o.geometry),materials:mats.map(mat),count:o.count,
+      let matrices=o.instanceMatrix.array.subarray(0,o.count*16),colors=o.instanceColor?.array.subarray(0,o.count*3),count=o.count;
+      if(options.snapshotWorld) {
+        const kept=[],tints=[];
+        for(let i=0;i<o.count;i++) {
+          const values=matrices.subarray(i*16,i*16+16);
+          if(Math.hypot(values[0],values[1],values[2])<1e-8)continue;
+          kept.push(...values);if(colors)tints.push(...colors.subarray(i*3,i*3+3));
+        }
+        count=kept.length/16;if(!count)return;
+        matrices=new Float32Array(kept);if(colors)colors=new Float32Array(tints);
+      }
+      const batch={geometry:geometry(o.geometry),materials:mats.map(mat),count,
         parentMatrix:parent.toArray(),matrixEncoding:'base64-float32-little-endian-column-major',
-        matrices:encodeFloat32(o.instanceMatrix.array.subarray(0,o.count*16))};
+        matrices:encodeFloat32(matrices)};
       if(binding)batch.binding={...binding,root:undefined,base:transform(binding.root.matrixWorld)};
       const lod=lodFor(o);if(lod)batch.lod=lod;
-      if(o.instanceColor)batch.colors=encodeFloat32(o.instanceColor.array.subarray(0,o.count*3));
+      if(colors)batch.colors=encodeFloat32(colors);
       instanceBatches.push(batch);return;
     }
     for(let i=0;i<(o.isInstancedMesh?o.count:1);i++) {

@@ -29,6 +29,10 @@ ABrickflowStage::ABrickflowStage()
 void ABrickflowStage::BeginPlay()
 {
     Super::BeginPlay();
+    FString ReviewPath;
+    if(FParse::Value(FCommandLine::Get(),TEXT("BrickflowReview="),ReviewPath)){
+        BeginReview(ReviewPath);return;
+    }
     FString Json;
     if(!FFileHelper::LoadFileToString(Json,*(FPaths::ProjectContentDir()/TEXT("Data/factory.json")))||
         !FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Json),Asset)){
@@ -99,6 +103,7 @@ void ABrickflowStage::RunNative(double PreserveTime)
 void ABrickflowStage::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+    if(bReviewMode){TickReview(DeltaSeconds);return;}
     if(Model&&!bBusy&&FParse::Param(FCommandLine::Get(),TEXT("BrickflowExerciseControls"))){
         if(ControlExercise==0){
             TogglePlayback();TogglePlayback();for(int32 I=0;I<5;++I)CycleSpeed();
@@ -174,6 +179,7 @@ void ABrickflowStage::EndPlay(const EEndPlayReason::Type Reason)
 }
 void ABrickflowStage::SelectChapter(int32 Index)
 {
+    if(bReviewMode){SelectReviewCamera(Index);return;}
     Chapter=FMath::Clamp(Index,0,5);
     const double P[][6]={{35,-9,0,125,.82,.8},{26.8,1,-13,10,.8,.75},{38.5,1,-13,15,.9,.8},
         {44.8,1,-13,13,1.,.85},{59,1,0,40,.9,.78},{35,-9,0,125,.82,.8}};

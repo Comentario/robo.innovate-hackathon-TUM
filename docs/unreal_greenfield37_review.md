@@ -4,6 +4,12 @@ Estado: **referencia no validada; preparación de autoría, sin película nueva*
 Se trabajó en `brickflow-cinematic-4gpu`. La simulación nativa sigue fijada a
 greenfield_30; este estudio no sustituye su geometría ni su lógica.
 
+Actualización posterior: la copia `f8bacc33` ya tiene geometría y estados
+congelados cargados en un proyecto Unreal de revisión separado, con pruebas
+de iluminación A/B. Véase
+[Última planta en Unreal: autoría e iluminación](unreal_greenfield37_authoring.md).
+Esta actualización tampoco constituye un port del movimiento nativo.
+
 ## Referencia observada
 
 El archivo `artifacts/greenfield_37/index.html` se regeneró durante la revisión.

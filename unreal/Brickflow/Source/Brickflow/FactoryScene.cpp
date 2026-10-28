@@ -50,7 +50,7 @@ UMaterialInstanceDynamic* ABrickflowStage::Material(const FString& ID,const FLin
     MID->SetScalarParameterValue(TEXT("Metallic"),Metallic);
     FString Image;
     if(Source->TryGetStringField(TEXT("texture"),Image)){
-        auto* Texture=FImageUtils::ImportFileAsTexture2D(FPaths::ProjectContentDir()/TEXT("Data")/Image);
+        auto* Texture=FImageUtils::ImportFileAsTexture2D((bReviewMode?ReviewRoot:FPaths::ProjectContentDir()/TEXT("Data"))/Image);
         if(Texture)MID->SetTextureParameterValue(TEXT("BaseTexture"),Texture);
     }
     GeneratedMaterials.Add(MID);MaterialCache.Add(Key,MID);return MID;

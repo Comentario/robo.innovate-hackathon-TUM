@@ -10,6 +10,7 @@ class UMaterialInterface;
 class UStaticMesh;
 class UCameraComponent;
 class FJsonObject;
+class FJsonValue;
 
 UCLASS()
 class BRICKFLOW_API ABrickflowStage : public AActor
@@ -79,6 +80,19 @@ private:
     std::shared_ptr<brickflow::Simulation> Model;
     std::vector<brickflow::Request> RecipeRequests;
     FString Failure;
+    // Isolated static authoring inspection. This mode never starts Model or a film.
+    bool bReviewMode=false,bReviewCandidate=false;
+    FString ReviewRoot,ReviewVariant;
+    TSharedPtr<FJsonObject> ReviewManifest;
+    TArray<TSharedPtr<FJsonObject>> ReviewCameras;
+    int32 ReviewInstanceCount=0;
+    TArray<TSharedPtr<FJsonValue>> ReviewMatrixSamples;
+    UPROPERTY() TArray<TObjectPtr<AActor>> ReviewLights;
+    void BeginReview(const FString& ManifestPath);
+    void TickReview(float DeltaSeconds);
+    void SelectReviewCamera(int32 Index);
+    void ToggleReviewLighting();
+    void BuildReviewLights();
     FString CapturePath;
     FString MovieDirectory,MoviePending;
     int32 MovieFrames=0,MovieFrame=0,MovieSettle=0;

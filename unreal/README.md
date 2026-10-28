@@ -93,6 +93,12 @@ zonas observadas en el MP4 actual y propuestas para reubicar en la planta final.
 El perfil `lighting/presentation-review.v1.json` conserva la base y los criterios
 de comparación; sus cambios de luz todavía no están aplicados ni aprobados.
 
+La referencia nueva `greenfield_37` también tiene un proyecto de revisión
+aislado con estados congelados renderizados en Unreal y ocho comparaciones A/B.
+Ver [`docs/unreal_greenfield37_authoring.md`](../docs/unreal_greenfield37_authoring.md).
+Ese modo no reproduce la simulación nueva: `-BrickflowReview=manifest.json`
+carga únicamente geometría y poses de autoría, sin iniciar el modelo anterior.
+
 ## Alcance y evidencia
 
 La escena reproduce inspección, rechazo, canales/reservas finitas, mezcla,

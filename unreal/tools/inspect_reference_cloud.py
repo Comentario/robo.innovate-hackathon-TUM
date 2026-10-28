@@ -22,6 +22,8 @@ def unreal_camera(camera):
                   unrealForward=ue,
                   unrealPitchYawDegrees=[math.degrees(math.atan2(ue[2], math.hypot(*ue[:2]))), math.degrees(math.atan2(ue[1], ue[0]))],
                   unrealHorizontalFov=math.degrees(2*math.atan(math.tan(math.radians(camera['verticalFov'])/2)*16/9)))
+    if 'target' in camera:
+        result['unrealTargetCm'] = [camera['target'][i]*100 for i in (0, 2, 1)]
     return result
 
 
