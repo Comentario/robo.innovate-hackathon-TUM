@@ -13,7 +13,8 @@ def gallery(output,status,delivered,error=''):
     ready={x['number'] for x in status.get('ready',[])}
     for number in range(1,11):
         name=f'Tour_{number:02}';entry=delivered.get(str(number));state='Delivered' if entry else 'Downloading' if number in ready else 'Queued / rendering'
-        content=f'<video controls preload="none" poster="{name}/poster.jpg" src="{name}/tour-1080p.mp4"></video><p><a href="{name}/tour-4k.mp4">4K master</a> · <a href="{name}/tour-1080p.mp4">1080p review</a> · <a href="{name}/tour.json">Camera plan</a></p>' if entry else '<div class="placeholder">The complete movie will appear here after verification.</div>'
+        master=f'<a href="{name}/tour-4k.mp4">4K master</a> · ' if entry and any(f['file']=='tour-4k.mp4' for f in entry['files']) else ''
+        content=f'<video controls preload="none" poster="{name}/poster.jpg" src="{name}/tour-1080p.mp4"></video><p>{master}<a href="{name}/tour-1080p.mp4">1080p review</a> · <a href="{name}/tour.json">Camera plan</a></p>' if entry else '<div class="placeholder">The complete movie will appear here after verification.</div>'
         cards.append(f'<article><h2>Tour {number:02} <small>{state}</small></h2>{content}</article>')
     active=' · '.join(f'GPU {k}: Tour {v["tour"]:02} / {v["stage"]}'+(f' / frame {v["latestFrame"]:,} of {v["totalFrames"]:,}' if 'latestFrame' in v else '') for k,v in status.get('active',{}).items())
     text='<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Brickflow · Final 37 tours</title><style>body{background:#0b0e13;color:#e9edf3;font:16px system-ui;margin:40px auto;max-width:1400px;padding:0 24px}h1{font-size:40px}p,small{color:#aebcca}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:24px}article{background:#141b25;border:1px solid #283344;border-radius:18px;padding:22px}small{font-size:14px;margin-left:12px}video{width:100%;border-radius:8px}a{color:#9ddd67}.placeholder{aspect-ratio:16/9;display:grid;place-items:center;background:#0b1018;border-radius:8px;padding:20px}aside{padding:18px;background:#182318;border-radius:12px;margin:24px 0}</style>'
@@ -41,7 +42,7 @@ def ready_order(items,cache,delivered):
     return sorted((item for item in items if str(item['number']) not in delivered),key=priority)
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--host',default='brickflow-cinematic-4gpu');p.add_argument('--remote-root',default='/home/shadeform/workspace/brickflow-final37-night');p.add_argument('--cache',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--once',action='store_true');a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--host',default='brickflow-cinematic-4gpu');p.add_argument('--remote-root',default='/home/shadeform/workspace/brickflow-final37-night');p.add_argument('--cache',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--once',action='store_true');p.add_argument('--1080-only',action='store_true',dest='only_1080');a=p.parse_args()
     a.cache.mkdir(parents=True,exist_ok=True);a.output.mkdir(parents=True,exist_ok=True)
     manifest=a.output/'delivery-status.json';delivered=json.loads(manifest.read_text()).get('delivered',{}) if manifest.exists() else {};status={};errors=0
     while True:
@@ -51,6 +52,10 @@ def main():
                 number=item['number'];name=f'Tour_{number:02}'
                 if str(number) in delivered:continue
                 report=json.loads(remote(a.host,a.remote_root+'/'+item['path']));assert report['complete'] and report['physicalOverlays']==2 and report['inspectionNeverPaused']
+                if a.only_1080:
+                    report['files']=[f for f in report['files'] if f['file']!='tour-4k.mp4']
+                    assert any(f['file']=='tour-1080p.mp4' for f in report['files'])
+                    report['deliveryResolution']='1080p'
                 pending=[]
                 for file in report['files']:
                     assert '/' not in file['file'] and '..' not in file['file']

@@ -185,3 +185,37 @@ Una captura de prueba de dos frames verificó ese canal independiente. Si cambia
 el proceso principal, la asistencia se detiene y deja la cola original al mando.
 El estado auxiliar se registra en `ahead-status.json`. Esta optimización usa las
 mismas cuatro GPUs ya contratadas y mantiene los ajustes de calidad del render.
+
+## Revisión de sincronización y entrega 1080p
+
+El propietario detectó desfase en los overlays del recorrido 02 y pidió descargar
+solo 1080p por el momento. Esa instrucción sustituye la descarga 4K prevista al
+principio; los masters y las descargas anteriores se conservan.
+
+`sync_night_overlays.py` mantiene sin cambios el reloj, los encuadres y los frames
+nativos. Retima únicamente los videos físicos. En Franka se revisaron visualmente
+el contacto/inicio del levantamiento (6,95 s del proxy) y la colocación (10,65 s);
+se alinean con los eventos reales del calendario de Unreal. Son referencias
+editoriales manuales, con precisión limitada por el video original, no una
+validación cinemática física. El feed termina antes de empezar el siguiente ciclo
+y no se prolonga mediante un fotograma congelado.
+
+Para la inspección normal se usa el tramo en movimiento del resultado `GOOD #47`
+(4,6–7,85 s), alineando su paso central con el ladrillo válido de la simulación.
+El recorrido 10 utiliza el tramo inicial `BAD #28`, antes del siguiente resultado
+válido, durante el paso del ladrillo rechazado. Los IDs físicos y sintéticos no
+se emparejan; no se cambian etiquetas, grupos ni puntuaciones del productor.
+La simulación de inspección continúa a 1×.
+
+La revisión se ejecuta mediante `brickflow-final37-sync.service`, separada de la
+cola original. Conserva enlaces a los chunks limpios antes de su limpieza. Para
+los primeros recorridos, cuyos chunks ya habían sido eliminados tras verificar
+el master, vuelve a capturar únicamente las ventanas de los overlays, con la
+misma cámara, fuente, resolución 4K y asentamiento temporal. Usa puertos 7971–7974.
+La composición final es 1080p. Audita los frames codificados en cada ancla, los
+hashes, la secuencia completa de frames y la traza real del reloj antes de
+publicar `delivery.json`.
+
+Las nuevas entregas se guardan dentro de la carpeta solicitada, en
+`Final37_Night_Tours/Synced_v2`. La galería de esa revisión enlaza únicamente
+resoluciones entregadas. La versión anterior sigue conservada para comparación.

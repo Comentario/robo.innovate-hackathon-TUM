@@ -1,0 +1,19 @@
+[Unit]
+Description=Synchronize physical overlays against final37 source events
+After=network-online.target brickflow-final37-night.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=shadeform
+WorkingDirectory=/home/shadeform/workspace/brickflow-final37-night
+ExecStart=/home/shadeform/workspace/brickflow-cinematic/tools/python/bin/python -u /home/shadeform/workspace/brickflow-final37-night/sync_night_overlays.py --root /home/shadeform/workspace/brickflow-final37-night --gpu 0
+Restart=on-failure
+RestartSec=30
+TimeoutStopSec=40
+Environment=PYTHONUNBUFFERED=1
+StandardOutput=append:/home/shadeform/workspace/brickflow-final37-night/Logs/sync-service.log
+StandardError=append:/home/shadeform/workspace/brickflow-final37-night/Logs/sync-service.log
+
+[Install]
+WantedBy=multi-user.target
