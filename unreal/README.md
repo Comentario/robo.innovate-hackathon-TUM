@@ -87,6 +87,12 @@ se genera con `tools/render_film_cloud.sh`: 30 fps, reloj continuo sin cortes, r
 40× en el timelapse final, sin UI y con master NVENC lossless. El stride debe ser 1 para el vídeo final;
 los strides mayores solo sirven para revisar encuadres.
 
+La revisión de iluminación de presentación está en
+[`docs/unreal_lighting_review.md`](../docs/unreal_lighting_review.md), con ocho
+zonas observadas en el MP4 actual y propuestas para reubicar en la planta final.
+El perfil `lighting/presentation-review.v1.json` conserva la base y los criterios
+de comparación; sus cambios de luz todavía no están aplicados ni aprobados.
+
 ## Alcance y evidencia
 
 La escena reproduce inspección, rechazo, canales/reservas finitas, mezcla,

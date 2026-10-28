@@ -1,0 +1,119 @@
+{
+  "schema": "brickflow.presentation-lighting-review.v1",
+  "status": "observed-baseline-with-untested-proposals",
+  "reviewDate": "2026-10-28",
+  "reference": {
+    "simulation": "greenfield_30",
+    "film": "artifacts/unreal_continuous/delivery/brickflow-continuous-4k.mp4",
+    "expectedSha256": "b13bab565995120a5d4b8716a5adcba91d342d96b039137267f3127efa94b6ad",
+    "width": 3840,
+    "height": 2160,
+    "fps": 30,
+    "durationSeconds": 395.56666666666666,
+    "sampleSeconds": [0, 36, 93, 100.5, 120, 130.5, 140, 155, 220, 260, 291, 310, 330, 345, 370, 390],
+    "stills": "artifacts/unreal_lighting_review/current-film",
+    "evidence": "Encoded film stills, visually inspected. No proposed lighting change has been rendered or approved."
+  },
+  "existingRig": {
+    "source": "unreal/Brickflow/Source/Brickflow/FactoryScene.cpp:216",
+    "units": "Unreal centimeters; intensity numbers are source values, not measured illuminance",
+    "largeRectLights": [
+      {"position": [1500, -1800, 3800], "target": [1500, 0, 0], "intensity": 1800000},
+      {"position": [4000, 2500, 3000], "target": [4000, 0, 0], "intensity": 1600000},
+      {"position": [6500, -1000, 3200], "target": [6500, 0, 0], "intensity": 1800000}
+    ],
+    "largeRectSize": [3500, 3500],
+    "largeRectAttenuationRadius": 20000,
+    "inputFill": {"position": [-800, -600, 1000], "target": [-1300, 0, 120], "intensity": 180000, "size": [1400, 600], "radius": 3000, "castShadows": false},
+    "profileFill": {"position": [2600, -800, 650], "target": [2150, -800, 165], "intensity": 100000, "size": [800, 600], "radius": 1500, "castShadows": false},
+    "skyLightIntensity": 0.45,
+    "exposure": {"autoExposureMinBrightness": 1, "autoExposureMaxBrightness": 1, "bias": 0},
+    "note": "The source does not explicitly configure a sky cubemap here. Inspect actual sky contribution before relying on it. This records source settings, not measured light output."
+  },
+  "findings": [
+    {
+      "id": "L01", "title": "Input pallet side faces", "priority": "P2", "seconds": 0,
+      "region": [0.17, 0.41, 0.70, 0.83],
+      "observation": "Brick tops read well; lower side faces, pallet support and pickup clearance are less readable beneath the heads.",
+      "proposal": "Retain the existing input fill. Trial a broad neutral side bounce aimed across lower stack faces; avoid adding more overhead light to already bright tops.",
+      "anchor": "input cart bounds and top-layer pickup envelope",
+      "acceptance": "The bottom pallet edge and head-to-stack clearance remain visible without washing out the warm brick surfaces."
+    },
+    {
+      "id": "L02", "title": "Dehacking head separation", "priority": "P2", "seconds": 36,
+      "region": [0.17, 0.25, 0.78, 0.53],
+      "observation": "Pickup faces are readable, while dark vertical rods and beam undersides merge into the surrounding gantry.",
+      "proposal": "Trial a restrained broad rear/side edge light on the head bank, plus soft underside fill where needed. Preserve depth and avoid reflective hotspots on the stack tops.",
+      "anchor": "dehacking head-bank bounds",
+      "acceptance": "Head silhouettes and vertical travel separate from the gantry throughout the layer lift."
+    },
+    {
+      "id": "L03", "title": "Row transfer and receiving subbelt", "priority": "P1", "seconds": 100.5,
+      "region": [0.12, 0.33, 0.53, 0.87],
+      "observation": "The row is visible, but dark receiving-belt edges, supports and adjacent gripper parts offer weak separation. The cyan receiving surface draws disproportionate attention.",
+      "proposal": "Rebalance the existing profile fill toward row side faces and the receiving edge. Trial a soft opposite-side edge light on the gripper. Keep the physical-video matching profile camera fixed.",
+      "anchor": "row pickup-to-subbelt transfer envelope",
+      "acceptance": "Pickup, clearance and placement can be read in the fixed profile without lifting the whole frame or creating a cyan hotspot."
+    },
+    {
+      "id": "L04", "title": "Inspection head and reject junction", "priority": "P1", "seconds": 130.5,
+      "region": [0.32, 0.27, 0.67, 0.76],
+      "observation": "White light bars and silver rollers dominate. The dark head/support assembly has less visual definition, weakening the inspection-system hierarchy.",
+      "proposal": "Trial broad neutral side fill and a restrained edge light on the sensor housing. Balance bright bar surfaces after checking material/emission and exposure; retain readable brick color and the opaque reject belt.",
+      "anchor": "inspection portal, sensing footprint and reject junction",
+      "acceptance": "Housing, sensing area and reject branch are distinguishable during the seven-second hold; bright bars retain useful shape and do not obscure the bricks."
+    },
+    {
+      "id": "L05", "title": "Brick visibility across routing tables", "priority": "P2", "seconds": 155,
+      "region": [0.44, 0.43, 0.64, 0.68],
+      "observation": "Repeated bright roller highlights compete with small bricks; some brick side faces are dark relative to the transport surface.",
+      "proposal": "Trial soft cross-light grazing the brick side faces and rebalance key-light direction. Inspect roller roughness only if highlights still dominate after lighting changes; do not recolor the tracked brick.",
+      "anchor": "active routing tables and brick travel height",
+      "acceptance": "The tracked brick stays distinguishable at 1080p without changing its material identity or the process geometry."
+    },
+    {
+      "id": "L06", "title": "Pallet formation inside the frame", "priority": "P1", "seconds": 260,
+      "region": [0.43, 0.49, 0.67, 0.89],
+      "observation": "The forming stack is substantially darker than the exposed roller decks; frame bars overlap its front face.",
+      "proposal": "Trial a low broad side fill into the well and a subtle rear edge light. Keep genuine contact shading. Structural occlusion is a separate camera-composition issue and cannot be solved with light alone.",
+      "anchor": "selected output-well formation envelope",
+      "acceptance": "Successive layers remain legible during continuous accelerated formation without making the frame disappear or lighting the brick from within."
+    },
+    {
+      "id": "L07", "title": "Pallet face inside the bridge gripper", "priority": "P1", "seconds": 330,
+      "region": [0.40, 0.38, 0.63, 0.93],
+      "observation": "The yellow gripper top is prominent while the pallet face inside its opening is deeply shaded. Similar loss persists during the bridge journey.",
+      "proposal": "Trial broad side lighting covering the bridge travel envelope from both oblique directions. Balance the yellow top separately from the pallet face. Prefer stationary area lights over a camera-mounted spotlight.",
+      "anchor": "bridge pickup-to-deposit swept bounds",
+      "acceptance": "The carried pallet face and bottom support remain readable at 1x across the entire bridge path, not only at one camera position."
+    },
+    {
+      "id": "L08", "title": "Wide reveal coverage", "priority": "P2", "seconds": 370,
+      "region": [0.17, 0.24, 0.88, 0.86],
+      "observation": "The overview has brighter output decks and weaker input/gantry separation. The black surrounding void makes the boundary pronounced.",
+      "proposal": "Trial broad low-level perimeter/gantry separation and redistribute plant coverage. Preserve the dark background if desired; do not brighten empty space or use depth of field as a lighting substitute.",
+      "anchor": "whole-plant bounds and orbit envelope",
+      "acceptance": "Input, processing and output remain identifiable across the full orbit, with no exposure pumping or abrupt light activation."
+    }
+  ],
+  "finalSimulationCarryForward": {
+    "target": "the final agreed native simulation; greenfield_37 is currently an unvalidated reference",
+    "method": "Re-anchor semantic zones to final actor bounds and review camera paths; do not copy old absolute positions blindly.",
+    "newZonesNotYetObservedInThisFilm": ["AMR fork-to-pallet handoff", "classified storage faces and aisles", "dock platform and truck cargo interior"],
+    "constraints": [
+      "Preserve the native simulation clock, actor poses, physical-video profile and insertion holds.",
+      "Keep brick colors and producer groups/scores unchanged.",
+      "Keep exposure consistent; try local fill before a global exposure increase.",
+      "No product UI or visible studio-light geometry.",
+      "Any animated light adjustment must be continuous across camera transitions and parallel-render boundaries.",
+      "Lighting is presentation support, not evidence of validated physical inspection performance."
+    ],
+    "reviewProcedure": [
+      "Capture baseline and candidate at identical simulation times, poses, cameras, exposure and encoding settings.",
+      "Review P1 zones first at 4K and presentation-size 1080p.",
+      "Compare both holds, the complete bridge journey and the final full orbit.",
+      "Check bright bars and rollers, shadow detail, temporal stability and four-GPU boundary consistency.",
+      "Approve candidate stills and short previews before rendering a full replacement film."
+    ]
+  }
+}
