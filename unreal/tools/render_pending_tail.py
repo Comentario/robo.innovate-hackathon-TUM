@@ -23,16 +23,17 @@ def fingerprint(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 
 def main():
     from night_tours_worker import render_chunk,atomic,HASH,STOP
-    parser=argparse.ArgumentParser();parser.add_argument('--root',type=Path,required=True);a=parser.parse_args();root=a.root.resolve();area=root/'Ahead';area.mkdir(exist_ok=True)
+    parser=argparse.ArgumentParser();parser.add_argument('--root',type=Path,required=True);parser.add_argument('--main-service',default='brickflow-final37-night.service');a=parser.parse_args();root=a.root.resolve();area=root/'Ahead';area.mkdir(exist_ok=True)
     lock=threading.RLock();state=dict(schema='brickflow.night-tail-support.v1',state='waiting_for_idle_gpus',publishedChunks=[],helpers={},pid=os.getpid())
     def report():
         with lock:
             state['updatedAt']=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime());atomic(root/'ahead-status.json',state)
     def snapshot():
-        status=json.loads((root/'status.json').read_text());pid=int(subprocess.check_output(['systemctl','show','brickflow-final37-night.service','--value','-p','MainPID']))
+        status=json.loads((root/'status.json').read_text());pid=int(subprocess.check_output(['systemctl','show',a.main_service,'--value','-p','MainPID']))
         if pid<=0:return status,0
         os.kill(pid,0)
-        assert 'night_tours_worker.py' in Path(f'/proc/{pid}/cmdline').read_bytes().decode()
+        command=Path(f'/proc/{pid}/cmdline').read_bytes().decode()
+        assert 'night_tours_worker.py' in command and str(root) in command
         return status,pid
     for sig in (signal.SIGTERM,signal.SIGINT):signal.signal(sig,lambda *_:STOP.set())
     report();pairs=[];parent=0

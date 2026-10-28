@@ -1,0 +1,20 @@
+[Unit]
+Description=Use idle GPUs for future chunks of the last final37 tours
+After=network-online.target brickflow-final37-final.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=shadeform
+WorkingDirectory=/home/shadeform/workspace/brickflow-final37-final-v3
+ExecStart=/home/shadeform/workspace/brickflow-cinematic/tools/python/bin/python -u /home/shadeform/workspace/brickflow-final37-final-v3/render_pending_tail.py --root /home/shadeform/workspace/brickflow-final37-final-v3 --main-service brickflow-final37-final.service
+Restart=on-failure
+RestartSec=30
+KillMode=control-group
+TimeoutStopSec=30
+Nice=5
+StandardOutput=append:/home/shadeform/workspace/brickflow-final37-final-v3/Logs/tail-service.log
+StandardError=append:/home/shadeform/workspace/brickflow-final37-final-v3/Logs/tail-service.log
+
+[Install]
+WantedBy=multi-user.target
