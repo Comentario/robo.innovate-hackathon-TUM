@@ -251,3 +251,8 @@ deben revelarse, conservar volumen y cerrar en la toma inicial/final, con cambio
 suaves entre frames. El preview anterior se conserva como revisión de tiempos,
 sin presentarlo como película final con cabinas. La entrega sigue siendo solo
 1080p; los masters limpios 4K permanecen en la VM.
+
+La galería principal de `Final37_Night_Tours/index.html` apunta a `Final_v3` para
+las diez entregas corregidas. `Synced_v2` conserva el preview de tiempos y
+`index-v1.html` la revisión antigua. El servicio local de entrega apunta ahora al
+root cloud final-v3 y a la caché local `final-v3-delivery`; no descarga masters 4K.

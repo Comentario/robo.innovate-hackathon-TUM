@@ -6,7 +6,7 @@ StartLimitIntervalSec=0
 [Service]
 Type=simple
 WorkingDirectory=/home/vjhannox/hackathon/robo.innovate-hackathon-TUM
-ExecStart=/usr/bin/python3 -u /home/vjhannox/hackathon/robo.innovate-hackathon-TUM/unreal/tools/deliver_night_tours.py --1080-only --remote-root /home/shadeform/workspace/brickflow-final37-night/OverlaySync --cache /home/vjhannox/hackathon/robo.innovate-hackathon-TUM/artifacts/unreal_night37/sync-delivery --output "/mnt/d/Hackathon/Munich Hackathon 2026/Videos_Unreal/Final37_Night_Tours/Synced_v2"
+ExecStart=/usr/bin/python3 -u /home/vjhannox/hackathon/robo.innovate-hackathon-TUM/unreal/tools/deliver_night_tours.py --1080-only --remote-root /home/shadeform/workspace/brickflow-final37-final-v3 --cache /home/vjhannox/hackathon/robo.innovate-hackathon-TUM/artifacts/unreal_night37/final-v3-delivery --output "/mnt/d/Hackathon/Munich Hackathon 2026/Videos_Unreal/Final37_Night_Tours/Final_v3"
 Restart=on-failure
 RestartSec=30
 TimeoutStopSec=30
