@@ -1,0 +1,22 @@
+[Unit]
+Description=Brickflow final37 corrected enclosures and synchronized ten-tour queue
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=shadeform
+WorkingDirectory=/home/shadeform/workspace/brickflow-final37-final-v3
+ExecStart=/home/shadeform/workspace/brickflow-cinematic/tools/python/bin/python -u /home/shadeform/workspace/brickflow-final37-final-v3/night_tours_worker.py --root /home/shadeform/workspace/brickflow-final37-final-v3
+Restart=on-failure
+RestartSec=30
+KillMode=control-group
+TimeoutStopSec=45
+LimitNOFILE=65536
+Environment=PYTHONUNBUFFERED=1
+StandardOutput=append:/home/shadeform/workspace/brickflow-final37-final-v3/Logs/service.log
+StandardError=append:/home/shadeform/workspace/brickflow-final37-final-v3/Logs/service.log
+
+[Install]
+WantedBy=multi-user.target

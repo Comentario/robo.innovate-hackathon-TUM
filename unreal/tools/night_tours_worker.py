@@ -114,6 +114,7 @@ def render_chunk(root,gpu,tour,tourpath,out,first,last,width=3840,port_base=7901
             STOP.wait(10)
 
 def tour_job(root,gpu,number,chunkframes):
+    runtime=json.loads((root/'runtime.json').read_text()) if (root/'runtime.json').exists() else {}
     path=root/'Tours'/f'tour-{number:02}.json';tour=json.loads(path.read_text());out=root/'Movies'/f'Tour_{number:02}';out.mkdir(parents=True,exist_ok=True)
     final=out/'delivery.json'
     if final.exists():
@@ -127,13 +128,12 @@ def tour_job(root,gpu,number,chunkframes):
     for first in range(0,tour['frames'],chunkframes):
         last=min(first+chunkframes,tour['frames']);chunk=out/'Chunks'/f'{first:06}-{last:06}'
         with LOCK:ACTIVE[str(gpu)]=dict(tour=number,stage='render',firstFrame=first,lastFrame=last,totalFrames=tour['frames'],chunkPath=str(chunk))
-        status(root);render_chunk(root,gpu,tour,path,chunk,first,last);chunks.append(chunk/'raw.mp4')
+        status(root);render_chunk(root,gpu,tour,path,chunk,first,last,port_base=int(runtime.get('portBase',7901)));chunks.append(chunk/'raw.mp4')
         with LOCK:STATE['completedChunks']=sum(1 for _ in (root/'Movies').glob('*/Chunks/*/verified.json'))
         status(root)
     concat=out/'concat.txt';concat.write_text(''.join("file '"+str(p)+"'\n" for p in chunks))
     with LOCK:ACTIVE[str(gpu)]=dict(tour=number,stage='composite',totalFrames=tour['frames'])
     status(root)
-    runtime=json.loads((root/'runtime.json').read_text()) if (root/'runtime.json').exists() else {}
     if runtime.get('editorialRevision')==2:
         # Compose against clean native footage: no baked legacy overlays or repairs.
         import sync_night_overlays as editorial

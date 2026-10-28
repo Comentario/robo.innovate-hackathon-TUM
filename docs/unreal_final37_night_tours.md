@@ -236,3 +236,18 @@ contra píxeles del chunk nativo limpio. El preview del recorrido 05 pasó estas
 comprobaciones (errores RGB medios 1,33/255 y 2,58/255). El servicio de parches se
 limita a ese preview mientras la nueva cola nativa prepara los diez recorridos
 con las carcasas corregidas; esa cola parte siempre de imágenes limpias.
+
+## Cola final con cabinas y overlays sincronizados
+
+`brickflow-final37-final.service` utiliza el root cloud
+`brickflow-final37-final-v3`, proyecto nativo aislado y puertos 7991–7994.
+Su preflight permanece cerrado hasta revisar la geometría contra WebGL, los
+estados cerrado/revelado/cerrado, la regresión completa de cámara y una prueba
+real de streaming 4K. Las instancias de cómputo se reutilizan; no se toca la VM
+de Jacob. El servicio anterior se detiene al pasar a la revisión visual nueva.
+
+Cada película nueva audita además todas las coberturas capturadas: ambos módulos
+deben revelarse, conservar volumen y cerrar en la toma inicial/final, con cambios
+suaves entre frames. El preview anterior se conserva como revisión de tiempos,
+sin presentarlo como película final con cabinas. La entrega sigue siendo solo
+1080p; los masters limpios 4K permanecen en la VM.

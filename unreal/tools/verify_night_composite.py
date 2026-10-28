@@ -40,7 +40,16 @@ def check_rendered_clock(chunks,tour):
         d=tour['overlays']['detection']
         if d['start']<=t<=d['end']:assert abs(float(row['speed'])-1)<1e-9
     assert maximum_rate_error<1e-8
-    return dict(renderedFrames=len(rows),allFramesContiguous=True,nativeClockContinuous=True,maximumSpeedError=maximum_rate_error,inspectionAlwaysOneX=True)
+    result=dict(renderedFrames=len(rows),allFramesContiguous=True,nativeClockContinuous=True,maximumSpeedError=maximum_rate_error,inspectionAlwaysOneX=True)
+    if rows and 'inspectionCoverage' in rows[0]:
+        result['enclosureCoverage']={}
+        for key in ['inspectionCoverage','routingCoverage']:
+            values=[float(row[key]) for row in rows];step=max(abs(b-a) for a,b in zip(values,values[1:]))
+            assert all(.2<=v<=1 for v in values) and min(values)<.4
+            assert values[0]==values[-1]==1,'Enclosures must close in establishing and final views'
+            assert step<.05,'Enclosure opacity changes abruptly'
+            result['enclosureCoverage'][key]=dict(minimum=min(values),maximum=max(values),maximumFrameStep=step,restoredAtEnd=True)
+    return result
 def main():
     p=argparse.ArgumentParser();p.add_argument('--tour',type=Path,required=True);p.add_argument('--movie',type=Path,required=True);p.add_argument('--franka',type=Path,required=True);p.add_argument('--detection',type=Path,required=True);p.add_argument('--chunks',type=Path);p.add_argument('--output',type=Path,required=True);a=p.parse_args();t=json.loads(a.tour.read_text())
     result=dict(verified=True,referenceSha256=t['referenceSha256'],name=t['name'],independentPhysicalValidation=False)
