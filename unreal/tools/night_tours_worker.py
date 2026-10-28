@@ -44,6 +44,12 @@ def process(command,log,timeout=18000,progress=None):
 
 def engine_cmd(root,gpu,tour,out,first,last,width=3840,audit=False):
     base=Path.home()/'workspace';engine=base/'brickflow-cinematic/tools/unreal-5.8.4/Engine/Binaries/Linux/UnrealEditor';project=base/'brickflow-final37-native/Brickflow.uproject'
+    runtime=root/'runtime.json'
+    if runtime.exists():
+        configured=json.loads(runtime.read_text()).get('project')
+        if configured:
+            project=Path(configured)
+            assert project.is_absolute() and project.suffix=='.uproject' and project.is_file(),'Invalid isolated Unreal project'
     cmd=[str(engine),str(project),'/Engine/Maps/Entry','-game','-RenderOffscreen','-vulkan',f'-graphicsadapter={gpu}','-unattended','-nosound','-nosplash','-nop4','-Windowed','-ForceRes',f'-ResX={width}',f'-ResY={width*9//16}',
       f'-BrickflowReplay={root}/Assets/scene.json',f'-BrickflowTour={tour}',f'-BrickflowFilm={out}',f'-BrickflowFilmFirst={first}',f'-BrickflowFilmLast={last}','-BrickflowFilmSettle=8',
       '-BrickflowReviewLighting=candidate',f'-BrickflowReviewRig={root}/Assets/lighting.json',f'-abslog={out}/engine.log',
