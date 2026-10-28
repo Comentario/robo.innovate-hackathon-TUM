@@ -1,0 +1,19 @@
+[Unit]
+Description=Verify actual pixels and captured clock of the ten final37 tours
+After=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=shadeform
+WorkingDirectory=/home/shadeform/workspace/brickflow-final37-night
+ExecStart=/home/shadeform/workspace/brickflow-cinematic/tools/python/bin/python -u /home/shadeform/workspace/brickflow-final37-night/night_tours_quality.py --root /home/shadeform/workspace/brickflow-final37-night
+Restart=on-failure
+RestartSec=30
+KillMode=control-group
+TimeoutStopSec=30
+StandardOutput=append:/home/shadeform/workspace/brickflow-final37-night/Logs/quality-service.log
+StandardError=append:/home/shadeform/workspace/brickflow-final37-night/Logs/quality-service.log
+
+[Install]
+WantedBy=multi-user.target

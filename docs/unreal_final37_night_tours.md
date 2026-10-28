@@ -125,3 +125,11 @@ real original y comprueba la continuidad de **todas** las trazas de captura,
 incluidos los límites entre chunks. En el ensayo técnico se observaron errores
 RGB medios de 1,90/255 para Franka y 1,42/255 para detección tras compresión.
 Esta prueba verifica inclusión editorial, no correspondencia física entre IDs.
+
+El servicio cloud `brickflow-final37-quality.service` ejecuta esa auditoría de
+píxeles y de traza real automáticamente, conforme aparece cada `delivery.json`.
+Guarda un resultado por recorrido en `Quality/tour-NN.json` y el resumen en
+`quality-status.json`. Comprueba además el SHA-256 del master contra su manifiesto.
+El objetivo de entrega se cierra solo tras revisar estos resultados junto con
+los archivos efectivamente copiados al disco D. Este servicio es independiente
+de la captura; instalarlo no reinicia los procesos de render activos.
