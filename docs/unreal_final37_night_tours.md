@@ -118,3 +118,10 @@ La auditoría C++ `tests_native/check_source_replay.cpp` se compila con
 60 frames de streaming 4K y un montaje técnico de 900 frames con ambos feeds.
 Ese montaje técnico reutiliza deliberadamente el clip de prueba; **no** se publica
 como recorrido. Las películas finales se generan de sus trazas completas.
+
+`unreal/tools/verify_night_composite.py` ofrece una comprobación adicional sobre
+los MP4 codificados: compara el interior de cada overlay con frames del video
+real original y comprueba la continuidad de **todas** las trazas de captura,
+incluidos los límites entre chunks. En el ensayo técnico se observaron errores
+RGB medios de 1,90/255 para Franka y 1,42/255 para detección tras compresión.
+Esta prueba verifica inclusión editorial, no correspondencia física entre IDs.
