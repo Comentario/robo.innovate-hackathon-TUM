@@ -92,9 +92,9 @@ def compose(root,sync,n,tour,patches,gpu,clean_concat=None,output_dir=None):
     maskindex=di+1
     for name in ['franka-mask','franka-shadow','detection-mask','detection-shadow']:cmd+=['-loop','1','-framerate','30','-i',str(out/(name+'.png'))]
     graph='[0:v]fps=30,setpts=PTS-STARTPTS,scale=1920:1080:flags=lanczos,setsar=1[base0];'
-    windows_expr='+'.join(f'between(n\\,{a}\\,{b-1})' for a,b in windows)
     for i,(p,first,last) in enumerate(patches):
         graph+=f'[{i+1}:v]fps=30,setpts=PTS-STARTPTS+{first}/30/TB,scale=1920:1080:flags=lanczos,setsar=1[clean{i}];'
+        windows_expr='+'.join(f'gte(t\\,{max(a,first)/30:.12f})*lt(t\\,{min(b,last)/30:.12f})' for a,b in windows if max(a,first)<min(b,last)) or '0'
         graph+=f'[base{i}][clean{i}]overlay=0:0:eof_action=pass:repeatlast=0:enable=\'{windows_expr}\'[base{i+1}];'
     for name,idx,mask,shadow,w,h in [('franka',fi,maskindex,maskindex+1,924,1642),('detection',di,maskindex+2,maskindex+3,1536,1192)]:
         o=tour['overlays'][name];start=o['start'];end=o['end']-start;a=o['fadeIn']-start;b=o['fadeOut']-start
@@ -120,6 +120,25 @@ def compose(root,sync,n,tour,patches,gpu,clean_concat=None,output_dir=None):
             error,index=min(candidates);assert error<10,(name,anchor['event'],'Source pixels differ',error)
             results.append(dict(event=anchor['event'],videoFrame=vf,sourceFrame=index,expectedSourceSeconds=anchor['sourceSeconds'],meanAbsoluteRgbError=error))
         checks[name]=results
+    absence=[]
+    clean_sources=list(patches)
+    if clean_concat:
+        for pth in sorted((root/f'Movies/Tour_{n:02}/Chunks').glob('*/raw.mp4')):
+            first,last=map(int,pth.parent.name.split('-'));clean_sources.append((pth,first,last))
+    for name,box in [('franka',(1382,129,462,821)),('detection',(67,48,768,596))]:
+        previous=old['overlays'][name];current=tour['overlays'][name];samples=[]
+        if previous['end']>current['end']+.5:samples.append((previous['end']+current['end'])/2)
+        if current['start']>previous['fadeIn']+1.5:samples.append((current['start']+previous['fadeIn']+1.2)/2)
+        for v in samples:
+            vf=round(v*30);v=vf/30
+            pth,first,last=next(p for p in clean_sources if p[1]<=vf<p[2])
+            x,y,w,h=box;actual=frame(target,v).crop((x,y,x+w,y+h));inner=(w//10,h//10,w-w//10,h-h//10)
+            errors=[]
+            for offset in [-1,0,1]:
+                expected=frame(pth,max(0,(vf-first+offset)/30),(1920,1080)).crop((x,y,x+w,y+h));delta=ImageChops.difference(actual.crop(inner),expected.crop(inner));errors.append(sum(ImageStat.Stat(delta).mean)/3)
+            error=min(errors);assert error<8,(name,'An expired or legacy overlay remains visible',error)
+            absence.append(dict(overlay=name,videoFrame=vf,meanAbsoluteRgbError=error))
+    checks['expiredOverlaysAbsent']=absence
     checks['renderedClock']=check_rendered_clock(root/f'Movies/Tour_{n:02}/Chunks',tour)
     checks.update(verified=True,overlayRevision=2,independentPhysicalValidation=False,movieSha256=report['sha256'])
     atomic(out/'sync-verification.json',checks)
@@ -129,7 +148,7 @@ def compose(root,sync,n,tour,patches,gpu,clean_concat=None,output_dir=None):
     return dict(number=n,referenceSha256=W.HASH,complete=True,files=files,seconds=tour['frames']/30,physicalOverlays=2,inspectionNeverPaused=True,overlayRevision=2,independentNativePlanner=False)
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--gpu',type=int,default=0);a=p.parse_args();root=a.root;sync=root/'OverlaySync';sync.mkdir(exist_ok=True)
+    p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--gpu',type=int,default=0);p.add_argument('--tours',type=int,nargs='+',default=[5,2,1,3,4,6,7,8,9,10]);a=p.parse_args();root=a.root;sync=root/'OverlaySync';sync.mkdir(exist_ok=True)
     for sig in [signal.SIGTERM,signal.SIGINT]:signal.signal(sig,lambda *_:W.STOP.set())
     def linker():
         while not W.STOP.is_set():
@@ -137,10 +156,10 @@ def main():
             except Exception:traceback.print_exc()
             W.STOP.wait(10)
     threading.Thread(target=linker,daemon=True).start()
-    facts=json.loads((root/'Assets/facts.json').read_text());state=dict(state='running',expectedTours=10,ready=[],failed=[],active={})
+    facts=json.loads((root/'Assets/facts.json').read_text());state=dict(state='running',expectedTours=len(a.tours),ready=[],failed=[],active={})
     def status():state['updatedAt']=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime());atomic(sync/'status.json',state)
     status()
-    for n in [5,2,1,3,4,6,7,8,9,10]:
+    for n in a.tours:
         if W.STOP.is_set():break
         original=json.loads((root/f'Tours/tour-{n:02}.json').read_text());tour=synced_plan(original,facts);out=sync/f'Movies/Tour_{n:02}';out.mkdir(parents=True,exist_ok=True)
         final=out/'delivery.json'

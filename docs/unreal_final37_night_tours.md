@@ -228,3 +228,11 @@ arrancar exige el SHA del suplemento de carcasas declarado en `scene.json`, su
 schema y su referencia. El proyecto anterior conserva sus rutas predeterminadas
 si no existe esta configuración. La primera película de esta revisión requiere
 la misma revisión visual y auditoría de píxeles antes de darse por final.
+
+La revisión visual posterior detectó que el overlay anterior reaparecía después
+terminar el nuevo. La reparación de previews usa ahora ventanas por tiempo
+absoluto de video y comprueba también la **ausencia** de cada overlay caducado
+contra píxeles del chunk nativo limpio. El preview del recorrido 05 pasó estas
+comprobaciones (errores RGB medios 1,33/255 y 2,58/255). El servicio de parches se
+limita a ese preview mientras la nueva cola nativa prepara los diez recorridos
+con las carcasas corregidas; esa cola parte siempre de imágenes limpias.
