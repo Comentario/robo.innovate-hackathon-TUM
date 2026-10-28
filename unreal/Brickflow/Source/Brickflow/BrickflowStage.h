@@ -2,6 +2,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Core/Simulation.h"
+#include "Core/SourceReplay.h"
 #include "BrickflowStage.generated.h"
 
 class UInstancedStaticMeshComponent;
@@ -93,6 +94,24 @@ private:
     void SelectReviewCamera(int32 Index);
     void ToggleReviewLighting();
     void BuildReviewLights();
+    // Native C++ playback of the final reference's exported event schedule.
+    bool bSourceReplay=false,bSourceAudit=false;
+    std::shared_ptr<brickflow::replay::Replay> SourceTimeline;
+    TArray<FPart> SourceParts;
+    struct FSourceBrickGroup {UInstancedStaticMeshComponent* Component=nullptr;TArray<int32> IDs;TArray<FTransform> Transforms;};
+    TArray<FSourceBrickGroup> SourceBrickGroups;
+    TMap<FString,UInstancedStaticMeshComponent*> SourceInstanceGroups;
+    TSharedPtr<FJsonObject> SourceTour;
+    FString SourceOutput,SourcePending;
+    int32 SourceFrame=0,SourceEnd=-1,SourceTotalFrames=0,SourceSettle=0;
+    double SourceWarmup=0;
+    void BeginSourceReplay(const FString& ManifestPath);
+    void BuildSourceParts();
+    FTransform SourceDriver(const FPart& Part) const;
+    void UpdateSourceScene();
+    double SourceNativeTime(double VideoSeconds,double* Rate=nullptr) const;
+    void ApplySourceFrame(int32 Frame);
+    void TickSourceReplay(float DeltaSeconds);
     FString CapturePath;
     FString MovieDirectory,MoviePending;
     int32 MovieFrames=0,MovieFrame=0,MovieSettle=0;

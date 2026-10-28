@@ -27,6 +27,12 @@ window.exportNativeFactory = function (options = {}) {
     for(const part of [...(g.userData.jaws||[]),...(g.userData.palletJaws||[])])
       roots.set(part.jaw,{type:g.userData.palletJaws?'palletJaw':'gripperJaw',
         record:String(r.id),root:part.jaw,sign:part.sign,parentTransform:transform(part.jaw.matrix)});
+    if(options.replayBindings&&g.userData.reachSleeves) {
+      g.userData.reachSleeves.forEach((root,i)=>roots.set(root,{type:'forkSleeve',record:String(r.id),root,sign:i?1:-1,parentTransform:transform(root.matrix)}));
+      g.userData.reachPosts.forEach((root,i)=>roots.set(root,{type:'forkPost',record:String(r.id),root,sign:i?1:-1,parentTransform:transform(root.matrix)}));
+      for(const root of g.children)if(root.isMesh&&root.scale.x===1&&root.scale.y===.05)
+        roots.set(root,{type:'forkTop',record:String(r.id),root,sign:root.position.z<0?-1:1,parentTransform:transform(root.matrix)});
+    }
   }
   d.sourceBeams.forEach((root,j)=>roots.set(root,{type:'sourceBeam',record:'head-0-'+j,root}));
   d.rowCenters.forEach(row=>{
@@ -68,9 +74,15 @@ window.exportNativeFactory = function (options = {}) {
     let binding=null;
     if(!options.snapshotWorld)for(let p=o;p;p=p.parent)if(roots.has(p)){binding=roots.get(p);break;}
     // One reusable native pallet prefab instead of one instance per cached pallet.
-    if(binding&&binding.record.startsWith('wood-')&&binding.record!=='wood-0')return;
+    if(binding&&binding.record.startsWith('wood-')&&binding.record!=='wood-0'&&!options.replayBindings)return;
+    if(options.replayBindings) {
+      for(let p=o;p;p=p.parent) {
+        if(p.parent?.isLOD){if(p!==p.parent.levels[0].object)return;}
+        else if(!binding&&!p.visible)return;
+      }
+    }
     const inverse=binding?binding.root.matrixWorld.clone().invert():null;
-    if(options.compactInstances&&o.isInstancedMesh) {
+    if(options.compactInstances&&o.isInstancedMesh&&!(options.replayBindings&&binding)) {
       const parent=o.matrixWorld.clone();if(inverse)parent.premultiply(inverse);
       let matrices=o.instanceMatrix.array.subarray(0,o.count*16),colors=o.instanceColor?.array.subarray(0,o.count*3),count=o.count;
       if(options.snapshotWorld) {

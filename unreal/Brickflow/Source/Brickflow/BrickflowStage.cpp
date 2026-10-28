@@ -29,6 +29,10 @@ ABrickflowStage::ABrickflowStage()
 void ABrickflowStage::BeginPlay()
 {
     Super::BeginPlay();
+    FString SourcePath;
+    if(FParse::Value(FCommandLine::Get(),TEXT("BrickflowReplay="),SourcePath)){
+        BeginSourceReplay(SourcePath);return;
+    }
     FString ReviewPath;
     if(FParse::Value(FCommandLine::Get(),TEXT("BrickflowReview="),ReviewPath)){
         BeginReview(ReviewPath);return;
@@ -103,6 +107,7 @@ void ABrickflowStage::RunNative(double PreserveTime)
 void ABrickflowStage::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+    if(bSourceReplay){TickSourceReplay(DeltaSeconds);return;}
     if(bReviewMode){TickReview(DeltaSeconds);return;}
     if(Model&&!bBusy&&FParse::Param(FCommandLine::Get(),TEXT("BrickflowExerciseControls"))){
         if(ControlExercise==0){
