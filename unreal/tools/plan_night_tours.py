@@ -35,6 +35,13 @@ class Clock:
 
 def make(facts,index):
     candidate=facts['candidates'][0];p=candidate['pallet'];tracks=candidate['tracks']
+    contrast=None
+    if index==10:
+        context=Path(__file__).resolve().parents[1]/'editorial/final37-inspection-contrast.json'
+        if context.exists():
+            contrast=json.loads(context.read_text())
+            assert contrast['referenceSha256']==facts['referenceSha256']
+            assert contrast['primarySubject']==str(candidate['id']) and contrast['good'] is False
     def event(kind,end=False):
         s=next(t for t in tracks if t['kind']==kind);return s['end' if end else 'start']
     start=facts['cart2Delivery']['start'];clock=Clock(start)
@@ -53,7 +60,9 @@ def make(facts,index):
     # Only physical manipulation has an editorial hold. Inspection never freezes.
     clock.add(2,1,0,'Franka comparison / ease to hold');clock.add(3+(index%3),0,0,'Franka comparison');clock.add(2,0,1,'Franka comparison / resume')
     scan=event('inspection-entry')
-    clock.normal(event('roller-row-accumulation',True)+1,'Inspection and routing / real detection overlay')
+    inspection_end=event('roller-row-accumulation',True)+1
+    if contrast:inspection_end=max(inspection_end,contrast['events']['bin-settling']['end']+2)
+    clock.normal(inspection_end,'Inspection and routing / real detection overlay')
     clock.fast(event('layer-buffer-zone-one')-2,4,'Row accumulation',2)
     clock.normal(event('place-guided-layer',True)+2,'Complete layer placement')
     clock.fast(event('finished-pallet-outfeed')-3,wait,'Continuous pallet assembly',4)
@@ -112,22 +121,30 @@ def make(facts,index):
       (at(event('amr-lift-pallet')-3),'amr',5),
       (at(event('amr-raise-forks-to-trailer')-4),'loading',5),
       (at(event('truck-order-departure')-2),'truck',6),(outro-2,'reveal',12)]
+    if contrast:
+        bad_scan=contrast['events']['inspection-entry']['start']
+        views['reject']=follow([.8,3.0,2.4],63,contrast['rejectedSubject'],(0,.12,0))
+        cues=[c for c in cues if not (c[1]=='brick' and abs(c[0]-at(scan+4))<1e-6)]
+        cues.extend([(at(bad_scan-2.5),'reject',4),(at(contrast['events']['bin-settling']['end']+1),'brick',8)])
     cues.sort()
     for i in range(1,len(cues)):
         prev=cues[i-1];assert cues[i][0]>=prev[0]+prev[2]-1e-5,(index,prev,cues[i])
     history=lambda t:next((h for h in reversed(facts['history']) if h['t']<=t),facts['history'][0])
     stock_start=sum(history(start)['stock']);assert stock_start>0
     franka=dict(start=at(row)-5.7,fadeIn=at(row)-2,fadeOut=at(place+4)+1.5,end=at(place+4)+3.5,clipSeconds=12.8,layout='right-compact')
-    detection=dict(start=at(scan)-.5,fadeIn=at(scan)-.5,fadeOut=at(scan)-.5+10.633333,end=at(scan)-.5+12.233333,clipSeconds=10.633333,layout='top-left')
+    detection_start=at(contrast['events']['inspection-entry']['start']-1.5) if contrast else at(scan)-.5
+    detection=dict(start=detection_start,fadeIn=detection_start,fadeOut=detection_start+10.633333,end=detection_start+12.233333,clipSeconds=10.633333,layout='top-left')
     # Every classifier frame occurs during a strictly advancing 1x source interval.
     for s in clock.segments:
         if s['videoStart']<detection['end'] and s['videoStart']+s['duration']>detection['start']:assert s['rateStart']==s['rateEnd']==1
-    return dict(schema='brickflow.final37-night-tour.v1',referenceSha256=facts['referenceSha256'],ownerDeclaredFinal=True,backend='native-cpp-source-event-replay',independentNativePlanner=False,
+    tour=dict(schema='brickflow.final37-night-tour.v1',referenceSha256=facts['referenceSha256'],ownerDeclaredFinal=True,backend='native-cpp-source-event-replay',independentNativePlanner=False,
       name=f'Tour {index:02}',number=index,subject=str(candidate['id']),pallet=p['wood'],truck=p['order'],cart=1,laneZ=[l['z'] for l in facts['lanes']],
       sourceStart=start,sourceEnd=clock.native,seconds=clock.video,frames=math.ceil(clock.video*30),fps=30,width=3840,height=2160,
       stockPalletsAtStart=stock_start,outroAdditionalInspected=history(clock.native)['inspected']-history(p['shippedAt'])['inspected'],clock=clock.segments,views=views,
       cues=[dict(at=t,view=n,blend=b) for t,n,b in cues],overlays=dict(franka=franka,detection=detection),
       evidence='Authoritative source trajectory playback. Real overlays are editorial comparisons, not synchronized physical validation.')
+    if contrast:tour['inspectionContrast']=contrast
+    return tour
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--facts',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)

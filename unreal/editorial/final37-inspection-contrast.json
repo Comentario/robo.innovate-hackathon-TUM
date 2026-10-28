@@ -1,0 +1,69 @@
+{
+  "referenceSha256": "3aa2ec3d3828a691e7020f4deca4dc86d093b69da1569b57c73865352a03f7c5",
+  "primarySubject": "38371",
+  "rejectedSubject": "37578",
+  "good": false,
+  "extreme": true,
+  "cart": 1,
+  "shade": 0,
+  "classificationSource": "unchanged final reference record",
+  "independentPhysicalValidation": false,
+  "events": {
+    "inspection-entry": {
+      "start": 10666.834766202326,
+      "end": 10667.16809953566,
+      "from": [
+        26,
+        1.2845,
+        -7
+      ],
+      "to": [
+        26.2,
+        1.2845,
+        -7
+      ]
+    },
+    "reject-stroke": {
+      "start": 10671.247776618799,
+      "end": 10671.682776618798,
+      "from": [
+        28.439999999999998,
+        1.2845,
+        -7
+      ],
+      "to": [
+        28.44,
+        1.2845,
+        -6.42
+      ]
+    },
+    "supported-reject-decline": {
+      "start": 10671.682776618798,
+      "end": 10673.910997851444,
+      "from": [
+        28.44,
+        1.2845,
+        -6.42
+      ],
+      "to": [
+        27.2,
+        0.7745,
+        -5.7
+      ]
+    },
+    "bin-settling": {
+      "start": 10673.910997851444,
+      "end": 10676.079779882908,
+      "from": [
+        27.2,
+        0.7745,
+        -5.7
+      ],
+      "to": [
+        25.0625,
+        0.4215,
+        -5.8005
+      ]
+    }
+  }
+}

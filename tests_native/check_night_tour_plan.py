@@ -18,6 +18,13 @@ for i in range(1,11):
     for overlay in t['overlays'].values():
         assert 0<=overlay['start']<=overlay['fadeIn']<overlay['fadeOut']<overlay['end']<t['seconds']
         assert overlay['start']+overlay['clipSeconds']<=overlay['end']
+    if 'inspectionContrast' in t:
+        context=t['inspectionContrast'];assert context['good'] is False
+        assert t['views']['reject']['focus']==context['rejectedSubject']!=t['subject']
+        a=context['events']['inspection-entry']['start'];b=context['events']['bin-settling']['end']
+        for segment in t['clock']:
+            end=m.Clock.state(segment,segment['videoStart']+segment['duration'])
+            if segment['nativeStart']<b and end>a:assert segment['rateStart']==segment['rateEnd']==1
     d=t['overlays']['detection']
     for s in t['clock']:
         if s['videoStart']<d['end'] and s['videoStart']+s['duration']>d['start']:

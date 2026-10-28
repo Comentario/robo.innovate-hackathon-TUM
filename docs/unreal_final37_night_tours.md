@@ -143,3 +143,19 @@ nativa independiente confirma mayor visibilidad de la capa bajo el cabezal.
 Las seis trazas nuevas se vuelven a auditar. No se cambian movimientos, tiempos,
 superposiciones ni encuadres de transferencia/inspección. Los planes originales
 quedan preservados en `Tours/original-camera` de la VM.
+
+El recorrido 10 incorpora además un contraste real del calendario: después de
+la inspección del ladrillo principal `38371`, sigue temporalmente al ladrillo
+`37578`, ya marcado como rechazado por la referencia final. Sus eventos exactos
+se conservan en `unreal/editorial/final37-inspection-contrast.json`; no se cambia
+ningún grupo, puntuación, resultado o trayectoria. El rechazo llega 9,675 s
+nativos después del paso inicial del principal por inspección. La cámara muestra
+el empuje, la bajada por la faja opaca y la llegada al contenedor desde un ángulo
+superior, antes de recuperar suavemente al principal. La fuente real del
+clasificador aparece durante esta sección y la simulación permanece a 1× hasta
+terminar el descenso y el fundido. Esto sigue siendo una comparación editorial
+entre grabación física y referencia sintética, sin emparejar sus IDs.
+
+Las otras nueve cámaras conservan sus planes al incorporar este contraste.
+El recorrido 10 actualizado dura 566,41 s (16.993 frames a 30 fps); su traza completa
+se volvió a auditar y una captura de Unreal confirmó la visibilidad del rechazo.
