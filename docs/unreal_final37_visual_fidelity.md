@@ -48,9 +48,15 @@ soportes en esas muestras; la iluminación cinematográfica difiere deliberadame
 de la fuente. Esta revisión es una comparación visual por muestras, no una
 validación exhaustiva de todos los píxeles ni una validación física independiente.
 
-La varilla señalada en el palletizador no se atribuye a una corrección demostrada.
-La comparación a cámara/tiempo iguales muestra elementos verticales equivalentes
-en la fuente; identificar inequívocamente el detalle de la captura recortada
-requiere su timestamp. Existe una rama de compatibilidad `bankLift` que reproduce
-la fórmula fuente, pero el replay final 37 contiene cero actores de ese tipo y
-esa rama no explica ni modifica el elemento señalado.
+La varilla señalada se revisó en el instante indicado, 5:12 del recorrido 02
+(frame 9360), comparando Unreal y WebGL a cámara y tiempo iguales. Corresponde al
+mástil de `guideGate` `gate-1-2`: posición fuente `[53.65, 1.8475, -6.2]`, sección
+35 × 35 mm y longitud 0,985 m. Su base toca el borde superior de la puerta a
+1,355 m; su extremo superior llega al cuerpo fijo del actuador a 2,34 m. La pieza
+existe en ambas versiones y se conserva. La captura ampliada y su proyección
+fuente permiten identificarla sin atribuir un defecto inexistente a Unreal.
+
+La rama de compatibilidad `bankLift` también reproduce la fórmula fuente, pero
+el replay final 37 contiene cero actores de ese tipo: esa rama no explica ni
+modifica el elemento señalado. La iluminación más contrastada de Unreal hace
+más visible la varilla de acero que en la referencia WebGL.
