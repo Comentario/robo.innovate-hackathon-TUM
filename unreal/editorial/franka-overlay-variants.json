@@ -1,0 +1,83 @@
+{
+  "schema": "brickflow.franka-overlay-variations.v1",
+  "baseline": "v1-original",
+  "shared": {
+    "durationSeconds": 28,
+    "fps": 30,
+    "simulationFilmStartSeconds": 84,
+    "physicalOriginalStartSeconds": 4,
+    "physicalOriginalEndSeconds": 16.8,
+    "physicalPlaybackRate": 1,
+    "physicalOriginalToFilmOffsetSeconds": 82.3,
+    "note": "Editorial visual comparisons only. Preserve both source actions and the original v1 files."
+  },
+  "variants": [
+    {
+      "id": "v2-right-compact",
+      "label": "V2 · Right compact",
+      "description": "A smaller right-hand portrait leaves more of the input rows visible; longer fades and a lighter shadow.",
+      "heightFraction": 0.76,
+      "leftFraction": 0.72,
+      "topFraction": 0.12,
+      "cornerRadiusFraction": 0.010,
+      "shadowOpacity": 115,
+      "opacity": 1,
+      "fadeInSeconds": [5.8, 7.4],
+      "fadeOutSeconds": [16.0, 18.2]
+    },
+    {
+      "id": "v3-left-compact",
+      "label": "V3 · Left compact",
+      "description": "Tests the opposite side. Input rows remain clear, but the lower receiving subbelt is partly covered.",
+      "heightFraction": 0.72,
+      "leftFraction": 0.035,
+      "topFraction": 0.14,
+      "cornerRadiusFraction": 0.008,
+      "shadowOpacity": 125,
+      "opacity": 1,
+      "fadeInSeconds": [6.0, 7.4],
+      "fadeOutSeconds": [16.3, 18.1]
+    },
+    {
+      "id": "v4-soft-overlay",
+      "label": "V4 · Soft overlay",
+      "description": "Feathered edges, slight translucency and no drop shadow create a softer transition between real footage and simulation.",
+      "heightFraction": 0.84,
+      "leftFraction": 0.70,
+      "topFraction": 0.08,
+      "cornerRadiusFraction": 0.012,
+      "edgeFeatherFraction": 0.0045,
+      "shadowOpacity": 0,
+      "opacity": 0.94,
+      "fadeInSeconds": [5.6, 7.6],
+      "fadeOutSeconds": [15.8, 18.3]
+    },
+    {
+      "id": "v5-lower-right",
+      "label": "V5 · Lower-right inset",
+      "description": "A smaller portrait sits near the lower-right corner, keeping most of the plant visible; exits slightly earlier.",
+      "heightFraction": 0.62,
+      "leftFraction": 0.76,
+      "topFraction": 0.335,
+      "cornerRadiusFraction": 0.006,
+      "shadowOpacity": 120,
+      "opacity": 1,
+      "fadeInSeconds": [6.2, 7.4],
+      "fadeOutSeconds": [15.5, 17.5]
+    },
+    {
+      "id": "v6-floating-right",
+      "label": "V6 · Floating right",
+      "description": "A larger portrait settles gently into position during the fade, using a quintic entry motion and slightly rounder corners.",
+      "heightFraction": 0.82,
+      "leftFraction": 0.70,
+      "topFraction": 0.09,
+      "cornerRadiusFraction": 0.014,
+      "shadowOpacity": 145,
+      "opacity": 1,
+      "entryOffsetFraction": [0.025, 0.015],
+      "fadeInSeconds": [5.8, 7.4],
+      "fadeOutSeconds": [15.8, 17.8]
+    }
+  ]
+}

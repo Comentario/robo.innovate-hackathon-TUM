@@ -1,5 +1,10 @@
 # Prueba visual: simulación y Franka físico
 
+Actualización de entrega: V1 se conserva y ahora hay cinco variantes nuevas
+con comparador, además de una prueba de inspección con una sola cámara.
+Todo se centraliza en `D:\Hackathon\Munich Hackathon 2026\Videos_Unreal\`.
+Véase [Versiones de superposición para elegir](unreal_overlay_choices.md).
+
 Se generó una prueba de **28 segundos, 30 fps**, usando exclusivamente el
 render entregado y el vídeo físico proporcionado por el propietario.
 
