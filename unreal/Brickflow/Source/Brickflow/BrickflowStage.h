@@ -102,11 +102,18 @@ private:
     TArray<FSourceBrickGroup> SourceBrickGroups;
     TMap<FString,UInstancedStaticMeshComponent*> SourceInstanceGroups;
     TSharedPtr<FJsonObject> SourceTour;
+    struct FSourceCamera {FVector P,Look;double FOV=65;FString Name;};
+    struct FSourceEnclosure {FString System;int32 Lane=0;TArray<UMaterialInstanceDynamic*> Materials;};
+    TArray<FSourceEnclosure> SourceEnclosures;
+    double SourceInspectionCoverage=1,SourceRoutingCoverage=1;
     FString SourceOutput,SourcePending;
     int32 SourceFrame=0,SourceEnd=-1,SourceTotalFrames=0,SourceSettle=0;
     double SourceWarmup=0;
     void BeginSourceReplay(const FString& ManifestPath);
     void BuildSourceParts();
+    void BuildSourceEnclosures();
+    void UpdateSourceEnclosures(double VideoSeconds);
+    FSourceCamera SourceCameraAt(double VideoSeconds) const;
     FTransform SourceDriver(const FPart& Part) const;
     void UpdateSourceScene();
     double SourceNativeTime(double VideoSeconds,double* Rate=nullptr) const;

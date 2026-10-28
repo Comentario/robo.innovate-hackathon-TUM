@@ -25,15 +25,13 @@ double ABrickflowStage::SourceNativeTime(double V,double* Rate) const
     const auto S=Segments.Last()->AsObject();const double D=S->GetNumberField(TEXT("duration"));if(Rate)*Rate=S->GetNumberField(TEXT("rateEnd"));
     return S->GetNumberField(TEXT("nativeStart"))+brickflow::film::elapsed(D,D,S->GetNumberField(TEXT("rateStart")),S->GetNumberField(TEXT("rateEnd")));
 }
-void ABrickflowStage::ApplySourceFrame(int32 Frame)
+ABrickflowStage::FSourceCamera ABrickflowStage::SourceCameraAt(double V) const
 {
-    const double V=double(Frame)/30;double Rate=0;Time=SourceNativeTime(V,&Rate);if(!bSourceAudit)UpdateSourceScene();
     const FString Subject=SourceTour->GetStringField(TEXT("subject"));const int32 SubjectID=SourceTimeline->named(TCHAR_TO_UTF8(*Subject));
     auto Focus=[&](const FString& Record){const int32 ID=SourceTimeline->named(TCHAR_TO_UTF8(*Record));FVector Sum=FVector::ZeroVector;double Weight=0;
         for(int J=-3;J<=3;++J){const double Dt=J*.06,W=FMath::Exp(-J*J/4.);Sum+=SourcePoint(SourceTimeline->state(ID,SourceNativeTime(FMath::Max(0.,V+Dt))).pose)*W;Weight+=W;}return Sum/Weight;};
-    struct View {FVector P,Look;double FOV;};
     const auto Views=SourceTour->GetObjectField(TEXT("views"));
-    auto Evaluate=[&](const FString& Name)->View{
+    auto Evaluate=[&](const FString& Name)->FSourceCamera{
         auto Definition=Views->GetObjectField(Name);FVector Look;
         if(Definition->HasField(TEXT("look")))Look=SourceWorld(Definition->GetArrayField(TEXT("look")));
         else{const FString Record=Definition->GetStringField(TEXT("focus"));Look=Focus(Record==TEXT("subject")?Subject:Record);}
@@ -46,7 +44,7 @@ void ABrickflowStage::ApplySourceFrame(int32 Frame)
     };
     const auto& Cues=SourceTour->GetArrayField(TEXT("cues"));int32 Active=0;
     for(int32 I=0;I<Cues.Num();++I)if(V>=Cues[I]->AsObject()->GetNumberField(TEXT("at")))Active=I;
-    const auto Cue=Cues[Active]->AsObject();const FString Name=Cue->GetStringField(TEXT("view"));View Desired=Evaluate(Name);
+    const auto Cue=Cues[Active]->AsObject();const FString Name=Cue->GetStringField(TEXT("view"));FSourceCamera Desired=Evaluate(Name);
     if(Active){const auto Previous=Evaluate(Cues[Active-1]->AsObject()->GetStringField(TEXT("view")));
         const double U=brickflow::film::blend((V-Cue->GetNumberField(TEXT("at")))/Cue->GetNumberField(TEXT("blend")));
         const FVector A=Previous.P-Previous.Look,B=Desired.P-Desired.Look;const double RA=A.Length(),RB=B.Length();
@@ -54,11 +52,18 @@ void ABrickflowStage::ApplySourceFrame(int32 Frame)
         const FVector Direction=Angle<1e-8?DA:(DA*FMath::Sin((1-U)*Angle)+DB*FMath::Sin(U*Angle))/FMath::Sin(Angle);
         const FVector Look=FMath::Lerp(Previous.Look,Desired.Look,U);Desired={Look+Direction*FMath::Lerp(RA,RB,U),Look,FMath::Lerp(Previous.FOV,Desired.FOV,U)};
     }
+    Desired.Name=Name;return Desired;
+}
+void ABrickflowStage::ApplySourceFrame(int32 Frame)
+{
+    const double V=double(Frame)/30;double Rate=0;Time=SourceNativeTime(V,&Rate);if(!bSourceAudit)UpdateSourceScene();
+    const auto Desired=SourceCameraAt(V);UpdateSourceEnclosures(V);
+    const FString Subject=SourceTour->GetStringField(TEXT("subject"));const int32 SubjectID=SourceTimeline->named(TCHAR_TO_UTF8(*Subject));
     CameraBlend=1;CameraTarget=Desired.P;CameraLookTarget=Desired.Look;
     Camera->SetWorldLocation(Desired.P);Camera->SetWorldRotation((Desired.Look-Desired.P).Rotation());Camera->SetFieldOfView(Desired.FOV);
     const auto State=SourceTimeline->state(SubjectID,Time);const auto& P=State.pose;
-    FString Line=FString::Printf(TEXT("%d,%.12f,%.9f,%s,%.12f,%.12f,%.12f,%d,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%s\n"),
-        Frame,Time,Rate,*Subject,P[0],P[1],P[2],State.visible?1:0,Desired.P.X,Desired.P.Y,Desired.P.Z,Desired.Look.X,Desired.Look.Y,Desired.Look.Z,Desired.FOV,*Name);
+    FString Line=FString::Printf(TEXT("%d,%.12f,%.9f,%s,%.12f,%.12f,%.12f,%d,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%s,%.9f,%.9f\n"),
+        Frame,Time,Rate,*Subject,P[0],P[1],P[2],State.visible?1:0,Desired.P.X,Desired.P.Y,Desired.P.Z,Desired.Look.X,Desired.Look.Y,Desired.Look.Z,Desired.FOV,*Desired.Name,SourceInspectionCoverage,SourceRoutingCoverage);
     FFileHelper::SaveStringToFile(Line,*(SourceOutput/TEXT("trace.csv")),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM,&IFileManager::Get(),FILEWRITE_Append);
 }
 void ABrickflowStage::TickSourceReplay(float DeltaSeconds)

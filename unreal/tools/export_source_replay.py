@@ -12,6 +12,7 @@ import struct
 from pathlib import Path
 
 from inspect_reference_cloud import unreal_camera, check_geometry
+from export_source_enclosures import export as export_enclosures
 
 
 def save(path, data):
@@ -108,7 +109,9 @@ def main():
             for s in samples:
                 assert all(math.isfinite(v) for v in s["pose"])
                 f.write(",".join([s["id"], str(s["t"]), *map(str, s["pose"]), str(int(s["visible"]))]) + "\n")
-        page.evaluate("""()=>{CART_DEMO.seek(0);for(const c of CART_DEMO.routingCovers)c.visible=false;for(const c of CART_DEMO.inspectionCovers)c.visible=false;CART_DEMO.scene.updateMatrixWorld(true)}""")
+        page.evaluate('CART_DEMO.seek(0)')
+        enclosures=export_enclosures(page,args.exporter,args.output,args.sha256)
+        page.evaluate("""()=>{for(const c of CART_DEMO.routingCovers)c.visible=false;for(const c of CART_DEMO.inspectionCovers)c.visible=false;CART_DEMO.scene.updateMatrixWorld(true)}""")
         page.add_script_tag(path=str(args.exporter.resolve()))
         geometry = page.evaluate("exportNativeFactory({compactInstances:true,reviewLod:true,replayBindings:true})")
         parts = [i for i in geometry["instances"] if "binding" in i]
@@ -116,7 +119,7 @@ def main():
         assert not any("binding" in b for b in geometry["instanceBatches"])
         types = sorted({p["binding"]["type"] for p in parts})
         geometry.update(snapshotOnly=True, snapshotTime=0, nativeSimulationPorted=False, referenceSha256=args.sha256,
-                        purpose="Static scene for native C++ playback of the final source event timeline", serviceCutaways="Source-defined inspection and routing panels")
+                        purpose="Static scene for native C++ playback of the final source event timeline", serviceCutaways="Separate source enclosures with reversible camera-dependent reveal")
         checks = check_geometry(geometry)
         for material_id, m in geometry["materials"].items():
             if "image" in m:
@@ -130,7 +133,8 @@ def main():
             cameras.append(unreal_camera(camera))
         save(args.output / "scene.json", {"schema": "brickflow.unreal-lighting-scene.v1", "referenceSha256": args.sha256,
             "snapshotOnly": True, "nativeSimulationPorted": False, "snapshotName": "final37-source-replay-static", "snapshotTime": 0,
-            "geometry": "geometry.json", "geometrySha256": hashlib.sha256((args.output / "geometry.json").read_bytes()).hexdigest(), "defaultCamera": "overview", "cameras": cameras})
+            "geometry": "geometry.json", "geometrySha256": hashlib.sha256((args.output / "geometry.json").read_bytes()).hexdigest(),
+            "enclosures":"enclosures.json","enclosuresSha256":enclosures['sha256'],"defaultCamera": "overview", "cameras": cameras})
         save(args.output / "export-status.json", {"complete": True, "sourceSha256": args.sha256, "replaySha256": hashlib.sha256(binary.read_bytes()).hexdigest(),
             "replayBytes": binary.stat().st_size, "dynamicParts": len(parts), "bindingTypes": types, "sourcePoseSamples": len(samples), "geometryChecks": checks,
             "runtime": "native C++ source-event replay in Unreal", "independentNativePlanner": False})

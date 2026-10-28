@@ -34,10 +34,10 @@ void ABrickflowStage::BeginSourceReplay(const FString& ManifestPath)
     IFileManager::Get().MakeDirectory(*SourceOutput,true);FParse::Value(FCommandLine::Get(),TEXT("BrickflowFilmFirst="),SourceFrame);
     SourceTotalFrames=SourceTour->GetIntegerField(TEXT("frames"));SourceEnd=SourceTotalFrames;FParse::Value(FCommandLine::Get(),TEXT("BrickflowFilmLast="),SourceEnd);
     SourceEnd=FMath::Min(SourceEnd,SourceTotalFrames);bPlaying=false;bBusy=false;
-    if(!bSourceAudit){BeginReview(ManifestPath);BuildSourceParts();}
+    if(!bSourceAudit){BeginReview(ManifestPath);BuildSourceEnclosures();BuildSourceParts();}
     else bReviewMode=true;
     FString Encoded;FJsonSerializer::Serialize(SourceTour,TJsonWriterFactory<>::Create(&Encoded));FFileHelper::SaveStringToFile(Encoded,*(SourceOutput/TEXT("tour.json")));
-    FFileHelper::SaveStringToFile(TEXT("frame,nativeSeconds,speed,subject,x,y,z,visible,cameraX,cameraY,cameraZ,lookX,lookY,lookZ,fov,view\n"),*(SourceOutput/TEXT("trace.csv")));
+    FFileHelper::SaveStringToFile(TEXT("frame,nativeSeconds,speed,subject,x,y,z,visible,cameraX,cameraY,cameraZ,lookX,lookY,lookZ,fov,view,inspectionCoverage,routingCoverage\n"),*(SourceOutput/TEXT("trace.csv")));
     UE_LOG(LogTemp,Display,TEXT("BRICKFLOW_SOURCE_REPLAY_READY hash=%s records=%d tracks=%llu frames=%d independentNativePlanner=false"),
         *Manifest->GetStringField(TEXT("referenceSha256")),int(SourceTimeline->records.size()),static_cast<unsigned long long>(SourceTimeline->trackCount),SourceTotalFrames);
 }
@@ -103,6 +103,7 @@ FTransform ABrickflowStage::SourceDriver(const FPart& Part) const
             const double LaneZ=SourceTour->GetArrayField(TEXT("laneZ"))[L]->AsNumber(),Back=LaneZ+(S-1)*1.2+Side*.62;
             X=Side<0?52.6:53.4;Y=1.25+.08;Z=(P[2]+Back)/2;SX=SY=.035;SZ=FMath::Max(.04,FMath::Abs(P[2]-Back));
         }else if(R.kind=="guideGate"){const double Bottom=P[1]+.055;SY=FMath::Max(.02,2.34-Bottom);Y=Bottom+SY/2;Z-=.40;SX=SZ=.035;}
+        else if(R.kind=="bankLift"){SY=FMath::Max(.06,P[1]-.30);Y=.15+SY/2;Z+=.19;SX=SZ=.035;}
         else if(R.kind=="rejectPusher"){const int L=FCString::Atoi(*Part.Record.RightChop(7));const double Back=SourceTour->GetArrayField(TEXT("laneZ"))[L]->AsNumber()-.53;
             SZ=FMath::Max(.05,P[2]-Back);Z=Back+SZ/2;Y=1.25+.035;SX=SY=.045;
         }else{const double Bottom=P[1]+(R.kind=="dispatch"?.38:R.kind=="rowPusher"?.37:.25);SY=FMath::Max(.03,Top-Bottom);Y=Bottom+SY/2;SX=SZ=R.kind=="dispatch"?.12:.055;}

@@ -1,6 +1,8 @@
 /* Offline authoring only. The shipped application uses native C++ state. */
 window.exportNativeFactory = function (options = {}) {
-  const d=CART_DEMO,T=THREE,roots=new Map(),geometries={},materials={},instances=[],instanceBatches=[];
+  const d=CART_DEMO,T=THREE,roots=new Map(),enclosureRoots=new Map(),geometries={},materials={},instances=[],instanceBatches=[];
+  for(const [system,covers] of Object.entries({inspection:d.inspectionCovers||[],routing:d.routingCovers||[]}))
+    covers.forEach((root,lane)=>enclosureRoots.set(root,{system,lane}));
   const encodeFloat32 = array => {
     const bytes=new Uint8Array(array.buffer,array.byteOffset,array.byteLength),pieces=[];
     for(let i=0;i<bytes.length;i+=32768)pieces.push(String.fromCharCode(...bytes.subarray(i,i+32768)));
@@ -60,6 +62,9 @@ window.exportNativeFactory = function (options = {}) {
   d.scene.updateMatrixWorld(true);
   d.scene.traverse(o=>{
     if(!o.isMesh||(o===d.bricks&&!options.snapshotWorld))return;
+    let enclosure=null;
+    for(let p=o;p;p=p.parent)if(enclosureRoots.has(p)){enclosure=enclosureRoots.get(p);break;}
+    if(options.enclosuresOnly&&!enclosure)return;
     if(options.snapshotWorld) {
       // A frozen authoring state, including current visibility and brick matrices.
       // Use nearest LOD consistently; never render both levels over one another.
@@ -98,6 +103,7 @@ window.exportNativeFactory = function (options = {}) {
       const batch={geometry:geometry(o.geometry),materials:mats.map(mat),count,
         parentMatrix:parent.toArray(),matrixEncoding:'base64-float32-little-endian-column-major',
         matrices:encodeFloat32(matrices)};
+      if(enclosure)batch.serviceEnclosure=enclosure;
       if(binding)batch.binding={...binding,root:undefined,base:transform(binding.root.matrixWorld)};
       const lod=lodFor(o);if(lod)batch.lod=lod;
       if(colors)batch.colors=encodeFloat32(colors);
@@ -108,6 +114,7 @@ window.exportNativeFactory = function (options = {}) {
       if(o.isInstancedMesh){o.getMatrixAt(i,matrix);matrix.premultiply(o.matrixWorld);}else matrix.copy(o.matrixWorld);
       if(inverse)matrix.premultiply(inverse);
       const item={geometry:geometry(o.geometry),materials:mats.map(mat),transform:transform(matrix)};
+      if(enclosure)item.serviceEnclosure=enclosure;
       const lod=lodFor(o);if(lod)item.lod=lod;
       if(binding) {
         item.binding={...binding,root:undefined,base:transform(binding.root.matrixWorld)};
