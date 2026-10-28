@@ -20,6 +20,8 @@ def gallery(output,status,delivered,error=''):
     text+=f'<h1>Brickflow · Final 37 tours</h1><p>Second kiln cart → dehacking → row transfer → inspection → pallet → inventory → truck departure</p><aside>{len(delivered)} / 10 delivered · Cloud: {html.escape(status.get("state","connecting"))}<br>{html.escape(active)}<br>Updated: {html.escape(status.get("updatedAt","waiting for cloud"))}</aside>'
     if error:text+='<p>Delivery reconnecting: '+html.escape(error)+'</p>'
     text+='<p>Every tour includes the physical Franka and one real classifier feed. TIMELAPSE labels show the source clock speed. Recorded hardware and simulated brick IDs are not paired.</p><main>'+''.join(cards)+'</main><p>Continuous native C++ playback of the final source timeline in Unreal. Editorial comparison; no independent physical validation is implied.</p></html>'
+    if len(delivered)<10:
+        text=text.replace('</html>','<script>setInterval(()=>{if(![...document.querySelectorAll("video")].some(v=>!v.paused))location.reload()},60000)</script></html>')
     temp=output/'index.html.tmp';temp.write_text(text);temp.replace(output/'index.html')
 
 def transfer(host,remote_path,local,expected):
