@@ -31,6 +31,15 @@ def transfer(host,remote_path,local,expected):
     subprocess.run(['rsync','--partial','--append-verify','--timeout=120','-e','ssh -o BatchMode=yes -o ConnectTimeout=15 -o ServerAliveInterval=20',host+':'+remote_path,str(partial)],check=True,timeout=7200)
     assert digest(partial)==expected,'Downloaded file hash mismatch';partial.replace(local)
 
+def ready_order(items,cache,delivered):
+    """Resume the furthest-downloaded tour first after a service or WSL restart."""
+    def priority(item):
+        folder=cache/f'Tour_{item["number"]:02}'
+        cached=sum(f.stat().st_size for f in folder.glob('*') if f.is_file() and
+                   (f.name.endswith('.mp4') or f.name.endswith('.mp4.partial')))
+        return (-cached,item['number'])
+    return sorted((item for item in items if str(item['number']) not in delivered),key=priority)
+
 def main():
     p=argparse.ArgumentParser();p.add_argument('--host',default='brickflow-cinematic-4gpu');p.add_argument('--remote-root',default='/home/shadeform/workspace/brickflow-final37-night');p.add_argument('--cache',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--once',action='store_true');a=p.parse_args()
     a.cache.mkdir(parents=True,exist_ok=True);a.output.mkdir(parents=True,exist_ok=True)
@@ -38,7 +47,7 @@ def main():
     while True:
         try:
             status=json.loads(remote(a.host,a.remote_root+'/status.json'));atomic(a.output/'cloud-status.json',status);gallery(a.output,status,delivered)
-            for item in sorted(status.get('ready',[]),key=lambda x:x['number']):
+            for item in ready_order(status.get('ready',[]),a.cache,delivered):
                 number=item['number'];name=f'Tour_{number:02}'
                 if str(number) in delivered:continue
                 report=json.loads(remote(a.host,a.remote_root+'/'+item['path']));assert report['complete'] and report['physicalOverlays']==2 and report['inspectionNeverPaused']

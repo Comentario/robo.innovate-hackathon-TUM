@@ -134,6 +134,11 @@ El objetivo de entrega se cierra solo tras revisar estos resultados junto con
 los archivos efectivamente copiados al disco D. Este servicio es independiente
 de la captura; instalarlo no reinicia los procesos de render activos.
 
+Si WSL o el servicio de entrega se reinician, la descarga continúa por el recorrido
+con más video ya conservado en la caché. Así termina primero una entrega avanzada
+antes de iniciar otra por orden numérico; los MP4 parciales siguen reanudándose y
+solo se publican después de comprobar sus hashes.
+
 Tras revisar una unión real entre los frames 1.799 y 1.800, se comprobó continuidad
 visual y temporal (avance de 1/30 s nativo en ese punto). La revisión reveló que
 la placa de agarre oculta parte de la capa desde la vista elevada. Se conserva
