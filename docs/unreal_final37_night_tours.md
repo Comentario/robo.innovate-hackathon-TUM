@@ -159,3 +159,24 @@ entre grabación física y referencia sintética, sin emparejar sus IDs.
 Las otras nueve cámaras conservan sus planes al incorporar este contraste.
 El recorrido 10 actualizado dura 566,41 s (16.993 frames a 30 fps); su traza completa
 se volvió a auditar y una captura de Unreal confirmó la visibilidad del rechazo.
+
+## Aprovechar las GPUs que queden libres al final
+
+`brickflow-final37-tail.service` espera hasta que estén terminados los recorridos
+1–8. Si los recorridos 9 o 10 siguen capturándose y hay GPUs sin trabajo de la cola,
+las utiliza para adelantar sus chunks futuros, empezando por el final. Cada chunk
+se calcula con el mismo replay C++, resolución, asentamiento temporal y encoder.
+La cola original conserva el orden cronológico y es la única que ensambla las
+películas; renderizar un chunk antes no adelanta el reloj del video.
+
+La asistencia trabaja en `Ahead/GPU_N/Tour_NN`. Solo publica un directorio ya
+verificado mediante `renameat2(RENAME_NOREPLACE)`: nunca sustituye un directorio
+existente de la cola original, aunque esté vacío. La prueba
+`tests_native/check_tail_publish.py` verifica los casos de destino ausente, vacío
+y con captura activa; también se probó la operación en la VM cloud.
+
+Los encoders auxiliares usan puertos localhost 7951–7954, separados de 7901–7904.
+Una captura de prueba de dos frames verificó ese canal independiente. Si cambia
+el proceso principal, la asistencia se detiene y deja la cola original al mando.
+El estado auxiliar se registra en `ahead-status.json`. Esta optimización usa las
+mismas cuatro GPUs ya contratadas y mantiene los ajustes de calidad del render.

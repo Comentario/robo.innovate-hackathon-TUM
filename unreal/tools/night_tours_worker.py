@@ -80,7 +80,7 @@ def verify_trace(path,tour,first=0,last=None):
         prev=row
     return dict(frames=len(rows),continuousSourceClock=True,oneSubjectIdentity=True,maximumCameraStepCm=maxstep)
 
-def render_chunk(root,gpu,tour,tourpath,out,first,last,width=3840):
+def render_chunk(root,gpu,tour,tourpath,out,first,last,width=3840,port_base=7901):
     out.mkdir(parents=True,exist_ok=True);video=out/'raw.mp4';done=out/'verified.json';frames=last-first
     if done.exists() and video.exists():
         report=json.loads(done.read_text())
@@ -89,7 +89,7 @@ def render_chunk(root,gpu,tour,tourpath,out,first,last,width=3840):
         for name in ['complete.status','trace.csv']:(out/name).unlink(missing_ok=True)
         encoder=None
         try:
-            port=7901+gpu;partial=out/'raw.partial.mp4'
+            port=port_base+gpu;partial=out/'raw.partial.mp4'
             enc=['ffmpeg','-nostdin','-hide_banner','-loglevel','warning','-y','-filter_threads','2','-f','rawvideo','-pixel_format','bgra','-video_size',f'{width}x{width*9//16}','-framerate','30','-i',f'tcp://127.0.0.1:{port}?listen=1','-map','0:v','-vf','scale=in_range=pc:out_range=tv:out_color_matrix=bt709,format=yuv420p','-an','-c:v','h264_nvenc','-gpu',str(gpu),'-preset','p7','-tune','hq','-rc','vbr','-cq','14','-b:v','0','-spatial-aq','1','-temporal-aq','1','-pix_fmt','yuv420p','-color_range','tv','-colorspace','bt709','-color_primaries','bt709','-color_trc','iec61966-2-1','-movflags','+faststart',str(partial)]
             with (out/f'encoder-{attempt}.log').open('w') as log:
                 encoder=subprocess.Popen(enc,stdout=log,stderr=subprocess.STDOUT,start_new_session=True);STOP.wait(1)
