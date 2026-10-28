@@ -90,6 +90,16 @@ def make(facts,index):
       'truck':follow([10,5,-10],72,p['order'],(0,.8,0)),
       'reveal':dict(look=[44,.5,8],offset=offset([90,75,78]),fov=67,orbitStart=outro+12,orbitDuration=36,orbitTurns=1 if index%2 else -1),
     }
+    # Keep the first four elevated views as comparison baselines. Lower pending
+    # variants reveal the real layer beneath the opaque gripping plate.
+    dehacking_variants={
+      5:([4.7,1.0,4.0],58,.02),6:([5.0,.9,3.5],60,.02),
+      7:([5.4,1.6,5.4],62,.10),8:([3.8,1.2,5.0],60,.05),
+      9:([7.0,2.3,6.7],65,.15),10:([6.2,1.7,5.5],63,.10),
+    }
+    if index in dehacking_variants:
+        off,fov,look_y=dehacking_variants[index]
+        views['dehacking']=follow(off,fov,look=(0,look_y,0))
     def at(t):return clock.at(t)
     cues=[(0,'input',0),(at(event('lift-36-top-layers')-9),'dehacking',5),
       (at(event('place-on-loading-belts',True)+1),'transport',5),

@@ -133,3 +133,13 @@ Guarda un resultado por recorrido en `Quality/tour-NN.json` y el resumen en
 El objetivo de entrega se cierra solo tras revisar estos resultados junto con
 los archivos efectivamente copiados al disco D. Este servicio es independiente
 de la captura; instalarlo no reinicia los procesos de render activos.
+
+Tras revisar una unión real entre los frames 1.799 y 1.800, se comprobó continuidad
+visual y temporal (avance de 1/30 s nativo en ese punto). La revisión reveló que
+la placa de agarre oculta parte de la capa desde la vista elevada. Se conserva
+esa vista en los recorridos 1–4; en los recorridos 5–10, aún sin capturar al cambiar
+sus planes, se prueban vistas de dehacking más bajas o intermedias. Una captura
+nativa independiente confirma mayor visibilidad de la capa bajo el cabezal.
+Las seis trazas nuevas se vuelven a auditar. No se cambian movimientos, tiempos,
+superposiciones ni encuadres de transferencia/inspección. Los planes originales
+quedan preservados en `Tours/original-camera` de la VM.
