@@ -5,7 +5,7 @@ or motion-generated. Camera and plant clocks remain the original final37 tours.
 """
 import argparse,concurrent.futures,csv,json,math,os,signal,subprocess,sys,threading,time,traceback
 from pathlib import Path
-from composite_night_tour import card_assets,digest,FRANKA,DETECTION
+from composite_night_tour import badge,card_assets,digest,FRANKA,DETECTION
 from plan_night_tours import Clock
 import night_tours_worker as W
 from verify_night_composite import frame,check_rendered_clock
@@ -75,13 +75,18 @@ def retime_filter(label,o,out):
         expr=term if expr is None else f'if(lt(PTS*TB\\,{y-s0:.12f})\\,{term}\\,{expr})'
     return f'[{label}]trim=start={s0}:end={knots[-1][1]},setpts=PTS-STARTPTS,setpts={expr},fps=30,scale=PLACEHOLDER:flags=lanczos,setsar=1,format=rgba[{out}]'
 
-def compose(root,sync,n,tour,patches,gpu):
-    out=sync/f'Movies/Tour_{n:02}';out.mkdir(parents=True,exist_ok=True)
+def compose(root,sync,n,tour,patches,gpu,clean_concat=None,output_dir=None):
+    out=output_dir or sync/f'Movies/Tour_{n:02}';out.mkdir(parents=True,exist_ok=True)
     old=json.loads((root/f'Tours/tour-{n:02}.json').read_text());windows=repair_windows(old,tour)
     physical=Path.home()/'workspace/brickflow-native/Saved/LightingReview';franka=physical/'franka-cycle-source-1080x1920.mp4';detection=physical/'Demo_Video1.mp4'
     assert digest(franka)==FRANKA and digest(detection)==DETECTION
     card_assets(out,'franka',924,1642);card_assets(out,'detection',1536,1192)
-    cmd=['ffmpeg','-nostdin','-hide_banner','-loglevel','warning','-y','-filter_complex_threads','2','-i',str(root/f'Movies/Tour_{n:02}/tour-4k.mp4')]
+    cmd=['ffmpeg','-nostdin','-hide_banner','-loglevel','warning','-y','-filter_complex_threads','2']
+    if clean_concat:
+        assert not patches,'A clean native concat must not contain legacy repair patches'
+        cmd+=['-f','concat','-safe','0','-i',str(clean_concat)]
+        badge(tour,out/'speed.ass')
+    else:cmd+=['-i',str(root/f'Movies/Tour_{n:02}/tour-4k.mp4')]
     for p,first,last in patches:cmd+=['-i',str(p)]
     fi=1+len(patches);di=fi+1;cmd+=['-i',str(franka),'-i',str(detection)]
     maskindex=di+1
@@ -96,7 +101,9 @@ def compose(root,sync,n,tour,patches,gpu):
         graph+=retime_filter(f'{idx}:v',o,name+'feed').replace('PLACEHOLDER',f'{w}:{h}')+';'
         graph+=f'[{mask}:v]format=gray[{name}mask];[{name}feed][{name}mask]alphamerge[{name}masked];'
         graph+=f'[{shadow}:v][{name}masked]overlay=48:48:shortest=1:format=auto,fade=t=in:st={a}:d={o["fadeSeconds"]}:alpha=1,fade=t=out:st={b}:d={end-b}:alpha=1,scale=iw/2:ih/2,setpts=PTS+{start}/TB[{name}card];'
-    graph+=f'[base{len(patches)}][frankacard]overlay=1358:105:eof_action=pass:repeatlast=0:format=auto[first];[first][detectioncard]overlay=43:24:eof_action=pass:repeatlast=0:format=auto,format=yuv420p[out]'
+    graph+=f'[base{len(patches)}][frankacard]overlay=1358:105:eof_action=pass:repeatlast=0:format=auto[first];[first][detectioncard]overlay=43:24:eof_action=pass:repeatlast=0:format=auto,'
+    if clean_concat:graph+=f'ass=filename={out/"speed.ass"},'
+    graph+='format=yuv420p[out]'
     (out/'filtergraph.txt').write_text(graph)
     partial=out/'tour-1080p.partial.mp4';target=out/'tour-1080p.mp4'
     cmd+=['-filter_complex',graph,'-map','[out]','-frames:v',str(tour['frames']),'-an','-map_metadata','-1','-c:v','h264_nvenc','-gpu',str(gpu),'-preset','p7','-tune','hq','-rc','vbr','-cq','18','-b:v','0','-pix_fmt','yuv420p','-movflags','+faststart',str(partial)]

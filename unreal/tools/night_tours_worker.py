@@ -133,6 +133,23 @@ def tour_job(root,gpu,number,chunkframes):
     concat=out/'concat.txt';concat.write_text(''.join("file '"+str(p)+"'\n" for p in chunks))
     with LOCK:ACTIVE[str(gpu)]=dict(tour=number,stage='composite',totalFrames=tour['frames'])
     status(root)
+    runtime=json.loads((root/'runtime.json').read_text()) if (root/'runtime.json').exists() else {}
+    if runtime.get('editorialRevision')==2:
+        # Compose against clean native footage: no baked legacy overlays or repairs.
+        import sync_night_overlays as editorial
+        editorial.W.STOP=STOP
+        synced_plan,compose_synced=editorial.synced_plan,editorial.compose
+        edited=synced_plan(tour,json.loads((root/'Assets/facts.json').read_text()))
+        if runtime.get('preserveClean4K',True):
+            clean=out/'clean-4k.mp4';partial=out/'clean-4k.partial.mp4'
+            process(['ffmpeg','-nostdin','-v','error','-y','-f','concat','-safe','0','-i',str(concat),'-c:v','copy','-an','-movflags','+faststart',str(partial)],out/'clean-master.log',timeout=1200)
+            partial.replace(clean)
+            atomic(out/'clean-4k.json',dict(file=clean.name,bytes=clean.stat().st_size,sha256=digest(clean),frames=tour['frames'],width=3840,height=2160,fps=30,chunkFramesIndividuallyDecoded=True))
+        report=compose_synced(root,root,number,edited,[],gpu,clean_concat=concat,output_dir=out)
+        report.update(subject=tour['subject'],stockPalletsAtStart=tour['stockPalletsAtStart'],cameraAudit=json.loads((audit/'verified.json').read_text()),visualRevision=runtime.get('visualRevision'))
+        atomic(final,report)
+        for raw in chunks:raw.unlink()
+        return report
     physical=Path.home()/'workspace/brickflow-native/Saved/LightingReview'
     # An independent compositor process is bounded and killed with its group if stalled.
     command=[sys.executable,str(Path(__file__).with_name('composite_night_tour.py')),'--tour',str(path),'--concat',str(concat),'--franka',str(physical/'franka-cycle-source-1080x1920.mp4'),'--detection',str(physical/'Demo_Video1.mp4'),'--output',str(out),'--gpu',str(gpu)]
@@ -170,6 +187,11 @@ def main():
             assert exported['complete'] and exported['sourceSha256']==HASH and audit['verified'] and gate['approvedForQueue'] and gate['referenceSha256']==HASH
             assert digest(root/'Assets/replay.bin')==exported['replaySha256']
             scene=json.loads((root/'Assets/scene.json').read_text());assert digest(root/'Assets/geometry.json')==scene['geometrySha256']
+            runtime=json.loads((root/'runtime.json').read_text()) if (root/'runtime.json').exists() else {}
+            if runtime.get('visualRevision'):
+                assert scene.get('enclosuresSha256'),'Visual revision needs its enclosure asset fingerprint'
+                enclosure=root/'Assets'/scene['enclosures'];assert digest(enclosure)==scene['enclosuresSha256']
+                enclosure_data=json.loads(enclosure.read_text());assert enclosure_data['schema']=='brickflow.source-service-enclosures.v1' and enclosure_data['referenceSha256']==HASH
             assert len(list((root/'Tours').glob('tour-??.json')))==10
             break
         except (OSError,ValueError,KeyError,AssertionError):status(root);STOP.wait(30)

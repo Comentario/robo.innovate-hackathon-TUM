@@ -219,3 +219,12 @@ publicar `delivery.json`.
 Las nuevas entregas se guardan dentro de la carpeta solicitada, en
 `Final37_Night_Tours/Synced_v2`. La galería de esa revisión enlaza únicamente
 resoluciones entregadas. La versión anterior sigue conservada para comparación.
+
+La cola de la revisión visual puede usar `runtime.json` con `project` absoluto,
+`editorialRevision: 2`, `visualRevision` y `preserveClean4K: true`. Compone los
+feeds sincronizados directamente sobre los nuevos chunks nativos limpios y añade
+el rótulo de velocidad; conserva además un master limpio 4K en cloud. Antes de
+arrancar exige el SHA del suplemento de carcasas declarado en `scene.json`, su
+schema y su referencia. El proyecto anterior conserva sus rutas predeterminadas
+si no existe esta configuración. La primera película de esta revisión requiere
+la misma revisión visual y auditoría de píxeles antes de darse por final.
