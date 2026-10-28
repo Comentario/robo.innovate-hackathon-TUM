@@ -1,0 +1,18 @@
+[Unit]
+Description=Mirror verified Brickflow final37 tours to Windows
+After=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+WorkingDirectory=/home/vjhannox/hackathon/robo.innovate-hackathon-TUM
+ExecStart=/usr/bin/python3 -u /home/vjhannox/hackathon/robo.innovate-hackathon-TUM/unreal/tools/deliver_night_tours.py --cache /home/vjhannox/hackathon/robo.innovate-hackathon-TUM/artifacts/unreal_night37/delivery --output "/mnt/d/Hackathon/Munich Hackathon 2026/Videos_Unreal/Final37_Night_Tours"
+Restart=on-failure
+RestartSec=30
+TimeoutStopSec=30
+Environment=PYTHONUNBUFFERED=1
+StandardOutput=append:/home/vjhannox/hackathon/robo.innovate-hackathon-TUM/artifacts/unreal_night37/delivery-service.log
+StandardError=append:/home/vjhannox/hackathon/robo.innovate-hackathon-TUM/artifacts/unreal_night37/delivery-service.log
+
+[Install]
+WantedBy=default.target

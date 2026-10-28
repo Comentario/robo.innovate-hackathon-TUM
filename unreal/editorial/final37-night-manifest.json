@@ -1,0 +1,111 @@
+{
+  "referenceSha256": "3aa2ec3d3828a691e7020f4deca4dc86d093b69da1569b57c73865352a03f7c5",
+  "tours": [
+    {
+      "number": 1,
+      "name": "Tour 01",
+      "seconds": 560.7862677237902,
+      "frames": 16824,
+      "subject": "38371",
+      "stockPalletsAtStart": 23,
+      "outroAdditionalInspected": 5076
+    },
+    {
+      "number": 2,
+      "name": "Tour 02",
+      "seconds": 546.7132072242015,
+      "frames": 16402,
+      "subject": "38371",
+      "stockPalletsAtStart": 23,
+      "outroAdditionalInspected": 5076
+    },
+    {
+      "number": 3,
+      "name": "Tour 03",
+      "seconds": 591.4624176522818,
+      "frames": 17744,
+      "subject": "38371",
+      "stockPalletsAtStart": 23,
+      "outroAdditionalInspected": 5076
+    },
+    {
+      "number": 4,
+      "name": "Tour 04",
+      "seconds": 563.6912345173897,
+      "frames": 16911,
+      "subject": "38371",
+      "stockPalletsAtStart": 23,
+      "outroAdditionalInspected": 5076
+    },
+    {
+      "number": 5,
+      "name": "Tour 05",
+      "seconds": 538.6699271110679,
+      "frames": 16161,
+      "subject": "38371",
+      "stockPalletsAtStart": 23,
+      "outroAdditionalInspected": 5076
+    },
+    {
+      "number": 6,
+      "name": "Tour 06",
+      "seconds": 577.9445439380197,
+      "frames": 17339,
+      "subject": "38371",
+      "stockPalletsAtStart": 23,
+      "outroAdditionalInspected": 5076
+    },
+    {
+      "number": 7,
+      "name": "Tour 07",
+      "seconds": 546.3126456946479,
+      "frames": 16390,
+      "subject": "38371",
+      "stockPalletsAtStart": 23,
+      "outroAdditionalInspected": 5076
+    },
+    {
+      "number": 8,
+      "name": "Tour 08",
+      "seconds": 599.3035634856151,
+      "frames": 17980,
+      "subject": "38371",
+      "stockPalletsAtStart": 23,
+      "outroAdditionalInspected": 5076
+    },
+    {
+      "number": 9,
+      "name": "Tour 09",
+      "seconds": 538.8720613908681,
+      "frames": 16167,
+      "subject": "38371",
+      "stockPalletsAtStart": 23,
+      "outroAdditionalInspected": 5076
+    },
+    {
+      "number": 10,
+      "name": "Tour 10",
+      "seconds": 564.5301428144564,
+      "frames": 16936,
+      "subject": "38371",
+      "stockPalletsAtStart": 23,
+      "outroAdditionalInspected": 5076
+    }
+  ],
+  "schema": "brickflow.final37-night-manifest.v1",
+  "source": "greenfield_37",
+  "subject": "38371",
+  "cart": 1,
+  "pallet": "wood-46",
+  "truck": "truck-2-1",
+  "width": 3840,
+  "height": 2160,
+  "fps": 30,
+  "overlays": [
+    "physical-franka",
+    "real-classifier-one-feed"
+  ],
+  "inspectionNeverPaused": true,
+  "backend": "native-cpp-source-event-replay",
+  "independentNativePlanner": false
+}
