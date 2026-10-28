@@ -17,12 +17,11 @@ window.FactoryWarehouseView=({T,box,rod,beam,support,rollerBed,equipment,label,M
   for(let i=0;i<4;i++){const x=65+i*5;for(const sign of [-1,1]){paint(x,-21+sign*.85,3.4,.035,M.yellow);paint(x+sign*1.7,-21,.035,1.7,M.yellow)}box(x+.7,.55,-22,.3,1.1,.22,M.dark);ledLocal(x+.7,1.08,-22);}
   for(let category=0;category<4;category++){
    const z=26+category*8;for(const side of [-1,1])paint(101+side*1.1,z,.035,6.0,M.blue);
-   rollerBed(91.0,97.4,z,.92,.8);box(90.8,.79,z,.4,.025,.92,M.steel);
-   for(const x of [91.1,97.25]){box(x,.91,z-.49,.07,.08,.07,M.dark);box(x,.84,z-.55,.12,.05,.24,M.steel)}
-   box(98,.015,z,1.5,.03,1.12,M.dark);for(const dz of [-.36,.36])box(98,.045,z+dz,.85,.09,.10,M.steel);
-   for(const side of [-1,1]){paint(98,z+side*.77,1.9,.04,M.yellow);paint(92,z+side*1.8,15,.04,colours[category])}
+   box(92.5,.008,z,3.92,.015,1.94,M.dark);
+   for(const side of [-1,1]){paint(92.5,z+side*.99,3.95,.05,M.yellow);paint(92.5+side*1.98,z,.05,2.0,M.yellow);paint(92,z+side*1.8,15,.04,colours[category])}
+   for(const x of [90.8,94.2]){box(x,.15,z-1.06,.08,.30,.08,M.steel);box(x,.30,z-1.06,.08,.10,.08,M.dark)}
    sign(names[category]+' ORDERS',95,z-2.5,colours[category]);
-   equipment(names[category]+' · automatic loading dock','actuator','loading_dock',[95,.75,z],[8.6,1.7,1.8],'A dock-clear interlock precedes the lift to trailer height. One pallet moves on the dock conveyor; separately driven trailer zones stop completed positions while the next pallet enters.',[['Order','8 complete pallets of one product'],['Infeed / trailer height','0.164 m / 0.80 m'],['Loading belt','0.35 m/s · configured'],['Interlock','AMR clear + truck docked + destination free']]);
+   equipment(names[category]+' · direct AMR loading dock','actuator','custom_loading_platform',[92.5,.55,z],[4.1,1.4,2.1],'A recessed dock platform lifts the complete loaded AMR to trailer-floor height. The vehicle places pallets directly from the front of the trailer toward its entrance, reverses onto the platform and returns to floor level before the truck can depart.',[['Order','8 complete pallets of one product'],['Platform','3.8 × 1.8 m · 0.80 m lift'],['Design load','5,000 kg including vehicle and cargo · concept target'],['Lift speed','0.15 m/s · configured'],['Interlock','Truck docked + vehicle fully on platform + dock clear'],['Validation','Trailer wheel loads and platform rating require supplier confirmation']]);
   }
   equipment('Autonomous pallet transport fleet','transport','autonomous_stacker',[77,1.3,-21],[22,2.8,2.4],'Four autonomous pallet stackers collect completed pallets directly from classified stock and deliver them to matching customer orders. Tasks reserve pickup, lift, withdrawal, travel and return together.',[['Fleet','4 vehicles'],['Demo travel speed','1.2 m/s'],['Motion','Sideways / reverse / straight; fixed load orientation'],['Load assumption','560 × 2.2 kg + 30 kg pallet = 1,262 kg']]);
   label('05  CLASSIFIED WAREHOUSE',[75,3.1,0]);label('06  ORDER-DRIVEN SHIPPING',[94,3.1,38]);
@@ -37,10 +36,11 @@ window.FactoryWarehouseView=({T,box,rod,beam,support,rollerBed,equipment,label,M
  }
  function fork(){const g=new T.Group();dynamicRoot.add(g);box(.65,.12,0,.10,.22,.88,M.steel,g);for(const z of [-.20,.20]){box(0,-.01,z,1.2,.07,.125,M.steel,g);box(.60,.13,z,.07,.30,.125,M.steel,g)}return g}
  function frame(){const g=new T.Group();dynamicRoot.add(g);box(0,.17,0,1.48,.15,1.14,M.yellow,g);box(0,.30,0,.35,.15,.35,M.dark,g);for(const x of [-.70,.70])for(const z of [-.52,.52])box(x,-.40,z,.08,1.15,.08,M.yellow,g);box(.70,-.97,0,.10,.08,1.12,M.steel,g);for(const z of [-.20,.20])box(.075,-.97,z,1.25,.07,.125,M.steel,g);for(const z of [-.52,.52])box(0,-.12,z,1.45,.12,.08,M.yellow,g);return g}
- function truck(){const g=new T.Group();dynamicRoot.add(g);box(0,.62,0,11.2,.20,2.5,M.dark,g);for(let i=0;i<8;i++){const x=-4.85+i*1.35;for(let xx=x-.52;xx<x+.53;xx+=.14)rod(xx,.774,0,.026,2.34,M.steel,'z',g);box(x+.62,.785,0,.02,.03,2.38,M.dark,g);box(x,.69,-1.22,.18,.14,.14,M.dark,g);ledLocal(x,.83,-1.22,g)}
+ function truck(){const g=new T.Group();dynamicRoot.add(g);box(0,.62,0,11.2,.20,2.5,M.dark,g);box(0,.76,0,11.2,.08,2.5,M.steel,g);
   for(const z of [-1.23,1.23])box(0,.92,z,11.3,.12,.06,M.steel,g);
   box(-7.1,1.25,0,2.7,2.1,2.40,M.green,g);box(-7.75,1.80,0,1.3,.60,2.43,M.blue,g);box(-8.5,.85,0,.12,.24,2.50,M.dark,g);box(-7.1,2.4,0,2.75,.18,2.45,M.green,g);
   for(const x of [-7.0,-4.2,2.9,4.0])for(const z of [-1.05,1.05]){rod(x,.35,z,.35,.22,M.dark,'z',g);rod(x,.35,z,.17,.23,M.steel,'z',g)}return g;
  }
- return{build,amr,fork,frame,truck};
+ function dockPlatform(){const g=new T.Group();dynamicRoot.add(g);box(0,-.085,0,3.8,.13,1.8,M.dark,g);box(0,-.01,0,3.8,.02,1.8,M.steel,g);for(const side of [-1,1]){box(0,.025,side*.87,3.8,.05,.045,M.yellow,g);box(0,-.04,side*.75,3.55,.12,.10,M.green,g)}return g}
+ return{build,amr,fork,frame,truck,dockPlatform};
 };
