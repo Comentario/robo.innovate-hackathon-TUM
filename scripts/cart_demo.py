@@ -12,7 +12,7 @@ def main():
     for item in catalog:
         asset=ROOT/'greenfield/assets'/item.get('image_asset','_missing')
         if asset.is_file():item['image']='data:'+str(mimetypes.guess_type(asset.name)[0])+';base64,'+base64.b64encode(asset.read_bytes()).decode()
-    model=(ROOT/'greenfield/cart_model.js').read_text();fingerprint=hashlib.sha256((model.split('/* snapshot-loader */')[0]+(ROOT/'greenfield/logistics.js').read_text()).encode()).hexdigest()[:16]
+    model=(ROOT/'greenfield/cart_model.js').read_text();fingerprint=hashlib.sha256(((ROOT/'greenfield/layout.js').read_text()+model.split('/* snapshot-loader */')[0]+(ROOT/'greenfield/logistics.js').read_text()).encode()).hexdigest()[:16]
     replays={}
     for mode in ('combined',):
         cache=folder/(mode+'-'+fingerprint+'.json.gz')
@@ -26,7 +26,7 @@ def main():
             chunks.write_text(json.dumps(replays[mode],separators=(',',':')))
 
     html=(ROOT/'greenfield/viewer_cart.html').read_text()
-    for key,value in {'__REPLAYS__':json.dumps(replays),'__THREE__':(ROOT/'third_party/three/three.min.js').read_text(),'__CATALOG__':json.dumps(catalog).replace('<','\u003c'),'__LOGISTICS__':(ROOT/'greenfield/logistics.js').read_text(),'__MODEL__':(ROOT/'greenfield/cart_model.js').read_text(),'__WAREHOUSE_VIEW__':(ROOT/'greenfield/warehouse_view.js').read_text(),'__VIEWER__':(ROOT/'greenfield/viewer_cart.js').read_text()}.items():html=html.replace(key,value)
+    for key,value in {'__REPLAYS__':json.dumps(replays),'__THREE__':(ROOT/'third_party/three/three.min.js').read_text(),'__CATALOG__':json.dumps(catalog).replace('<','\u003c'),'__LAYOUT__':(ROOT/'greenfield/layout.js').read_text(),'__LOGISTICS__':(ROOT/'greenfield/logistics.js').read_text(),'__MODEL__':(ROOT/'greenfield/cart_model.js').read_text(),'__WAREHOUSE_VIEW__':(ROOT/'greenfield/warehouse_view.js').read_text(),'__VIEWER__':(ROOT/'greenfield/viewer_cart.js').read_text()}.items():html=html.replace(key,value)
     (folder/'index.html').write_text(html)
     print(folder/'index.html')
 if __name__=='__main__':main()
