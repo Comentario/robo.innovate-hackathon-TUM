@@ -1,0 +1,103 @@
+{
+  "schema_version": "cell-0.1",
+  "units": "m",
+  "frame": "world",
+  "brick_size_m": [
+    0.06,
+    0.025,
+    0.02
+  ],
+  "workspace": {
+    "min_m": [
+      -0.1,
+      -0.5,
+      0.0
+    ],
+    "max_m": [
+      0.8,
+      0.5,
+      0.9
+    ]
+  },
+  "source": {
+    "origin_m": [
+      0.35,
+      -0.35,
+      0.12
+    ],
+    "columns": 3,
+    "pitch_m": [
+      0.085,
+      0.09
+    ]
+  },
+  "pallet": {
+    "origin_m": [
+      0.35,
+      0.12,
+      0.12
+    ],
+    "pitch_m": [
+      0.085,
+      0.09,
+      0.02
+    ],
+    "capacity": {
+      "rows": 2,
+      "columns": 3,
+      "layers": 2
+    }
+  },
+  "approach_clearance_m": 0.15,
+  "home_m": [
+    0.4,
+    0,
+    0.5
+  ],
+  "orientation_quaternions": {
+    "front_out": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "back_out": [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+    ]
+  },
+  "reference_arm": {
+    "robot": "Panda",
+    "grasp_offset_m": 0.1034,
+    "supports": [
+      {
+        "id": "source_support",
+        "position_m": [
+          0.435,
+          -0.215,
+          0.05
+        ],
+        "size_m": [
+          0.32,
+          0.39,
+          0.11
+        ]
+      },
+      {
+        "id": "pallet_support",
+        "position_m": [
+          0.435,
+          0.195,
+          0.05
+        ],
+        "size_m": [
+          0.32,
+          0.22,
+          0.11
+        ]
+      }
+    ]
+  }
+}

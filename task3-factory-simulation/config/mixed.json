@@ -1,0 +1,5 @@
+{
+  "rows": 2, "columns": 3, "layers": 2,
+  "target_ratios": {"dark": 1, "medium": 1, "light": 1},
+  "mode": "mixed", "shortage_policy": "reject"
+}

@@ -1,0 +1,403 @@
+{
+  "schema_version": "1.0",
+  "currency": "USD",
+  "basis": "Preliminary planning allowances; not supplier quotations",
+  "integration_fraction": [
+    0.25,
+    0.45
+  ],
+  "electricity_usd_per_kwh": 0.1,
+  "energy_basis": "Power and duty scenario; not a metered or torque-based consumption model",
+  "energy_efficiency": 0.85,
+  "exclusions": [
+    "Building and land",
+    "Civil works and foundations",
+    "Taxes, freight and import duties",
+    "Plant upstream kiln energy",
+    "Staffing, maintenance and financing costs"
+  ],
+  "price_anchors": [
+    {
+      "model": "SICK WTB4-3P2162",
+      "usd": 316.8,
+      "kind": "Public advertised unit price; stock/terms may change",
+      "url": "https://www.teknihaus.com/1028084",
+      "checked_on": "2026-10-25"
+    },
+    {
+      "model": "SICK WTB4-3P2162",
+      "usd": 345.0,
+      "kind": "Public advertised unit price",
+      "url": "https://www.nexinstrument.com/wtb4-3p2162",
+      "checked_on": "2026-10-25"
+    },
+    {
+      "model": "Festo 8062793 bare axis",
+      "usd": 2022.83,
+      "kind": "Distributor list price; motor/drive/tool not included",
+      "url": "https://www.motion.com/products/sku/11523397",
+      "checked_on": "2026-10-25"
+    }
+  ],
+  "tariff_reference": {
+    "selected_usd_per_kwh": 0.1,
+    "kind": "User-adjustable planning tariff, not ACME utility rate",
+    "benchmark_usd_per_kwh": 0.0626,
+    "benchmark": "Texas industrial average, March 2026; EIA table 5.6.A",
+    "url": "https://www.eia.gov/electricity/monthly/current_month/may2026.pdf"
+  },
+  "items": [
+    {
+      "id": "bulk_bridge",
+      "label": "Stack delivery bridge",
+      "count_key": "one",
+      "unit_cost_usd": [
+        120000,
+        240000
+      ],
+      "unit_power_kw": [
+        8,
+        12
+      ],
+      "duty": 0.3,
+      "scope": "Complete bridge, trolley and supported pickup tool; unquoted allowance",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "layer_gantries",
+      "label": "Layer handling gantries",
+      "count_key": "gantries",
+      "unit_cost_usd": [
+        50000,
+        120000
+      ],
+      "unit_power_kw": [
+        4,
+        7
+      ],
+      "duty": "gantry",
+      "scope": "Axes, drives and EOAT; excludes receiving nests",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "receiving_nests",
+      "label": "Dehacking receiving nests",
+      "count_key": "nests",
+      "unit_cost_usd": [
+        4000,
+        9000
+      ],
+      "unit_power_kw": [
+        0.18,
+        0.37
+      ],
+      "duty": 0.4,
+      "scope": "Powered roller nests and hold-downs",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "feed_slides",
+      "label": "Transverse feed slides",
+      "count_key": "slides",
+      "unit_cost_usd": [
+        9000,
+        18000
+      ],
+      "unit_power_kw": [
+        0.4,
+        0.75
+      ],
+      "duty": "slides",
+      "scope": "Supported carriage, rail and drive",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "mixing_loops",
+      "label": "Continuous mixing circuits",
+      "count_key": "cells",
+      "unit_cost_usd": [
+        25000,
+        55000
+      ],
+      "unit_power_kw": [
+        0.75,
+        1.5
+      ],
+      "duty": 1.0,
+      "scope": "Loop frame, common drive and encoder; branch/guide hardware listed separately",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "branches",
+      "label": "Guided infeed / outfeed branches",
+      "count_key": "branches",
+      "unit_cost_usd": [
+        3000,
+        6000
+      ],
+      "unit_power_kw": [
+        0.18,
+        0.4
+      ],
+      "duty": 0.65,
+      "scope": "Infeed/outfeed branch drive, approach rollers and guides; custom integration",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "divert_guides",
+      "label": "Guided divert assemblies",
+      "count_key": "cells",
+      "unit_cost_usd": [
+        800,
+        1800
+      ],
+      "unit_power_kw": [
+        0,
+        0
+      ],
+      "duty": 0,
+      "scope": "Guided cylinder, valves, mount and shaped tool; air allowance separate",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "roller_diverters",
+      "label": "Outlet roller-transfer cassettes",
+      "count_key": "cells",
+      "unit_cost_usd": [
+        2000,
+        5000
+      ],
+      "unit_power_kw": [
+        0.09,
+        0.18
+      ],
+      "duty": 0.3,
+      "scope": "Powered lateral-transfer cassette",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "roller_zones",
+      "label": "Inspection roller zones",
+      "count_key": "zones",
+      "unit_cost_usd": [
+        450,
+        900
+      ],
+      "unit_power_kw": [
+        0.035,
+        0.05
+      ],
+      "duty": 0.5,
+      "scope": "RollerDrive plus idlers/frame; excludes sensor and controller",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "collector_zones",
+      "label": "Discard collector roller zones",
+      "count_key": "collector_zones",
+      "unit_cost_usd": [
+        450,
+        900
+      ],
+      "unit_power_kw": [
+        0.035,
+        0.05
+      ],
+      "duty": 0.15,
+      "scope": "100 roller zones drawn in two collectors; sensor and controller allowances listed separately",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "reject_belts",
+      "label": "Cross-belt and decline reject lanes",
+      "count_key": "cells",
+      "unit_cost_usd": [
+        2500,
+        6000
+      ],
+      "unit_power_kw": [
+        0.18,
+        0.37
+      ],
+      "duty": 0.2,
+      "scope": "One cross-transfer/decline lane per cell; excludes collector zones",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "zone_controls",
+      "label": "Four-zone controllers",
+      "count_key": "controllers",
+      "unit_cost_usd": [
+        400,
+        900
+      ],
+      "unit_power_kw": [
+        0.01,
+        0.018
+      ],
+      "duty": 1.0,
+      "scope": "16 inspection controllers plus 13 per 50-zone collector, 42 provisioned total; electrical design pending",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "pushers",
+      "label": "Guided pusher assemblies",
+      "count_key": "pushers",
+      "unit_cost_usd": [
+        8000,
+        16000
+      ],
+      "unit_power_kw": [
+        0.4,
+        0.75
+      ],
+      "duty": "pushers",
+      "scope": "X/Z axis, motor, drive and paddle; bare axis price anchor is separate",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "row_decks",
+      "label": "Row-forming roller decks",
+      "count_key": "cells",
+      "unit_cost_usd": [
+        2000,
+        5000
+      ],
+      "unit_power_kw": [
+        0.18,
+        0.37
+      ],
+      "duty": 0.35,
+      "scope": "Receiving pocket and row indexing; pusher priced separately",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "lowering",
+      "label": "Guided pallet lowering systems",
+      "count_key": "lines",
+      "unit_cost_usd": [
+        15000,
+        35000
+      ],
+      "unit_power_kw": [
+        1.5,
+        3.0
+      ],
+      "duty": 0.25,
+      "scope": "Custom lift/holding structure; final rated lift not selected",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "pallet_logistics",
+      "label": "Shared pallet transport",
+      "count_key": "one",
+      "unit_cost_usd": [
+        90000,
+        180000
+      ],
+      "unit_power_kw": [
+        2,
+        4
+      ],
+      "duty": 0.4,
+      "scope": "Inventory/output cars, output shuttle and pallet conveyors; excludes bridge",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "cameras",
+      "label": "Camera and lens kits",
+      "count_key": "cameras",
+      "unit_cost_usd": [
+        600,
+        1200
+      ],
+      "unit_power_kw": [
+        0.004,
+        0.006
+      ],
+      "duty": 1.0,
+      "scope": "Camera, lens and cable planning allowance",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "lighting",
+      "label": "Inspection lighting kits",
+      "count_key": "lights",
+      "unit_cost_usd": [
+        250,
+        650
+      ],
+      "unit_power_kw": [
+        0.017,
+        0.017
+      ],
+      "duty": 1.0,
+      "scope": "17 W manufacturer maximum per L300 reference light",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "presence",
+      "label": "Presence sensor kits",
+      "count_key": "presence",
+      "unit_cost_usd": [
+        250,
+        400
+      ],
+      "unit_power_kw": [
+        0.0008,
+        0.0012
+      ],
+      "duty": 1.0,
+      "scope": "88 inspection/transfer photoeyes plus 100 drawn collector detectors; indicative public price anchors linked separately",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "controls",
+      "label": "Line controls and integration hardware",
+      "count_key": "one",
+      "unit_cost_usd": [
+        30000,
+        70000
+      ],
+      "unit_power_kw": [
+        0.5,
+        1.0
+      ],
+      "duty": 1.0,
+      "scope": "PLC, cabinet, power supplies and guarding hardware; design unquoted",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "bins",
+      "label": "Stationary collection bins",
+      "count_key": "bins",
+      "unit_cost_usd": [
+        1500,
+        3500
+      ],
+      "unit_power_kw": [
+        0,
+        0
+      ],
+      "duty": 0,
+      "scope": "Collection container allowance; emptying service excluded",
+      "price_basis": "Engineering allowance; unquoted"
+    },
+    {
+      "id": "air",
+      "label": "Air and auxiliary reserve",
+      "count_key": "one",
+      "unit_cost_usd": [
+        5000,
+        12000
+      ],
+      "unit_power_kw": [
+        1.0,
+        3.0
+      ],
+      "duty": 1.0,
+      "scope": "Utility reserve, not a calculated compressor specification",
+      "price_basis": "Engineering allowance; unquoted"
+    }
+  ]
+}

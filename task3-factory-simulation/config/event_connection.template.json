@@ -1,0 +1,51 @@
+{
+  "schema_version": "event-connection-template-0.1",
+  "status": "pending_event_information",
+  "execution_enabled": false,
+  "robot": {
+    "manufacturer": null,
+    "model": null,
+    "sdk_name": null,
+    "sdk_version": null,
+    "base_frame": null,
+    "tcp_frame": null,
+    "gripper_type": null,
+    "joint_units": null,
+    "cartesian_units": null,
+    "home_configuration": null
+  },
+  "cell": {
+    "frame": null,
+    "brick_dimensions_m": null,
+    "pick_support_geometry": null,
+    "pallet_geometry": null,
+    "workspace_limits_m": null
+  },
+  "calibration": {
+    "camera_frame": null,
+    "cell_frame": null,
+    "translation_m": null,
+    "rotation_xyzw": null,
+    "pose_reference": "brick_center",
+    "grasp_tcp_offset_m": null
+  },
+  "perception": {
+    "producer": "person1",
+    "classification": "use_delivered_Lab_Kmeans_groups_unchanged",
+    "extra_score_filter": false,
+    "tracking_or_static_batch_protocol": null,
+    "observed_face_protocol": null,
+    "metric_pose_source": null
+  },
+  "adapter": {
+    "contract": "execution.ExecutionAdapter.perform(command) -> ActionResult",
+    "supported_outcomes": [
+      "succeeded",
+      "failed_before_action",
+      "unknown"
+    ],
+    "implementation": null,
+    "mode": "hardware",
+    "backend": null
+  }
+}
