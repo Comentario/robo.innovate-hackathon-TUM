@@ -1,0 +1,11 @@
+{
+  "schema": "known-layout-reference-freeze-v1",
+  "sha256": {
+    "experiments/detection_20261024/reference/annotations.json": "1a36cf4531bca88678a989fb01421df1304dcfe3a980318ac4b06a936e936e3f",
+    "perception/evaluation/protocol.json": "eb759f74987de4b08c1c381113d1033ea5302cba5e4c05b63b0e464a86e97bb1",
+    "perception/evaluation/missing_reference.json": "144050d78c2f8655f30c126d1470d5616bb709ede47f0d9095fbadb97393cd49",
+    "perception/evaluation/registrations_development.json": "ec7da4e63558f0d555a966818de79f4a67c95c10c76e4a2c0a2b47a0b213a365",
+    "perception/evaluation/registrations_heldout.json": "bab2d53aa44c7bc518e7493d0c15cf75089b176ba1f40286a663499507fbcdda"
+  },
+  "heldout_policy": "Whole group D reserved from tuning; evaluate frozen versions only after final model/config selection."
+}

@@ -1,0 +1,125 @@
+{
+  "schema": "known-layout-evaluation-v1",
+  "status": "frozen_before_geometric_implementation",
+  "primary_reference": "experiments/detection_20261024/reference/annotations.json",
+  "split": {
+    "development": [
+      "img_1.jpg",
+      "img_3.jpg",
+      "img_7.jpg",
+      "img_10.jpg"
+    ],
+    "held_out": [
+      "img_13.jpg",
+      "img_16.jpg"
+    ],
+    "held_out_group": "D",
+    "independence": "Views are correlated observations of one stack/disassembly sequence. Held-out group D is reserved from implementation tuning; this is not independent-stack generalization."
+  },
+  "primary_visual_face_reference": {
+    "positive_role": "exposed_top",
+    "positive_count": 166,
+    "excluded_role": "ambiguous",
+    "excluded_count": 14,
+    "meaning": "Complete manually identified visible 2x4 top-facing regions, not calibrated current-top height, hidden occupancy, mechanical access or robot-frame poses.",
+    "original_annotations_immutable": true
+  },
+  "supplemental_missing_track": {
+    "file": "perception/evaluation/missing_reference.json",
+    "meaning": "A complete same-orientation face is visibly missing at an expected slot in a supplied image-plane layout hypothesis. This does not prove absence of a hidden/occluded physical brick.",
+    "separate_from_primary_ambiguity_track": true,
+    "count": 6,
+    "held_out_missing_count": 0
+  },
+  "lower_surface_track": {
+    "role": "visible_lower",
+    "count": 23,
+    "meaning": "Selected non-exhaustive visible lower-layer fragments. A zero error count cannot prove global layer discrimination, especially when candidates avoid gaps by construction. Actual top-layer height accuracy is not measurable from the supplied uncalibrated JPEGs."
+  },
+  "matching": {
+    "instance": "Maximum-cardinality one-to-one IoU >= 0.50 on axis-aligned envelopes of reference/predicted quadrilaterals, then maximize IoU. Merged candidates are ineligible as individual true positives.",
+    "merged": "Candidate contains the centers and covers at least 50 percent of each of two or more confirmed visual-face reference envelopes.",
+    "duplicate": "Additional non-merge candidate matches an already matched reference at IoU >= 0.50.",
+    "lower_selection": "A confirmed-present candidate offered as a top hypothesis has its center in a labeled lower fragment or covers at least 50 percent of the fragment; report only this conservative proxy, not full layer accuracy.",
+    "orientation": "Undirected polygon long-axis error modulo 180 degrees on matched individual references. Mark this as substantially supplied/manual registration, not autonomous 6D estimation.",
+    "registration": "Within matched reference instances, one-to-one nearest projected expected stud positions to the selected manual stud centers. Report all reference errors and coverage separately from image-derived observed peak localization.",
+    "stud_peak": "If the implementation exposes image-derived stud peak locations, one-to-one matching within 8 px to the 48 selected manual centers; report matched error and missed-reference coverage. No precision claim for unannotated studs.",
+    "ambiguity": "All 14 original ambiguous regions remain excluded from primary positive recall and spurious classification. Six are additionally measured in the explicitly separate image-plane missing-face track."
+  },
+  "decision_reporting": {
+    "required": [
+      "present",
+      "missing",
+      "uncertain"
+    ],
+    "positive_correct": "confirmed present on a primary positive reference",
+    "positive_wrong": "confirmed missing on a primary positive reference",
+    "positive_uncertain": "uncertain or no matched candidate on a primary positive reference",
+    "missing_correct": "confirmed missing on a supplementary missing-face slot",
+    "missing_wrong": "confirmed present on a supplementary missing-face slot",
+    "coverage": "Report the fraction receiving a non-uncertain decision, correct-confirmed fraction, and incorrect-confirmed fraction for each reference track and each split. Missing/no candidate must not silently count as a correct missing decision.",
+    "tradeoff": "Always report all decision counts and coverage at the fixed deployed thresholds. Do not select confidence thresholds using held-out labels or report a high reliability obtained by rejecting almost all cells."
+  },
+  "fixed_sensitivity_cases": [
+    {
+      "name": "nominal",
+      "operation": "unchanged image and supplied coarse registration"
+    },
+    {
+      "name": "brightness_070",
+      "operation": "multiply all image channels by 0.70 then clip; geometry unchanged"
+    },
+    {
+      "name": "brightness_130",
+      "operation": "multiply all image channels by 1.30 then clip; geometry unchanged"
+    },
+    {
+      "name": "rotation_m05",
+      "operation": "rotate image -5 degrees about image center with reflected border; transform coarse input, reference polygons and reference studs coherently"
+    },
+    {
+      "name": "rotation_p05",
+      "operation": "rotate image +5 degrees about image center with reflected border; transform coarse input, reference polygons and reference studs coherently"
+    },
+    {
+      "name": "initial_x_m04",
+      "operation": "shift only supplied coarse registration -4 px in image x; image and scoring references unchanged"
+    },
+    {
+      "name": "initial_x_p04",
+      "operation": "shift only supplied coarse registration +4 px in image x; image and scoring references unchanged"
+    },
+    {
+      "name": "initial_y_m04",
+      "operation": "shift only supplied coarse registration -4 px in image y; image and scoring references unchanged"
+    },
+    {
+      "name": "initial_y_p04",
+      "operation": "shift only supplied coarse registration +4 px in image y; image and scoring references unchanged"
+    },
+    {
+      "name": "flat_image_sanity",
+      "operation": "replace RGB with its per-image channel means; retain geometry. No candidate may be confirmed present without image evidence. This is a counterfactual sanity check, not a photographed absence ground truth."
+    }
+  ],
+  "proposed_demonstration_acceptance": {
+    "status": "endorsed_by_independent_reviewer_before_implementation",
+    "nominal_visual_present_precision_min": 0.95,
+    "nominal_positive_confirmed_present_coverage_min": 0.8,
+    "supplemental_correct_missing_min": 5,
+    "supplemental_missing_reference_count": 6,
+    "flat_image_confident_present_max": 0,
+    "interpretation": "Conditional known-layout visual-face demonstration criteria, not safe picking, true current-layer correctness, physical occupancy, metric accuracy or independent generalization. Sensitivity regressions must remain explicit and may prevent acceptance even if nominal criteria pass."
+  },
+  "leakage_controls": [
+    "The perception process must not load evaluation references, historical detector outputs or simulator identities/poses/colors/connections.",
+    "Only coarse manually assisted global registration, expected repeatable geometry and explicitly supplied layer/plane hypotheses are perception inputs.",
+    "No per-instance or per-strip adjustment from reference polygons. Held-out coarse global registration is prepared independently from raw images and remains fixed.",
+    "Held-out outputs are disclosed only as aggregate/review evidence after an evaluated implementation is frozen; no image-specific tuning is accepted.",
+    "Every batch evaluation and sensitivity run uses the default Pueue queue and immutable code/config/input/reference snapshots."
+  ],
+  "simulation": {
+    "status": "blocked_by_unresolved_original_360_brick_layer_origins_and_camera_calibration",
+    "rule": "No smaller final benchmark or invented origins. A later confirmed simulation must use the exact same perception code; truth is scoring-only."
+  }
+}

@@ -1,0 +1,7 @@
+.deps/
+downloads/
+runs/
+__pycache__/
+*.pyc
+.pytest_cache/
+

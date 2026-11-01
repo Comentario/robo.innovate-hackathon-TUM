@@ -1,0 +1,111 @@
+{
+  "schema": "known-layout-registration-v1",
+  "coordinate_convention": "Canonical u spans across strips [0,22], v along strips [0,20]; four corners correspond (0,0),(22,0),(22,20),(0,20), not necessarily image clockwise.",
+  "assistance": "Manual four-corner registration independently specified before geometric implementation; nominal intrinsics, no calibrated metric pose.",
+  "images": [
+    {
+      "file": "img_13.jpg",
+      "split": "heldout",
+      "correlation_group": "D",
+      "canonical_quad_xy": [
+        [
+          434,
+          83
+        ],
+        [
+          945,
+          77
+        ],
+        [
+          942,
+          554
+        ],
+        [
+          435,
+          550
+        ]
+      ],
+      "registration_source": "manual_coarse_outer_footprint_four_corners",
+      "manual_anchor_uncertainty_px": 5,
+      "supplied_layout": {
+        "strips": 6,
+        "groups_along_strip": 5,
+        "strip_pitch_studs": 4,
+        "brick_dims_studs": [
+          2,
+          4
+        ],
+        "canonical_extent_studs": [
+          22,
+          20
+        ],
+        "current_top_layer_index": null
+      },
+      "calibration": {
+        "status": "nominal_not_measured",
+        "fx": 924.27738,
+        "fy": 925.738464,
+        "cx": 640,
+        "cy": 360
+      },
+      "notes": [
+        "Observed image-plane window only; not a substitute for the original 360-brick stack geometry.",
+        "No per-strip/per-instance coordinates or occupancy labels supplied.",
+        "Current physical top-plane height, same-orientation lower edge, and true hidden occupancy are not established.",
+        "The outer strip can depart from uniform 4-stud pitch; its physical layer assignment is uncertain."
+      ]
+    },
+    {
+      "file": "img_16.jpg",
+      "split": "heldout",
+      "correlation_group": "D",
+      "canonical_quad_xy": [
+        [
+          553,
+          146
+        ],
+        [
+          1014,
+          219
+        ],
+        [
+          957,
+          638
+        ],
+        [
+          502,
+          587
+        ]
+      ],
+      "registration_source": "manual_coarse_outer_footprint_four_corners",
+      "manual_anchor_uncertainty_px": 5,
+      "supplied_layout": {
+        "strips": 6,
+        "groups_along_strip": 5,
+        "strip_pitch_studs": 4,
+        "brick_dims_studs": [
+          2,
+          4
+        ],
+        "canonical_extent_studs": [
+          22,
+          20
+        ],
+        "current_top_layer_index": null
+      },
+      "calibration": {
+        "status": "nominal_not_measured",
+        "fx": 924.27738,
+        "fy": 925.738464,
+        "cx": 640,
+        "cy": 360
+      },
+      "notes": [
+        "Observed image-plane window only; not a substitute for the original 360-brick stack geometry.",
+        "No per-strip/per-instance coordinates or occupancy labels supplied.",
+        "Current physical top-plane height, same-orientation lower edge, and true hidden occupancy are not established.",
+        "The outer strip can depart from uniform 4-stud pitch; its physical layer assignment is uncertain."
+      ]
+    }
+  ]
+}

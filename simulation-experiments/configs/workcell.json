@@ -1,0 +1,30 @@
+{
+  "robot": "fr3",
+  "source_xy": [0.45, -0.16],
+  "source_cells": 4,
+  "source_layers": 3,
+  "output_xy": [0.45, 0.16],
+  "output_cells": 3,
+  "baseplate_studs": 24,
+  "scrap_xy": [0.30, 0.0],
+  "scrap_size": [0.12, 0.12],
+  "recipe": "mixed",
+  "seed": 26,
+  "colors": {
+    "dark_red": [114, 14, 15],
+    "brown": [88, 42, 18],
+    "tan": [190, 140, 80],
+    "reject_4211201": [220, 25, 15],
+    "reject_6135191": [155, 95, 30]
+  },
+  "reject_colors": ["reject_4211201", "reject_6135191"],
+  "physics": {
+    "dt": 0.008333333333333333,
+    "decimation": 4,
+    "clutch_preload_n": 3.5,
+    "clutch_friction": 0.2,
+    "assembly_force_n": 1.0
+  },
+  "episode_seconds": 180.0,
+  "tool": {"kind": "parallel", "tcp_offset_m": [0.0, 0.0, 0.1034], "cad_path": null}
+}

@@ -1,0 +1,170 @@
+{
+  "schema": "supplemental-image-face-absence-v1",
+  "frozen_before_implementation": true,
+  "source_reference_sha256": "1a36cf4531bca88678a989fb01421df1304dcfe3a980318ac4b06a936e936e3f",
+  "scope": "Separate supplementary visual-face absence track. Original primary ambiguous labels remain excluded; no calibrated physical absence or held-out missing evidence.",
+  "instances": [
+    {
+      "file": "img_1.jpg",
+      "correlation_group": "A",
+      "reference_id": "c5r1",
+      "polygon": [
+        [
+          828.8,
+          226.2
+        ],
+        [
+          873.8,
+          226.4
+        ],
+        [
+          873.6,
+          316.8
+        ],
+        [
+          828.6,
+          316.4
+        ]
+      ],
+      "label": "complete_expected_face_missing",
+      "visual_evidence": "No complete parallel 2x4 face exists at this cell; visible perpendicular lower surfaces and/or open gap occupy it.",
+      "physical_hidden_occupancy": "not_established",
+      "original_role_unchanged": "ambiguous"
+    },
+    {
+      "file": "img_1.jpg",
+      "correlation_group": "A",
+      "reference_id": "c5r3",
+      "polygon": [
+        [
+          828.4,
+          406.6
+        ],
+        [
+          873.4,
+          407.2
+        ],
+        [
+          873.2,
+          497.6
+        ],
+        [
+          828.2,
+          496.8
+        ]
+      ],
+      "label": "complete_expected_face_missing",
+      "visual_evidence": "No complete parallel 2x4 face exists at this cell; visible perpendicular lower surfaces and/or open gap occupy it.",
+      "physical_hidden_occupancy": "not_established",
+      "original_role_unchanged": "ambiguous"
+    },
+    {
+      "file": "img_3.jpg",
+      "correlation_group": "A",
+      "reference_id": "c5r1",
+      "polygon": [
+        [
+          789.2,
+          233.6
+        ],
+        [
+          834.0,
+          226.8
+        ],
+        [
+          845.0,
+          311.6
+        ],
+        [
+          800.4,
+          318.2
+        ]
+      ],
+      "label": "complete_expected_face_missing",
+      "visual_evidence": "No complete parallel 2x4 face exists at this cell; visible perpendicular lower surfaces and/or open gap occupy it.",
+      "physical_hidden_occupancy": "not_established",
+      "original_role_unchanged": "ambiguous"
+    },
+    {
+      "file": "img_3.jpg",
+      "correlation_group": "A",
+      "reference_id": "c5r3",
+      "polygon": [
+        [
+          811.6,
+          402.8
+        ],
+        [
+          856.0,
+          396.4
+        ],
+        [
+          867.0,
+          481.2
+        ],
+        [
+          822.8,
+          487.4
+        ]
+      ],
+      "label": "complete_expected_face_missing",
+      "visual_evidence": "No complete parallel 2x4 face exists at this cell; visible perpendicular lower surfaces and/or open gap occupy it.",
+      "physical_hidden_occupancy": "not_established",
+      "original_role_unchanged": "ambiguous"
+    },
+    {
+      "file": "img_7.jpg",
+      "correlation_group": "B",
+      "reference_id": "c5r1",
+      "polygon": [
+        [
+          632.4,
+          529.2
+        ],
+        [
+          720.8,
+          530.4
+        ],
+        [
+          719.8,
+          571.6
+        ],
+        [
+          631.4,
+          569.8
+        ]
+      ],
+      "label": "complete_expected_face_missing",
+      "visual_evidence": "No complete parallel 2x4 face exists at this cell; visible perpendicular lower surfaces and/or open gap occupy it.",
+      "physical_hidden_occupancy": "not_established",
+      "original_role_unchanged": "ambiguous"
+    },
+    {
+      "file": "img_7.jpg",
+      "correlation_group": "B",
+      "reference_id": "c5r3",
+      "polygon": [
+        [
+          809.2,
+          531.6
+        ],
+        [
+          897.6,
+          532.8
+        ],
+        [
+          896.6,
+          575.2
+        ],
+        [
+          808.2,
+          573.4
+        ]
+      ],
+      "label": "complete_expected_face_missing",
+      "visual_evidence": "No complete parallel 2x4 face exists at this cell; visible perpendicular lower surfaces and/or open gap occupy it.",
+      "physical_hidden_occupancy": "not_established",
+      "original_role_unchanged": "ambiguous"
+    }
+  ]
+}
