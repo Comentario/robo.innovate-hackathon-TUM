@@ -1,4 +1,60 @@
-# Marmon Challenge 2: FR3 LEGO sorting
+# Simulation experiments — Isaac Sim for the FR3 sorting cell
+
+**Can we test the robot's real control code without the robot?**
+
+Robot time at a hackathon is scarce and shared. These are dated experiments that put the *unchanged*
+real control stack from [task 2](../task2-franka-manipulation/) behind an Isaac Sim backend, so
+perception and planning can be tried against simulated bricks instead of competing for the arm.
+
+The Franka Research 3 workcell uses Isaac Sim 5.1 / Isaac Lab with native
+[BrickSim](https://github.com/intelligent-control-lab/BrickSim) interlocking-brick physics.
+
+## How this folder is organized
+
+Each experiment is one dated folder under [`experiments/`](experiments/) with its own `REPORT.md` or
+`README.md` and the script that produced it. The shared code they build on is in
+[`perception/`](perception/) and [`challenge2/`](challenge2/).
+
+Every report states what it established **and what it did not**. That is deliberate: in a cell where a
+wrong pose means a collision, an experiment that proves nothing is worse than useless if it is written
+up as though it proved something. Read the limits before reusing a result.
+
+| Theme | Experiments |
+|---|---|
+| Control-stack alignment | `control_alignment_20261026`, `pose_reader_20261026` |
+| Grasping from depth | `depth_ridges_20261024`, `depth_bricks_20261024`, `hardware_grasp_reference_20261025` |
+| Material handling | `declared_material_retention_20261025`, `destination_plan_20261025` |
+| Detection and segmentation | `detection_20261024`, `sam3_20261024`, `ridge_chains_20261024` |
+| Known-layout baseline | `known_layout_20261024`, `sim_views_20261024`, `sim_pose_20261024` |
+
+## Where it stands
+
+The honest summary: the real planner, canonical targets and motion policy now run against an Isaac
+backend and pass offline parity checks. **Full-motion execution in simulation is not validated**,
+loaded-gripper behavior and the complete grasp sequence are not aligned, and native extraction,
+transfer and stacking remain unproven.
+
+The corrected simulation input is **300 bricks**: ten layers of six parallel ridges of five bricks,
+alternating by 90 degrees. The earlier 360-brick geometry is kept as superseded.
+
+The scope note below applies throughout: the robot type follows the team's confirmed hardware, while
+the supplied challenge slides refer to a ViperX 300 S for the LEGO demo. Dimensions and layouts are
+configurable estimates, not a reconstruction calibrated from images.
+
+Artifacts from each run (renders, recordings, generated data) stay in the team's private repository;
+the README and the script of every experiment are here, which is what makes one reproducible. The
+`results.json` files that the reports quote numbers from were kept.
+
+**On links that do not resolve:** the reports below link to per-run output under `runs/` and to
+rendered overlays and evaluations. Those were never committed, not even on the team's own branch, so
+those links were already dead there. Every conclusion is stated in the report text itself.
+
+Written by **Programmercloud-cmd**. See [../AUTHORS.md](../AUTHORS.md).
+
+---
+
+## Detailed status, as recorded during the event
+
 
 The current priority is [alignment with the real `task2/jacob` control stack](experiments/control_alignment_20261026/REPORT.md),
 pinned at `13f37da`. The unchanged real Python planner, canonical targets and

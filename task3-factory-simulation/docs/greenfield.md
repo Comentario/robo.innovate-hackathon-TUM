@@ -1,96 +1,185 @@
-# Concepto 1: instalación nueva autónoma
+# Concept 1: autonomous greenfield installation
 
-Esta propuesta aborda la escasez de personal para un trabajo físicamente exigente y repetitivo. No modela una estación de revisión humana. El prototipo anterior permanece intacto en `plant_sim` y `artifacts/plant_automation_01`; su punto de partida es el commit `86b820d`.
+This proposal addresses the shortage of staff for physically demanding, repetitive work. It does
+not model a human inspection station. The earlier prototype stays intact in `plant_sim` and
+`artifacts/plant_automation_01`; its starting point is commit `86b820d`.
 
-## Abrir y reproducir
+## Open and reproduce
 
-Desde la raíz del repositorio:
+From the repository root:
 
 ```bash
 python3 scripts/greenfield_demo.py --compare --output-dir artifacts/greenfield_02
 ```
 
-Abrir `artifacts/greenfield_02/index.html`. Funciona offline, sin servidor ni GPU remota. `comparison.html` compara escenarios; cada uno tiene su propia reproducción 3D. Una ejecución no sobrescribe una carpeta existente: seleccionar otro nombre al repetirla.
+Open `artifacts/greenfield_02/index.html`. It works offline, with no server and no remote GPU.
+`comparison.html` compares scenarios; each one has its own 3D playback. A run never overwrites an
+existing folder: choose another name when repeating it.
 
-Dependencia ya utilizada por el prototipo: `python3 -m pip install --target .deps/plant_sim -r plant_sim/requirements.txt`.
+Dependency already used by the prototype:
+`python3 -m pip install --target .deps/plant_sim -r plant_sim/requirements.txt`.
 
-Pruebas:
+Tests:
 
 ```bash
 PYTHONPATH=.deps/plant_sim:. python3 -m unittest discover -s tests_greenfield -v
 ```
 
-## Arquitectura concreta
+## The architecture, concretely
 
-1. Muelle automático: recibe un stack de 800 ladrillos, 10×4×20. La demostración física dispone de dos posiciones de entrada, 1.600 piezas; los 36 stacks de un kiln cart son contexto del reto, no una geometría completa validada en esta escena.
-2. Pórtico de retención de capa: retira una capa de 40 y la lleva a una de las bandejas libres. La retención/gripper industrial y su validación de carga siguen pendientes; no se presupone que el gripper LEGO sirva para ladrillos reales.
-3. Distribuidor de filas: separa primero la fila delantera, sin atravesar las restantes. Alimenta dos células por distribuidor. Una célula aislada antes del arranque no recibe material.
-4. Cada célula dosifica piezas y tiene ocho zonas exclusivas de inspección, cámara con iluminación controlada y desvío. La identificación de color/calidad es sintética en este estudio; no ejecuta percepción sobre imágenes renderizadas ni modifica el módulo de persona 1.
-5. Decisión incierta: segunda exposición automática una sola vez. Si persiste la duda, cuarentena automática. Defectuoso observado: rechazo. Ninguna de estas rutas espera una clasificación humana.
-6. Aprobados: tres transportadores de acumulación, uno por tono aceptado, con 20 zonas físicas de 0,30 m cada uno. Se reserva la zona siguiente antes de mover. Si la entrada está ocupada, se utiliza una reserva automática de hasta 50 bolsillos por célula. La recuperación reserva una zona antes del retorno; el desvío evita esperar por esa misma zona mientras se retiene el mecanismo que necesita la recuperación (interbloqueo circular). Depósito y recuperación comparten el mecanismo de transferencia: no hay manipulaciones simultáneas ficticias. Falta de espacio produce contrapresión, sin descartar material aprobado.
-7. Selector mecánico de tonos y formador de filas: reserva inventario suficiente para una capa completa con receta 13/13/14, variando el tono extra. Alterna tonos vecinos y comprueba que no existan filas/columnas monocromas. Las filas terminadas se empujan a un nido de capa. No hay un robot haciendo un ciclo de pick-and-place por cada pieza buena.
-8. Pórtico común, centradores y pozo guiado: deposita una capa, comprueba posición y baja el soporte 69 mm. La siguiente capa llega al mismo plano; las anteriores y el pallet descienden físicamente juntos. Tras 14 capas verifica cantidades, producto y distribución vertical y libera 560 piezas. El transportador adelanta los pallets ya terminados antes de descargar el siguiente; no los atraviesa. Los paneles de guía se elevan y confirman fin de carrera antes de descargar el pallet y alimentar el vacío; se cierran antes de reanudar el apilado.
+1. **Automatic dock:** receives a stack of 800 bricks, 10x4x20. The physical demonstration has two
+   input positions, 1,600 pieces; the 36 stacks of a kiln cart are context from the challenge, not a
+   complete geometry validated in this scene.
+2. **Layer retention gantry:** removes a layer of 40 and carries it to one of the free trays. The
+   industrial retention mechanism and gripper, and their load validation, are still open; we do not
+   assume that the LEGO gripper works for real bricks.
+3. **Row distributor:** separates the front row first, without passing through the remaining ones. It
+   feeds two cells per distributor. A cell isolated before start-up receives no material.
+4. **Each cell** doses pieces and has eight exclusive inspection zones, a camera with controlled
+   lighting, and a divert path. Color and quality identification is synthetic in this study; it does
+   not run perception on rendered images and does not modify task 1's module.
+5. **Uncertain decision:** a second automatic exposure, once only. If the doubt persists, automatic
+   quarantine. An observed defect means rejection. None of these paths waits for a human
+   classification.
+6. **Approved bricks:** three accumulation conveyors, one per accepted shade, with 20 physical zones
+   of 0.30 m each. The next zone is reserved before moving. If the entry is occupied, an automatic
+   reservation of up to 50 pockets per cell is used. Recovery reserves a zone before the return; the
+   divert avoids waiting for that same zone while holding the mechanism the recovery needs
+   (circular interlock). Deposit and recovery share the transfer mechanism: there are no fictitious
+   simultaneous manipulations. Lack of space produces back pressure, without discarding approved
+   material.
+7. **Mechanical shade selector and row former:** reserves enough inventory for a complete layer with
+   a 13/13/14 recipe, varying which shade gets the extra piece. It alternates neighboring shades and
+   checks that no monochrome rows or columns exist. Finished rows are pushed into a layer nest.
+   There is no robot doing one pick-and-place cycle per good piece.
+8. **Shared gantry, centering guides and guided well:** deposits a layer, checks the position and
+   lowers the support by 69 mm. The next layer arrives at the same plane; the earlier layers and the
+   pallet physically descend together. After 14 layers it verifies quantities, product and vertical
+   distribution, and releases 560 pieces. The conveyor advances the already finished pallets before
+   unloading the next one; it does not pass through them. The guide panels rise and confirm their end
+   stop before unloading the pallet and feeding the empty one; they close before stacking resumes.
 
-Los tonos `Warm`, `Copper`, `Russet` y la receta en tercios son hipótesis ilustrativas del equipo para tonos **aceptables** de un solo producto. Oscuro no equivale automáticamente a defecto. La pertenencia a la calidad aceptada depende del producto. No se mezclan marcas/SKUs para completar cuotas. Se conservan sobrantes aprobados y pallets parciales entre lotes; no se inventa suministro ilimitado de reemplazo.
+The shades `Warm`, `Copper`, `Russet` and the recipe in thirds are illustrative team hypotheses for
+**acceptable** shades of a single product. Dark does not automatically mean defective. Belonging to
+the accepted quality depends on the product. Brands and SKUs are not mixed to fill quotas. Approved
+leftovers and partial pallets are kept between batches; no unlimited replacement supply is invented.
 
-## Automatización y fallos
+## Automation and failures
 
-SimPy posee los recursos y el reloj. Three.js reproduce las mismas posiciones y trayectorias por ID, sin copias visuales independientes. Los fotoeléctricos virtuales se encienden por presencia geométrica. El panel muestra eventos de estación, trayecto, velocidad, tiempo y progreso. Las confirmaciones de agarre/fin de carrera son señales virtuales supuestas; hay un caso de confirmación crítica ausente que inhibe el movimiento. No hay PLC ni hardware conectado.
+SimPy owns the resources and the clock. Three.js replays the same positions and trajectories by ID,
+with no independent visual copies. Virtual photoelectric sensors trigger on geometric presence. The
+panel shows station events, travel, speed, time and progress. Grasp and end-stop confirmations are
+assumed virtual signals; there is one case of a missing critical confirmation that inhibits motion.
+There is no PLC and no connected hardware.
 
-La referencia incluye un atasco de posición conocida, con retroceso limitado y confirmación de retorno, y un error de centrado de 8 mm, corregido automáticamente. Error de 20 mm o ausencia de confirmación crítica llevan a `SAFE HOLD` y conservan el material. No se promete recuperarse autónomamente de cualquier fallo mecánico; mantenimiento y reparación quedan fuera del flujo productivo nominal.
+The reference run includes a jam at a known position, with limited retreat and return confirmation,
+and an 8 mm centering error, corrected automatically. A 20 mm error or a missing critical
+confirmation leads to `SAFE HOLD` and preserves the material. We do not promise autonomous recovery
+from any mechanical failure; maintenance and repair stay outside the nominal production flow.
 
-## Por qué dura ese tiempo
+## Why it takes that long
 
-Cada desplazamiento usa `max(|Δx|, |Δy|, |Δz|) / velocidad`: ejes coordinados y duración fijada por el eje limitante. A ello se suman exposición, inferencia, confirmaciones, agarre y liberación. Son velocidades de ingeniería y tiempos supuestos configurables, no ciclos medidos. El bloqueo por buffers, la disponibilidad del pórtico común, la mezcla de inventario y los fallos afectan al tiempo final. No se aplica otro factor de disponibilidad del 85% encima de los fallos explícitos.
+Every movement uses `max(|dx|, |dy|, |dz|) / speed`: coordinated axes, with the duration set by the
+limiting axis. Exposure, inference, confirmations, grasping and release are added on top. These are
+engineering speeds and assumed, configurable times, not measured cycles. Buffer blocking, the
+availability of the shared gantry, inventory mixing and failures all affect the final time. No
+further 85 % availability factor is applied on top of the explicit failures.
 
-La nueva arquitectura es una candidata verificable, **no un óptimo demostrado**. Dos y cuatro células usan el mismo material y las mismas decisiones por ID. La comparación incluye incertidumbre alta, rechazo alto, una célula aislada, fallo de alineación y confirmación ausente. Los runs detenidos están censurados y no se comparan como capacidad sostenida.
+The new architecture is a verifiable candidate, **not a demonstrated optimum**. Two and four cells use
+the same material and the same per-ID decisions. The comparison includes high uncertainty, high
+rejection, an isolated cell, an alignment failure and a missing confirmation. Stopped runs are
+censored and are not compared as sustained capacity.
 
-## KPIs que sí se pueden defender
+## KPIs that can actually be defended
 
-- **Released conforming product**: piezas conformes en pallets completos físicamente descargados ×3.600 / tiempo total. Incluye llenado y vaciado del lote.
-- **Conforming material formed**: añade el pallet parcial. No equivale a producto entregado.
-- Pallets completos, material parcial, rechazo, cuarentena y stock/WIP retenido, con balance por identidad.
-- Cumplimiento de receta por capa, filas/columnas monocromas y columnas verticales por pallet.
-- Reinspecciones y recuperaciones realmente confirmadas.
-- Duración de movimientos y esperas programadas por estación. Sus sumas pueden superar el tiempo total si varias piezas se mueven en paralelo; no son automáticamente porcentajes de utilización.
+- **Released conforming product:** conforming pieces on complete, physically unloaded pallets
+  x3,600 / total time. It includes filling and emptying the batch.
+- **Conforming material formed:** adds the partial pallet. It is not equivalent to delivered product.
+- Complete pallets, partial material, rejection, quarantine and retained stock and WIP, with a
+  balance by identity.
+- Recipe compliance per layer, monochrome rows and columns, and vertical columns per pallet.
+- Reinspections and recoveries that were actually confirmed.
+- Duration of movements and scheduled waits per station. Their sums can exceed the total time when
+  several pieces move in parallel; they are not automatically utilization percentages.
 
-La conformidad real se conoce únicamente porque el generador sintético tiene ground truth. Esa verdad se utiliza para evaluar, **nunca para impedir una falsa aceptación**. Un escenario con errores de clasificación puede formar producto incorrecto: el modelo debe mostrarlo. Las tasas de error por defecto son supuestos ideales que requieren medición de persona 1 para estimar una planta real.
+Real conformity is known only because the synthetic generator has ground truth. That truth is used to
+evaluate, **never to prevent a false acceptance**. A scenario with classification errors can form
+incorrect product: the model has to show it. The default error rates are ideal assumptions and need
+task 1's measurements to estimate a real plant.
 
-La meta configurable es 3.000 conformes/h; la simulación puede quedar por debajo. No se ajusta el reloj para alcanzarla. No hay baseline manual medido, CAPEX cotizado ni ahorro/ROI demostrado. Las estimaciones de personal del mentor son contexto de demanda de automatización, no empleos cuya eliminación esté garantizada.
+The configurable goal is 3,000 conforming pieces per hour; the simulation may fall below it. The clock
+is not adjusted to reach it. There is no measured manual baseline, no quoted CAPEX and no
+demonstrated saving or ROI. The mentor's staffing estimates are context for the demand for
+automation, not jobs whose removal is guaranteed.
 
-## Referencias y límites
+## References and limits
 
-Las URLs, valores y alcance se distribuyen con cada informe en `catalog.json`/`run.json` y están visibles en **Engineering basis**:
+URLs, values and scope ship with every report in `catalog.json` and `run.json`, and are visible under
+**Engineering basis**:
 
-- [Güdel FP](https://www.gudel.com/products/linearaxis/fp): perfil FP-4 de 2.000 N y 75 m/min. No combinar con la velocidad del perfil ligero. Se selecciona 1 m/s y carga de capa 40×1,8 +30 =102 kg. Es una referencia de eje; EOAT, eje vertical, dinámica y configuración completa requieren validación.
-- [mk GUF-P 2000](https://www.mk-group.com/en/products/conveyor-technology/belt-conveyors/guf-p-2000.html): hasta 125 kg y 80 m/min, según variante. Cada buffer seleccionado tiene 6 m, 36 kg y 0,35 m/s.
-- [Interroll PM9710](https://www.interroll.com/fileadmin/products/product_data/PM-9710/PM9710_EN.pdf): 1.250 kg/m, 3.000 kg/accionamiento y 0,1–0,5 m/s. Stack supuesto: 1.465 kg incluyendo pallet supuesto de 25 kg; distribución de apoyo de 1,2 m pendiente de verificar. Temperatura publicada +5…45 °C: confirmar la temperatura real del producto/entorno antes de seleccionar equipos para salida de horno.
-- [Basler a2A2600-64ucBAS](https://docs.baslerweb.com/a2a2600-64ucbas): cámara color/global shutter/trigger; sus fps no demuestran precisión de clasificación.
-- [SICK WTB4C](https://www.sick.com/media/docs/7/97/097/operating_instructions_wtb4c_3pxxx_axx_de_en_fr_pt_es_it_ja_zh_ru_im0070097.pdf): respuesta 0,5 ms como referencia para presencia; no es un sensor de seguridad.
-- [LINGL/Triangle Brick](https://lingl.com/wp-content/uploads/2018/03/Triangle_Brick_englisch.pdf): referencia industrial de mezcla, formadores de filas y marcos descendentes. No es un datasheet del selector personalizado de esta escena.
+- [Gudel FP](https://www.gudel.com/products/linearaxis/fp): FP-4 profile, 2,000 N and 75 m/min. Do not
+  combine with the light profile's speed. We select 1 m/s and a layer load of 40x1.8 + 30 = 102 kg.
+  This is an axis reference; EOAT, the vertical axis, dynamics and the complete configuration need
+  validation.
+- [mk GUF-P 2000](https://www.mk-group.com/en/products/conveyor-technology/belt-conveyors/guf-p-2000.html):
+  up to 125 kg and 80 m/min, depending on the variant. Each selected buffer is 6 m, 36 kg and 0.35 m/s.
+- [Interroll PM9710](https://www.interroll.com/fileadmin/products/product_data/PM-9710/PM9710_EN.pdf):
+  1,250 kg/m, 3,000 kg per drive and 0.1-0.5 m/s. Assumed stack: 1,465 kg including an assumed 25 kg
+  pallet; a 1.2 m support distribution is still to be verified. Published temperature +5 to 45 C:
+  confirm the real product and environment temperature before selecting equipment for a kiln exit.
+- [Basler a2A2600-64ucBAS](https://docs.baslerweb.com/a2a2600-64ucbas): color, global shutter,
+  triggered camera; its frame rate does not demonstrate classification accuracy.
+- [SICK WTB4C](https://www.sick.com/media/docs/7/97/097/operating_instructions_wtb4c_3pxxx_axx_de_en_fr_pt_es_it_ja_zh_ru_im0070097.pdf):
+  0.5 ms response as a presence reference; it is not a safety sensor.
+- [LINGL/Triangle Brick](https://lingl.com/wp-content/uploads/2018/03/Triangle_Brick_englisch.pdf):
+  industrial reference for blending, row formers and descending frames. It is not a datasheet for this
+  scene's custom selector.
 
-Dimensiones exteriores y cantidades: material del organizador, 245×67×69 mm, 800 entrada y 560 salida. **Orientación provisional**: 10 aristas cortas transversalmente y 4 largas en profundidad, huella 0,67×0,98 m. No inferir la orientación únicamente del número 10×4. Masa **1,8 kg asumida**, no un SKU ACME confirmado; una ficha de [US Brick King](https://usbrick.com/wp-content/uploads/2025/05/USBrick-TechSpecs-1.pdf) sirve únicamente como comparador, no certificación ACME.
+External dimensions and quantities: the organizer's material, 245x67x69 mm, 800 in and 560 out.
+**Provisional orientation:** 10 short edges across and 4 long edges in depth, footprint 0.67x0.98 m. Do
+not infer the orientation from the number 10x4 alone. Mass **assumed at 1.8 kg**, not a confirmed ACME
+SKU; a datasheet from [US Brick King](https://usbrick.com/wp-content/uploads/2025/05/USBrick-TechSpecs-1.pdf)
+serves only as a comparator, not as ACME certification.
 
-Se auditan continuidad de trayectorias, exclusividad por ID, tiempos derivados, pallets sin IDs repetidos y mezcla. Se comprueban envolventes de ladrillos en un muestreo de posiciones; esto **no es una prueba continua de ausencia de colisiones**, no incluye herramientas/cables y no valida contacto, fricción, vuelco, retención o integridad estructural. La guía alinea una carga rígida: no deforma ladrillos cocidos ni supone que sus irregularidades desaparezcan. El paso siguiente para industrialización es validar agarre, tolerancias, temperatura, polvo y tiempos con el integrador.
+We audit trajectory continuity, exclusivity by ID, derived times, pallets without repeated IDs, and
+mixing. Brick envelopes are checked on a sample of positions; this is **not a continuous proof that no
+collision occurs**, it does not include tools or cables, and it does not validate contact, friction,
+tipping, retention or structural integrity. The guide aligns a rigid load: it does not deform fired
+bricks and does not assume their irregularities disappear. The next step towards industrialization is
+to validate grasping, tolerances, temperature, dust and timings with the integrator.
 
-## Evidencia de esta versión
+## Evidence for this version
 
-Quince pruebas del concepto cubren balances, identidad, transferencia rígida de capas, guías abiertas antes de descargar/alimentar pallets, descenso de 69 mm, mezcla, errores de clasificación, cuarentena y fallos. El núcleo previo conserva sus 89 pruebas. La escena se comprueba offline en Edge, con 1.600 IDs, vistas de mezcla/apilado y ancho móvil. El informe de ejecución es regenerable y los artefactos voluminosos no se incluyen en Git.
+Fifteen tests of the concept cover balances, identity, rigid layer transfer, guides opened before
+unloading and feeding pallets, the 69 mm descent, mixing, classification errors, quarantine and
+failures. The earlier core keeps its 89 tests. The scene is checked offline in Edge, with 1,600 IDs,
+mixing and stacking views, and a movable width. The run report is regenerable and the bulky artifacts
+are not included in git.
 
-La referencia de cuatro células queda por debajo de la meta de 3.000 conformes/h. La actividad del mecanismo compartido de desvío y reserva muestra una restricción concreta que debe investigarse: depósitos y recuperaciones consumen trayectos verticales y no pueden ejecutarse a la vez. Optimizar ese mecanismo o redistribuir stock entre células requiere otro escenario y validación de hardware; no basta con aumentar la velocidad gráfica de reproducción.
+The four-cell reference falls below the goal of 3,000 conforming pieces per hour. The activity of the
+shared divert and reservation mechanism shows a concrete constraint that has to be investigated:
+deposits and recoveries consume vertical travel and cannot run at the same time. Optimizing that
+mechanism or redistributing stock between cells needs another scenario and hardware validation;
+raising the graphical playback speed is not enough.
 
-Una observación importante: el escenario con más incertidumbre puede mostrar mayor tasa de pallets liberados por hora en este lote porque envía más piezas a cuarentena y reduce trabajo posterior. Eso **no demuestra una mejora del proceso**: cambian el rendimiento material y el inventario residual. Comparar siempre rechazo, cuarentena, material formado y stock retenido junto con el caudal.
+One important observation: the scenario with the most uncertainty can show a higher rate of pallets
+released per hour in this batch because it sends more pieces to quarantine and reduces later work.
+That **does not demonstrate a process improvement**: material yield and residual inventory change.
+Always compare rejection, quarantine, formed material and retained stock together with throughput.
 
-### Resultado reproducido (semilla 8)
+### Reproduced result (seed 8)
 
-Referencia: 3014.86 s; 1.600 inspeccionados; 1.120 liberados en dos pallets; 120 en pallet parcial; 176 rechazados; 6 en cuarentena y 178 en stock/WIP. Dos recuperaciones confirmadas. El muestreo de envolventes no encontró intersecciones en 130 instantes; no equivale a validar colisiones continuas ni herramientas.
+Reference: 3,014.86 s; 1,600 inspected; 1,120 released on two pallets; 120 on a partial pallet; 176
+rejected; 6 in quarantine and 178 in stock and WIP. Two confirmed recoveries. The envelope sampling
+found no intersections at 130 instants; that is not equivalent to validating continuous collisions or
+tools.
 
-| Escenario | Estado | Conformes liberados/h |
+| Scenario | State | Conforming released/h |
 |---|---|---:|
 | Autonomous reference | completed_with_residual_stock | 1337.38 |
 | Two-cell alternative | completed_with_residual_stock | 779.52 |
 | One cell isolated before dispatch | completed_with_residual_stock | 1107.77 |
 | More uncertain observations | completed_with_residual_stock | 1702.76 |
 | High rejection | completed_with_residual_stock | 781.22 |
-| Alignment outside recovery range | safe_hold | No comparable: censurado |
-| Missing source confirmation | safe_hold | No comparable: censurado |
+| Alignment outside recovery range | safe_hold | Not comparable: censored |
+| Missing source confirmation | safe_hold | Not comparable: censored |

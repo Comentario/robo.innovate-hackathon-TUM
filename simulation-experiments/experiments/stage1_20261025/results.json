@@ -1,0 +1,621 @@
+{
+  "scope": "RGB-D ordinary-candidate/mock handoff integration smoke, not actual Challenge1 or manipulation",
+  "render_jobs": [
+    1722,
+    1728
+  ],
+  "results": [
+    {
+      "job_id": 1723,
+      "role": "wide_baseline_development",
+      "snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T001958.593862Z-stage1-development",
+      "source_commit": "2ec8b93be5b16dad1a44c099fcaadc9ae619e99c",
+      "gate": {
+        "scope": "INTEGRATION SMOKE ONLY",
+        "all_states_have_candidate": false,
+        "confidence_errors_including_unverified": 0,
+        "controls_pass": true,
+        "mock_handoff_pass": false,
+        "passed": false
+      },
+      "summary": {
+        "raw_geometry": {
+          "positive_references": 171,
+          "raw_detections": 0,
+          "matched": 0,
+          "missed_individual_faces": 171,
+          "merge": 0,
+          "duplicate": 0,
+          "lower_layer_target": 0,
+          "ambiguous_ignored": 0,
+          "other_spurious_or_unresolved": 0,
+          "outside_roi": 0,
+          "image_precision": null,
+          "image_recall": 0.0,
+          "height_consistent_matches": 0,
+          "height_consistent_precision": null,
+          "height_consistent_recall": 0.0,
+          "selected_lower_layer": 0,
+          "height_inconsistent_claims": 0,
+          "lower_flags_with_uncovered_projection": 0,
+          "xy_error_mm": {
+            "count": 0,
+            "median": null,
+            "p90": null,
+            "max": null
+          },
+          "shared_yaw_error_deg": {
+            "count": 0,
+            "median": null,
+            "p90": null,
+            "max": null
+          }
+        },
+        "present": {
+          "positive_references": 171,
+          "raw_detections": 0,
+          "matched": 0,
+          "missed_individual_faces": 171,
+          "merge": 0,
+          "duplicate": 0,
+          "lower_layer_target": 0,
+          "ambiguous_ignored": 0,
+          "other_spurious_or_unresolved": 0,
+          "outside_roi": 0,
+          "image_precision": null,
+          "image_recall": 0.0,
+          "height_consistent_matches": 0,
+          "height_consistent_precision": null,
+          "height_consistent_recall": 0.0,
+          "selected_lower_layer": 0,
+          "height_inconsistent_claims": 0,
+          "lower_flags_with_uncovered_projection": 0,
+          "xy_error_mm": {
+            "count": 0,
+            "median": null,
+            "p90": null,
+            "max": null
+          },
+          "shared_yaw_error_deg": {
+            "count": 0,
+            "median": null,
+            "p90": null,
+            "max": null
+          }
+        },
+        "positive_decisions": {
+          "present": 0,
+          "missing": 0,
+          "uncertain": 0,
+          "no_match": 171
+        },
+        "missing_decisions": {
+          "present": 0,
+          "missing": 0,
+          "uncertain": 0,
+          "no_match": 2
+        },
+        "known_missing_calls": 0,
+        "correct_missing": 0,
+        "known_missing_precision": null,
+        "observable_missing_references": 2,
+        "correct_missing_recall": 0.0,
+        "positive_decisive_coverage": 0.0,
+        "missing_decisive_coverage": 0.0,
+        "wrong_missing_on_present": 0,
+        "wrong_height_missing_on_absence": 0,
+        "present_on_absence_references": 0,
+        "unverified_missing_calls": 0,
+        "phase_error_mm": {
+          "count": 0,
+          "median": null,
+          "p90": null,
+          "max": null
+        },
+        "band_frames": {
+          "correct_current_layer": 0,
+          "unsupported": 6,
+          "supported_wrong_layer_or_height": 0
+        },
+        "chain_stats": {
+          "reference_ridges": 36,
+          "uncovered_reference_ridges": 36,
+          "split_reference_ridges": 0,
+          "mixed_reference_ridge_parentchains": 0
+        }
+      },
+      "evaluation_sha256": "c1412132e94afd24e021412655081f4500e70b2241a7d21cd5f248eb78d0372f"
+    },
+    {
+      "job_id": 1724,
+      "role": "wide_baseline_reserved",
+      "snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T001959.055036Z-stage1-reserved",
+      "source_commit": "2ec8b93be5b16dad1a44c099fcaadc9ae619e99c",
+      "gate": {
+        "scope": "INTEGRATION SMOKE ONLY",
+        "all_states_have_candidate": false,
+        "confidence_errors_including_unverified": 0,
+        "controls_pass": true,
+        "mock_handoff_pass": false,
+        "passed": false
+      },
+      "summary": {
+        "raw_geometry": {
+          "positive_references": 64,
+          "raw_detections": 0,
+          "matched": 0,
+          "missed_individual_faces": 64,
+          "merge": 0,
+          "duplicate": 0,
+          "lower_layer_target": 0,
+          "ambiguous_ignored": 0,
+          "other_spurious_or_unresolved": 0,
+          "outside_roi": 0,
+          "image_precision": null,
+          "image_recall": 0.0,
+          "height_consistent_matches": 0,
+          "height_consistent_precision": null,
+          "height_consistent_recall": 0.0,
+          "selected_lower_layer": 0,
+          "height_inconsistent_claims": 0,
+          "lower_flags_with_uncovered_projection": 0,
+          "xy_error_mm": {
+            "count": 0,
+            "median": null,
+            "p90": null,
+            "max": null
+          },
+          "shared_yaw_error_deg": {
+            "count": 0,
+            "median": null,
+            "p90": null,
+            "max": null
+          }
+        },
+        "present": {
+          "positive_references": 64,
+          "raw_detections": 0,
+          "matched": 0,
+          "missed_individual_faces": 64,
+          "merge": 0,
+          "duplicate": 0,
+          "lower_layer_target": 0,
+          "ambiguous_ignored": 0,
+          "other_spurious_or_unresolved": 0,
+          "outside_roi": 0,
+          "image_precision": null,
+          "image_recall": 0.0,
+          "height_consistent_matches": 0,
+          "height_consistent_precision": null,
+          "height_consistent_recall": 0.0,
+          "selected_lower_layer": 0,
+          "height_inconsistent_claims": 0,
+          "lower_flags_with_uncovered_projection": 0,
+          "xy_error_mm": {
+            "count": 0,
+            "median": null,
+            "p90": null,
+            "max": null
+          },
+          "shared_yaw_error_deg": {
+            "count": 0,
+            "median": null,
+            "p90": null,
+            "max": null
+          }
+        },
+        "positive_decisions": {
+          "present": 0,
+          "missing": 0,
+          "uncertain": 0,
+          "no_match": 64
+        },
+        "missing_decisions": {
+          "present": 0,
+          "missing": 0,
+          "uncertain": 0,
+          "no_match": 0
+        },
+        "known_missing_calls": 0,
+        "correct_missing": 0,
+        "known_missing_precision": null,
+        "observable_missing_references": 0,
+        "correct_missing_recall": null,
+        "positive_decisive_coverage": 0.0,
+        "missing_decisive_coverage": null,
+        "wrong_missing_on_present": 0,
+        "wrong_height_missing_on_absence": 0,
+        "present_on_absence_references": 0,
+        "unverified_missing_calls": 0,
+        "phase_error_mm": {
+          "count": 0,
+          "median": null,
+          "p90": null,
+          "max": null
+        },
+        "band_frames": {
+          "correct_current_layer": 0,
+          "unsupported": 4,
+          "supported_wrong_layer_or_height": 0
+        },
+        "chain_stats": {
+          "reference_ridges": 18,
+          "uncovered_reference_ridges": 18,
+          "split_reference_ridges": 0,
+          "mixed_reference_ridge_parentchains": 0
+        }
+      },
+      "evaluation_sha256": "6b5e85464fc9318ee8f64d3066fa944dcf2769db1ca3dbc08a53ef5d795d5adf"
+    },
+    {
+      "job_id": 1726,
+      "role": "workspace_development",
+      "snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T002637.845861Z-stage1-development-workspace_v1",
+      "source_commit": "0bf9911a1714359b8b856b9fc4234e1669540622",
+      "gate": {
+        "scope": "INTEGRATION SMOKE ONLY",
+        "all_states_have_candidate": false,
+        "confidence_errors_including_unverified": 0,
+        "controls_pass": true,
+        "mock_handoff_pass": false,
+        "passed": false
+      },
+      "summary": {
+        "raw_geometry": {
+          "positive_references": 171,
+          "raw_detections": 0,
+          "matched": 0,
+          "missed_individual_faces": 171,
+          "merge": 0,
+          "duplicate": 0,
+          "lower_layer_target": 0,
+          "ambiguous_ignored": 0,
+          "other_spurious_or_unresolved": 0,
+          "outside_roi": 0,
+          "image_precision": null,
+          "image_recall": 0.0,
+          "height_consistent_matches": 0,
+          "height_consistent_precision": null,
+          "height_consistent_recall": 0.0,
+          "selected_lower_layer": 0,
+          "height_inconsistent_claims": 0,
+          "lower_flags_with_uncovered_projection": 0,
+          "xy_error_mm": {
+            "count": 0,
+            "median": null,
+            "p90": null,
+            "max": null
+          },
+          "shared_yaw_error_deg": {
+            "count": 0,
+            "median": null,
+            "p90": null,
+            "max": null
+          }
+        },
+        "present": {
+          "positive_references": 171,
+          "raw_detections": 0,
+          "matched": 0,
+          "missed_individual_faces": 171,
+          "merge": 0,
+          "duplicate": 0,
+          "lower_layer_target": 0,
+          "ambiguous_ignored": 0,
+          "other_spurious_or_unresolved": 0,
+          "outside_roi": 0,
+          "image_precision": null,
+          "image_recall": 0.0,
+          "height_consistent_matches": 0,
+          "height_consistent_precision": null,
+          "height_consistent_recall": 0.0,
+          "selected_lower_layer": 0,
+          "height_inconsistent_claims": 0,
+          "lower_flags_with_uncovered_projection": 0,
+          "xy_error_mm": {
+            "count": 0,
+            "median": null,
+            "p90": null,
+            "max": null
+          },
+          "shared_yaw_error_deg": {
+            "count": 0,
+            "median": null,
+            "p90": null,
+            "max": null
+          }
+        },
+        "positive_decisions": {
+          "present": 0,
+          "missing": 0,
+          "uncertain": 0,
+          "no_match": 171
+        },
+        "missing_decisions": {
+          "present": 0,
+          "missing": 0,
+          "uncertain": 0,
+          "no_match": 2
+        },
+        "known_missing_calls": 0,
+        "correct_missing": 0,
+        "known_missing_precision": null,
+        "observable_missing_references": 2,
+        "correct_missing_recall": 0.0,
+        "positive_decisive_coverage": 0.0,
+        "missing_decisive_coverage": 0.0,
+        "wrong_missing_on_present": 0,
+        "wrong_height_missing_on_absence": 0,
+        "present_on_absence_references": 0,
+        "unverified_missing_calls": 0,
+        "phase_error_mm": {
+          "count": 0,
+          "median": null,
+          "p90": null,
+          "max": null
+        },
+        "band_frames": {
+          "correct_current_layer": 3,
+          "unsupported": 3,
+          "supported_wrong_layer_or_height": 0
+        },
+        "chain_stats": {
+          "reference_ridges": 36,
+          "uncovered_reference_ridges": 36,
+          "split_reference_ridges": 0,
+          "mixed_reference_ridge_parentchains": 0
+        }
+      },
+      "evaluation_sha256": "bfb5ae51c75ea49a4948dc2fb65a4c7afa8b11076e35a4e2970658b070700b8e"
+    },
+    {
+      "job_id": 1729,
+      "role": "close_view_development",
+      "snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T003437.436801Z-stage1-development-workspace_v1",
+      "source_commit": "cd9e386ad38df92f4361caf4c3e90c98b9d02f0e",
+      "gate": {
+        "scope": "INTEGRATION SMOKE ONLY",
+        "all_states_have_candidate": true,
+        "confidence_errors_including_unverified": 0,
+        "controls_pass": true,
+        "mock_handoff_pass": true,
+        "passed": true
+      },
+      "summary": {
+        "raw_geometry": {
+          "positive_references": 176,
+          "raw_detections": 170,
+          "matched": 168,
+          "missed_individual_faces": 8,
+          "merge": 0,
+          "duplicate": 0,
+          "lower_layer_target": 2,
+          "ambiguous_ignored": 0,
+          "other_spurious_or_unresolved": 0,
+          "outside_roi": 0,
+          "image_precision": 0.9882352941176471,
+          "image_recall": 0.9545454545454546,
+          "height_consistent_matches": 168,
+          "height_consistent_precision": 0.9882352941176471,
+          "height_consistent_recall": 0.9545454545454546,
+          "selected_lower_layer": 0,
+          "height_inconsistent_claims": 0,
+          "lower_flags_with_uncovered_projection": 0,
+          "xy_error_mm": {
+            "count": 168,
+            "median": 0.7026912950549187,
+            "p90": 1.8345465651731514,
+            "max": 6.238647728433394
+          },
+          "shared_yaw_error_deg": {
+            "count": 168,
+            "median": 0.020594302082512804,
+            "p90": 1.0293903684713357,
+            "max": 1.0293903684713357
+          }
+        },
+        "present": {
+          "positive_references": 176,
+          "raw_detections": 41,
+          "matched": 41,
+          "missed_individual_faces": 135,
+          "merge": 0,
+          "duplicate": 0,
+          "lower_layer_target": 0,
+          "ambiguous_ignored": 0,
+          "other_spurious_or_unresolved": 0,
+          "outside_roi": 0,
+          "image_precision": 1.0,
+          "image_recall": 0.23295454545454544,
+          "height_consistent_matches": 41,
+          "height_consistent_precision": 1.0,
+          "height_consistent_recall": 0.23295454545454544,
+          "selected_lower_layer": 0,
+          "height_inconsistent_claims": 0,
+          "lower_flags_with_uncovered_projection": 0,
+          "xy_error_mm": {
+            "count": 41,
+            "median": 0.5001547331299879,
+            "p90": 0.7077432356857141,
+            "max": 0.7159323208713803
+          },
+          "shared_yaw_error_deg": {
+            "count": 41,
+            "median": 0.012175810454655994,
+            "p90": 0.020594302082512804,
+            "max": 0.020594302082512804
+          }
+        },
+        "positive_decisions": {
+          "present": 41,
+          "missing": 0,
+          "uncertain": 127,
+          "no_match": 8
+        },
+        "missing_decisions": {
+          "present": 0,
+          "missing": 1,
+          "uncertain": 1,
+          "no_match": 0
+        },
+        "known_missing_calls": 1,
+        "correct_missing": 1,
+        "known_missing_precision": 1.0,
+        "observable_missing_references": 2,
+        "correct_missing_recall": 0.5,
+        "positive_decisive_coverage": 0.23295454545454544,
+        "missing_decisive_coverage": 0.5,
+        "wrong_missing_on_present": 0,
+        "wrong_height_missing_on_absence": 0,
+        "present_on_absence_references": 0,
+        "unverified_missing_calls": 0,
+        "phase_error_mm": {
+          "count": 170,
+          "median": 0.5001377047169492,
+          "p90": 1.4965947568665317,
+          "max": 6.0611425996848975
+        },
+        "band_frames": {
+          "correct_current_layer": 6,
+          "unsupported": 0,
+          "supported_wrong_layer_or_height": 0
+        },
+        "chain_stats": {
+          "reference_ridges": 36,
+          "uncovered_reference_ridges": 0,
+          "split_reference_ridges": 0,
+          "mixed_reference_ridge_parentchains": 0
+        }
+      },
+      "evaluation_sha256": "2cc82178b84d1c773f9107414ec5fb69f4168133a63e004d410491a7f2b19d22"
+    },
+    {
+      "job_id": 1730,
+      "role": "close_view_reserved",
+      "snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T003437.726220Z-stage1-reserved-workspace_v1",
+      "source_commit": "cd9e386ad38df92f4361caf4c3e90c98b9d02f0e",
+      "gate": {
+        "scope": "INTEGRATION SMOKE ONLY",
+        "all_states_have_candidate": false,
+        "confidence_errors_including_unverified": 0,
+        "controls_pass": true,
+        "mock_handoff_pass": true,
+        "passed": false
+      },
+      "summary": {
+        "raw_geometry": {
+          "positive_references": 66,
+          "raw_detections": 59,
+          "matched": 59,
+          "missed_individual_faces": 7,
+          "merge": 0,
+          "duplicate": 0,
+          "lower_layer_target": 0,
+          "ambiguous_ignored": 0,
+          "other_spurious_or_unresolved": 0,
+          "outside_roi": 0,
+          "image_precision": 1.0,
+          "image_recall": 0.8939393939393939,
+          "height_consistent_matches": 59,
+          "height_consistent_precision": 1.0,
+          "height_consistent_recall": 0.8939393939393939,
+          "selected_lower_layer": 0,
+          "height_inconsistent_claims": 0,
+          "lower_flags_with_uncovered_projection": 0,
+          "xy_error_mm": {
+            "count": 59,
+            "median": 0.7155151594191147,
+            "p90": 1.8477749921402924,
+            "max": 3.3531157931086035
+          },
+          "shared_yaw_error_deg": {
+            "count": 59,
+            "median": 0.018090344569885262,
+            "p90": 0.9725032950784183,
+            "max": 0.9725032950784183
+          }
+        },
+        "present": {
+          "positive_references": 66,
+          "raw_detections": 19,
+          "matched": 19,
+          "missed_individual_faces": 47,
+          "merge": 0,
+          "duplicate": 0,
+          "lower_layer_target": 0,
+          "ambiguous_ignored": 0,
+          "other_spurious_or_unresolved": 0,
+          "outside_roi": 0,
+          "image_precision": 1.0,
+          "image_recall": 0.2878787878787879,
+          "height_consistent_matches": 19,
+          "height_consistent_precision": 1.0,
+          "height_consistent_recall": 0.2878787878787879,
+          "selected_lower_layer": 0,
+          "height_inconsistent_claims": 0,
+          "lower_flags_with_uncovered_projection": 0,
+          "xy_error_mm": {
+            "count": 19,
+            "median": 0.7065493255092161,
+            "p90": 0.7218052438757122,
+            "max": 0.7227663176384947
+          },
+          "shared_yaw_error_deg": {
+            "count": 19,
+            "median": 0.018090344569885262,
+            "p90": 0.018090344569885262,
+            "max": 0.018090344569885262
+          }
+        },
+        "positive_decisions": {
+          "present": 19,
+          "missing": 0,
+          "uncertain": 40,
+          "no_match": 7
+        },
+        "missing_decisions": {
+          "present": 0,
+          "missing": 0,
+          "uncertain": 0,
+          "no_match": 0
+        },
+        "known_missing_calls": 0,
+        "correct_missing": 0,
+        "known_missing_precision": null,
+        "observable_missing_references": 0,
+        "correct_missing_recall": null,
+        "positive_decisive_coverage": 0.2878787878787879,
+        "missing_decisive_coverage": null,
+        "wrong_missing_on_present": 0,
+        "wrong_height_missing_on_absence": 0,
+        "present_on_absence_references": 0,
+        "unverified_missing_calls": 0,
+        "phase_error_mm": {
+          "count": 59,
+          "median": 0.49921713898021247,
+          "p90": 1.0150565256459354,
+          "max": 2.958170475906768
+        },
+        "band_frames": {
+          "correct_current_layer": 2,
+          "unsupported": 2,
+          "supported_wrong_layer_or_height": 0
+        },
+        "chain_stats": {
+          "reference_ridges": 18,
+          "uncovered_reference_ridges": 6,
+          "split_reference_ridges": 0,
+          "mixed_reference_ridge_parentchains": 0
+        }
+      },
+      "evaluation_sha256": "50856e060618ce818c2876d63577cb2ed821ce687730bb2133c6655fb30811e3"
+    }
+  ],
+  "ordinary_mock_interface_passed": true,
+  "sparse_remnant_coverage_passed": false,
+  "actual_Challenge1_integrated": false,
+  "physical_optics_or_graspability_validated": false,
+  "correlation": "Views/states share one design; reserved patterns historically known, no independent-stack generalization",
+  "independent_evaluation": "agrees",
+  "independent_review": "agrees; no further perception tuning in this experiment"
+}

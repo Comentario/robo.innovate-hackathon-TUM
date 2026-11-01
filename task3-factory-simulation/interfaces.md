@@ -1,151 +1,135 @@
-# Contrato propuesto v0.1 — pendiente de acuerdo del equipo
+# Proposed contract v0.1 — pending team agreement
 
-## Entrada de planificación
+## Planning input
 
-Lista JSON de objetos con `id` (cadena no vacía, única) y `color_group`
-(cadena no vacía). Atributos adicionales, como `score`, se ignoran.
-Los identificadores numéricos del ejemplo conceptual del roadmap deben convertirse
-explícitamente a cadenas en el adaptador de percepción.
+A JSON list of objects with `id` (a non-empty, unique string) and `color_group` (a non-empty string).
+Additional attributes, such as `score`, are ignored. The numeric identifiers in the roadmap's
+conceptual example have to be converted to strings explicitly in the perception adapter.
 
-Configuración: `rows`, `columns`, `layers` enteros positivos. Cada celda contiene
-un ladrillo. Opcionalmente `target_ratios`: mapa de categoría a peso finito >= 0,
-con suma positiva. Los pesos se normalizan; las categorías omitidas reciben peso
-cero y no se seleccionan. Sin pesos explícitos, se mantiene la proporción del
-inventario. Si no hay suficientes ladrillos elegibles, se rechaza el plan completo.
-Si falta un tono, se redistribuye entre los tonos elegibles disponibles y se
-reporta la desviación; no se inventan ladrillos.
+Configuration: `rows`, `columns`, `layers` as positive integers. Each cell holds one brick.
+Optionally `target_ratios`: a map from category to a finite weight >= 0, with a positive sum. The
+weights are normalized; categories that are left out get weight zero and are not selected. Without
+explicit weights, the inventory's proportion is kept. If there are not enough eligible bricks, the
+whole plan is rejected. If a shade is missing, it is redistributed among the available eligible
+shades and the deviation is reported; bricks are never invented.
 
-## Salida de planificación
+## Planning output
 
-Objeto con `schema_version`, `shape`, `blend`, `placements` y `metrics`.
-`blend` contiene cantidades por categoría. Cada placement tiene `step` (desde 1),
-`brick_id`, `color_group`, `layer`, `row`, `column` (índices desde 0).
-Se ejecuta una capa completa antes de la siguiente, por filas y columnas.
-`metrics` contiene proporciones objetivo y reales, desviación L1 y cantidad de
-pares vecinos del mismo tono (incluye vecinos verticales entre capas).
+An object with `schema_version`, `shape`, `blend`, `placements` and `metrics`. `blend` holds the
+quantities per category. Each placement has `step` (from 1), `brick_id`, `color_group`, `layer`,
+`row` and `column` (indices from 0). A complete layer is executed before the next one, by rows and
+columns. `metrics` holds the target and actual proportions, the L1 deviation, and the number of
+neighboring pairs of the same shade (including vertical neighbors between layers).
 
-Estas posiciones son lógicas: persona 3 debe convertirlas a coordenadas físicas.
-No representan poses, orientaciones, estabilidad estructural ni trayectorias
-seguras. Rechazar planes incompatibles con el agarre, soporte o layout real.
+These positions are logical: task 3's integration has to convert them to physical coordinates. They
+do not represent poses, orientations, structural stability or safe trajectories. Reject plans that
+are incompatible with the real grasp, support or layout.
 
-## Integración
+## Integration
 
-API: `planning.make_plan(inventory, rows=..., columns=..., layers=...,
-target_ratios=None) -> dict`. Errores de contrato: `ValueError`.
-CLI: `python3 -m planning INVENTORY --rows R --columns C --layers L
-[--ratios '{"dark": 1, "light": 1}']`.
-Éxito: JSON y código 0; error: mensaje por stderr y código 2.
+API: `planning.make_plan(inventory, rows=..., columns=..., layers=..., target_ratios=None) -> dict`.
+Contract errors: `ValueError`.
 
-## Extensión v0.2
+CLI: `python3 -m planning INVENTORY --rows R --columns C --layers L [--ratios '{"dark": 1, "light": 1}']`.
+On success: JSON and exit code 0; on error: a message on stderr and exit code 2.
 
-`make_plan` acepta además `mode="mixed" | "smooth"`,
-`tone_values=None | {categoria: valor_entre_0_y_1}` y
-`shortage_policy="redistribute" | "reject"`. El modo suave requiere valores
-finitos para las categorías seleccionadas. `reject` exige que las cantidades
-coincidan con la receta redondeada por la misma asignación incremental, sin
-limitación de existencias. La API mantiene `redistribute` por compatibilidad;
-los ejemplos de configuración usan `reject`.
+## Extension v0.2
 
-La salida v0.2 añade `policy` (modo, política de faltantes y escala de tonos)
-y `metrics.mean_neighbor_tone_distance` (null en modo mixed; 0 sin vecinos).
-La CLI acepta `--config PATH`; los argumentos de dimensiones y `--ratios`
-prevalecen sobre el JSON. Las claves desconocidas se rechazan.
+`make_plan` additionally accepts `mode="mixed" | "smooth"`,
+`tone_values=None | {category: value_between_0_and_1}` and
+`shortage_policy="redistribute" | "reject"`. Smooth mode requires finite values for the selected
+categories. `reject` requires the quantities to match the recipe rounded by the same incremental
+assignment, with no stock limitation. The API keeps `redistribute` for compatibility; the example
+configurations use `reject`.
 
-## Ejemplo reproducible de integración
+The v0.2 output adds `policy` (mode, shortfall policy and shade scale) and
+`metrics.mean_neighbor_tone_distance` (null in mixed mode; 0 when there are no neighbors). The CLI
+accepts `--config PATH`; the dimension arguments and `--ratios` take precedence over the JSON.
+Unknown keys are rejected.
 
-Ver `examples/handoff/` y `docs/handoff.md`. La salida de referencia v0.2 es
-un plan completo sobre inventario sintético. La gestión de disponibilidad,
-reservas, confirmaciones y pallets parcialmente construidos aún no forma parte
-de esta API; requiere coordinación con integración antes de ejecutar hardware.
+## Reproducible integration example
 
-## Extensión opcional por caras v0.3
+See `examples/handoff/`. The v0.2 reference output is a complete plan over a synthetic inventory.
+Availability management, reservations, confirmations and partially built pallets are not part of this
+API yet; they need coordination with integration before running hardware.
 
-Ver `docs/faces.md` y `examples/faces/`. `planning.faces.make_face_plan` consume
-caras observadas y orientaciones permitidas, conserva IDs físicos únicos y
-produce placements con `visible_face` y `orientation_id`. El consumidor simulado
-valida ambas versiones, v0.2 y v0.3. La API anterior mantiene su comportamiento.
+## Optional per-face extension v0.3
 
-## Diagnóstico de distribución local (campos adicionales)
+See [docs/faces.md](docs/faces.md) and `examples/faces/`. `planning.faces.make_face_plan` consumes
+observed faces and allowed orientations, keeps unique physical IDs, and produces placements with
+`visible_face` and `orientation_id`. The simulated consumer validates both versions, v0.2 and v0.3.
+The earlier API keeps its behavior.
 
-`metrics.distribution` publica conteos por capa y fila, objetivos locales de
-receta y de la mezcla seleccionada, y errores L1 contra ambos. Esto distingue
-falta de stock de acumulación espacial. Mixed asigna cuotas de mezcla por capa
-y fila antes de penalizar vecinos iguales. Smooth conserva su criterio local.
-El redondeo es determinista y no garantiza el óptimo visual global.
+## Local distribution diagnostics (additional fields)
 
-## Contrato de ejecución independiente de transporte
+`metrics.distribution` publishes counts per layer and row, the local targets from the recipe and from
+the selected blend, and the L1 errors against both. This separates a stock shortage from spatial
+accumulation. Mixed assigns blend quotas per layer and row before penalizing equal neighbors. Smooth
+keeps its local criterion. The rounding is deterministic and does not guarantee the global visual
+optimum.
 
-`execution.compile_job(plan, inventory, cell_config)` traduce placements a
-acciones de referencia de objeto; `ExecutionAdapter.perform(command)` reconoce
-cada acción con succeeded/failed_before_action/unknown. `config/cell.json` y
-`docs/cell_execution.md` definen poses, fases y estados. No cambia el contrato
-del planificador ni exige ROS. El modo ROS `--cell` publica estas mismas acciones
-y estados de ejecución simulada sobre el adaptador opcional.
+## Transport-independent execution contract
 
-## Entrega de persona 1 e integración de personas 2 y 3
+`execution.compile_job(plan, inventory, cell_config)` translates placements into object-reference
+actions; `ExecutionAdapter.perform(command)` acknowledges each action with
+succeeded / failed_before_action / unknown. `config/cell.json` defines poses, phases and states. It
+does not change the planner's contract and does not require ROS. The ROS `--cell` mode publishes
+these same actions and simulated execution states over the optional adapter.
 
-Ver `examples/perception/snapshot.json` y `docs/orchestration.md`: instantánea
-versionada con ID, origen declarado, modalidad por caras y lista de items.
-Planificar no exige poses. Ejecutar un origen perception exige poses métricas
-por ID en el frame de la celda; nunca se reinterpretan píxeles como metros.
-El adaptador de entrada se ajustará al productor real cuando llegue.
+## Task 1 handoff, and integration between tasks
 
-La evidencia final usa pallet-observation-0.1, vinculada a run_id y plan_digest.
-Sin evidencia el estado es awaiting_observation, aunque la ejecución termine.
-El journal SQLite conserva reservas de un ciclo, acciones pendientes y reconocidas.
+See `examples/perception/snapshot.json`: a versioned snapshot with an ID, a declared origin, the
+per-face modality and the item list. Planning does not require poses. Executing a perception origin
+requires metric poses per ID in the cell frame; pixels are never reinterpreted as meters. The input
+adapter will be adjusted to the real producer when it arrives.
 
-## Recuperación explícita de un pallet parcial
+The final evidence uses pallet-observation-0.1, bound to `run_id` and `plan_digest`. Without evidence
+the state is `awaiting_observation`, even if execution finishes. The SQLite journal keeps one cycle's
+reservations, and the pending and acknowledged actions.
 
-`cell-reconciliation-0.1` vincula evidencia completa al run, plan y huella del
-checkpoint. `integration.recovery.assess_recovery` produce una propuesta sin
-movimiento; `Journal.recover_simulation` crea un run hijo con un prefijo verificado
-preservado y tareas restantes, únicamente para acknowledgement_simulator.
-`execution.compile_job(..., preserved_placements=PREFIX)` excluye ese prefijo de
-los picks y exige poses solo para las piezas aún disponibles. Ver `docs/recovery.md`.
+## Explicit recovery of a partial pallet
 
+`cell-reconciliation-0.1` binds complete evidence to the run, the plan and the checkpoint
+fingerprint. `integration.recovery.assess_recovery` produces a proposal without motion;
+`Journal.recover_simulation` creates a child run with a verified preserved prefix and the remaining
+tasks, for the acknowledgement simulator only.
+`execution.compile_job(..., preserved_placements=PREFIX)` excludes that prefix from the picks and
+requires poses only for the pieces that are still available.
 
-## Recuperación de la referencia Panda
+## Recovery of the Panda reference
 
-`Journal.recover_reference_simulation` es una vía distinta de la recuperación
-lógica. Requiere el adaptador Panda concreto, checkpoint de escena, preparación
-persistente de posición segura y comparación actual de la escena/articulaciones.
-La evidencia cell-reconciliation-0.1 añade robot_scene y robot_scene_digest.
-El hijo conserva panda_moveit_kinematic y queda listo solo tras activar su escena.
-No habilita hardware ni `resume_simulation` para Panda. Ver
-`docs/reference_arm_recovery.md` para el alcance de esta demo.
+`Journal.recover_reference_simulation` is a separate path from logical recovery. It requires the
+concrete Panda adapter, a scene checkpoint, a persistent safe-position preparation, and a current
+comparison of the scene and joints. The cell-reconciliation-0.1 evidence adds `robot_scene` and
+`robot_scene_digest`. The child keeps `panda_moveit_kinematic` and is only ready once its scene is
+activated. It does not enable hardware or `resume_simulation` for Panda.
 
-## Entrada de persona 1: color relativo schema 0.2
+## Task 1 input: relative color, schema 0.2
 
-`integration.person1_intake.convert_inventory(value, min_score=...)` convierte
-el inventario `color_estimated`/`accepted` de persona 1 a nuestro snapshot.
-Conserva `uniform`/`color_group_N`, centros Lab, score heurístico y geometría px;
-excluye unknown, parciales, posibles merges, no elegibles y scores bajo umbral.
-No incorpora source_poses ni identidad de cara: `source=perception`,
-`face_aware=false`. El snapshot sirve para planificar; ejecutar exige poses
-métricas medidas como cualquier entrada de percepción. Los IDs son locales a
-la imagen; categorías de capturas distintas no se equiparan automáticamente.
-Ver `docs/person1_review_2026-10-21.md` y `examples/person1/`.
+`integration.person1_intake.convert_inventory(value, min_score=...)` converts task 1's
+`color_estimated` / `accepted` inventory into our snapshot. It keeps `uniform` / `color_group_N`, the
+Lab centers, the heuristic score and the pixel geometry; it excludes unknown, partial, possible
+merges, ineligible items and scores below the threshold. It does not take in `source_poses` or face
+identity: `source=perception`, `face_aware=false`. The snapshot is enough to plan; executing requires
+measured metric poses like any perception input. The IDs are local to the image; categories from
+different captures are not automatically treated as equivalent. See `examples/person1/`.
 
-## Inventario de persona 1 en la celda de referencia
+## Task 1 inventory in the reference cell
 
-`integration.person1_simulation.prepare_person1_simulation(inventory, cell, config=None)`
-consume clases/scores sin reclasificar ni filtrar por puntuación adicional. Devuelve
-`observed_snapshot` (perception), `staged_snapshot` (synthetic), `plan`, `job` y
-`handoff`. Solo los IDs seleccionados se colocan en la cuadrícula de staging.
-El job conserva `person1_handoff` con centros Lab, huella del inventario, receta,
-conteos y procedencia de geometría. Se preserva el bloqueo de ejecución del
-snapshot real sin poses medidas. Ver `docs/person1_simulation.md`.
+`integration.person1_simulation.prepare_person1_simulation(inventory, cell, config=None)` consumes
+classes and scores without reclassifying or filtering by any additional score. It returns
+`observed_snapshot` (perception), `staged_snapshot` (synthetic), `plan`, `job` and `handoff`. Only the
+selected IDs are placed on the staging grid. The job keeps `person1_handoff` with the Lab centers, the
+inventory fingerprint, the recipe, the counts and the provenance of the geometry. The execution block
+for a real snapshot without measured poses is preserved.
 
-## Continuidad de persona 1 durante recuperación
+## Task 1 continuity during recovery
 
-El reconciliador conserva `job.person1_handoff` y el `producer` del snapshot de
-staging en el ciclo hijo. Para ese lote, rechaza cambios de clase/score de IDs
-conocidos e IDs no incluidos en el staging. El adaptador Panda verifica también
-que no cambie la procedencia al activar el nuevo job. Receta, plan y prefijo
-permanecen intactos; el hijo contiene únicamente acciones nuevas para el resto.
-Los jobs con geometría `synthetic_staging_grid` no se admiten con `mode=hardware`.
-Ver `docs/person1_recovery.md` y `docs/event_connection.md`.
-
+The reconciler keeps `job.person1_handoff` and the staging snapshot's `producer` in the child cycle.
+For that batch, it rejects class or score changes for known IDs, and IDs that were not included in
+the staging. The Panda adapter also verifies that the provenance does not change when the new job is
+activated. The recipe, plan and prefix stay intact; the child contains only new actions for the
+remainder. Jobs with `synthetic_staging_grid` geometry are not accepted with `mode=hardware`.
 
 ## Task 3 — independent process simulation
 
@@ -153,12 +137,10 @@ Ver `docs/person1_recovery.md` y `docs/event_connection.md`.
 `config/plant_demo.json`; it returns run status, config/provenance, KPIs, material
 ledger, pallet IDs, per-layer/pallet mixing metrics and a timestamped event log.
 Time is seconds; rates are bricks/hour; dimensions are millimeters. One product
-per run. Input geometry is 10×4×20 and output 10×4×14 in the organizer example.
-The synthetic detector is separate from the existing Person 1 adapter. No ROS or
+per run. Input geometry is 10x4x20 and output 10x4x14 in the organizer example.
+The synthetic detector is separate from the existing task 1 adapter. No ROS or
 hardware commands are emitted. `blocked` requires explicit reconciliation; no
 automatic restart is implemented. Generated HTML is an offline event-log replay.
-See `docs/plant_simulation.md` for assumptions, conservation and limitations.
-
 
 ### Task 3 mechanical trace, revision 1.1
 
@@ -169,8 +151,7 @@ attachment intervals and inspection observations. `validate_mechanics` audits
 continuity and exclusive tool booking, not contact or collision physics.
 Default `index.html` is now an offline Three.js 3D view; the 2D view is preserved
 as `process_2d.html`. `mechanics.json` records paths separately from `run.json`.
-No robot or PLC control is introduced. See `docs/plant_3d.md`.
-
+No robot or PLC control is introduced.
 
 ### Task 3 automation revision 1.2
 
@@ -185,4 +166,4 @@ exclusive reservations. Photoeyes in the viewer use material coordinates;
 sequence limit confirmations remain virtual. 3D export checks swept brick bounds
 against fixed solids and refuses known penetrations. Scope excludes full contact,
 brick-brick, tools/cables and dynamics. Multi-robot process capacity requires a
-separate audited geometric layout before exporting 3D. See docs/plant_automation.md.
+separate audited geometric layout before exporting 3D.

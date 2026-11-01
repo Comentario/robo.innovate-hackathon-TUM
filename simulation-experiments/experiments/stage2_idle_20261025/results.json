@@ -1,0 +1,363 @@
+{
+  "scope": "Bounded native full-stack idle baseline and diagnostics; no manipulation success",
+  "round_complete": true,
+  "stage_passed": false,
+  "overall_six_stage_goal_complete": false,
+  "initial_design": {
+    "bricks": 300,
+    "native_connections": 930,
+    "source_parts_including_plate": 301
+  },
+  "baseline_job": 1725,
+  "debug_job": 1727,
+  "offline_analysis_jobs": [
+    1731,
+    1732,
+    1735
+  ],
+  "controlled_pair": [
+    {
+      "job_id": 1733,
+      "snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T005714.927650Z-stage2-native-epsilon-1e-4",
+      "numerical_epsilon": {
+        "environment_raw": "1e-4",
+        "effective_requested": 0.0001,
+        "status": "Existing OsqpSolver constructor environment/default; value is not a serialized solver-setting getter",
+        "coupling": [
+          "solver eps_abs and eps_rel",
+          "G >= -epsilon",
+          "stage2 Hx-Vv <= 1-epsilon"
+        ],
+        "physical_thresholds_changed": false,
+        "break_selection_changed": false
+      },
+      "steps_executed": 7,
+      "idle_validated": false,
+      "first_failure": {
+        "finite": true,
+        "max_position_drift_m": 0.0001707762518073223,
+        "position_drift_part_index": 300,
+        "max_orientation_drift_rad": 0.0013754981744850481,
+        "orientation_drift_part_index": 99,
+        "max_linear_speed_m_s": 0.041321293659287946,
+        "max_angular_speed_rad_s": 0.2633431449434304,
+        "reasons": [
+          "native_component_changed_or_broken"
+        ],
+        "step": 7,
+        "physics_time_s": 0.08333333767950535,
+        "source_parts": 300,
+        "native_connections": 928,
+        "broken_connections": [
+          "ConnectionInfo(physics_csid=836, physics_stud_pid=243, physics_hole_pid=273, stud_ifid=1, hole_ifid=0, offset=[1, 1], yaw=1, env_id=0, usd_stud_pid=245, usd_hole_pid=275, stud_path='/World/envs/env_0/brick_8_0_3', hole_path='/World/envs/env_0/brick_9_0_3', usd_csid=836, conn_path='/World/envs/env_0/managed/Conns/Conn_836')",
+          "ConnectionInfo(physics_csid=837, physics_stud_pid=244, physics_hole_pid=273, stud_ifid=1, hole_ifid=0, offset=[1, -3], yaw=1, env_id=0, usd_stud_pid=246, usd_hole_pid=275, stud_path='/World/envs/env_0/brick_8_0_4', hole_path='/World/envs/env_0/brick_9_0_3', usd_csid=837, conn_path='/World/envs/env_0/managed/Conns/Conn_837')"
+        ],
+        "robot_finite": true,
+        "watched_utilization": {
+          "/World/envs/env_0/managed/Conns/Conn_836": -1.0,
+          "/World/envs/env_0/managed/Conns/Conn_837": -1.0
+        },
+        "joint_positions": [
+          0.0,
+          -0.4000000059604645,
+          0.0,
+          -2.5,
+          0.0,
+          2.0999999046325684,
+          0.7853999733924866,
+          0.03999999910593033,
+          0.03999999910593033
+        ],
+        "joint_velocities": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "all_serialized_solves_converged": true,
+      "watched_final": {
+        "836": {
+          "utilization": 1.0000978907974745,
+          "raw_relaxation_v": 4.313486607232978e-05,
+          "relaxed_bound_positive_gap": 5.5195162954819596e-05
+        },
+        "837": {
+          "utilization": 1.0001407681942294,
+          "raw_relaxation_v": 8.752080755590996e-05,
+          "relaxed_bound_positive_gap": 5.5159094195298186e-05
+        }
+      },
+      "analysis": "/home/faps/dev/github/robo.innovate26/runs/20261025T010002.112809Z-stage2-epsilon-pair-analysis/output/default_1e4/debug_analysis.json",
+      "analysis_sha256": "5bd3d2608218dee0ac1aed9d59c14aa65aeb86ecbe7570cbc859c6e6d8b68fb9"
+    },
+    {
+      "job_id": 1734,
+      "snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T005715.221682Z-stage2-native-epsilon-1e-6",
+      "numerical_epsilon": {
+        "environment_raw": "1e-6",
+        "effective_requested": 1e-06,
+        "status": "Existing OsqpSolver constructor environment/default; value is not a serialized solver-setting getter",
+        "coupling": [
+          "solver eps_abs and eps_rel",
+          "G >= -epsilon",
+          "stage2 Hx-Vv <= 1-epsilon"
+        ],
+        "physical_thresholds_changed": false,
+        "break_selection_changed": false
+      },
+      "steps_executed": 7,
+      "idle_validated": false,
+      "first_failure": {
+        "finite": true,
+        "max_position_drift_m": 0.0001707762518073223,
+        "position_drift_part_index": 300,
+        "max_orientation_drift_rad": 0.0013754981744850481,
+        "orientation_drift_part_index": 99,
+        "max_linear_speed_m_s": 0.041321293659287946,
+        "max_angular_speed_rad_s": 0.2633431449434304,
+        "reasons": [
+          "native_component_changed_or_broken"
+        ],
+        "step": 7,
+        "physics_time_s": 0.08333333767950535,
+        "source_parts": 300,
+        "native_connections": 928,
+        "broken_connections": [
+          "ConnectionInfo(physics_csid=836, physics_stud_pid=243, physics_hole_pid=273, stud_ifid=1, hole_ifid=0, offset=[1, 1], yaw=1, env_id=0, usd_stud_pid=245, usd_hole_pid=275, stud_path='/World/envs/env_0/brick_8_0_3', hole_path='/World/envs/env_0/brick_9_0_3', usd_csid=836, conn_path='/World/envs/env_0/managed/Conns/Conn_836')",
+          "ConnectionInfo(physics_csid=837, physics_stud_pid=244, physics_hole_pid=273, stud_ifid=1, hole_ifid=0, offset=[1, -3], yaw=1, env_id=0, usd_stud_pid=246, usd_hole_pid=275, stud_path='/World/envs/env_0/brick_8_0_4', hole_path='/World/envs/env_0/brick_9_0_3', usd_csid=837, conn_path='/World/envs/env_0/managed/Conns/Conn_837')"
+        ],
+        "robot_finite": true,
+        "watched_utilization": {
+          "/World/envs/env_0/managed/Conns/Conn_836": -1.0,
+          "/World/envs/env_0/managed/Conns/Conn_837": -1.0
+        },
+        "joint_positions": [
+          0.0,
+          -0.4000000059604645,
+          0.0,
+          -2.5,
+          0.0,
+          2.0999999046325684,
+          0.7853999733924866,
+          0.03999999910593033,
+          0.03999999910593033
+        ],
+        "joint_velocities": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "all_serialized_solves_converged": true,
+      "watched_final": {
+        "836": {
+          "utilization": 1.0000425438856184,
+          "raw_relaxation_v": 4.273102189170412e-05,
+          "relaxed_bound_positive_gap": 5.717016717989704e-09
+        },
+        "837": {
+          "utilization": 1.0000857535480696,
+          "raw_relaxation_v": 8.691632169126482e-05,
+          "relaxed_bound_positive_gap": 5.37522289025883e-09
+        }
+      },
+      "analysis": "/home/faps/dev/github/robo.innovate26/runs/20261025T010002.112809Z-stage2-epsilon-pair-analysis/output/variant_1e6/debug_analysis.json",
+      "analysis_sha256": "1738b2e5baeaf25b82fbd6979f862fcff2c18ba2b79e6564da0eed3854123139"
+    }
+  ],
+  "interpretation": "Both epsilon values break the same connections at step7. Tighter coupled numerical epsilon reduces relaxed-bound violation but positive model relaxation and break selection persist; underlying load/contact origin remains unresolved. This does not prove physical overload or eliminate all numerical/model effects.",
+  "physical_settings_changed": false,
+  "break_selection_changed": false,
+  "updated_tip_collision_validated": false,
+  "independent_evaluation": "agrees",
+  "independent_review": "agrees; stop bounded round without parameter tuning",
+  "next_blocker": "Resolve spontaneous native breakage through a separately scoped contact/angular-load-accounting investigation before contact manipulation. No evidence justifies increasing preload/friction, changing dt/cooldown or hiding native breakage.",
+  "contact_observation": {
+    "scope": "One unchanged-threshold finite contact-report observation and independent offline evaluation; no manipulation",
+    "capture_job_id": 1738,
+    "evaluation_job_id": 1739,
+    "capture_snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T014802.480148Z-stage2-native-contacts-1e-4",
+    "evaluation_snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T014929.925825Z-stage2-contact-evaluation",
+    "evaluation_file": "/home/faps/dev/github/robo.innovate26/runs/20261025T014929.925825Z-stage2-contact-evaluation/output/contact_evaluation.json",
+    "evaluation_sha256": "882ee32b5635efa4c5a406dbc504233077fd6f8f58b9ba7066892a58671314c7",
+    "frozen_evaluation_manifest_sha256": "1f6ca0bae51a35657e9b1bbc439a3cef75a64d230d539669e68c116e17966bb8",
+    "capture_source_commit": "2d759ad",
+    "protocol_sha256": "aa1246e68d7202a7b8bde1d7230aa6a1ea17e0a9562affacd8166b9aa113beea",
+    "capture_contact_metadata_sha256": "07c60b806eaccc5bde2686af14421a058a9d8379fe1100025a758be9d076e5e5",
+    "budget": {
+      "physical_observation_runs": 1,
+      "maximum_postassembly_steps": 8,
+      "steps_executed": 7,
+      "stop_first_failure": true,
+      "watched_bodies": 6,
+      "body_steps_reported": 42,
+      "normal_and_friction_capacity_per_view": 1024,
+      "API_setup_adaptations_used": 0,
+      "queue": "default"
+    },
+    "baseline_reference_job_id": 1733,
+    "baseline_equivalence_checks_all_passed": true,
+    "initial_and_terminal_state_files_byte_identical": true,
+    "source_state_difference_summary": {
+      "initial": {
+        "source_position_m_max": 0.0,
+        "source_orientation_rad_max": 0.0,
+        "source_linear_velocity_m_s_max": 0.0,
+        "source_angular_velocity_rad_s_max": 0.0
+      },
+      "last": {
+        "source_position_m_max": 0.0,
+        "source_orientation_rad_max": 4.2146848510894035e-08,
+        "source_linear_velocity_m_s_max": 0.0,
+        "source_angular_velocity_rad_s_max": 0.0
+      }
+    },
+    "orientation_metric_note": "Terminal4.21e-8rad is floating-point quaternion self-distance; the complete state files are byte-identical.",
+    "reporting_setting": {
+      "path": "/physics/disableContactProcessing",
+      "before": true,
+      "after": false,
+      "scope": "process-local; potentially perturbing, requires baseline-equivalence evaluation"
+    },
+    "API": {
+      "source_file": "/home/faps/miniforge3/envs/unitree_sim_env/lib/python3.11/site-packages/isaacsim/extscache/omni.physics.tensors-107.3.26+107.3.3.lx64.r.cp311.u353/omni/physics/tensors/impl/api.py",
+      "source_sha256": "5dd16f8a37eccc94ac82338d6c1127e785cccf761cae1f6f18ef03d55b0f325f",
+      "extension_version_directory": "omni.physics.tensors-107.3.26+107.3.3.lx64.r.cp311.u353"
+    },
+    "filter_coverage": {
+      "requested_and_resolved_paths_per_view": 319,
+      "unresolved_requested_paths": 0,
+      "all_six_views_checked": true
+    },
+    "reported_normal_entries": 0,
+    "reported_friction_entries": 0,
+    "reported_net_and_filtered_normal_impulses_all_zero": true,
+    "all_returned_arrays_finite": true,
+    "positive_reporting_control_verified": false,
+    "contact_completeness": "unknown",
+    "unknown_categories": [
+      "friction_completeness_unverified",
+      "no_positive_reporting_control",
+      "normal_sign_unverified",
+      "substep_time_alignment_unverified"
+    ],
+    "native_JH_comparison_performed": false,
+    "diagnostic_completed": true,
+    "idle_validated": false,
+    "capture_validated": false,
+    "manipulation_validated": false,
+    "independent_verdict": "Instrumentation reproduces baseline within frozen checks, including same step7 native break. All-zero reported streams without a positive control do not prove zero contact or explain native angular load; root cause and extraction prerequisite remain unresolved. No parameter tuning or further experiment follows automatically."
+  },
+  "round2_source_velocity16": {
+    "scope": "One configured source-velocity iteration4-to16 sensitivity trial; no manipulation",
+    "improvement_round": 2,
+    "capture_job_id": 1740,
+    "evaluation_job_id": 1741,
+    "capture_source_commit": "1debd6e",
+    "capture_snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T020034.012576Z-stage2-round2-source-velocity16",
+    "evaluation_snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T020255.062438Z-stage2-round2-evaluation",
+    "evaluation_file": "/home/faps/dev/github/robo.innovate26/runs/20261025T020255.062438Z-stage2-round2-evaluation/output/evaluation.json",
+    "evaluation_sha256": "96d25940042f4b30ac255f9b5b79c5d9ead5455f14f835dce7b25882adcafb25",
+    "evaluation_manifest_sha256": "b6aaa2c1378148d498cb32c4ea403876054cdb7bd6f726385df3a1cea61fa8c1",
+    "round2_protocol_sha256": "8109a9e0ff6716c74098bfe8986960cbfc055cfb8a3f80c8206d51776a654e92",
+    "idle_report_sha256": "9e28ec19b15006d1c1b33211e5c2563d22e3dc768d5815e680b75eff13f1362c",
+    "solver_property_report_sha256": "b3c83d6f0552485b4bda7e91b81f651e89c2b2df6a95e07ab31288154d340553",
+    "trial_integrity_checks": {
+      "300_distinct_source_paths": true,
+      "source_ids_match_1725": true,
+      "source_ids_match_1733": true,
+      "configured32_4_to32_16": true,
+      "baseline_runtime_before4_not_claimed": true,
+      "island_counter_not_claimed": true,
+      "unchanged_idle_protocol": true,
+      "default_epsilon1e4": true,
+      "wall_budget_respected": true,
+      "initial_native_ids_equal": true,
+      "301_initial_parts": true,
+      "initial_300_runtime32_16": true,
+      "initial_300_authored32_16": true,
+      "terminal_300_runtime32_16": true,
+      "terminal_300_authored32_16": true,
+      "native_breakage_parameters_unchanged": true,
+      "native_assembly_parameters_unchanged": true,
+      "available_plate_robot_controls_unchanged": true,
+      "TGS_and_velocity16_within_clamps": true,
+      "position32_within_clamps": true,
+      "initial_states_match_1725": true,
+      "initial_states_match_1733": true,
+      "step_budget_and_sequence": true,
+      "initial_robot_q_matches_baseline": true,
+      "no_initial_breaks": true
+    },
+    "integrity_check_count": 25,
+    "all_integrity_checks_passed": true,
+    "idle_gate_passed": false,
+    "maximum_steps": 120,
+    "steps_executed": 7,
+    "wall_limit_s": 180,
+    "initial_states_byte_identical_to1725_and1733": true,
+    "runtime_source_initial_and_terminal": {
+      "actor_count": 300,
+      "position_iterations": 32,
+      "velocity_iterations": 16
+    },
+    "baseline_configuration": {
+      "position_iterations": 32,
+      "velocity_iterations": 4,
+      "runtime_before4_measured": false,
+      "evidence": "Pinned authored configuration only; not an actual baseline getter measurement"
+    },
+    "TGS_scene_clamps": [
+      {
+        "path": "/physicsScene",
+        "solverType": "TGS",
+        "minVelocityIterationCount": 0,
+        "maxVelocityIterationCount": 255,
+        "minPositionIterationCount": 1,
+        "maxPositionIterationCount": 255
+      }
+    ],
+    "available_plate_and_robot_controls_unchanged": true,
+    "failure": {
+      "step": 7,
+      "reason": [
+        "native_component_changed_or_broken"
+      ],
+      "native_source_component_parts": 300,
+      "native_source_connections": 928,
+      "same_break_events_as1725": true,
+      "connection_ids": [
+        836,
+        837
+      ],
+      "top_body": "brick_9_0_3",
+      "maximum_position_drift_m": 0.0001707762518073223,
+      "maximum_orientation_drift_rad": 0.0013754981744850481,
+      "maximum_linear_speed_m_s": 0.041321293659287946,
+      "maximum_angular_speed_rad_s": 0.2633431449434304
+    },
+    "common_step_global_drift_and_speed_differences_all_zero": true,
+    "trajectory_limit": "Only initial full states and logged per-step global metrics compared; no claim that all intermediate per-body trajectories or loads are identical.",
+    "load_utilization_comparison": {
+      "measured": false,
+      "reason": "run_idle logs state/graph events, not native capacity utilization, impulses or forces. No values imputed."
+    },
+    "executed_island_iteration_counter_available": false,
+    "reserved_executed": false,
+    "extraction_validated": false,
+    "promoted_as_fix": false,
+    "independent_verdict": "All25 integrity checks pass; the full300 idle gate still fails at the same step7 events. No measured benefit in recorded global motion metrics. Preserve failed sensitivity result, do not promote settings or start a sweep; extraction remains blocked."
+  }
+}

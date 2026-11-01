@@ -1,0 +1,179 @@
+{
+  "diagnostic_complete": false,
+  "runtime_materials_verified": false,
+  "runtime_verdict": "UNKNOWN_OR_NOT_VERIFIED",
+  "checks": {
+    "execution_authorized": true,
+    "protocol_pin": true,
+    "capture_complete": true,
+    "baseline_validated": true,
+    "prior_clock": true,
+    "resource_contract": true,
+    "baseline_readback_pin": true,
+    "baseline_readback_audit_pin": true,
+    "reference_metadata_pin": true,
+    "reference_fixture_pin": true,
+    "prior_supervisor_pin": true,
+    "binding_helper_pin": true,
+    "original_author_source_pin": true,
+    "input_/home/faps/dev/github/robo.innovate26/runs/20261025T155936.755455Z-stage2-free-position-r1/experiments/stage2_free_position_20261025/run_fixture.py": true,
+    "input_/home/faps/dev/github/robo.innovate26/runs/20261025T155936.755455Z-stage2-free-position-r1/experiments/stage2_free_position_20261025/protocol.json": true,
+    "input_/home/faps/dev/github/robo.innovate26/runs/20261025T155936.755455Z-stage2-free-position-r1/experiments/stage2_free_position_20261025/source_science.json": true,
+    "input_/home/faps/dev/github/robo.innovate26/runs/20261025T155936.755455Z-stage2-free-position-r1/experiments/stage2_pick_20261025/tool_model.py": true,
+    "input_/home/faps/miniforge3/envs/unitree_sim_env/lib/python3.11/site-packages/isaacsim/extscache/omni.physics.tensors-107.3.26+107.3.3.lx64.r.cp311.u353/omni/physics/tensors/impl/api.py": true,
+    "input_/home/faps/dev/github/robo.innovate26/runs/20261025T155936.755455Z-stage2-free-position-r1/pick/capture_metadata.json": true,
+    "input_/home/faps/dev/github/robo.innovate26/runs/20261025T155936.755455Z-stage2-free-position-r1/pipeline_supervisor.json": true,
+    "input_/home/faps/dev/github/robo.innovate26/runs/20261025T155936.755455Z-stage2-free-position-r1/.deps/bricksim/core.cpython-311-x86_64-linux-gnu.so": true,
+    "input_/home/faps/dev/github/robo.innovate26/runs/20261025T155936.755455Z-stage2-free-position-r1/pick/fixture_initial.json": true,
+    "input_/home/faps/dev/github/robo.innovate26/runs/20261025T161523.798508Z-stage2-contact-readback/output/readback.json": true,
+    "input_/home/faps/dev/github/robo.innovate26/runs/20261025T161523.798508Z-stage2-contact-readback/audit/evaluation.json": true,
+    "input_/home/faps/dev/github/robo.innovate26/runs/20261025T165816.000989Z-stage2-finger-response/pipeline_supervisor.json": true,
+    "input_/home/faps/dev/github/robo.innovate26/experiments/brick_material_binding_20261025/materials.py": true,
+    "input_/home/faps/dev/github/robo.innovate26/runs/20261025T161523.798508Z-stage2-contact-readback/code/readback.py": true,
+    "input_/home/faps/dev/github/robo.innovate26/experiments/brick_material_binding_20261025/results.json": true,
+    "input_/home/faps/dev/github/robo.innovate26/runs/20261025T155936.755455Z-stage2-free-position-r1/experiments/stage2_exposed_tip_20261025/model.py": true,
+    "captured_source_descriptors": true,
+    "captured_source_parent_runner": true,
+    "captured_source_parent_protocol": true,
+    "captured_source_source_science": true,
+    "captured_source_tool_model": true,
+    "captured_source_tensor_api": true,
+    "initialization_only": true,
+    "finite_snapshots": true,
+    "all_state_and_settings_unchanged": true,
+    "hook_entry_unchanged": true,
+    "reference_proprioception": true,
+    "reference_settings": true,
+    "robot_names_and_stage_units": true,
+    "source_graph": true,
+    "coupon_isolated": true,
+    "coupon_properties": true,
+    "fixture_unchanged": true,
+    "initial_coupon_unchanged": true,
+    "mapping_honesty": true,
+    "three_exact_views": true,
+    "left_exact_body": true,
+    "right_exact_body": true,
+    "coupon_exact_body": true,
+    "untouched_finger_usd": true,
+    "exact_coupon_colliders": true,
+    "BodyCollider_only_binding_delta": true,
+    "TopCollider_only_binding_delta": true,
+    "frozen_declared_coefficients": true,
+    "authoring_timing": true,
+    "authoring_helper_pin": true,
+    "authoring_subtree_inventory": true,
+    "authoring_preserved_/World/envs/env_0/contact_coupon": true,
+    "authoring_preserved_/World/envs/env_0/contact_coupon/BodyCollider": false,
+    "authoring_preserved_/World/envs/env_0/contact_coupon/TopCollider": false,
+    "authoring_preserved_/World/envs/env_0/contact_coupon/LegoMaterial": true,
+    "authoring_preserved_/World/envs/env_0/contact_coupon/LegoMaterial/PreviewSurface": true,
+    "authoring_preserved_/World/envs/env_0/contact_coupon/Body": true,
+    "authoring_preserved_/World/envs/env_0/contact_coupon/Tubes": true,
+    "authoring_preserved_/World/envs/env_0/contact_coupon/Studs": true,
+    "authoring_scope_only": false,
+    "authoring_exact_material_BodyCollider": true,
+    "authoring_exact_material_TopCollider": true,
+    "density_unauthored": true,
+    "authoring_hook_provenance": true,
+    "authoring_exact_helper_report": true,
+    "getter_attempt_records": true
+  },
+  "failed_checks": [
+    "authoring_preserved_/World/envs/env_0/contact_coupon/BodyCollider",
+    "authoring_preserved_/World/envs/env_0/contact_coupon/TopCollider",
+    "authoring_scope_only"
+  ],
+  "runtime_checks": {
+    "left_slot_count": true,
+    "left_getter_inventory": true,
+    "left_material_properties_bag": true,
+    "left_contact_offsets_bag": true,
+    "left_rest_offsets_bag": true,
+    "right_slot_count": true,
+    "right_getter_inventory": true,
+    "right_material_properties_bag": true,
+    "right_contact_offsets_bag": true,
+    "right_rest_offsets_bag": true,
+    "coupon_slot_count": true,
+    "coupon_getter_inventory": true,
+    "coupon_material_properties_bag": true,
+    "coupon_contact_offsets_bag": true,
+    "coupon_rest_offsets_bag": true
+  },
+  "failed_runtime_checks": [],
+  "runtime_arrays_valid": true,
+  "views": {
+    "left": {
+      "material_properties": {
+        "attempt_record_valid": true,
+        "runtime_array_valid": true,
+        "status": "AVAILABLE",
+        "error": null
+      },
+      "contact_offsets": {
+        "attempt_record_valid": true,
+        "runtime_array_valid": true,
+        "status": "AVAILABLE",
+        "error": null
+      },
+      "rest_offsets": {
+        "attempt_record_valid": true,
+        "runtime_array_valid": true,
+        "status": "AVAILABLE",
+        "error": null
+      }
+    },
+    "right": {
+      "material_properties": {
+        "attempt_record_valid": true,
+        "runtime_array_valid": true,
+        "status": "AVAILABLE",
+        "error": null
+      },
+      "contact_offsets": {
+        "attempt_record_valid": true,
+        "runtime_array_valid": true,
+        "status": "AVAILABLE",
+        "error": null
+      },
+      "rest_offsets": {
+        "attempt_record_valid": true,
+        "runtime_array_valid": true,
+        "status": "AVAILABLE",
+        "error": null
+      }
+    },
+    "coupon": {
+      "material_properties": {
+        "attempt_record_valid": true,
+        "runtime_array_valid": true,
+        "status": "AVAILABLE",
+        "error": null
+      },
+      "contact_offsets": {
+        "attempt_record_valid": true,
+        "runtime_array_valid": true,
+        "status": "AVAILABLE",
+        "error": null
+      },
+      "rest_offsets": {
+        "attempt_record_valid": true,
+        "runtime_array_valid": true,
+        "status": "AVAILABLE",
+        "error": null
+      }
+    }
+  },
+  "shape_row_to_collider_mapping": "UNKNOWN",
+  "BODY_material_mapped": false,
+  "friction_pair_coefficient": "UNKNOWN",
+  "proceed_gate_passed": false,
+  "retention_passed": false,
+  "physics_extraction_passed": false,
+  "physical_retry_authorized": false,
+  "scope": "Startup material configuration only. No contact, traction, row-to-collider assignment or retention claim.",
+  "readback_sha256": "5a13b78f5db08a7a5e2e9c20d7d29844d7d54c5b98b0ef83bde34a7122aa29db",
+  "protocol_sha256": "5b72f17235ac46febe762687db449bc493da97e70248e079d7d48bd85a52bc24",
+  "wall_seconds": 0.05511726101394743
+}

@@ -1,0 +1,1156 @@
+{
+  "timing": "pre_initialization",
+  "helper_pin": {
+    "path": "/home/faps/dev/github/robo.innovate26/experiments/brick_material_binding_20261025/materials.py",
+    "sha256": "09f28c7a6ca0e2b7d30ab8a5f56d0757e81f97a3f9931461559a29662a2bdd80"
+  },
+  "actual_helper_copy": {
+    "path": "/home/faps/dev/github/robo.innovate26/runs/20261025T174525.554088Z-brick-material-runtime/code/materials.py",
+    "sha256": "09f28c7a6ca0e2b7d30ab8a5f56d0757e81f97a3f9931461559a29662a2bdd80"
+  },
+  "hook": {
+    "kind": "process_local_Tool.author_wrapper",
+    "class_module": "tool_model",
+    "class_name": "Tool",
+    "class_identity_unchanged": true,
+    "original_method_source": {
+      "path": "/home/faps/dev/github/robo.innovate26/runs/20261025T155936.755455Z-stage2-free-position-r1/experiments/stage2_exposed_tip_20261025/model.py",
+      "sha256": "c5b4baf5b0720881c7c791866030d65fe18770fa1b2fa1b1593995884bb51a78"
+    },
+    "wrapper_source": {
+      "path": "/home/faps/dev/github/robo.innovate26/runs/20261025T174525.554088Z-brick-material-runtime/code/readback.py",
+      "sha256": "43b652a8946f25eb2e84f2eb70919a5c2fc17f16c2d509296899cdc12daa004f"
+    }
+  },
+  "report": {
+    "scope": "USD_SCHEMA_AUTHORING_ONLY",
+    "brick_root": "/World/envs/env_0/contact_coupon",
+    "pre_initialization_asserted": true,
+    "targets": {
+      "BodyCollider": {
+        "collider_path": "/World/envs/env_0/contact_coupon/BodyCollider",
+        "material_path": "/World/envs/env_0/contact_coupon/DeclaredContactMaterials/Body",
+        "declared_coefficients": [
+          0.5,
+          0.4000000059604645,
+          0.10000000149011612
+        ]
+      },
+      "TopCollider": {
+        "collider_path": "/World/envs/env_0/contact_coupon/TopCollider",
+        "material_path": "/World/envs/env_0/contact_coupon/DeclaredContactMaterials/Top",
+        "declared_coefficients": [
+          1.0,
+          0.800000011920929,
+          0.20000000298023224
+        ]
+      }
+    },
+    "runtime_coefficients_verified": false,
+    "retention_claim": false
+  },
+  "before": {
+    "/World/envs/env_0/contact_coupon": {
+      "type": "Xform",
+      "apis": [
+        "PhysicsRigidBodyAPI",
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsMassAPI"
+      ],
+      "attributes": {
+        "lego:brick_color": {
+          "usd_type": "int3",
+          "sdk_value": "(185, 145, 100)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "lego:brick_dimensions": {
+          "usd_type": "int3",
+          "sdk_value": "(4, 2, 3)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "lego:part_kind": {
+          "usd_type": "token",
+          "sdk_value": "brick",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:centerOfMass": {
+          "usd_type": "point3f",
+          "sdk_value": "(0, 0, 0.0048)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:diagonalInertia": {
+          "usd_type": "float3",
+          "sdk_value": "(6.26688e-8, 2.009088e-7, 2.304e-7)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:kinematicEnabled": {
+          "usd_type": "bool",
+          "sdk_value": false,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:mass": {
+          "usd_type": "float",
+          "sdk_value": 0.00215999991632998,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:principalAxes": {
+          "usd_type": "quatf",
+          "sdk_value": "(1, 0, 0, 0)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:rigidBodyEnabled": {
+          "usd_type": "bool",
+          "sdk_value": true,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physxContactReport:threshold": {
+          "usd_type": "float",
+          "sdk_value": 0.0,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physxRigidBody:disableGravity": {
+          "usd_type": "bool",
+          "sdk_value": false,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physxRigidBody:maxDepenetrationVelocity": {
+          "usd_type": "float",
+          "sdk_value": 0.20000000298023224,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physxRigidBody:sleepThreshold": {
+          "usd_type": "float",
+          "sdk_value": 0.0,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physxRigidBody:solverPositionIterationCount": {
+          "usd_type": "int",
+          "sdk_value": 32,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physxRigidBody:solverVelocityIterationCount": {
+          "usd_type": "int",
+          "sdk_value": 4,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOp:orient": {
+          "usd_type": "quatd",
+          "sdk_value": "(0.7071064831632508, 0, 0, 0.7071070792097187)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOp:scale": {
+          "usd_type": "double3",
+          "sdk_value": "(1, 1, 1)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOp:translate": {
+          "usd_type": "double3",
+          "sdk_value": "(0.13999681174755096, -0.1200011819601059, 0.19100365778514689)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOpOrder": {
+          "usd_type": "token[]",
+          "sdk_value": "[xformOp:translate, xformOp:orient, xformOp:scale]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        }
+      },
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": [],
+        "proxyPrim": []
+      }
+    },
+    "/World/envs/env_0/contact_coupon/BodyCollider": {
+      "type": "Cube",
+      "apis": [
+        "PhysicsCollisionAPI"
+      ],
+      "attributes": {
+        "physics:collisionEnabled": {
+          "usd_type": "bool",
+          "sdk_value": true,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:dynamicFriction": {
+          "usd_type": "float",
+          "sdk_value": 0.4000000059604645,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:restitution": {
+          "usd_type": "float",
+          "sdk_value": 0.10000000149011612,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:staticFriction": {
+          "usd_type": "float",
+          "sdk_value": 0.5,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "size": {
+          "usd_type": "double",
+          "sdk_value": 1.0,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "visibility": {
+          "usd_type": "token",
+          "sdk_value": "invisible",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOp:scale": {
+          "usd_type": "float3",
+          "sdk_value": "(0.032, 0.016, 0.0096)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOp:translate": {
+          "usd_type": "double3",
+          "sdk_value": "(0, 0, 0.0048000000000000004)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOpOrder": {
+          "usd_type": "token[]",
+          "sdk_value": "[xformOp:translate, xformOp:scale]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        }
+      },
+      "relationships": {
+        "physics:simulationOwner": [],
+        "proxyPrim": []
+      }
+    },
+    "/World/envs/env_0/contact_coupon/TopCollider": {
+      "type": "Cube",
+      "apis": [
+        "PhysicsCollisionAPI"
+      ],
+      "attributes": {
+        "physics:collisionEnabled": {
+          "usd_type": "bool",
+          "sdk_value": true,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:dynamicFriction": {
+          "usd_type": "float",
+          "sdk_value": 0.800000011920929,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:restitution": {
+          "usd_type": "float",
+          "sdk_value": 0.20000000298023224,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:staticFriction": {
+          "usd_type": "float",
+          "sdk_value": 1.0,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "size": {
+          "usd_type": "double",
+          "sdk_value": 1.0,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "visibility": {
+          "usd_type": "token",
+          "sdk_value": "invisible",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOp:scale": {
+          "usd_type": "float3",
+          "sdk_value": "(0.032, 0.016, 0.0017)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOp:translate": {
+          "usd_type": "double3",
+          "sdk_value": "(0, 0, 0.010450000000000001)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOpOrder": {
+          "usd_type": "token[]",
+          "sdk_value": "[xformOp:translate, xformOp:scale]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        }
+      },
+      "relationships": {
+        "physics:simulationOwner": [],
+        "proxyPrim": []
+      }
+    },
+    "/World/envs/env_0/contact_coupon/LegoMaterial": {
+      "type": "Material",
+      "apis": [],
+      "attributes": {
+        "outputs:surface": {
+          "usd_type": "token",
+          "sdk_value": "",
+          "connections": [
+            "/World/envs/env_0/contact_coupon/LegoMaterial/PreviewSurface.outputs:surface"
+          ],
+          "has_authored_value": true,
+          "has_authored_connections": true
+        }
+      },
+      "relationships": {}
+    },
+    "/World/envs/env_0/contact_coupon/LegoMaterial/PreviewSurface": {
+      "type": "Shader",
+      "apis": [
+        "NodeDefAPI"
+      ],
+      "attributes": {
+        "info:id": {
+          "usd_type": "token",
+          "sdk_value": "UsdPreviewSurface",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "inputs:diffuseColor": {
+          "usd_type": "color3f",
+          "sdk_value": "(0.48514998, 0.2831488, 0.1274377)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "inputs:ior": {
+          "usd_type": "float",
+          "sdk_value": 1.5299999713897705,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "inputs:roughness": {
+          "usd_type": "float",
+          "sdk_value": 0.15000000596046448,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "outputs:surface": {
+          "usd_type": "token",
+          "sdk_value": "",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        }
+      },
+      "relationships": {}
+    },
+    "/World/envs/env_0/contact_coupon/Body": {
+      "type": "Mesh",
+      "apis": [],
+      "attributes": {
+        "extent": {
+          "usd_type": "float3[]",
+          "sdk_value": "[(-0.01595, -0.00795, -0.004775), (0.01595, 0.00795, 0.004775)]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "faceVertexCounts": {
+          "usd_type": "int[]",
+          "sdk_value": "[4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "faceVertexIndices": {
+          "usd_type": "int[]",
+          "sdk_value": "[0, 4, 5, 1, 1, 5, 6, 2, 2, 6, 7, 3, 4, 8, 9, 5, 5, 9, 10, 6, 6, 10, 11, 7, 8, 12, 13, 9, 9, 13, 14, 10, 10, 14, 15, 11, 32, 33, 37, 36, 33, 34, 38, 37, 34, 35, 39, 38, 36, 37, 41, 40, 38, 39, 43, 42, 40, 41, 45, 44, 41, 42, 46, 45, 42, 43, 47, 46, 21, 22, 26, 25, 3, 7, 23, 19, 19, 23, 39, 35, 7, 11, 27, 23, 23, 27, 43, 39, 11, 15, 31, 27, 27, 31, 47, 43, 0, 16, 20, 4, 16, 32, 36, 20, 4, 20, 24, 8, 20, 36, 40, 24, 8, 24, 28, 12, 24, 40, 44, 28, 12, 28, 29, 13, 28, 44, 45, 29, 13, 29, 30, 14, 29, 45, 46, 30, 14, 30, 31, 15, 30, 46, 47, 31, 0, 1, 17, 16, 16, 17, 33, 32, 1, 2, 18, 17, 17, 18, 34, 33, 2, 3, 19, 18, 18, 19, 35, 34, 22, 38, 42, 26, 21, 25, 41, 37, 25, 26, 42, 41, 21, 37, 38, 22]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "points": {
+          "usd_type": "point3f[]",
+          "sdk_value": "[(-0.01595, -0.00795, -0.004775), (-0.01475, -0.00795, -0.004775), (0.01475, -0.00795, -0.004775), (0.01595, -0.00795, -0.004775), (-0.01595, -0.00675, -0.004775), (-0.01475, -0.00675, -0.004775), (0.01475, -0.00675, -0.004775), (0.01595, -0.00675, -0.004775), (-0.01595, 0.00675, -0.004775), (-0.01475, 0.00675, -0.004775), (0.01475, 0.00675, -0.004775), (0.01595, 0.00675, -0.004775), (-0.01595, 0.00795, -0.004775), (-0.01475, 0.00795, -0.004775), (0.01475, 0.00795, -0.004775), (0.01595, 0.00795, -0.004775), (-0.01595, -0.00795, -0.003575), (-0.01475, -0.00795, -0.003575), (0.01475, -0.00795, -0.003575), (0.01595, -0.00795, -0.003575), (-0.01595, -0.00675, -0.003575), (-0.01475, -0.00675, -0.003575), (0.01475, -0.00675, -0.003575), (0.01595, -0.00675, -0.003575), (-0.01595, 0.00675, -0.003575), (-0.01475, 0.00675, -0.003575), (0.01475, 0.00675, -0.003575), (0.01595, 0.00675, -0.003575), (-0.01595, 0.00795, -0.003575), (-0.01475, 0.00795, -0.003575), (0.01475, 0.00795, -0.003575), (0.01595, 0.00795, -0.003575), (-0.01595, -0.00795, 0.004775), (-0.01475, -0.00795, 0.004775), (0.01475, -0.00795, 0.004775), (0.01595, -0.00795, 0.004775), (-0.01595, -0.00675, 0.004775), (-0.01475, -0.00675, 0.004775), (0.01475, -0.00675, 0.004775), (0.01595, -0.00675, 0.004775), (-0.01595, 0.00675, 0.004775), (-0.01475, 0.00675, 0.004775), (0.01475, 0.00675, 0.004775), (0.01595, 0.00675, 0.004775), (-0.01595, 0.00795, 0.004775), (-0.01475, 0.00795, 0.004775), (0.01475, 0.00795, 0.004775), (0.01595, 0.00795, 0.004775)]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "subdivisionScheme": {
+          "usd_type": "token",
+          "sdk_value": "none",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOp:orient": {
+          "usd_type": "quatf",
+          "sdk_value": "(0, 1, 0, 0)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOp:translate": {
+          "usd_type": "double3",
+          "sdk_value": "(0, 0, 0.004775000000000001)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOpOrder": {
+          "usd_type": "token[]",
+          "sdk_value": "[xformOp:translate, xformOp:orient]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        }
+      },
+      "relationships": {
+        "material:binding": [
+          "/World/envs/env_0/contact_coupon/LegoMaterial"
+        ],
+        "proxyPrim": []
+      }
+    },
+    "/World/envs/env_0/contact_coupon/Tubes": {
+      "type": "PointInstancer",
+      "apis": [],
+      "attributes": {
+        "orientations": {
+          "usd_type": "quath[]",
+          "sdk_value": "[(1, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 0)]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "positions": {
+          "usd_type": "point3f[]",
+          "sdk_value": "[(-0.008, 0, 0.004225), (0, 0, 0.004225), (0.008, 0, 0.004225)]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "protoIndices": {
+          "usd_type": "int[]",
+          "sdk_value": "[0, 0, 0]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "scales": {
+          "usd_type": "float3[]",
+          "sdk_value": "[(1, 1, 1), (1, 1, 1), (1, 1, 1)]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        }
+      },
+      "relationships": {
+        "prototypes": [
+          "/World/envs/env_0/contact_coupon/TubePrototype"
+        ],
+        "proxyPrim": []
+      }
+    },
+    "/World/envs/env_0/contact_coupon/Studs": {
+      "type": "PointInstancer",
+      "apis": [],
+      "attributes": {
+        "orientations": {
+          "usd_type": "quath[]",
+          "sdk_value": "[(1, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 0)]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "positions": {
+          "usd_type": "point3f[]",
+          "sdk_value": "[(-0.012, -0.004, 0.010425), (-0.012, 0.004, 0.010425), (-0.004, -0.004, 0.010425), (-0.004, 0.004, 0.010425), (0.004, -0.004, 0.010425), (0.004, 0.004, 0.010425), (0.012, -0.004, 0.010425), (0.012, 0.004, 0.010425)]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "protoIndices": {
+          "usd_type": "int[]",
+          "sdk_value": "[0, 0, 0, 0, 0, 0, 0, 0]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "scales": {
+          "usd_type": "float3[]",
+          "sdk_value": "[(1, 1, 1), (1, 1, 1), (1, 1, 1), (1, 1, 1), (1, 1, 1), (1, 1, 1), (1, 1, 1), (1, 1, 1)]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        }
+      },
+      "relationships": {
+        "prototypes": [
+          "/World/envs/env_0/contact_coupon/StudPrototype"
+        ],
+        "proxyPrim": []
+      }
+    }
+  },
+  "after": {
+    "/World/envs/env_0/contact_coupon": {
+      "type": "Xform",
+      "apis": [
+        "PhysicsRigidBodyAPI",
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsMassAPI"
+      ],
+      "attributes": {
+        "lego:brick_color": {
+          "usd_type": "int3",
+          "sdk_value": "(185, 145, 100)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "lego:brick_dimensions": {
+          "usd_type": "int3",
+          "sdk_value": "(4, 2, 3)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "lego:part_kind": {
+          "usd_type": "token",
+          "sdk_value": "brick",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:centerOfMass": {
+          "usd_type": "point3f",
+          "sdk_value": "(0, 0, 0.0048)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:diagonalInertia": {
+          "usd_type": "float3",
+          "sdk_value": "(6.26688e-8, 2.009088e-7, 2.304e-7)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:kinematicEnabled": {
+          "usd_type": "bool",
+          "sdk_value": false,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:mass": {
+          "usd_type": "float",
+          "sdk_value": 0.00215999991632998,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:principalAxes": {
+          "usd_type": "quatf",
+          "sdk_value": "(1, 0, 0, 0)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:rigidBodyEnabled": {
+          "usd_type": "bool",
+          "sdk_value": true,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physxContactReport:threshold": {
+          "usd_type": "float",
+          "sdk_value": 0.0,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physxRigidBody:disableGravity": {
+          "usd_type": "bool",
+          "sdk_value": false,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physxRigidBody:maxDepenetrationVelocity": {
+          "usd_type": "float",
+          "sdk_value": 0.20000000298023224,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physxRigidBody:sleepThreshold": {
+          "usd_type": "float",
+          "sdk_value": 0.0,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physxRigidBody:solverPositionIterationCount": {
+          "usd_type": "int",
+          "sdk_value": 32,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physxRigidBody:solverVelocityIterationCount": {
+          "usd_type": "int",
+          "sdk_value": 4,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOp:orient": {
+          "usd_type": "quatd",
+          "sdk_value": "(0.7071064831632508, 0, 0, 0.7071070792097187)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOp:scale": {
+          "usd_type": "double3",
+          "sdk_value": "(1, 1, 1)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOp:translate": {
+          "usd_type": "double3",
+          "sdk_value": "(0.13999681174755096, -0.1200011819601059, 0.19100365778514689)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOpOrder": {
+          "usd_type": "token[]",
+          "sdk_value": "[xformOp:translate, xformOp:orient, xformOp:scale]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        }
+      },
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": [],
+        "proxyPrim": []
+      }
+    },
+    "/World/envs/env_0/contact_coupon/BodyCollider": {
+      "type": "Cube",
+      "apis": [
+        "MaterialBindingAPI",
+        "PhysicsCollisionAPI"
+      ],
+      "attributes": {
+        "physics:collisionEnabled": {
+          "usd_type": "bool",
+          "sdk_value": true,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:dynamicFriction": {
+          "usd_type": "float",
+          "sdk_value": 0.4000000059604645,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:restitution": {
+          "usd_type": "float",
+          "sdk_value": 0.10000000149011612,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:staticFriction": {
+          "usd_type": "float",
+          "sdk_value": 0.5,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "size": {
+          "usd_type": "double",
+          "sdk_value": 1.0,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "visibility": {
+          "usd_type": "token",
+          "sdk_value": "invisible",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOp:scale": {
+          "usd_type": "float3",
+          "sdk_value": "(0.032, 0.016, 0.0096)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOp:translate": {
+          "usd_type": "double3",
+          "sdk_value": "(0, 0, 0.0048000000000000004)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOpOrder": {
+          "usd_type": "token[]",
+          "sdk_value": "[xformOp:translate, xformOp:scale]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        }
+      },
+      "relationships": {
+        "material:binding:physics": [
+          "/World/envs/env_0/contact_coupon/DeclaredContactMaterials/Body"
+        ],
+        "physics:simulationOwner": [],
+        "proxyPrim": []
+      }
+    },
+    "/World/envs/env_0/contact_coupon/TopCollider": {
+      "type": "Cube",
+      "apis": [
+        "MaterialBindingAPI",
+        "PhysicsCollisionAPI"
+      ],
+      "attributes": {
+        "physics:collisionEnabled": {
+          "usd_type": "bool",
+          "sdk_value": true,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:dynamicFriction": {
+          "usd_type": "float",
+          "sdk_value": 0.800000011920929,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:restitution": {
+          "usd_type": "float",
+          "sdk_value": 0.20000000298023224,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:staticFriction": {
+          "usd_type": "float",
+          "sdk_value": 1.0,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "size": {
+          "usd_type": "double",
+          "sdk_value": 1.0,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "visibility": {
+          "usd_type": "token",
+          "sdk_value": "invisible",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOp:scale": {
+          "usd_type": "float3",
+          "sdk_value": "(0.032, 0.016, 0.0017)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOp:translate": {
+          "usd_type": "double3",
+          "sdk_value": "(0, 0, 0.010450000000000001)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOpOrder": {
+          "usd_type": "token[]",
+          "sdk_value": "[xformOp:translate, xformOp:scale]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        }
+      },
+      "relationships": {
+        "material:binding:physics": [
+          "/World/envs/env_0/contact_coupon/DeclaredContactMaterials/Top"
+        ],
+        "physics:simulationOwner": [],
+        "proxyPrim": []
+      }
+    },
+    "/World/envs/env_0/contact_coupon/LegoMaterial": {
+      "type": "Material",
+      "apis": [],
+      "attributes": {
+        "outputs:surface": {
+          "usd_type": "token",
+          "sdk_value": "",
+          "connections": [
+            "/World/envs/env_0/contact_coupon/LegoMaterial/PreviewSurface.outputs:surface"
+          ],
+          "has_authored_value": true,
+          "has_authored_connections": true
+        }
+      },
+      "relationships": {}
+    },
+    "/World/envs/env_0/contact_coupon/LegoMaterial/PreviewSurface": {
+      "type": "Shader",
+      "apis": [
+        "NodeDefAPI"
+      ],
+      "attributes": {
+        "info:id": {
+          "usd_type": "token",
+          "sdk_value": "UsdPreviewSurface",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "inputs:diffuseColor": {
+          "usd_type": "color3f",
+          "sdk_value": "(0.48514998, 0.2831488, 0.1274377)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "inputs:ior": {
+          "usd_type": "float",
+          "sdk_value": 1.5299999713897705,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "inputs:roughness": {
+          "usd_type": "float",
+          "sdk_value": 0.15000000596046448,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "outputs:surface": {
+          "usd_type": "token",
+          "sdk_value": "",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        }
+      },
+      "relationships": {}
+    },
+    "/World/envs/env_0/contact_coupon/Body": {
+      "type": "Mesh",
+      "apis": [],
+      "attributes": {
+        "extent": {
+          "usd_type": "float3[]",
+          "sdk_value": "[(-0.01595, -0.00795, -0.004775), (0.01595, 0.00795, 0.004775)]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "faceVertexCounts": {
+          "usd_type": "int[]",
+          "sdk_value": "[4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "faceVertexIndices": {
+          "usd_type": "int[]",
+          "sdk_value": "[0, 4, 5, 1, 1, 5, 6, 2, 2, 6, 7, 3, 4, 8, 9, 5, 5, 9, 10, 6, 6, 10, 11, 7, 8, 12, 13, 9, 9, 13, 14, 10, 10, 14, 15, 11, 32, 33, 37, 36, 33, 34, 38, 37, 34, 35, 39, 38, 36, 37, 41, 40, 38, 39, 43, 42, 40, 41, 45, 44, 41, 42, 46, 45, 42, 43, 47, 46, 21, 22, 26, 25, 3, 7, 23, 19, 19, 23, 39, 35, 7, 11, 27, 23, 23, 27, 43, 39, 11, 15, 31, 27, 27, 31, 47, 43, 0, 16, 20, 4, 16, 32, 36, 20, 4, 20, 24, 8, 20, 36, 40, 24, 8, 24, 28, 12, 24, 40, 44, 28, 12, 28, 29, 13, 28, 44, 45, 29, 13, 29, 30, 14, 29, 45, 46, 30, 14, 30, 31, 15, 30, 46, 47, 31, 0, 1, 17, 16, 16, 17, 33, 32, 1, 2, 18, 17, 17, 18, 34, 33, 2, 3, 19, 18, 18, 19, 35, 34, 22, 38, 42, 26, 21, 25, 41, 37, 25, 26, 42, 41, 21, 37, 38, 22]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "points": {
+          "usd_type": "point3f[]",
+          "sdk_value": "[(-0.01595, -0.00795, -0.004775), (-0.01475, -0.00795, -0.004775), (0.01475, -0.00795, -0.004775), (0.01595, -0.00795, -0.004775), (-0.01595, -0.00675, -0.004775), (-0.01475, -0.00675, -0.004775), (0.01475, -0.00675, -0.004775), (0.01595, -0.00675, -0.004775), (-0.01595, 0.00675, -0.004775), (-0.01475, 0.00675, -0.004775), (0.01475, 0.00675, -0.004775), (0.01595, 0.00675, -0.004775), (-0.01595, 0.00795, -0.004775), (-0.01475, 0.00795, -0.004775), (0.01475, 0.00795, -0.004775), (0.01595, 0.00795, -0.004775), (-0.01595, -0.00795, -0.003575), (-0.01475, -0.00795, -0.003575), (0.01475, -0.00795, -0.003575), (0.01595, -0.00795, -0.003575), (-0.01595, -0.00675, -0.003575), (-0.01475, -0.00675, -0.003575), (0.01475, -0.00675, -0.003575), (0.01595, -0.00675, -0.003575), (-0.01595, 0.00675, -0.003575), (-0.01475, 0.00675, -0.003575), (0.01475, 0.00675, -0.003575), (0.01595, 0.00675, -0.003575), (-0.01595, 0.00795, -0.003575), (-0.01475, 0.00795, -0.003575), (0.01475, 0.00795, -0.003575), (0.01595, 0.00795, -0.003575), (-0.01595, -0.00795, 0.004775), (-0.01475, -0.00795, 0.004775), (0.01475, -0.00795, 0.004775), (0.01595, -0.00795, 0.004775), (-0.01595, -0.00675, 0.004775), (-0.01475, -0.00675, 0.004775), (0.01475, -0.00675, 0.004775), (0.01595, -0.00675, 0.004775), (-0.01595, 0.00675, 0.004775), (-0.01475, 0.00675, 0.004775), (0.01475, 0.00675, 0.004775), (0.01595, 0.00675, 0.004775), (-0.01595, 0.00795, 0.004775), (-0.01475, 0.00795, 0.004775), (0.01475, 0.00795, 0.004775), (0.01595, 0.00795, 0.004775)]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "subdivisionScheme": {
+          "usd_type": "token",
+          "sdk_value": "none",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOp:orient": {
+          "usd_type": "quatf",
+          "sdk_value": "(0, 1, 0, 0)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOp:translate": {
+          "usd_type": "double3",
+          "sdk_value": "(0, 0, 0.004775000000000001)",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "xformOpOrder": {
+          "usd_type": "token[]",
+          "sdk_value": "[xformOp:translate, xformOp:orient]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        }
+      },
+      "relationships": {
+        "material:binding": [
+          "/World/envs/env_0/contact_coupon/LegoMaterial"
+        ],
+        "proxyPrim": []
+      }
+    },
+    "/World/envs/env_0/contact_coupon/Tubes": {
+      "type": "PointInstancer",
+      "apis": [],
+      "attributes": {
+        "orientations": {
+          "usd_type": "quath[]",
+          "sdk_value": "[(1, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 0)]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "positions": {
+          "usd_type": "point3f[]",
+          "sdk_value": "[(-0.008, 0, 0.004225), (0, 0, 0.004225), (0.008, 0, 0.004225)]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "protoIndices": {
+          "usd_type": "int[]",
+          "sdk_value": "[0, 0, 0]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "scales": {
+          "usd_type": "float3[]",
+          "sdk_value": "[(1, 1, 1), (1, 1, 1), (1, 1, 1)]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        }
+      },
+      "relationships": {
+        "prototypes": [
+          "/World/envs/env_0/contact_coupon/TubePrototype"
+        ],
+        "proxyPrim": []
+      }
+    },
+    "/World/envs/env_0/contact_coupon/Studs": {
+      "type": "PointInstancer",
+      "apis": [],
+      "attributes": {
+        "orientations": {
+          "usd_type": "quath[]",
+          "sdk_value": "[(1, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 0), (1, 0, 0, 0)]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "positions": {
+          "usd_type": "point3f[]",
+          "sdk_value": "[(-0.012, -0.004, 0.010425), (-0.012, 0.004, 0.010425), (-0.004, -0.004, 0.010425), (-0.004, 0.004, 0.010425), (0.004, -0.004, 0.010425), (0.004, 0.004, 0.010425), (0.012, -0.004, 0.010425), (0.012, 0.004, 0.010425)]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "protoIndices": {
+          "usd_type": "int[]",
+          "sdk_value": "[0, 0, 0, 0, 0, 0, 0, 0]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "scales": {
+          "usd_type": "float3[]",
+          "sdk_value": "[(1, 1, 1), (1, 1, 1), (1, 1, 1), (1, 1, 1), (1, 1, 1), (1, 1, 1), (1, 1, 1), (1, 1, 1)]",
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        }
+      },
+      "relationships": {
+        "prototypes": [
+          "/World/envs/env_0/contact_coupon/StudPrototype"
+        ],
+        "proxyPrim": []
+      }
+    },
+    "/World/envs/env_0/contact_coupon/DeclaredContactMaterials": {
+      "type": "Scope",
+      "apis": [],
+      "attributes": {},
+      "relationships": {
+        "proxyPrim": []
+      }
+    },
+    "/World/envs/env_0/contact_coupon/DeclaredContactMaterials/Body": {
+      "type": "Material",
+      "apis": [
+        "PhysicsMaterialAPI"
+      ],
+      "attributes": {
+        "physics:dynamicFriction": {
+          "usd_type": "float",
+          "sdk_value": 0.4000000059604645,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:restitution": {
+          "usd_type": "float",
+          "sdk_value": 0.10000000149011612,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:staticFriction": {
+          "usd_type": "float",
+          "sdk_value": 0.5,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        }
+      },
+      "relationships": {}
+    },
+    "/World/envs/env_0/contact_coupon/DeclaredContactMaterials/Top": {
+      "type": "Material",
+      "apis": [
+        "PhysicsMaterialAPI"
+      ],
+      "attributes": {
+        "physics:dynamicFriction": {
+          "usd_type": "float",
+          "sdk_value": 0.800000011920929,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:restitution": {
+          "usd_type": "float",
+          "sdk_value": 0.20000000298023224,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        },
+        "physics:staticFriction": {
+          "usd_type": "float",
+          "sdk_value": 1.0,
+          "connections": [],
+          "has_authored_value": true,
+          "has_authored_connections": false
+        }
+      },
+      "relationships": {}
+    }
+  },
+  "density_defaults": {
+    "/World/envs/env_0/contact_coupon/DeclaredContactMaterials/Body": {
+      "value": 0.0,
+      "has_authored_value": false
+    },
+    "/World/envs/env_0/contact_coupon/DeclaredContactMaterials/Top": {
+      "value": 0.0,
+      "has_authored_value": false
+    }
+  }
+}

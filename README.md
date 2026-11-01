@@ -145,11 +145,12 @@ Each folder keeps its README and its script so the experiment can be rerun.
 This is a **curated** copy, meant to be readable and quick to clone, not a mirror of the team's
 working repositories.
 
-**Kept:** all source code, all documentation, the metrics behind every claim, and a sample of the
-result images.
+**Kept:** all source code, the data contracts between the tasks, the documentation of each delivered
+subsystem, the metrics behind every claim, and a sample of the result images.
 
 **Left out:** trained model weights, image datasets, recorded replay packages, per-move robot
-logs and generated data files of tens of megabytes. Together they were over 1.2 GB; the whole
+logs, generated data files of tens of megabytes, and the internal coordination notes the team wrote
+to each other during the three days. Together they were over 1.2 GB; the whole
 repository is now about 21 MB.
 
 Nothing was rewritten to look better. Where a result is weak, such as 54 % on unseen bricks, it is
@@ -167,12 +168,16 @@ reported as it was measured.
 │   ├── examples/                  calibrations you can load directly
 │   └── jetson/                    Orin Nano deployment and kiosk
 ├── task2-franka-manipulation/     ns-235861
-│   ├── teaching-baseline/         taught positions, grid generation, motion
+│   ├── README.md                  the approach, what stops a motion, what was proven
+│   ├── teaching-baseline/         taught poses, grid generation, continuous-arc motion
 │   └── ros2-stack/                hand-eye calibration, LEGO sorter, ROS 2 reference
 ├── task3-factory-simulation/      JhannoxDev
-│   ├── greenfield/                the model and the browser viewer
-│   ├── docs/                      adapters, execution, demo and limits
-│   └── scripts/, tests/           checkpoint tools and validation
+│   ├── README.md                  how the line works and what the numbers mean
+│   ├── interfaces.md              the data contract between the tasks
+│   ├── greenfield/                the delivered model and the browser viewer
+│   ├── planning/, execution/      blending, patterning, object actions
+│   ├── docs/                      the concept, blending criteria, revision log
+│   └── scripts/, tests*/          checkpoint tools and validation
 ├── simulation-experiments/        Programmercloud-cmd
 │   ├── experiments/               one dated folder per experiment
 │   ├── perception/, challenge2/   the shared code behind them

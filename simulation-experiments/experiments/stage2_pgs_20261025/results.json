@@ -1,0 +1,245 @@
+{
+  "schema": "stage2-final-round3-pgs-results-v1",
+  "improvement_round": 3,
+  "maximum_improvement_rounds": 3,
+  "round_budget_status": "Closed: no fourth round, parameter sweep, retry or native build authorized by these results.",
+  "sole_physics_configuration_change": "Scene solver family TGS1 to PGS0; default32position/4velocity retained, dt1/120, coupled native epsilon1e-4, binary, native physical capacities/switches/break rules, source layout and nominal robot targets unchanged.",
+  "native_core_sha256": "4e62dc33ee02270993c20e3cfd658e6d6ef0ea9780e53ad15cedde12f41b2455",
+  "phases": {
+    "A": {
+      "capture_job_id": 1745,
+      "capture_snapshot": "runs/20261025T023902.662030Z-stage2-round3-PGS-A",
+      "audit_job_id": 1746,
+      "audit_snapshot": "runs/20261025T023921.396642Z-stage2-round3-PGS-A-evaluation",
+      "capture_source_commit": "cacbae9",
+      "passed_checks": 12,
+      "total_checks": 12,
+      "proceed_gate_passed": true,
+      "evaluation_sha256": "20cb5dd396504312599ea154f7a1f349e8d4e67fdd184c0c2a6b277e25bf6018",
+      "evaluation_protocol_sha256": "08e5632da0345d8cd9a3a8a24d21fcb705549d23ccc0aa75d3602e7139d13101",
+      "metrics": {
+        "comparison": [
+          {
+            "step": 1,
+            "J_residual_Ns": 9.24246418873391e-12,
+            "H_norm_Nms": 0.0,
+            "frozen_TGS_H_norm_Nms": 7.991099328578112e-06,
+            "H_limit_Nms": 7.991099328578112e-08,
+            "H_screen_pass": true,
+            "J_screen_pass": true
+          },
+          {
+            "step": 2,
+            "J_residual_Ns": 9.24246418873391e-12,
+            "H_norm_Nms": 0.0,
+            "frozen_TGS_H_norm_Nms": 7.991099328578112e-06,
+            "H_limit_Nms": 7.991099328578112e-08,
+            "H_screen_pass": true,
+            "J_screen_pass": true
+          },
+          {
+            "step": 3,
+            "J_residual_Ns": 9.24246418873391e-12,
+            "H_norm_Nms": 0.0,
+            "frozen_TGS_H_norm_Nms": 7.991099328578112e-06,
+            "H_limit_Nms": 7.991099328578112e-08,
+            "H_screen_pass": true,
+            "J_screen_pass": true
+          },
+          {
+            "step": 4,
+            "J_residual_Ns": 9.24246418873391e-12,
+            "H_norm_Nms": 0.0,
+            "frozen_TGS_H_norm_Nms": 7.991099328578112e-06,
+            "H_limit_Nms": 7.991099328578112e-08,
+            "H_screen_pass": true,
+            "J_screen_pass": true
+          },
+          {
+            "step": 5,
+            "J_residual_Ns": 9.24246418873391e-12,
+            "H_norm_Nms": 0.0,
+            "frozen_TGS_H_norm_Nms": 7.991099328578112e-06,
+            "H_limit_Nms": 7.991099328578112e-08,
+            "H_screen_pass": true,
+            "J_screen_pass": true
+          },
+          {
+            "step": 6,
+            "J_residual_Ns": 9.24246418873391e-12,
+            "H_norm_Nms": 0.0,
+            "frozen_TGS_H_norm_Nms": 7.991099328578112e-06,
+            "H_limit_Nms": 7.991099328578112e-08,
+            "H_screen_pass": true,
+            "J_screen_pass": true
+          },
+          {
+            "step": 7,
+            "J_residual_Ns": 9.24246418873391e-12,
+            "H_norm_Nms": 0.0,
+            "frozen_TGS_H_norm_Nms": 7.991099328578112e-06,
+            "H_limit_Nms": 7.991099328578112e-08,
+            "H_screen_pass": true,
+            "J_screen_pass": true
+          },
+          {
+            "step": 8,
+            "J_residual_Ns": 9.24246418873391e-12,
+            "H_norm_Nms": 0.0,
+            "frozen_TGS_H_norm_Nms": 7.991099328578112e-06,
+            "H_limit_Nms": 7.991099328578112e-08,
+            "H_screen_pass": true,
+            "J_screen_pass": true
+          }
+        ],
+        "base_eccentric_evaluation": "output/eccentric/evaluation.json",
+        "angular_velocity_delta_momentum": "Descriptive only; see unchanged base audit, not an additional acceptance gate.",
+        "iteration_evidence": "Authored USD32/4 for A; actual executed island count unmeasured."
+      },
+      "base_eccentric_checks": {
+        "passed": 36,
+        "total": 36
+      },
+      "meaning": "Operational numerical angular-writeback screen only, not an idle/contact/calibration claim."
+    },
+    "B": {
+      "capture_job_id": 1747,
+      "capture_snapshot": "runs/20261025T024036.744684Z-stage2-round3-PGS-B",
+      "audit_job_id": 1748,
+      "audit_snapshot": "runs/20261025T024055.481502Z-stage2-round3-PGS-B-evaluation",
+      "capture_source_commit": "cacbae9",
+      "passed_checks": 33,
+      "total_checks": 33,
+      "proceed_gate_passed": true,
+      "evaluation_sha256": "e2db199c8212066320c9a64539bcc572420e7b518e29933ddda75bb8b7d23e3a",
+      "evaluation_protocol_sha256": "08e5632da0345d8cd9a3a8a24d21fcb705549d23ccc0aa75d3602e7139d13101",
+      "metrics": {
+        "postassembly_steps": 120,
+        "first_failure": null,
+        "max_position_drift_m": 0.00020829330319761222,
+        "max_orientation_drift_rad": 0.0021788997081458377,
+        "final_max_linear_speed_m_s": 6.372306684248505e-07,
+        "final_max_angular_speed_rad_s": 1.3796165789811251e-05,
+        "iteration_evidence": "Actual actor32/4 readbacks; executed effective island iteration count unmeasured."
+      },
+      "meaning": "One bounded120step idle stability result; not physical contact or manipulation validation."
+    },
+    "C": {
+      "capture_job_id": 1749,
+      "capture_snapshot": "runs/20261025T024214.471653Z-stage2-round3-PGS-C",
+      "audit_job_id": 1750,
+      "audit_snapshot": "runs/20261025T024231.107173Z-stage2-round3-PGS-C-evaluation",
+      "capture_source_commit": "cacbae9",
+      "passed_checks": 33,
+      "total_checks": 33,
+      "proceed_gate_passed": true,
+      "evaluation_sha256": "b303f98c18343e112dc2cd0595b730a0e96e32fc7196abab91c25a634978a971",
+      "evaluation_protocol_sha256": "08e5632da0345d8cd9a3a8a24d21fcb705549d23ccc0aa75d3602e7139d13101",
+      "metrics": {
+        "postassembly_steps": 120,
+        "first_failure": null,
+        "max_position_drift_m": 0.0005817966928847268,
+        "max_orientation_drift_rad": 0.00880817763132997,
+        "final_max_linear_speed_m_s": 2.0658614462631267e-06,
+        "final_max_angular_speed_rad_s": 4.987177858190939e-05,
+        "iteration_evidence": "Actual actor32/4 readbacks; executed effective island iteration count unmeasured."
+      },
+      "meaning": "One bounded120step idle stability result; not physical contact or manipulation validation."
+    }
+  },
+  "frozen_proceed_chain": [
+    {
+      "to": "A",
+      "reference": "TGS1743capture/1744audit",
+      "reference_evaluation_sha256": "5445d7984bacc684e6ea70ccb52cefd2f5bc7bf0bbff1f4b489a335a864aa298"
+    },
+    {
+      "to": "B",
+      "predecessor_audit_job_id": 1746,
+      "predecessor_evaluation_sha256": "20cb5dd396504312599ea154f7a1f349e8d4e67fdd184c0c2a6b277e25bf6018"
+    },
+    {
+      "to": "C",
+      "predecessor_audit_job_id": 1748,
+      "predecessor_evaluation_sha256": "e2db199c8212066320c9a64539bcc572420e7b518e29933ddda75bb8b7d23e3a"
+    }
+  ],
+  "operational_A_screen": {
+    "valid_steps": 8,
+    "J_minus_gravity_norm_limit_Ns": 1e-08,
+    "H_norm_limit_fraction_of_each_frozen_TGS_step": 0.01,
+    "observed_H_norm_all_steps_Nms": 0.0,
+    "observed_J_residual_all_steps_Ns": 9.24246418873391e-12,
+    "frozen_TGS_H_norm_Nms": 7.991099328578112e-06,
+    "physical_calibration_claim": false
+  },
+  "bounded_idle_B": {
+    "source_bricks": 300,
+    "native_parts": 301,
+    "native_links": 930,
+    "steps": 120
+  },
+  "reserved_idle_C": {
+    "case": "H_mix",
+    "removed_source_id": "brick_9_2_2",
+    "source_bricks": 299,
+    "native_parts": 300,
+    "native_links": 926,
+    "steps": 120,
+    "not_full300_replacement": true
+  },
+  "interpretation": {
+    "recommendation": "Retain PGS as an experimentally supported bounded idle-workaround candidate.",
+    "source_binary_hypothesis": "The TGS/PGS comparison suppresses the reproducible inferred external-H signature in the isolated fixture and passes both idle cases. Source/writeback accounting mismatch is a qualified hypothesis; exact installed-binary lineage and independent raw weld-load frame/sign have not been established. No causal patch proof.",
+    "actor_settings_evidence": "B/C initial and terminal actual actor32/4 readbacks verified. A has authoredUSD32/4 evidence. Effective executed island iteration counters remain unavailable.",
+    "not_measured": [
+      "Longer-duration or arbitrary-layout stability",
+      "Calibrated contact/weld-force correctness",
+      "Updated fingertip collision validity",
+      "Grasp/peel/extraction",
+      "Insertion/restacking/repeated sorting",
+      "Hardware transfer"
+    ],
+    "manipulation_validated": false,
+    "contact_model_validated": false,
+    "end_to_end_demo_complete": false
+  },
+  "sha256": {
+    "runs/20261025T023902.662030Z-stage2-round3-PGS-A/manifest.json": "f3f357178a4a9505a5f52a40e515b170cd9d5f2bb522a265dbe3dd8c3a828450",
+    "runs/20261025T023902.662030Z-stage2-round3-PGS-A/output/supervisor.json": "f8c6390723fcdd8cc5bc420c83bd9365c6218da98a3844e824ec75cc2d360208",
+    "runs/20261025T023921.396642Z-stage2-round3-PGS-A-evaluation/manifest.json": "537f2b18bc0c9b06fce356a3f47b6cd8c09d6666dae106addc84e4c1d44594c1",
+    "runs/20261025T023921.396642Z-stage2-round3-PGS-A-evaluation/evaluation/protocol.json": "08e5632da0345d8cd9a3a8a24d21fcb705549d23ccc0aa75d3602e7139d13101",
+    "runs/20261025T023921.396642Z-stage2-round3-PGS-A-evaluation/output/evaluation.json": "20cb5dd396504312599ea154f7a1f349e8d4e67fdd184c0c2a6b277e25bf6018",
+    "runs/20261025T023921.396642Z-stage2-round3-PGS-A-evaluation/output/run_complete.json": "fe9ee71919f8f7ef18a0d3b6d50b26143eec5073a86d6feea84585a75bd3dbcb",
+    "runs/20261025T023902.662030Z-stage2-round3-PGS-A/output/fixture_metadata.json": "af4e02c7607a21a05cf63a4ae004e44b01d20a63d36ad787d87fb8065ce77279",
+    "runs/20261025T023902.662030Z-stage2-round3-PGS-A/output/trace.jsonl": "be28c610729679300c02c41a408f9189510d8571a5dd308181562c212a85d0fb",
+    "runs/20261025T023902.662030Z-stage2-round3-PGS-A/output/diagnostic_report.json": "1cb01a6ec5e9e4dc1c3ff975e577b5c506cbedc7b99e1849f877eac5dbbf12a7",
+    "runs/20261025T023902.662030Z-stage2-round3-PGS-A/output/diagnostic_complete.json": "b90aac13df214a11a3c6a1dc0774e531d5a81d566fec7bc12e51a911cb8348c7",
+    "runs/20261025T024036.744684Z-stage2-round3-PGS-B/manifest.json": "1754410b562faded3db79e61204eb5fa8dd9f966f9eb08ba2d3c2c1bdab6565e",
+    "runs/20261025T024036.744684Z-stage2-round3-PGS-B/output/supervisor.json": "e6d1809a294adffebd493ad5b34a969ee7693320d261d706a115e785c6d70702",
+    "runs/20261025T024055.481502Z-stage2-round3-PGS-B-evaluation/manifest.json": "34094911a67709ed565d04ce9fe9a4ed0a3883b90a5df65d01781716e9abdd10",
+    "runs/20261025T024055.481502Z-stage2-round3-PGS-B-evaluation/evaluation/protocol.json": "08e5632da0345d8cd9a3a8a24d21fcb705549d23ccc0aa75d3602e7139d13101",
+    "runs/20261025T024055.481502Z-stage2-round3-PGS-B-evaluation/output/evaluation.json": "e2db199c8212066320c9a64539bcc572420e7b518e29933ddda75bb8b7d23e3a",
+    "runs/20261025T024055.481502Z-stage2-round3-PGS-B-evaluation/output/run_complete.json": "c22b8e1b299ecc5921e02806f48ed4ff05d7f99be0736a9e8200bcc4962449c4",
+    "runs/20261025T024036.744684Z-stage2-round3-PGS-B/output/pgs_settings.json": "be16d4e1845c176737b8e803a32995d301df9e039b307f99a62d4ac36cd27f0b",
+    "runs/20261025T024036.744684Z-stage2-round3-PGS-B/output/idle_report.json": "c158dac23065a2741a7e0fbbe39da8bf4caf8c2d196bedf84ec0a5d097213ea7",
+    "runs/20261025T024036.744684Z-stage2-round3-PGS-B/output/idle_trace.jsonl": "c5b06eab69a7f069f7c02fb1d57540ff134dae26e00f9c601f347b90025a5239",
+    "runs/20261025T024036.744684Z-stage2-round3-PGS-B/output/idle_source_ids.json": "a87e216c5aea376354b1eb361e287e685fc7ad926635224b1a8e2cfb6f176761",
+    "runs/20261025T024036.744684Z-stage2-round3-PGS-B/output/idle_states_initial.npy": "b3c3e9d002236fd2af1101563e23dda577c92f2f21f8e04d2047b9c348e84cd9",
+    "runs/20261025T024036.744684Z-stage2-round3-PGS-B/output/idle_states_final.npy": "c51af06fc0e44fe5408427d9e7ed54f518c3f80d22a19c1c14be246d239b8a43",
+    "runs/20261025T024036.744684Z-stage2-round3-PGS-B/output/pgs_idle_complete.json": "724198f2597d39c704dc828dd8cb1fcc1732716744b75689d3fc65d1bf590195",
+    "runs/20261025T024214.471653Z-stage2-round3-PGS-C/manifest.json": "00ddbd0b758d496ed738c37683924ae21dc514f6761c572419d31f0e532f500d",
+    "runs/20261025T024214.471653Z-stage2-round3-PGS-C/output/supervisor.json": "19a89562ab7cdd87664ed11165c33c4a6dfcccc8dafe2c35e2fa207417ab2061",
+    "runs/20261025T024231.107173Z-stage2-round3-PGS-C-evaluation/manifest.json": "691edda1b420aaafb679f31b6c7a273c9da15f9fab58abd7dbe782eb6ef355aa",
+    "runs/20261025T024231.107173Z-stage2-round3-PGS-C-evaluation/evaluation/protocol.json": "08e5632da0345d8cd9a3a8a24d21fcb705549d23ccc0aa75d3602e7139d13101",
+    "runs/20261025T024231.107173Z-stage2-round3-PGS-C-evaluation/output/evaluation.json": "b303f98c18343e112dc2cd0595b730a0e96e32fc7196abab91c25a634978a971",
+    "runs/20261025T024231.107173Z-stage2-round3-PGS-C-evaluation/output/run_complete.json": "ac570d2e149bdaa423b3062da9568a49f74576182acb6a7342636e11b3bb34d9",
+    "runs/20261025T024214.471653Z-stage2-round3-PGS-C/output/pgs_settings.json": "fb4050e6a432aa2dbb27169c4f31b7695af6be0cea1528249020b276959806a4",
+    "runs/20261025T024214.471653Z-stage2-round3-PGS-C/output/idle_report.json": "b03657f9cb6f037bf661ae628a260da53b46f0b8cf595ea401622a6db7c71bc7",
+    "runs/20261025T024214.471653Z-stage2-round3-PGS-C/output/idle_trace.jsonl": "24b9468ed899c5c3480bafcc71cc32b9e7209b1f264ab4fbdb71ba3fd8d70552",
+    "runs/20261025T024214.471653Z-stage2-round3-PGS-C/output/idle_source_ids.json": "3fd64a8117575dddb2ea0f1545be2c7a5a114993e6d780ae3deac24ba2cce84d",
+    "runs/20261025T024214.471653Z-stage2-round3-PGS-C/output/idle_states_initial.npy": "c3b522a1a03f31f2a5aeece245d48b26518f06963983aab667e2228459e7c9db",
+    "runs/20261025T024214.471653Z-stage2-round3-PGS-C/output/idle_states_final.npy": "41b3de66cab04350badcd8fd3ae71e470fdeaa87140f04851d26010283f48146",
+    "runs/20261025T024214.471653Z-stage2-round3-PGS-C/output/pgs_idle_complete.json": "6a9804063e3cf9ff9566fe65c919b36bebdd4c8cf4f85ba44a864580020fbc63"
+  }
+}

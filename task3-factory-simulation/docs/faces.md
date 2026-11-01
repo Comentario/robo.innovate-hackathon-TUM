@@ -1,12 +1,12 @@
-# Tonalidad por cara — propuesta v0.3
+# Per-face shade — proposal v0.3
 
-Un ladrillo puede tener tonos distintos en cada cara. No se debe inferir el tono
-de una cara oculta a partir de otra. Se conserva la API v0.2 de categoría por
-ladrillo y se añade `planning.faces.make_face_plan` como extensión independiente.
+A brick can have a different shade on each face. The shade of a hidden face must not be inferred from
+another one. The v0.2 per-brick category API is kept, and `planning.faces.make_face_plan` is added as
+an independent extension.
 
-## Entrada
+## Input
 
-Cada ladrillo contiene `id`, `faces` y `allowed_orientations`:
+Each brick carries `id`, `faces` and `allowed_orientations`:
 
 ```json
 {
@@ -23,46 +23,44 @@ Cada ladrillo contiene `id`, `faces` y `allowed_orientations`:
 }
 ```
 
-`null` o ausencia de una cara significa no observada. Solo se eligen caras
-observadas y referenciadas por una orientación permitida. Las caras observadas
-pueden incluir metadatos adicionales, pero el MVP consume su `color_group`.
-Los identificadores de caras están ligados al ladrillo físico; percepción debe
-mantenerlos estables, incluso si el ladrillo se mueve.
+`null` or a missing face means not observed. Only faces that were observed and are referenced by an
+allowed orientation can be chosen. Observed faces may carry extra metadata, but the MVP consumes
+their `color_group`. Face identifiers are bound to the physical brick; perception has to keep them
+stable, even if the brick moves.
 
-Las orientaciones las declara integración según el agarre permitido. En los
-fixtures son hipótesis sintéticas, no capacidades verificadas del robot. Un
-`orientation_id` no es todavía un ángulo, pose o instrucción de giro ejecutable.
+Orientations are declared by integration according to the permitted grasp. In the fixtures they are
+synthetic hypotheses, not verified robot capabilities. An `orientation_id` is not yet an angle, a pose
+or an executable rotation instruction.
 
-## Selección y salida
+## Selection and output
 
-Se exige receta explícita. Primero se calculan cuotas enteras con la misma regla
-que v0.2. Una asignación por emparejamiento busca ladrillos distintos cuyas caras
-permitidas cubran esas cuotas; puede reasignar un ladrillo flexible para preservar
-otro tono escaso. Con `reject` se rechaza si no existe tal asignación. Con
-`redistribute` se cubren las cuotas posibles y se completa por déficit de tonos
-entre los candidatos restantes; esta sustitución es heurística.
+An explicit recipe is required. Integer quotas are computed first, with the same rule as v0.2. A
+matching assignment then looks for distinct bricks whose allowed faces cover those quotas; it may
+reassign a flexible brick to preserve another scarce shade. With `reject`, the plan is refused if no
+such assignment exists. With `redistribute`, the quotas that can be met are met and the rest is
+filled by shade shortfall among the remaining candidates; that substitution is heuristic.
 
-Después, el patrón mixed/smooth y la secuencia se calculan con la cara elegida.
-La salida usa `schema_version="0.3"`; cada placement añade `visible_face` y
-`orientation_id`. `face_policy` identifica caras permitidas no observadas,
-ladrillos sin candidatos observados y el origen declarado de orientaciones.
+The mixed or smooth pattern and the sequence are then computed with the chosen face. The output uses
+`schema_version="0.3"`; every placement adds `visible_face` and `orientation_id`. `face_policy`
+identifies allowed faces that were not observed, bricks with no observed candidates, and the declared
+origin of the orientations.
 
-Esta versión optimiza una sola cara de exposición por posición. No evalúa a la
-vez frontal/lateral/superior ni predice el aspecto de una pared al desempaquetar.
-Los valores de tono de smooth siguen siendo representativos de la categoría,
-no medidas calibradas por cara ni una descripción de textura.
+This version optimizes a single exposed face per position. It does not evaluate front, side and top at
+the same time, and it does not predict the appearance of a wall once the package is unpacked. The
+shade values used by smooth mode are still representative of the category, not per-face calibrated
+measurements, and they do not describe texture.
 
-## Reproducir
+## Reproduce
 
 ```bash
 python3 -m demo --face-aware --inventory examples/faces/inventory.json --config examples/faces/config.json --output artifacts/faces_run.json
 ```
 
-En este ejemplo todos los frentes son oscuros. Para cumplir 4/4/4, el planificador
-debe elegir algunas caras posteriores. Los tops no observados nunca se usan.
+In this example every front face is dark. To meet 4/4/4, the planner has to choose some back faces.
+Tops that were not observed are never used.
 
-## Acuerdos pendientes
+## Open agreements
 
-Qué caras cuentan en el paquete y en la pared, orientación de exposición por
-posición, giros físicamente permitidos, textura/variación dentro de una cara y
-cómo adquirir/calibrar observaciones múltiples sin perder identidad.
+Which faces count in the package and in the wall, the exposure orientation per position, the
+rotations that are physically permitted, texture and variation within one face, and how to acquire
+and calibrate multiple observations without losing identity.

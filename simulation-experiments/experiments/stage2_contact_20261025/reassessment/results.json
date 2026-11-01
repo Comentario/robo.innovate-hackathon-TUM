@@ -1,0 +1,55 @@
+{
+  "schema": "supplied-tip-representation-reassessment-results-v1",
+  "scope": "One saved LEFT32 diagnostic, not a new cooking or contact configuration; original G failure preserved.",
+  "source_commit": "10177e6",
+  "pueue_job_id": 1758,
+  "snapshot": "runs/20261025T042001.531758Z-tip-representation-reassessment",
+  "status": "descriptive_complete",
+  "analysis_wall_s": 0.10929564898833632,
+  "budget_s": 60,
+  "versions": {
+    "python": "3.11.15 (main, Mar 11 2026, 17:20:07) [GCC 14.3.0]",
+    "numpy": "1.26.0",
+    "scipy": "1.15.3"
+  },
+  "summary": {
+    "hulls": 32,
+    "closed_oriented_nondegenerate_hulls": 32,
+    "indexed_convex_eligible_at_original_epsilon": 16,
+    "maximum_indexed_polygon_nonplanarity_m": 0.00014450794115019908,
+    "maximum_indexed_fan_convexity_excess_m": 0.000115406516821283,
+    "STL_reference_free_witnesses": 27,
+    "witnesses": 27,
+    "candidate_witness_states": {
+      "SDK_halfspace_union": {
+        "outside": 26,
+        "unknown": 1
+      },
+      "vertex_hull_union": {
+        "outside": 27
+      },
+      "indexed_winding_union": {
+        "unknown": 27
+      }
+    }
+  },
+  "interpretation": "Plane and indexed-fan interpretations are not established exact physical collision oracles. Vertex-hull candidate does not show blockage at the 27 fixed probes; this is not proof of live collider suitability or complete CAD fidelity.",
+  "preserved_bounds_failure": {
+    "maximum_absolute_difference_m": 0.00010288106108188519,
+    "frozen_limit_m": 0.0001
+  },
+  "right_tip": "UNTESTED",
+  "R3_status": "FAILED, closed after three contact improvement rounds; no promotion, D/R or parameter sweep.",
+  "proceed_gate_passed": false,
+  "next_action": "One separately reviewed, motion-free active-PhysX query diagnostic using unchanged STL/registration/decomposition. Fixed controls and probes, no contact trial or proxy fallback.",
+  "primary_sources": [
+    "https://docs.omniverse.nvidia.com/kit/docs/omni_physics/107.3/extensions/runtime/source/omni.physx/docs/api/python.html",
+    "https://github.com/NVIDIA-Omniverse/PhysX/blob/107.3-physx-5.6.1/physx/include/cooking/PxCooking.h"
+  ],
+  "sha256": {
+    "runs/20261025T042001.531758Z-tip-representation-reassessment/manifest.json": "8a8b9b8d895f72a840a82cf41d227973553f8844a6a9188a406f16491858f667",
+    "runs/20261025T042001.531758Z-tip-representation-reassessment/launch.sh": "ba63275647f886d53f0dd56bc8843f64d34d6a784b87112bd8a62f98c41b536c",
+    "runs/20261025T042001.531758Z-tip-representation-reassessment/output/evaluation.json": "ad369653fb66a07478a0486bfca4af150dbc2709e96d17272247428e93b14885",
+    "runs/20261025T042001.531758Z-tip-representation-reassessment/versions.json": "2295a84f456ba164dc869f62b712778642be034cc882291d9fa4e3385a5c2538"
+  }
+}

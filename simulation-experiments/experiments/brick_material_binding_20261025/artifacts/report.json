@@ -1,0 +1,44 @@
+{
+  "schema_authoring_passed": true,
+  "runtime_coefficients_verified": false,
+  "retention_claim": false,
+  "positive_preservation": true,
+  "reload_resolution": true,
+  "negative_cases": {
+    "missing initialization flag": true,
+    "missing collider": true,
+    "disabled collider": true,
+    "missing declared attribute": true,
+    "unexpected coefficient": true,
+    "conflicting direct physics binding": true,
+    "conflicting inherited physics binding": true,
+    "conflicting reserved material path": true
+  },
+  "authoring": {
+    "scope": "USD_SCHEMA_AUTHORING_ONLY",
+    "brick_root": "/Brick",
+    "pre_initialization_asserted": true,
+    "targets": {
+      "BodyCollider": {
+        "collider_path": "/Brick/BodyCollider",
+        "material_path": "/Brick/DeclaredContactMaterials/Body",
+        "declared_coefficients": [
+          0.5,
+          0.4000000059604645,
+          0.10000000149011612
+        ]
+      },
+      "TopCollider": {
+        "collider_path": "/Brick/TopCollider",
+        "material_path": "/Brick/DeclaredContactMaterials/Top",
+        "declared_coefficients": [
+          1.0,
+          0.800000011920929,
+          0.20000000298023224
+        ]
+      }
+    },
+    "runtime_coefficients_verified": false,
+    "retention_claim": false
+  }
+}

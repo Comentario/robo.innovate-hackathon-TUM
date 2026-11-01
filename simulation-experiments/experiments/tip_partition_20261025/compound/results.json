@@ -1,0 +1,123 @@
+{
+  "schema": "explicit-tip-compound-results-v1",
+  "original_attempt": {
+    "job_id": 1764,
+    "source_commit": "8e1c4cd",
+    "snapshot": "runs/20261025T055949.493521Z-explicit-tip-compound",
+    "status": "STOP",
+    "error": "Fixed128-vertex CPU cap exceeded; no splitting",
+    "retained_cells": 27,
+    "failed_cell": "front_body_bored_11",
+    "actual_process_seconds": 0.16371565801091492
+  },
+  "unchanged_diagnostic": {
+    "job_id": 1765,
+    "source_commit": "0ab784e",
+    "snapshot": "runs/20261025T060952.563975Z-explicit-tip-cap-diagnostic",
+    "integrity_passed": true,
+    "same_27_records": true,
+    "failed_cell": "front_body_bored_11",
+    "extreme_vertices": 133,
+    "triangulated_facets": 262,
+    "exact_plane_rows_descriptive_only": 124,
+    "minimum_vertex_spacing_mm": 0.0032449698259259274,
+    "supervisor": {
+      "phases": [
+        {
+          "phase": "--replay",
+          "returncode": 1,
+          "wall_seconds": 0.2138703990058275
+        },
+        {
+          "phase": "--audit",
+          "returncode": 0,
+          "wall_seconds": 0.11380626999016386
+        }
+      ],
+      "diagnostic_wall_seconds": 0.3312722509872401,
+      "cumulative_supervised_seconds": 0.49498790899815504,
+      "cumulative_limit_seconds": 180,
+      "proceed_gate_passed": false,
+      "original128candidate_status": "FAILED and unchanged",
+      "within_cumulative_budget": true
+    }
+  },
+  "status": "offline_candidate_passed; native cooking and active-shape validation pending",
+  "cooking_authorized": false,
+  "physical_collision_validated": false,
+  "proceed_gate_passed": false,
+  "limitations": [
+    "Plane-row and triangle counts are not cooked polygon counts.",
+    "Only the first failed cell is assessed; later cells and native cookability remain untested.",
+    "No clustering, deduplication, fitting, cap change, geometry acceptance or cooking."
+  ],
+  "old_benchmarks": "Closed, unchanged; no new three-round pool",
+  "resource_guard_completion": {
+    "job_id": 1766,
+    "source_commit": "9d789ab",
+    "snapshot": "runs/20261025T061618.814542Z-explicit-tip-compound-255",
+    "offline_candidate_passed": true,
+    "checks": {
+      "source_face_provenance": true,
+      "source_cuts": true,
+      "original_loop_vertices": true,
+      "derived_hole_and_boss": true,
+      "body_source_hull": true,
+      "exact48_unique_regions": true,
+      "all_cells_convex_valid": true,
+      "sector_slab_partition_and_blind_cap": true,
+      "bounds_100um": true,
+      "volume_1percent": true,
+      "candidate_sampled_boundary_100um": true,
+      "source_outside_exact_distance_100um": true,
+      "source_inside_fixed_normal_bound": true,
+      "all27_reference_free_spheres": true,
+      "all27_candidate_free_spheres": true,
+      "shared_180s_budget": true
+    },
+    "bounds_error_mm": 8.881784197001252e-16,
+    "relative_volume_error": 0.0005302038871950824,
+    "candidate_samples": {
+      "total": 102418,
+      "confirmed_exterior": 31100,
+      "both_probes_inside": 71296,
+      "other_filtered": 22,
+      "max_exact_STL_distance_mm": 0.05966716954842035,
+      "boundary_bracket_margin_mm": 0.001
+    },
+    "source_samples": {
+      "total": 101886,
+      "strict_inside": 83185,
+      "outside_exact_distance_max_mm": 0.05973508105365044,
+      "inside_normal_endpoints_still_inside": 0,
+      "inside_metric": "Fixed100um-normal endpoint upper-bound test only; not nearest Euclidean or Hausdorff distance"
+    },
+    "supervisor": {
+      "phases": [
+        {
+          "phase": "construction",
+          "returncode": 0,
+          "wall_seconds": 0.26385083800414577
+        },
+        {
+          "phase": "audit",
+          "wall_seconds": 5.771091399990837,
+          "returncode": 0
+        }
+      ],
+      "prior_supervised_seconds": 0.49498790899815504,
+      "current_supervised_seconds": 6.0515442570031155,
+      "cumulative_supervised_seconds": 6.5465321660012705,
+      "cumulative_limit_seconds": 180.0,
+      "within_budget": true,
+      "cooking_authorized": false,
+      "physical_collision_validated": false
+    },
+    "sha256": {
+      "manifest.json": "a969ef3f7482e1450566b1e4f370cf6956276c0bb96cd141a4366a7408c31c87",
+      "output/compound.json": "5752e14f71cbffc34490945ca735a919ed4d260409e494e8c5254fac18db8f65",
+      "audit/evaluation.json": "28f1924a7a88f6ed55d07683b3a9e8b1d1a6b12cc08d069a89af9f7f88735ec9",
+      "supervisor.json": "db027537ab1d03d1ce9d6db92e0ed484ca3e8ff038179d8c791326f9f5dbd98d"
+    }
+  }
+}

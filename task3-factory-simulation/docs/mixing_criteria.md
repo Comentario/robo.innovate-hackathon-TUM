@@ -1,52 +1,49 @@
-# Criterios de mezcla v0.1 — decisiones del equipo
+# Blending criteria v0.1 — team decisions
 
-## Base oficial
+## Official basis
 
-Fuente consultada el 18-10-2026:
-https://roboinnovate.mirmi.tum.de/hackathon/hackathon-2026/ — reto #08 Marmon.
+Source consulted on 2026-10-18:
+https://roboinnovate.mirmi.tum.de/hackathon/hackathon-2026/ — challenge #08, Marmon.
 
-El objetivo es formar paquetes visualmente equilibrados con ladrillos cocidos
-que tienen variaciones naturales de color. Se permiten mezclas suaves y mezclas
-de colores intencionadas; también importa la apariencia de la pared terminada.
-Se mencionan superficies texturadas y heterogéneas. No se publican proporciones,
-umbrales de calidad, dimensiones ni robot específico para este reto.
+The goal is to form visually balanced packages from fired bricks that have natural color
+variations. Soft blends and deliberate color mixes are both allowed; the appearance of the finished
+wall matters too. Textured and heterogeneous surfaces are mentioned. No proportions, quality
+thresholds, dimensions or specific robot are published for this challenge.
 
-## Política provisional, configurable
+## Provisional, configurable policy
 
-1. **Receta global**: pesos por categoría, normalizados a proporciones. Los
-   ejemplos usan tercios únicamente para demostrar el sistema. Sin receta,
-   la API conserva las proporciones del inventario.
-2. **Disponibilidad**: jamás repetir IDs ni superar existencias. La demo usa
-   `reject`: rechazar si la receta redondeada no se puede cumplir. Alternativa
-   `redistribute`: sustituir según disponibilidad y reportar desviación.
-3. **Patrón**: `mixed` asigna cuotas por capa y fila y después evita categorías iguales vecinas; `smooth`
-   prioriza reducir diferencias de tono entre vecinos. Después se busca
-   equilibrio en fila/capa. Ambas son heurísticas voraces, no óptimos globales.
-4. **Secuencia**: completar capas desde abajo, en orden de fila/columna.
-   El adaptador de ejecución deberá validar soporte, agarre y accesibilidad.
-5. **Evaluación**: desviación L1 de receta, vecinos del mismo tono y, en modo
-   suave, distancia media de tono entre vecinos. Son métricas de diagnóstico,
-   no puntuaciones oficiales ni certificados de aceptación.
+1. **Global recipe:** weights per category, normalized to proportions. The examples use thirds only
+   to demonstrate the system. Without a recipe, the API keeps the inventory's proportions.
+2. **Availability:** never repeat IDs and never exceed stock. The demo uses `reject`: refuse if the
+   rounded recipe cannot be met. The alternative, `redistribute`, substitutes according to
+   availability and reports the deviation.
+3. **Pattern:** `mixed` assigns quotas per layer and row and then avoids equal neighboring
+   categories; `smooth` prioritizes reducing shade differences between neighbors. Balance across row
+   and layer is sought afterwards. Both are greedy heuristics, not global optima.
+4. **Sequence:** complete layers from the bottom up, in row and column order. The execution adapter
+   has to validate support, grasp and accessibility.
+5. **Evaluation:** L1 deviation from the recipe, same-shade neighbors, and, in smooth mode, the mean
+   shade distance between neighbors. These are diagnostic metrics, not official scores or acceptance
+   certificates.
 
-`config/mixed.json` y `config/smooth.json` permiten cambiar la receta, forma,
-modo y política de faltantes sin editar código. Los valores de tono del ejemplo
-son sintéticos entre 0 y 1; percepción deberá aportar una escala calibrada.
+`config/mixed.json` and `config/smooth.json` allow the recipe, shape, mode and shortfall policy to be
+changed without editing code. The example shade values are synthetic, between 0 and 1; perception has
+to supply a calibrated scale.
 
-Reducir distancias locales puede crear zonas o gradientes. Es solo nuestra
-primera aproximación a «suave»: habrá que contrastarla con muestras y con la
-interpretación de Marmon, incluida la forma en que se extraen los ladrillos del
-paquete para construir una pared. No se asume que minimizar distancias locales
-sea la receta industrial correcta.
+Reducing local distances can create zones or gradients. This is only our first approximation of
+"soft": it has to be checked against samples and against Marmon's interpretation, including the way
+bricks are taken out of the package to build a wall. We do not assume that minimizing local distances
+is the correct industrial recipe.
 
-## Fronteras de módulos
+## Module boundaries
 
-- Percepción entrega ID y categoría; sus cambios de detector no alteran el planificador.
-- Selección de mezcla decide cantidades, sin coordenadas del robot.
-- Patrón distribuye categorías en una cuadrícula lógica.
-- Secuenciación asigna IDs y ordena pasos.
-- Integración transforma posiciones lógicas en poses y gestiona fallos/reservas.
+- Perception delivers an ID and a category; changing its detector does not alter the planner.
+- Blend selection decides quantities, with no robot coordinates.
+- The pattern stage distributes categories over a logical grid.
+- Sequencing assigns IDs and orders the steps.
+- Integration turns logical positions into poses and handles failures and reservations.
 
-Confirmar durante el evento: receta y tolerancias, aspecto deseado (paquete y
-pared), categorías/escala de tono, caras visibles, geometría, orientación de
-capas, acceso a fuentes y criterio del jurado. Si cambia el patrón geométrico,
-se sustituye el generador de patrón; si cambia el robot, su adaptador.
+To confirm during the event: recipe and tolerances, the desired appearance (package and wall),
+categories and shade scale, visible faces, geometry, layer orientation, access to sources, and the
+jury's criteria. If the geometric pattern changes, the pattern generator is replaced; if the robot
+changes, its adapter is.

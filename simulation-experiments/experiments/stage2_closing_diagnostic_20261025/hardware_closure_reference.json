@@ -1,0 +1,36 @@
+{
+  "schema": "operator-gripper-closure-reference-v1",
+  "source": "User report, 2026-10-25",
+  "observation": "Commanding the gripper through Franka Desk to close to14mm worked perfectly; simple position closure is sufficient.",
+  "desk_setting_m": 0.014,
+  "requested_width_versus_measured_gap": "Pending clarification",
+  "fingertip_version_during_test": "Pending clarification",
+  "interpretation": "Use simple position-controlled closure as the manipulation baseline. This observation does not by itself calibrate firmware width to simulated finger joints or actual custom-pad face separation.",
+  "current_diagnostic_changed": false,
+  "current_control": "Existing controller already sends finger position targets; the old1.5N condition was an experimental phase trigger, not evidence that complex force control or RL is required.",
+  "not_inferred": [
+    "Actual pad/brick deformation or measured gap",
+    "Contact force",
+    "Calibrated firmware-to-custom-pad offset",
+    "Native simulated extraction or physical extraction readiness"
+  ],
+  "model_width_relations": {
+    "scope": "Source-derived nominal Isaac FR3/custom-pad geometry, not physical calibration",
+    "finger_joint_opening_direction": "Positiveq1 openslefttowardhand+Y; positiveq2 opensrighttowardhand-Y",
+    "nominal_custom_face_offset_sum_m": 0.00281338,
+    "nominal_pad_gap_formula": "gap_m=q1_m+q2_m+0.00281338; symmetricq=(gap_m-0.00281338)/2",
+    "if_joint_sum_is_14mm": {
+      "q_each_m": 0.007,
+      "nominal_pad_gap_m": 0.01681338
+    },
+    "if_desired_nominal_custom_pad_gap_is_14mm": {
+      "q_each_m": 0.00559331
+    },
+    "if_desired_nominal_custom_pad_gap_is_16mm": {
+      "q_each_m": 0.00659331
+    },
+    "closure_ramp": "Existing1mm/s per finger implies2mm/s nominal gap closure",
+    "firmware_mapping": "UNVERIFIED; Desk width, SDK joint-sum width, nominal pad gap and deformed brick gap are not equated",
+    "frame_caution": "Exported hardware URDF rotates rightfingerframe180deg; do not transfer localface-plane signs directly between URDF andUSD conventions"
+  }
+}

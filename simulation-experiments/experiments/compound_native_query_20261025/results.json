@@ -1,0 +1,163 @@
+{
+  "schema": "explicit-compound-native-query-results-v1",
+  "attempt1": {
+    "job_id": 1767,
+    "source_commit": "0fbc0bf",
+    "snapshot": "runs/20261025T062618.700247Z-explicit-tip-native-query",
+    "status": "FAILED_BEFORE_COOK_AND_QUERIES",
+    "reason": "Strict frozen1754 robot property equality failed: only rigidbody entries10/11 differ in mass/inertia/COM; actuator arrays exact. Body-name mapping not saved in this stopped capture.",
+    "target_geometry": "UNTESTED",
+    "physical_properties": "Not preserved in attempt1; no tolerance relaxation or baseline redefinition",
+    "actual_total_process_seconds": 14.699420149001526,
+    "sha256": {
+      "manifest.json": "9ca7638e1dbf3f600c0fe32faa3fc1a9718d663fcc55511eea8420dfb81fba42",
+      "output/failure.json": "c74894391cc18c0477b6641c8cd430851ee2a28460e7baf7febfbb86148cedb9",
+      "output/property_checks.json": "f5285357d53c748b59f2bda46a0acfe0e132266c057772e1e9f4444c6f98b659",
+      "output/supervisor.json": "d9e2a2156a2b2e7d56b05c449b9e18b045acfe5ea2feabcde04a357c97c1b89a",
+      "audit/evaluation.json": "8819c20bd919546a272c265e95685b340de3cb8f2c9b46b64879ed7156839e6f",
+      "pipeline_supervisor.json": "acd6fa34a531aaca1c3ddfb8c8a7bab955fc3477f11cd755d8983a5514e8ec6c"
+    }
+  },
+  "reviewed_reassessment": "No further native run, recook, geometry/tolerance/order change in this closed gate. Future source/contract reassessment must distinguish active cooked-boundary changes from compound query reporting. No demonstrated contact failure; physical mounting remains provisional.",
+  "tested_clear_features_passed": false,
+  "contact_authorized": false,
+  "physical_registration_validated": false,
+  "attempt2": {
+    "job_id": 1768,
+    "source_commit": "cd7aca3",
+    "snapshot": "runs/20261025T063606.330409Z-explicit-tip-native-query-fixed-mass",
+    "status": "FAILED_BEFORE_EXPLICIT_INITIALIZATION_COOK_AND_QUERIES",
+    "reason": "Full-articulation setters restored both fingers exactly but rewrote previously correct nonfinger inertia/principal-axis readbacks. Strict full-robot equality failed.",
+    "saved_record_findings": {
+      "all_masses_exact": true,
+      "all_COM_positions_exact": true,
+      "both_finger_all3_physical_arrays_exact": true,
+      "all_actuator_arrays_exact": true,
+      "nonfinger_inertia_and_principal_quaternion_differences": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        9
+      ],
+      "q_qdot_time_unchanged": true,
+      "setters_completed_once": [
+        "set_masses",
+        "set_coms",
+        "set_inertias"
+      ],
+      "physical_equivalence_not_established": true
+    },
+    "actual_cumulative_process_seconds": 29.796654913996463,
+    "target_geometry": "UNTESTED",
+    "sha256": {
+      "manifest.json": "bf17c4f19c62c7308517b9ed9deb606658b0bc12bb3a617a04d8f5e68cda2df7",
+      "output/failure.json": "2dae0207bd3ae88d1a6964538740a96804ad4cdb3b9081bdf59c35094441f6d9",
+      "output/property_restoration.json": "d0a1b86cd2ad6201e4d1b13f98351b9c38beb38168e1be9cd84799a958a24792",
+      "output/supervisor.json": "0eeae48d00ffb4f6d6a09df3aedc70e3a558885f532dee26a789e4cc10a3b0eb",
+      "audit/evaluation.json": "9f71f4552ecf3fc99a8c7177b0e8e61b8717917154c5ee0213e520fc32e46067",
+      "pipeline_supervisor.json": "0809981498fce296da1b68df315715eccfdbd48abc69996866b236f138ac0f07"
+    }
+  },
+  "status": "All3native executions CLOSED. Offline candidate PASS; native tested-feature quality FAIL; contact/grasp/extraction UNTESTED.",
+  "attempt3_targeted_route": {
+    "job_id": 1769,
+    "source_commit": "c6b141b",
+    "snapshot": "runs/20261025T064519.962873Z-explicit-tip-native-query-targeted-mass",
+    "status": "INTEGRITY_PASS_TESTED_FEATURE_QUALITY_FAIL",
+    "observation_integrity_passed": true,
+    "integrity_pass_count": 42,
+    "integrity_check_count": 42,
+    "quality_checks": {
+      "left_96_parities": true,
+      "left_clear_firsthits_100um": false,
+      "left_27_no_target_overlaps": true,
+      "right_96_parities": true,
+      "right_clear_firsthits_100um": false,
+      "right_27_no_target_overlaps": true
+    },
+    "tips": {
+      "left": {
+        "target_rays_with_hits": 42,
+        "total_rays": 96,
+        "clear_reference_hit_count": 42,
+        "unresolved_distance_count": 0,
+        "missing_CAD_hits": [],
+        "unexpected_target_hits": [],
+        "sphere_target_overlap_ids": [],
+        "firsthit_failures_over100um": [
+          "left_grid_3_4",
+          "left_grid_4_0",
+          "left_grid_4_1",
+          "left_grid_4_6",
+          "left_grid_4_7",
+          "left_grid_6_0",
+          "left_bbox_2_1"
+        ],
+        "worst": {
+          "id": "left_grid_4_1",
+          "error_m": 0.0049999940991402175,
+          "reference_distance_m": 0.02149999999999995,
+          "actual_distance_m": 0.026499994099140167,
+          "actual_path": "/World/envs/env_0/Robot/fr3_leftfinger/collisions/mesh_3/part_rear_body_solid_13"
+        }
+      },
+      "right": {
+        "target_rays_with_hits": 42,
+        "total_rays": 96,
+        "clear_reference_hit_count": 42,
+        "unresolved_distance_count": 0,
+        "missing_CAD_hits": [],
+        "unexpected_target_hits": [],
+        "sphere_target_overlap_ids": [],
+        "firsthit_failures_over100um": [
+          "right_grid_3_4",
+          "right_grid_4_0",
+          "right_grid_4_1",
+          "right_grid_4_6",
+          "right_bbox_2_1"
+        ],
+        "worst": {
+          "id": "right_grid_4_1",
+          "error_m": 0.004999997824430544,
+          "reference_distance_m": 0.021499999999999922,
+          "actual_distance_m": 0.026499997824430466,
+          "actual_path": "/World/envs/env_0/Robot/fr3_rightfinger/collisions/mesh_3/part_rear_body_solid_11"
+        }
+      }
+    },
+    "actual_cumulative_process_seconds": 45.99649638500705,
+    "cook_summary_per_finger": {
+      "valid_single_hulls": 48,
+      "vertex_count_range": [
+        6,
+        9
+      ],
+      "polygon_count_range": [
+        5,
+        9
+      ],
+      "maximum_saved_descriptor_bounds_delta_m": 0.0005931876605803493
+    },
+    "sha256": {
+      "manifest.json": "bc461d3c0805b06055b5e29ff98d38aae10959a005d6342ac7967e8350580979",
+      "output/property_restoration.json": "7e311b23643a01ef19afe9397fb478729a7c6dd6744fbc9879ef376a7aff9a10",
+      "output/property_checks.json": "76fbcbc35dba1ee9604c6c60a2f9fab6e81b1b90811431d8098a3ef87bebe4fd",
+      "output/cook_results.json": "081bc52ad20deeb52577d7258804dd95e27c1049c1a80142243d20a74f06800e",
+      "output/queries.json": "2c1440b25438b4e967d7e1c29243f7e258a30efab8995ab0814c0a5885f1a2d4",
+      "output/query_report.json": "789a1e8618268efecba16801c34c2eff8f92a4755e1a4a2750cfcbea6ab2a47b",
+      "audit/evaluation.json": "85577a8ee409719d13976a4379b710de428d0abfa4ecf868e4985e3bb5e29e70",
+      "pipeline_supervisor.json": "8e284abeafb5592f91811e921da663a8655a46fd49520427f47c3e41abfadc6f"
+    }
+  },
+  "limitations": [
+    "Sparse negative overlap results do not certify an entire void.",
+    "Firsthit differences are ray-depth errors, not global Hausdorff/contact/grasp failure evidence.",
+    "Returned SDK descriptor bounds/counts do not prove identity with active collider surfaces.",
+    "Unlogged hull minThickness fallback is a source-supported hypothesis only, not an established cause."
+  ]
+}

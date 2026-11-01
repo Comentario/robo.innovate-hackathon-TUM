@@ -28,7 +28,7 @@ the team for the files and place them at:
 | Demo network (YOLO11n-cls, 3 MB) | `outputs2/classifier_runs/web_20261026_172444/weights/best.pt` |
 
 Or pass them explicitly: `web_demo.py --weights <detector.pt> --nn-weights <network.pt>`.
-The older detectors in `weights/` (v1, v2) were committed before this rule and still work.
+No weights are committed in this public copy, the older v1 and v2 detectors included.
 
 ## Web demo (main entry point)
 
@@ -118,7 +118,7 @@ What we learned:
   `benchmark_pipeline.py`: analysis and diagnostics behind the results above.
 - `scripts/predict_good_prototype.py`, `evaluate_prototype_first_dataset.py`,
   `experiment_svm_*.py`: early experiments on the first datasets.
-- `weights/brick_seg_v2.pt`: final detector (default). `weights/brick_seg_v1_standing.pt`: standing-only v1.
+- `scripts/web_demo.py --weights`: point this at the detector you obtained; no `.pt` file ships here.
 - `examples/`: calibrations (the demo reference `calibration_20261026_171541_demo.json`, the
   top-view reference, an older one), the combined YOLO dataset yaml and the photo exclusion lists.
 

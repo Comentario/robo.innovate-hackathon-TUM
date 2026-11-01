@@ -1,103 +1,93 @@
-# Brickflow · Unreal nativo
+# Brickflow, native Unreal
 
-Proyecto: `Brickflow/Brickflow.uproject`, Unreal Engine **5.8.4**, Linux x86-64.
-La simulación completa corre en C++20. La geometría JSON no contiene animaciones
-ni un replay de Python/JavaScript. La referencia fijada es `greenfield_30`.
+Project: `Brickflow/Brickflow.uproject`, Unreal Engine **5.8.4**, Linux x86-64. The complete
+simulation runs in C++20. The JSON geometry contains no animations and no Python or JavaScript
+replay. The pinned reference is `greenfield_30`.
 
-## Ejecutar
+## Run it
 
-### Evaluar desde el navegador de este equipo
+### Evaluating from a browser on this machine
 
-Acceso interactivo por escritorio remoto noVNC sobre túnel SSH:
-`http://localhost:6080/vnc.html?autoconnect=1&resize=scale&view_only=0&path=websockify`.
-La GPU y Unreal permanecen en Brev. El navegador transmite imagen e inputs;
-el motor sigue siendo el ejecutable nativo. No es un enlace público y solo
-funciona en el equipo donde se abre el túnel.
+Interactive access over a noVNC remote desktop through an SSH tunnel:
+`http://localhost:6080/vnc.html?autoconnect=1&resize=scale&view_only=0&path=websockify`. The GPU and
+Unreal stay on Brev. The browser transmits the image and the inputs; the engine is still the native
+executable. It is not a public link and it only works on the machine where the tunnel is opened.
 
-Para restablecerlo desde WSL si el túnel se cierra:
+To bring it back from WSL if the tunnel closes:
 
 ```bash
 ./.deps/brev/bin/brev exec brickflow-cinematic-4gpu @unreal/tools/start_interactive_cloud.sh
 ./.deps/brev/bin/brev port-forward brickflow-cinematic-4gpu -p 6080:6080
 ```
 
-El escritorio usa Xvfb `:81`, x11vnc en loopback `5901` y websockify/noVNC en
-loopback `6080`. Los PID y logs están en `Saved/Interactive/` en la VM. Las
-dependencias de esta VM son `xvfb x11vnc novnc websockify openbox x11-utils`.
-Se verificó la conexión WebSocket en Chromium y el cambio de cámara mediante
-clics enviados desde el navegador. Se usa transmisión de escritorio para
-evaluación; no se ha medido latencia ni calidad de streaming para un pitch.
+The desktop uses Xvfb `:81`, x11vnc on loopback `5901`, and websockify/noVNC on loopback `6080`. The
+PIDs and logs are in `Saved/Interactive/` on the VM. This VM's dependencies are
+`xvfb x11vnc novnc websockify openbox x11-utils`. The WebSocket connection was verified in Chromium,
+and camera switching was verified with clicks sent from the browser. Desktop streaming is used for
+evaluation; neither latency nor streaming quality has been measured for a pitch.
 
-### Ejecutable Linux
+### Linux executable
 
-En Linux con GPU NVIDIA, Vulkan y un escritorio gráfico:
+On Linux with an NVIDIA GPU, Vulkan and a graphical desktop:
 
 ```bash
 ./Brickflow.sh -vulkan -ResX=1920 -ResY=1080 -Windowed
 ```
 
-En la VM `brickflow-cinematic-4gpu`, el build está en
-`/home/shadeform/workspace/brickflow-native/Packaged/Linux/`.
-El proyecto editable está en `/home/shadeform/workspace/brickflow-native/`.
+On the `brickflow-cinematic-4gpu` VM, the build is at
+`/home/shadeform/workspace/brickflow-native/Packaged/Linux/`. The editable project is at
+`/home/shadeform/workspace/brickflow-native/`.
 
-La versión actual no crea UI ni dashboard. Arranca a 1×; `Space` reproduce o
-pausa. Botón derecho y arrastre orbitan y la rueda cambia la distancia. Las
-teclas `1`–`6` conservan encuadres de evaluación. Las métricas siguen disponibles
-en la evidencia JSON, pero no se dibujan sobre la planta.
+The current version creates no UI and no dashboard. It starts at 1x; `Space` plays or pauses. Right
+button and drag orbit, and the wheel changes the distance. The keys `1` to `6` hold evaluation
+framings. The metrics are still available in the JSON evidence, but they are not drawn over the plant.
 
-El vídeo de seguimiento usa `-BrickflowFilm=/ruta/nueva` y calcula su cámara a
-partir de los eventos y poses nativos. Ver `docs/unreal_continuous_film.md` para los
-puntos de inserción de vídeos físicos, rampas de velocidad y verificación.
+The tracking video uses `-BrickflowFilm=/new/path` and computes its camera from the native events and
+poses.
 
-La réplica `brickflow-cinematic-4gpu` tiene cuatro RTX PRO 6000; se comprobó
-un render independiente por adaptador Vulkan. El octavo argumento opcional de
-`render_film_cloud.sh` selecciona el adaptador. `launch_four_gpu_cloud.sh`
-reparte un rango de frames entre las cuatro tarjetas sin cambiar el reloj.
-Ver `docs/unreal_four_gpu_vm.md` para recursos, copia y evidencia.
+The `brickflow-cinematic-4gpu` replica has four RTX PRO 6000; an independent render per Vulkan
+adapter was verified. The optional eighth argument of `render_film_cloud.sh` selects the adapter.
+`launch_four_gpu_cloud.sh` splits a frame range across the four cards without changing the clock.
 
-## Entregables locales de la versión anterior (con UI)
+## Local deliverables from the previous version (with UI)
 
-- `artifacts/unreal_native/brickflow-native-pitch.mp4`: tour 1080p, 24 segundos.
-- `artifacts/unreal_native/brickflow-linux-native.tar.gz`: build Linux completo.
-- `artifacts/unreal_native/mixed-chapter0.png`: vista general de Unreal.
-- `artifacts/unreal_native/perception-native.png`: detalle de inspección.
-- `artifacts/unreal_native/evidence-native.png`: panel de evidencia.
-- `artifacts/unreal_native/*verification.json`: contrastes numéricos.
+- `artifacts/unreal_native/brickflow-native-pitch.mp4`: 1080p tour, 24 seconds.
+- `artifacts/unreal_native/brickflow-linux-native.tar.gz`: the complete Linux build.
+- `artifacts/unreal_native/mixed-chapter0.png`: Unreal overview.
+- `artifacts/unreal_native/perception-native.png`: inspection detail.
+- `artifacts/unreal_native/evidence-native.png`: evidence panel.
+- `artifacts/unreal_native/*verification.json`: numeric comparisons.
 
-Extraer el build con `tar -xzf brickflow-linux-native.tar.gz` y ejecutar
-`Linux/Brickflow.sh`. El ZIP de Unreal y las herramientas pesadas están en la
-VM; el editor no es necesario para ejecutar el build empaquetado.
+Extract the build with `tar -xzf brickflow-linux-native.tar.gz` and run `Linux/Brickflow.sh`. The
+Unreal ZIP and the heavy tools are on the VM; the editor is not needed to run the packaged build.
 
-## Compilar y capturar en Brev
+## Building and capturing on Brev
 
-Los scripts `tools/*_cloud.sh` usan rutas explícitas de esa VM y se ejecutan con
-`brev exec brickflow-cinematic-4gpu @ruta/al/script.sh`. El orden de preparación es
-instalar engine, preparar geometría, crear material en editor, compilar y
-empaquetar. `prepare_geometry.py` requiere Playwright/Chromium, solo al preparar
-assets; el ejecutable no los necesita.
+The `tools/*_cloud.sh` scripts use explicit paths on that VM and are run with
+`brev exec brickflow-cinematic-4gpu @path/to/script.sh`. The preparation order is: install the engine,
+prepare the geometry, author the material in the editor, compile, and package. `prepare_geometry.py`
+requires Playwright and Chromium, only when preparing assets; the executable does not need them.
 
-`preview_cloud.sh` usa Vulkan sobre Xvfb con `-RenderOffscreen` para revisión
-automatizada. Acepta modo, capítulo, tiempo y anchura; `-BrickflowPackaged`
-selecciona el ejecutable independiente. Genera PNG y evidencia JSON con los
-pallets completos, sus IDs y tiempos. `tests_native/compare_unreal.py` contrasta
-esa evidencia con las cachés originales.
+`preview_cloud.sh` uses Vulkan over Xvfb with `-RenderOffscreen` for automated review. It accepts a
+mode, chapter, time and width; `-BrickflowPackaged` selects the standalone executable. It generates a
+PNG and JSON evidence with the complete pallets, their IDs and times. `tests_native/compare_unreal.py`
+compares that evidence against the original caches.
 
-El tour anterior de 24 segundos se conserva como histórico. El render vigente
-se genera con `tools/render_film_cloud.sh`: 30 fps, reloj continuo sin cortes, rampas a 16× durante la reconstrucción y
-40× en el timelapse final, sin UI y con master NVENC lossless. El stride debe ser 1 para el vídeo final;
-los strides mayores solo sirven para revisar encuadres.
+The earlier 24-second tour is kept as a historical artifact. The current render is generated with
+`tools/render_film_cloud.sh`: 30 fps, a continuous clock with no cuts, ramps to 16x during the
+rebuild and 40x in the final timelapse, no UI, and a lossless NVENC master. The stride has to be 1 for
+the final video; larger strides are only useful for reviewing framings.
 
-## Alcance y evidencia
+## Scope and evidence
 
-La escena reproduce inspección, rechazo, canales/reservas finitas, mezcla,
-formación, apilado y despacho del modelo fijado. Conserva identidad de bricks.
-Mixed y Single coinciden numéricamente con la referencia, incluidos los 78
-pallets. Las poses también se contrastan contra el JavaScript original.
+The scene reproduces inspection, rejection, finite channels and reservations, blending, forming,
+stacking and dispatch for the pinned model. It preserves brick identity. Mixed and Single match the
+reference numerically, including the 78 pallets. The poses are also compared against the original
+JavaScript.
 
-El input actual es sintético con semilla. No representa percepción independiente
-de persona 1 ni capacidad industrial medida. Las recetas son heurísticas de la
-demo y el movimiento es cinemático, sin validación física independiente.
-`docs/unreal_native_goal.md` registra pruebas, límites y estado de entrega.
+The current input is synthetic, with a seed. It does not represent independent perception from task 1
+and it is not measured industrial capacity. The recipes are demo heuristics and the motion is
+kinematic, with no independent physical validation.
 
-La VM se factura mientras permanece activa. No borrar la instancia antes de
-comprobar los respaldos del build y del proyecto.
+The VM is billed while it stays active. Do not delete the instance before checking the backups of the
+build and the project.

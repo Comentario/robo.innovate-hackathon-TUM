@@ -1,0 +1,44 @@
+{
+  "scope": "Optional remote access and allocated GPU/runtime metadata preflight",
+  "source_snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T012356.087375Z-alex-capability-preflight",
+  "source_commit": "6ec2cac519351cf2fd098103503a5fef39db22f2",
+  "local_pueue_job_id": 1737,
+  "slurm_job_id": "4685752",
+  "failed_unallocated_submission": 1736,
+  "ssh_currently_verified": true,
+  "observed_login_host": "alex2.nhr.fau.de",
+  "remote_status": "COMPLETED",
+  "elapsed_seconds": 10,
+  "allocated_resources": {
+    "gpu": "NVIDIA A40",
+    "gpu_count": 1,
+    "cpu_cores": 16,
+    "memory_slurm": "60000M",
+    "walltime_cap_minutes": 5
+  },
+  "driver": "610.57.04",
+  "probe_python": "3.9.25",
+  "probe_glibc": "glibc 2.34",
+  "apptainer": "apptainer version 1.5.4-1.el9",
+  "isaac_validation": "NOT_TESTED_NO_VERIFIED_MATCHING_RUNTIME",
+  "cuda_kernel_tested": false,
+  "isaac_compatibility_validated": false,
+  "ssh_settings_changed": false,
+  "credential_files_copied": false,
+  "source_hash_matches_remote": true,
+  "artifacts": {
+    "remote_result": "/home/faps/dev/github/robo.innovate26/runs/20261025T012356.087375Z-alex-capability-preflight/result.json",
+    "verification": "/home/faps/dev/github/robo.innovate26/runs/20261025T012356.087375Z-alex-capability-preflight/verification.json",
+    "accounting": "/home/faps/dev/github/robo.innovate26/runs/20261025T012356.087375Z-alex-capability-preflight/sacct.txt"
+  },
+  "limits": [
+    "Metadata absence in probe Python is not proof of cluster-wide absence.",
+    "GPU/driver inventory does not validate CUDA/Vulkan or Isaac startup/rendering.",
+    "No scaling or remote simulation/training follows this probe.",
+    "Local native-stack dynamics blocker remains unchanged."
+  ],
+  "next_dependency": "Identify a matching existing runtime/container, then perform a separately budgeted scheduled headless Isaac RGB/depth and physics smoke before scaling.",
+  "dependencies_installed": false,
+  "independent_review": "passed; capability inventory only",
+  "independent_evaluation": "passed; source/result hashes and Slurm accounting verified"
+}
