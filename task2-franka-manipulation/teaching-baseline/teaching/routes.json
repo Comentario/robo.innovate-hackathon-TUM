@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "routes": {
+    "point_15_to_point_01": {
+      "source_point": 15,
+      "target_point": 1,
+      "clearance_z_m": 0.14348507881164552,
+      "start_tolerance_m": 0.003,
+      "max_xy_m": 0.6355520172918062,
+      "max_descent_m": 0.012000000000000009,
+      "max_lift_m": 0.12461622591316701,
+      "catalog_sha256": "1b812ddfd252c00c4e1ba363e0a51fba347f05b5d472211924a3e64c4f446c0e",
+      "operator_confirmed_clearance": false,
+      "prepared_utc": "2026-10-25T18:48:46.664179+00:00",
+      "path": "Vertical lift at source XY; straight XY transfer at clearance; vertical descent to target upper pose",
+      "basis": "Clearance is 10 mm above the highest of the 15 recorded upper poses. Physical clearance of tool, links and cables requires operator observation."
+    }
+  }
+}

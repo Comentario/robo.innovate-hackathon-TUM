@@ -1,0 +1,16 @@
+{
+  "action": "close",
+  "config": {
+    "approach_opening_m": 0.02,
+    "close_target_m": 0.014,
+    "position_speed_m_s": 0.02,
+    "opening_tolerance_m": 0.001,
+    "width_source": "Operator: approach with 20 mm opening; set 14 mm to close.",
+    "physical_validation": "Widths configured, not actuated or physically tested in this update. Finger position alone does not verify a pick.",
+    "close_control_mode": "position",
+    "hold_basis": "Operator explicitly confirmed that position control to 14 mm is sufficient to hold the LEGO brick; verify pickup visually."
+  },
+  "target_width_m": 0.014,
+  "command": "finger position; no pick verification",
+  "arm_motion_sent": false
+}

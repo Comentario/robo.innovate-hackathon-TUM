@@ -1,0 +1,116 @@
+{
+  "completed_utc": "2026-10-25T16:04:53.127340+00:00",
+  "motion_log": "quick_test/joints_20261025T160304Z.log",
+  "joint_results": [
+    {
+      "joint": 1,
+      "peak_tcp_mm": 68.3515059,
+      "peak_joint_rad": 0.100026369,
+      "return_tcp_mm": 0.11606414,
+      "return_joint_max_rad": 0.000233054161,
+      "min_command_success_rate": 0.949999988,
+      "passed": true
+    },
+    {
+      "joint": 2,
+      "peak_tcp_mm": 63.570696,
+      "peak_joint_rad": 0.0997450948,
+      "return_tcp_mm": 0.0602782941,
+      "return_joint_max_rad": 0.000117182732,
+      "min_command_success_rate": 0.839999974,
+      "passed": true
+    },
+    {
+      "joint": 3,
+      "peak_tcp_mm": 67.057791,
+      "peak_joint_rad": 0.0998743176,
+      "return_tcp_mm": 0.215097728,
+      "return_joint_max_rad": 0.000224769115,
+      "min_command_success_rate": 0.889999986,
+      "passed": true
+    },
+    {
+      "joint": 4,
+      "peak_tcp_mm": 58.5549145,
+      "peak_joint_rad": 0.0997980833,
+      "return_tcp_mm": 0.353929483,
+      "return_joint_max_rad": 0.000305831432,
+      "min_command_success_rate": 0.879999995,
+      "passed": true
+    },
+    {
+      "joint": 5,
+      "peak_tcp_mm": 9.87719811,
+      "peak_joint_rad": 0.0998719335,
+      "return_tcp_mm": 0.492045221,
+      "return_joint_max_rad": 0.000390768051,
+      "min_command_success_rate": 0.870000005,
+      "passed": true
+    },
+    {
+      "joint": 6,
+      "peak_tcp_mm": 22.2531951,
+      "peak_joint_rad": 0.0999138355,
+      "return_tcp_mm": 0.615399565,
+      "return_joint_max_rad": 0.000468552113,
+      "min_command_success_rate": 0.910000026,
+      "passed": true
+    },
+    {
+      "joint": 7,
+      "peak_tcp_mm": 0.741885279,
+      "peak_joint_rad": 0.0999641418,
+      "return_tcp_mm": 0.738451784,
+      "return_joint_max_rad": 0.000544905663,
+      "min_command_success_rate": 0.920000017,
+      "passed": true
+    }
+  ],
+  "all_joints_passed": true,
+  "max_tcp_excursion_mm": 68.3515059,
+  "final_tcp_return_error_mm": 0.738451784,
+  "lowest_reported_command_success_rate": 0.839999974,
+  "verified_camera_feeds": 3,
+  "camera_results": [
+    {
+      "name": "wrist_webcam",
+      "device": "/dev/video2",
+      "frames": 60,
+      "seconds": 3.757521027990151,
+      "fps": 15.967974511134862,
+      "shape": [
+        480,
+        640,
+        3
+      ],
+      "mean_pixel_change": 11.584302300347222,
+      "verified": true
+    },
+    {
+      "name": "external_webcam",
+      "device": "/dev/video10",
+      "frames": 60,
+      "seconds": 4.614794698005426,
+      "fps": 13.0016618130234,
+      "shape": [
+        480,
+        640,
+        3
+      ],
+      "mean_pixel_change": 29.325245225694445,
+      "verified": true
+    },
+    {
+      "name": "wrist_realsense",
+      "device": "RealSense",
+      "serial": "943222073921",
+      "color_frames": 60,
+      "depth_frames": 60,
+      "seconds": 4.481714485998964,
+      "fps": 13.387733687061534,
+      "depth_nonzero_fraction": 0.42464518229166665,
+      "verified": true
+    }
+  ],
+  "limits": "Small joint excursions only, no gripper or contact tests. No downward excursion commanded. FCI success rate dipped to 84%; no robot fault occurred."
+}

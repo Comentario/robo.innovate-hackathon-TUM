@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "checks": [
+    "300 unique IDs covering all n/m/k combinations",
+    "30 bricks in every layer",
+    "all 15 numbered upper poses unchanged",
+    "deterministic regeneration",
+    "31.8 mm center pitch",
+    "exact 9.6 mm height steps",
+    "15 mm grasp offsets",
+    "common center and 90-degree layer rotation",
+    "vertical generated tool orientation",
+    "no fabricated joint configurations or physical outcomes",
+    "numbered and brick-ID lookup",
+    "stale calibration rejected before robot access"
+  ],
+  "robot_commands_sent": false,
+  "updated_utc": "2026-10-25T20:50:08.995705+00:00",
+  "source_signature": "c78d287f53d43022dffdc17603fbec418144911e026645dd5a91ef1fbdd5f7b6",
+  "grasp_offsets_checked": 315,
+  "all_upper_poses_unchanged": true,
+  "current_grasp_offset_below_upper_mm": 15,
+  "all_grasp_targets_height_change_mm": -3
+}

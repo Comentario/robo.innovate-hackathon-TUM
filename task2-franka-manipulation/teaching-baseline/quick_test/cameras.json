@@ -1,0 +1,41 @@
+[
+  {
+    "name": "wrist_webcam",
+    "device": "/dev/video2",
+    "frames": 60,
+    "seconds": 3.757521027990151,
+    "fps": 15.967974511134862,
+    "shape": [
+      480,
+      640,
+      3
+    ],
+    "mean_pixel_change": 11.584302300347222,
+    "verified": true
+  },
+  {
+    "name": "external_webcam",
+    "device": "/dev/video10",
+    "frames": 60,
+    "seconds": 4.614794698005426,
+    "fps": 13.0016618130234,
+    "shape": [
+      480,
+      640,
+      3
+    ],
+    "mean_pixel_change": 29.325245225694445,
+    "verified": true
+  },
+  {
+    "name": "wrist_realsense",
+    "device": "RealSense",
+    "serial": "943222073921",
+    "color_frames": 60,
+    "depth_frames": 60,
+    "seconds": 4.481714485998964,
+    "fps": 13.387733687061534,
+    "depth_nonzero_fraction": 0.42464518229166665,
+    "verified": true
+  }
+]

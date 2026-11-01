@@ -1,0 +1,13 @@
+{
+  "updated_utc": "2026-10-25T20:50:08.995705+00:00",
+  "status": "operator-accepted grasping baseline",
+  "current_grasp_offset_below_upper_m": 0.015,
+  "approach_opening_m": 0.02,
+  "close_target_m": 0.014,
+  "close_control_mode": "position",
+  "release_opening_m": 0.02,
+  "verified_pick_drop_count": 2,
+  "verified_transfer_log": "teaching/picks/verified_transfers.json",
+  "observed_trial_offset_below_upper_m": 0.012,
+  "validation_scope": "Two successful pick/drop trials were recorded with the temporary 12 mm setting; operator subsequently restored the 15 mm reference offset. Prior a_0_0_9 positioning at 15 mm is logged separately. No new grasp or arm movement was performed during this restoration."
+}
