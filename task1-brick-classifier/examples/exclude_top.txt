@@ -1,0 +1,15 @@
+# one photo_id per line (see review/review.csv); lines with # are ignored
+# one brick split into two polygons
+top_block01__IMG_010
+top_block01__IMG_011
+top_block01__IMG_014
+top_block03__IMG_031
+top_block05__IMG_053
+# motion blur / hand: fragments or brick only partly labeled
+top_block01__IMG_013
+top_block06__IMG_062
+top_block07__IMG_076
+top_block07__IMG_077
+top_block09__IMG_093
+top_block09__IMG_094
+top_block09__IMG_095

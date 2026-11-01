@@ -1,0 +1,50 @@
+{
+  "wood_unseen_brick": {
+    "n": 40,
+    "correct": 24,
+    "accuracy": 0.6,
+    "good_recall": 0.5,
+    "bad_recall": 0.667,
+    "balanced_accuracy": 0.583
+  },
+  "wood_per_brick": {
+    "B01": "1/4",
+    "B02": "4/4",
+    "B03": "3/4",
+    "B04": "1/4",
+    "B05": "3/4",
+    "B06": "4/4",
+    "B07": "2/4",
+    "B08": "0/4",
+    "B09": "4/4",
+    "B10": "2/4"
+  },
+  "carpet_unseen_brick": {
+    "n": 34,
+    "correct": 16,
+    "accuracy": 0.471,
+    "good_recall": 0.533,
+    "bad_recall": 0.421,
+    "balanced_accuracy": 0.477
+  },
+  "carpet_per_brick": {
+    "B01": "3/4",
+    "B02": "3/3",
+    "B03": "2/4",
+    "B04": "0/4",
+    "B05": "0/4",
+    "B06": "0/3",
+    "B07": "2/2",
+    "B08": "0/2",
+    "B09": "3/4",
+    "B10": "3/4"
+  },
+  "all_unseen_brick": {
+    "n": 74,
+    "correct": 40,
+    "accuracy": 0.541,
+    "good_recall": 0.516,
+    "bad_recall": 0.558,
+    "balanced_accuracy": 0.537
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "20261026_144328": {
+    "n": 32,
+    "correct": 29,
+    "accuracy": 0.906,
+    "good_recall": 0.846,
+    "bad_recall": 0.947,
+    "balanced_accuracy": 0.897
+  },
+  "20261026_150311": {
+    "n": 20,
+    "correct": 20,
+    "accuracy": 1.0,
+    "good_recall": 1.0,
+    "bad_recall": 1.0,
+    "balanced_accuracy": 1.0
+  },
+  "20261026_155426": {
+    "n": 20,
+    "correct": 15,
+    "accuracy": 0.75,
+    "good_recall": 0.625,
+    "bad_recall": 0.833,
+    "balanced_accuracy": 0.729
+  },
+  "20261026_161021": {
+    "n": 46,
+    "correct": 35,
+    "accuracy": 0.761,
+    "good_recall": 0.6,
+    "bad_recall": 0.885,
+    "balanced_accuracy": 0.742
+  },
+  "20261026_163845": {
+    "n": 15,
+    "correct": 15,
+    "accuracy": 1.0,
+    "good_recall": 1.0,
+    "bad_recall": 1.0,
+    "balanced_accuracy": 1.0
+  },
+  "all_held_out_lights": {
+    "n": 133,
+    "correct": 114,
+    "accuracy": 0.857,
+    "good_recall": 0.783,
+    "bad_recall": 0.918,
+    "balanced_accuracy": 0.851
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "val_photos": 19,
+  "label_bricks": 48,
+  "matched": 48,
+  "missed": 0,
+  "extra": 0,
+  "mean_mask_iou": 0.961,
+  "min_mask_iou": 0.899,
+  "speed_ms_per_frame_1080p": 17.5,
+  "device": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "per_photo": [
+    {
+      "photo": "top_block03__IMG_030",
+      "labels": 4,
+      "predicted": 4,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.937
+    },
+    {
+      "photo": "top_block03__IMG_032",
+      "labels": 3,
+      "predicted": 3,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.944
+    },
+    {
+      "photo": "top_block03__IMG_033",
+      "labels": 3,
+      "predicted": 3,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.972
+    },
+    {
+      "photo": "top_block03__IMG_034",
+      "labels": 4,
+      "predicted": 4,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.971
+    },
+    {
+      "photo": "top_block03__IMG_035",
+      "labels": 5,
+      "predicted": 5,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.968
+    },
+    {
+      "photo": "top_block03__IMG_036",
+      "labels": 5,
+      "predicted": 5,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.957
+    },
+    {
+      "photo": "top_block03__IMG_037",
+      "labels": 5,
+      "predicted": 5,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.962
+    },
+    {
+      "photo": "top_block03__IMG_038",
+      "labels": 5,
+      "predicted": 5,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.961
+    },
+    {
+      "photo": "top_block03__IMG_039",
+      "labels": 4,
+      "predicted": 4,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.972
+    },
+    {
+      "photo": "top_block08__IMG_080",
+      "labels": 1,
+      "predicted": 1,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.951
+    },
+    {
+      "photo": "top_block08__IMG_081",
+      "labels": 1,
+      "predicted": 1,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.947
+    },
+    {
+      "photo": "top_block08__IMG_082",
+      "labels": 1,
+      "predicted": 1,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.968
+    },
+    {
+      "photo": "top_block08__IMG_083",
+      "labels": 1,
+      "predicted": 1,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.981
+    },
+    {
+      "photo": "top_block08__IMG_084",
+      "labels": 1,
+      "predicted": 1,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.956
+    },
+    {
+      "photo": "top_block08__IMG_085",
+      "labels": 1,
+      "predicted": 1,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.958
+    },
+    {
+      "photo": "top_block08__IMG_086",
+      "labels": 1,
+      "predicted": 1,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.974
+    },
+    {
+      "photo": "top_block08__IMG_087",
+      "labels": 1,
+      "predicted": 1,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.938
+    },
+    {
+      "photo": "top_block08__IMG_088",
+      "labels": 1,
+      "predicted": 1,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.959
+    },
+    {
+      "photo": "top_block08__IMG_089",
+      "labels": 1,
+      "predicted": 1,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.977
+    }
+  ]
+}

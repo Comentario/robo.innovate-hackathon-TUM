@@ -1,0 +1,135 @@
+{
+  "labeled_val": {
+    "carpet": {
+      "brick_seg_v2": {
+        "photos": 8,
+        "bricks": 8,
+        "found": 8,
+        "missed": 0,
+        "extra": 2,
+        "mean_iou": 0.975
+      },
+      "brick_seg_v3": {
+        "photos": 8,
+        "bricks": 8,
+        "found": 8,
+        "missed": 0,
+        "extra": 0,
+        "mean_iou": 0.983
+      }
+    },
+    "standing": {
+      "brick_seg_v2": {
+        "photos": 31,
+        "bricks": 126,
+        "found": 126,
+        "missed": 0,
+        "extra": 0,
+        "mean_iou": 0.951
+      },
+      "brick_seg_v3": {
+        "photos": 31,
+        "bricks": 126,
+        "found": 126,
+        "missed": 0,
+        "extra": 0,
+        "mean_iou": 0.953
+      }
+    },
+    "top": {
+      "brick_seg_v2": {
+        "photos": 19,
+        "bricks": 48,
+        "found": 48,
+        "missed": 0,
+        "extra": 0,
+        "mean_iou": 0.961
+      },
+      "brick_seg_v3": {
+        "photos": 19,
+        "bricks": 48,
+        "found": 48,
+        "missed": 0,
+        "extra": 1,
+        "mean_iou": 0.966
+      }
+    },
+    "wood": {
+      "brick_seg_v2": {
+        "photos": 8,
+        "bricks": 8,
+        "found": 8,
+        "missed": 0,
+        "extra": 9,
+        "mean_iou": 0.876
+      },
+      "brick_seg_v3": {
+        "photos": 8,
+        "bricks": 8,
+        "found": 8,
+        "missed": 0,
+        "extra": 0,
+        "mean_iou": 0.974
+      }
+    }
+  },
+  "wood_overexposed": {
+    "brick_seg_v2": {
+      "photos": 40,
+      "detections": 73,
+      "photos_with_count": {
+        "0": 1,
+        "1": 6,
+        "2": 32,
+        "3": 1
+      },
+      "right": 6
+    },
+    "brick_seg_v3": {
+      "photos": 40,
+      "detections": 40,
+      "photos_with_count": {
+        "1": 40
+      },
+      "right": 40
+    }
+  },
+  "live_today": {
+    "brick_seg_v2": {
+      "photos": 8,
+      "detections": 24,
+      "photos_with_count": {
+        "1": 1,
+        "3": 5,
+        "4": 2
+      }
+    },
+    "brick_seg_v3": {
+      "photos": 8,
+      "detections": 18,
+      "photos_with_count": {
+        "1": 4,
+        "3": 2,
+        "4": 2
+      }
+    }
+  },
+  "empty": {
+    "brick_seg_v2": {
+      "photos": 3,
+      "detections": 3,
+      "photos_with_count": {
+        "1": 3
+      },
+      "right": 0
+    },
+    "brick_seg_v3": {
+      "photos": 3,
+      "detections": 0,
+      "photos_with_count": {
+        "0": 3
+      },
+      "right": 3
+    }
+  }
+}

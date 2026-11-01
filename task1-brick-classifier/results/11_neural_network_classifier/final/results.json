@@ -1,0 +1,11 @@
+{
+  "training_data": {
+    "n": 265,
+    "correct": 265,
+    "accuracy": 1.0,
+    "good_recall": 1.0,
+    "bad_recall": 1.0,
+    "balanced_accuracy": 1.0
+  },
+  "note": "scored on its own training crops: memorization, not generalization"
+}

@@ -1,0 +1,10 @@
+{
+  "carpet_same_bricks": {
+    "n": 34,
+    "correct": 20,
+    "accuracy": 0.588,
+    "good_recall": 0.067,
+    "bad_recall": 1.0,
+    "balanced_accuracy": 0.533
+  }
+}

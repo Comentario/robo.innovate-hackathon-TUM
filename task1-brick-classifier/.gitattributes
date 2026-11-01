@@ -1,0 +1,2 @@
+# Shell scripts run on the Jetson: always LF, also in Windows checkouts.
+*.sh text eol=lf

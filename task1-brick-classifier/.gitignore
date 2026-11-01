@@ -1,0 +1,8 @@
+# Weights, datasets and generated data stay out of git (see README "Weights").
+*.pt
+*.pth
+*.onnx
+*.engine
+outputs2/
+jetson/bundle/
+__pycache__/

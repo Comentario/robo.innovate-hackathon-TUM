@@ -1,0 +1,413 @@
+[
+  {
+    "model": "table_L_C|1nn",
+    "features": [
+      "dL_wood",
+      "C_med"
+    ],
+    "good_accepted": 35,
+    "good_rejected": 0,
+    "bad_rejected": 52,
+    "bad_accepted": 2,
+    "total": 89,
+    "accuracy": 0.978,
+    "good_recall": 1.0,
+    "bad_recall": 0.963,
+    "auc": 0.961,
+    "errors": [
+      "BAD_01#1(b)",
+      "BAD_02#1(b)"
+    ]
+  },
+  {
+    "model": "raw_L_C_spread|1nn",
+    "features": [
+      "L_med",
+      "C_med",
+      "L_iqr",
+      "C_iqr"
+    ],
+    "good_accepted": 35,
+    "good_rejected": 0,
+    "bad_rejected": 52,
+    "bad_accepted": 2,
+    "total": 89,
+    "accuracy": 0.978,
+    "good_recall": 1.0,
+    "bad_recall": 0.963,
+    "auc": 0.949,
+    "errors": [
+      "BAD_01#1(b)",
+      "BAD_02#1(b)"
+    ]
+  },
+  {
+    "model": "raw_L_a_b|1nn",
+    "features": [
+      "L_med",
+      "a_med",
+      "b_med"
+    ],
+    "good_accepted": 33,
+    "good_rejected": 2,
+    "bad_rejected": 52,
+    "bad_accepted": 2,
+    "total": 89,
+    "accuracy": 0.955,
+    "good_recall": 0.943,
+    "bad_recall": 0.963,
+    "auc": 0.958,
+    "errors": [
+      "BAD_01#1(b)",
+      "BAD_02#1(b)",
+      "MIX_03#5(g)",
+      "MIX_04#6(g)"
+    ]
+  },
+  {
+    "model": "raw_L_C_h|1nn",
+    "features": [
+      "L_med",
+      "C_med",
+      "h_med"
+    ],
+    "good_accepted": 33,
+    "good_rejected": 2,
+    "bad_rejected": 52,
+    "bad_accepted": 2,
+    "total": 89,
+    "accuracy": 0.955,
+    "good_recall": 0.943,
+    "bad_recall": 0.963,
+    "auc": 0.96,
+    "errors": [
+      "BAD_01#1(b)",
+      "BAD_02#1(b)",
+      "MIX_03#5(g)",
+      "MIX_04#6(g)"
+    ]
+  },
+  {
+    "model": "raw_L_C|1nn",
+    "features": [
+      "L_med",
+      "C_med"
+    ],
+    "good_accepted": 32,
+    "good_rejected": 3,
+    "bad_rejected": 52,
+    "bad_accepted": 2,
+    "total": 89,
+    "accuracy": 0.944,
+    "good_recall": 0.914,
+    "bad_recall": 0.963,
+    "auc": 0.968,
+    "errors": [
+      "BAD_01#1(b)",
+      "BAD_02#1(b)",
+      "GOOD_04#1(g)",
+      "GOOD_04#2(g)",
+      "MIX_04#6(g)"
+    ]
+  },
+  {
+    "model": "raw_L_a_b|prototype_q0.9",
+    "features": [
+      "L_med",
+      "a_med",
+      "b_med"
+    ],
+    "good_accepted": 31,
+    "good_rejected": 4,
+    "bad_rejected": 52,
+    "bad_accepted": 2,
+    "total": 89,
+    "accuracy": 0.933,
+    "good_recall": 0.886,
+    "bad_recall": 0.963,
+    "auc": 0.958,
+    "errors": [
+      "BAD_01#1(b)",
+      "BAD_02#1(b)",
+      "GOOD_01#1(g)",
+      "GOOD_03#1(g)",
+      "GOOD_04#1(g)",
+      "GOOD_04#2(g)"
+    ]
+  },
+  {
+    "model": "raw_L_C|prototype_q0.9",
+    "features": [
+      "L_med",
+      "C_med"
+    ],
+    "good_accepted": 30,
+    "good_rejected": 5,
+    "bad_rejected": 52,
+    "bad_accepted": 2,
+    "total": 89,
+    "accuracy": 0.921,
+    "good_recall": 0.857,
+    "bad_recall": 0.963,
+    "auc": 0.968,
+    "errors": [
+      "BAD_01#1(b)",
+      "BAD_02#1(b)",
+      "GOOD_01#1(g)",
+      "GOOD_02#1(g)",
+      "GOOD_03#1(g)",
+      "GOOD_04#1(g)",
+      "GOOD_04#2(g)"
+    ]
+  },
+  {
+    "model": "raw_L_C_h|prototype_q0.9",
+    "features": [
+      "L_med",
+      "C_med",
+      "h_med"
+    ],
+    "good_accepted": 30,
+    "good_rejected": 5,
+    "bad_rejected": 52,
+    "bad_accepted": 2,
+    "total": 89,
+    "accuracy": 0.921,
+    "good_recall": 0.857,
+    "bad_recall": 0.963,
+    "auc": 0.96,
+    "errors": [
+      "BAD_01#1(b)",
+      "BAD_02#1(b)",
+      "GOOD_01#1(g)",
+      "GOOD_02#1(g)",
+      "GOOD_03#1(g)",
+      "GOOD_04#1(g)",
+      "GOOD_04#2(g)"
+    ]
+  },
+  {
+    "model": "table_L_C|prototype_q0.9",
+    "features": [
+      "dL_wood",
+      "C_med"
+    ],
+    "good_accepted": 30,
+    "good_rejected": 5,
+    "bad_rejected": 52,
+    "bad_accepted": 2,
+    "total": 89,
+    "accuracy": 0.921,
+    "good_recall": 0.857,
+    "bad_recall": 0.963,
+    "auc": 0.961,
+    "errors": [
+      "BAD_01#1(b)",
+      "BAD_02#1(b)",
+      "GOOD_01#1(g)",
+      "GOOD_02#1(g)",
+      "GOOD_03#1(g)",
+      "GOOD_04#1(g)",
+      "GOOD_04#2(g)"
+    ]
+  },
+  {
+    "model": "raw_L_C_spread|prototype_q0.9",
+    "features": [
+      "L_med",
+      "C_med",
+      "L_iqr",
+      "C_iqr"
+    ],
+    "good_accepted": 29,
+    "good_rejected": 6,
+    "bad_rejected": 50,
+    "bad_accepted": 4,
+    "total": 89,
+    "accuracy": 0.888,
+    "good_recall": 0.829,
+    "bad_recall": 0.926,
+    "auc": 0.949,
+    "errors": [
+      "BAD_01#1(b)",
+      "BAD_02#1(b)",
+      "GOOD_01#1(g)",
+      "GOOD_03#3(g)",
+      "GOOD_04#2(g)",
+      "MIX_04#1(g)",
+      "MIX_04#2(g)",
+      "MIX_04#6(g)",
+      "MIX_07#6(b)",
+      "MIX_08#7(b)"
+    ]
+  },
+  {
+    "model": "raw_L_C|prototype_q1.0",
+    "features": [
+      "L_med",
+      "C_med"
+    ],
+    "good_accepted": 33,
+    "good_rejected": 2,
+    "bad_rejected": 45,
+    "bad_accepted": 9,
+    "total": 89,
+    "accuracy": 0.876,
+    "good_recall": 0.943,
+    "bad_recall": 0.833,
+    "auc": 0.968,
+    "errors": [
+      "BAD_01#1(b)",
+      "BAD_01#4(b)",
+      "BAD_02#1(b)",
+      "BAD_03#2(b)",
+      "BAD_04#2(b)",
+      "BAD_06#1(b)",
+      "GOOD_01#1(g)",
+      "GOOD_04#2(g)",
+      "MIX_01#2(b)",
+      "MIX_07#6(b)",
+      "MIX_08#7(b)"
+    ]
+  },
+  {
+    "model": "table_L_C|prototype_q1.0",
+    "features": [
+      "dL_wood",
+      "C_med"
+    ],
+    "good_accepted": 34,
+    "good_rejected": 1,
+    "bad_rejected": 44,
+    "bad_accepted": 10,
+    "total": 89,
+    "accuracy": 0.876,
+    "good_recall": 0.971,
+    "bad_recall": 0.815,
+    "auc": 0.961,
+    "errors": [
+      "BAD_01#1(b)",
+      "BAD_01#4(b)",
+      "BAD_02#1(b)",
+      "BAD_02#4(b)",
+      "BAD_03#2(b)",
+      "BAD_04#2(b)",
+      "BAD_05#1(b)",
+      "BAD_06#1(b)",
+      "GOOD_01#1(g)",
+      "MIX_01#2(b)",
+      "MIX_08#7(b)"
+    ]
+  },
+  {
+    "model": "raw_L_C_h|prototype_q1.0",
+    "features": [
+      "L_med",
+      "C_med",
+      "h_med"
+    ],
+    "good_accepted": 34,
+    "good_rejected": 1,
+    "bad_rejected": 39,
+    "bad_accepted": 15,
+    "total": 89,
+    "accuracy": 0.82,
+    "good_recall": 0.971,
+    "bad_recall": 0.722,
+    "auc": 0.96,
+    "errors": [
+      "BAD_01#1(b)",
+      "BAD_01#4(b)",
+      "BAD_02#1(b)",
+      "BAD_02#4(b)",
+      "BAD_03#2(b)",
+      "BAD_04#2(b)",
+      "BAD_05#1(b)",
+      "BAD_06#1(b)",
+      "GOOD_01#1(g)",
+      "MIX_01#2(b)",
+      "MIX_02#2(b)",
+      "MIX_03#2(b)",
+      "MIX_05#2(b)",
+      "MIX_06#3(b)",
+      "MIX_07#4(b)",
+      "MIX_08#5(b)"
+    ]
+  },
+  {
+    "model": "raw_L_a_b|prototype_q1.0",
+    "features": [
+      "L_med",
+      "a_med",
+      "b_med"
+    ],
+    "good_accepted": 33,
+    "good_rejected": 2,
+    "bad_rejected": 39,
+    "bad_accepted": 15,
+    "total": 89,
+    "accuracy": 0.809,
+    "good_recall": 0.943,
+    "bad_recall": 0.722,
+    "auc": 0.958,
+    "errors": [
+      "BAD_01#1(b)",
+      "BAD_01#4(b)",
+      "BAD_02#1(b)",
+      "BAD_02#4(b)",
+      "BAD_03#2(b)",
+      "BAD_04#2(b)",
+      "BAD_05#1(b)",
+      "BAD_06#1(b)",
+      "GOOD_01#1(g)",
+      "GOOD_04#2(g)",
+      "MIX_01#2(b)",
+      "MIX_02#2(b)",
+      "MIX_03#2(b)",
+      "MIX_05#2(b)",
+      "MIX_06#3(b)",
+      "MIX_07#4(b)",
+      "MIX_08#5(b)"
+    ]
+  },
+  {
+    "model": "raw_L_C_spread|prototype_q1.0",
+    "features": [
+      "L_med",
+      "C_med",
+      "L_iqr",
+      "C_iqr"
+    ],
+    "good_accepted": 34,
+    "good_rejected": 1,
+    "bad_rejected": 35,
+    "bad_accepted": 19,
+    "total": 89,
+    "accuracy": 0.775,
+    "good_recall": 0.971,
+    "bad_recall": 0.648,
+    "auc": 0.949,
+    "errors": [
+      "BAD_01#1(b)",
+      "BAD_01#4(b)",
+      "BAD_02#1(b)",
+      "BAD_02#4(b)",
+      "BAD_03#2(b)",
+      "BAD_04#2(b)",
+      "BAD_05#1(b)",
+      "BAD_06#1(b)",
+      "GOOD_04#2(g)",
+      "MIX_01#2(b)",
+      "MIX_02#2(b)",
+      "MIX_02#4(b)",
+      "MIX_03#2(b)",
+      "MIX_05#2(b)",
+      "MIX_05#4(b)",
+      "MIX_06#3(b)",
+      "MIX_06#5(b)",
+      "MIX_07#4(b)",
+      "MIX_07#6(b)",
+      "MIX_08#7(b)"
+    ]
+  }
+]

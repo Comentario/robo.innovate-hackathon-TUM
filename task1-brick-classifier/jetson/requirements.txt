@@ -1,0 +1,9 @@
+# Same ultralytics as the laptop, so the detector and the network behave the same.
+ultralytics==8.4.185
+lap
+fastapi
+uvicorn[standard]
+# Imported by scripts/live_brick_classifier.py (Grounding DINO path, not used by the demo).
+transformers
+matplotlib
+pillow

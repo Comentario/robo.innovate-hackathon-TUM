@@ -1,0 +1,16 @@
+# one photo_id per line (see review/review.csv); lines with # are ignored
+# touching perforated bricks: ragged masks and missing bricks
+calibration_20261024_174814__cal001
+calibration_20261024_174814__cal002
+calibration_20261024_174814__cal005
+calibration_20261024_174814__cal006
+calibration_20261024_174814__cal007
+# two lying bricks stacked, labeled as one
+live_20261024_172058__0008
+live_20261024_172058__0009
+# close-up row: ragged masks and an unlabeled brick on the left
+live_20261024_175830__0009
+live_20261024_175830__0010
+# excluded after user review (2026-10-25)
+live_20261024_174323__0002
+third_MIX__MIX_08

@@ -1,0 +1,23 @@
+{
+  "appId": "brick-sorter",
+  "platform": "linux",
+  "version": "0.1.0",
+  "entitlements": [
+    { "type": "network", "mode": "host" },
+    { "type": "camera" },
+    { "type": "usb" },
+    { "type": "gpu" },
+    { "type": "display" },
+    { "type": "persist", "name": "brick-sorter", "path": "/data" }
+  ],
+  "readiness": {
+    "tcpSocket": { "port": 8000 },
+    "timeoutSeconds": 300
+  },
+  "env": {
+    "CLASSIFIER": "nn",
+    "REFERENCE": "latest",
+    "CAMERA_MAX_HEIGHT": "720",
+    "KIOSK": "1"
+  }
+}
