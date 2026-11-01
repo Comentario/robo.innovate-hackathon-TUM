@@ -1,0 +1,81 @@
+{
+  "schema": "declared-brick-material-authoring-result-v1",
+  "job_id": 1827,
+  "source_commit": "bf688ec",
+  "snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T173430.156529Z-brick-material-authoring",
+  "schema_authoring_passed": true,
+  "positive_preservation": true,
+  "reload_resolution": true,
+  "negative_cases": {
+    "missing initialization flag": true,
+    "missing collider": true,
+    "disabled collider": true,
+    "missing declared attribute": true,
+    "unexpected coefficient": true,
+    "conflicting direct physics binding": true,
+    "conflicting inherited physics binding": true,
+    "conflicting reserved material path": true
+  },
+  "authoring": {
+    "scope": "USD_SCHEMA_AUTHORING_ONLY",
+    "brick_root": "/Brick",
+    "pre_initialization_asserted": true,
+    "targets": {
+      "BodyCollider": {
+        "collider_path": "/Brick/BodyCollider",
+        "material_path": "/Brick/DeclaredContactMaterials/Body",
+        "declared_coefficients": [
+          0.5,
+          0.4000000059604645,
+          0.10000000149011612
+        ]
+      },
+      "TopCollider": {
+        "collider_path": "/Brick/TopCollider",
+        "material_path": "/Brick/DeclaredContactMaterials/Top",
+        "declared_coefficients": [
+          1.0,
+          0.800000011920929,
+          0.20000000298023224
+        ]
+      }
+    },
+    "runtime_coefficients_verified": false,
+    "retention_claim": false
+  },
+  "runtime_coefficients_verified": false,
+  "retention_claim": false,
+  "active_workcell_changed": false,
+  "shared_native_source_changed": false,
+  "physics_steps": 0,
+  "Kit_started": false,
+  "versions": {
+    "python": "3.11.15 existing unitree_sim_env",
+    "usd": "0.24.5; installed standalone library import probe",
+    "model_or_weights": "None"
+  },
+  "timing": {
+    "pueue_start": "2026-10-25T18:34:30.524575370+01:00",
+    "pueue_end": "2026-10-25T18:34:30.955038251+01:00",
+    "full_pueue_job_seconds": 0.430462881,
+    "maximum_active_seconds": 10,
+    "retention_fixture_ledger_unchanged_seconds": 2682.9455824780234
+  },
+  "report_sha256": "a3064b0651ae33b5dd44ea66cc2c8a0383a8781c8cb0b4fde6fe673dd18fc822",
+  "stage_sha256": "1fa2c9d62e4058143d9c1ad481f5fd4ccf432fa87d012c992d1907ac64de7851",
+  "independent_reviews": {
+    "evaluator": "Accepts actual USD schema/binding, preservation, reload and eight atomic negatives. No effective PhysX or grip claim.",
+    "reviewer": "Accepts opt-in source authoring correction; no active/native/shared change, no fourth fixture round."
+  },
+  "next_dependency": "A future separately declared runtime model must verify effective material values and unchanged model properties before any contact trial. Operator Desk-width and actual gripping-depth mapping remains unverified.",
+  "commands": [
+    "python3 experiments/brick_material_binding_20261025/submit.py (original source bf688ec, one job; no automatic resubmission)",
+    "Frozen per-process library environment and exact command: /home/faps/dev/github/robo.innovate26/runs/20261025T173430.156529Z-brick-material-authoring/launch.sh"
+  ],
+  "limitations": [
+    "Tiny source-representative USD stage, not the 300-brick workcell or a native BrickSim runtime test.",
+    "Copies existing declared coefficients; no physical material calibration or coefficient tuning.",
+    "Body dynamic friction declaration .4 is lower than previous runtime default .5; this is not demonstrated to improve retention.",
+    "All previous failed/censored grasp results remain unchanged."
+  ]
+}

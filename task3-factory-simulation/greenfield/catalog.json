@@ -1,0 +1,654 @@
+[
+  {
+    "id": "layer_gantry",
+    "model": "Gudel FP-4, high-load reference",
+    "url": "https://de.gudel.com/produkte/linearachsen/fp",
+    "nominal": {
+      "Reference configuration": "FP-4, high-load column",
+      "Maximum reference payload force": "2,000 N before vertical-stroke derating",
+      "X/Y speed at 2,000 N": "75 m/min = 1.25 m/s",
+      "Load derating": "Above 0.5 m vertical stroke: subtract 76 N per additional metre"
+    },
+    "scope": "Reference axis envelope, not an approved configured machine. Long axis maps to world Z; EOAT, vertical axis, dynamics, temperature and full stroke need integrator validation.",
+    "image_asset": "gantry.png",
+    "image_credit": "Güdel · FP family manufacturer image (FP-7 pictured; not the selected FP-4)",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference"
+  },
+  {
+    "id": "pallet_belt",
+    "model": "Interroll PM 9710",
+    "url": "https://www.interroll.com/fileadmin/products/product_data/PM-9710/PM9710_EN.pdf",
+    "nominal": {
+      "load_kg_per_m": 1250,
+      "load_kg_per_drive": 3000,
+      "speed_min_m_s": 0.1,
+      "speed_max_m_s": 0.5,
+      "Supply": "400 V",
+      "Motor power range": "0.09–0.75 kW",
+      "Roller diameter": "89 mm",
+      "Ambient": "5–45 °C, non-condensing"
+    },
+    "scope": "Configured pallet/support distribution and thermal suitability must be verified; not a certification of this layout.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference",
+    "image_asset": "pallet-roller.jpg",
+    "image_credit": "Official manufacturer reference illustration; installation/configuration differs from this custom scene.",
+    "image_source": {
+      "asset": "pallet-roller.jpg",
+      "page_url": "https://www.interroll.com/fileadmin/products/product_data/PM-9710/PM9710_EN.pdf",
+      "image_url": "https://www.interroll.com/fileadmin/products/product_data/PM-9710/PM9710_EN.pdf",
+      "method": "Manufacturer datasheet image extracted from page 1",
+      "retrieved": "2026-10-25",
+      "sha256": "b3666695c7d8230e79b1d4091da2ed1e3a479a55cb983499fe3a2247bb5734fe",
+      "size": [
+        1000,
+        705
+      ]
+    }
+  },
+  {
+    "id": "vision",
+    "model": "Basler ace 2 a2A2600-64ucBAS",
+    "url": "https://docs.baslerweb.com/a2a2600-64ucbas",
+    "nominal": {
+      "Resolution": "2600 × 2160 pixels",
+      "Frame rate": "65 fps (default)",
+      "Shutter": "Global shutter",
+      "Color interface": "USB 3.0 color",
+      "Trigger": "Hardware trigger"
+    },
+    "scope": "Color, global shutter, hardware trigger. Exposure/inference/rejection errors are assumptions; no rendered-image perception is executed.",
+    "image_asset": "camera.jpg",
+    "image_credit": "Basler · ace 2 USB color, official product documentation",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference"
+  },
+  {
+    "id": "presence",
+    "model": "SICK WTB4-3P2162 · miniature photoelectric sensor",
+    "url": "https://www.sick.com/media/pdf/2/92/992/dataSheet_WTB4-3P2162_1028084_es.pdf",
+    "nominal": {
+      "Supply": "10–30 V DC",
+      "Sensing range": "15–150 mm",
+      "Response": "0.5 ms",
+      "Output": "PNP, 100 mA maximum",
+      "Light": "Visible red, 650 nm",
+      "Protection": "IP67"
+    },
+    "scope": "Background-suppression proximity sensor, mounted above the brick with a short downward sensing path. Red beam is illustrative. Not a safety protective sensor.",
+    "image_asset": "sensor.png",
+    "image_credit": "SICK · official product datasheet, illustration may differ",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference"
+  },
+  {
+    "id": "formation",
+    "model": "Custom row selector + guided lowering stacker",
+    "url": "https://lingl.com/wp-content/uploads/2018/03/Triangle_Brick_englisch.pdf",
+    "nominal": {
+      "Published application": "Triangle Brick, Merry Oaks Works II",
+      "Mechanisms shown": "Grouping, gripper handling, kiln-car unloading and pack formation"
+    },
+    "scope": "Industrial process and layout reference only. The brochure does not rate our custom row pocket, elevator, pallet dimensions or cycle time.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference",
+    "image_asset": "formation.jpg",
+    "image_credit": "Official manufacturer reference illustration; installation/configuration differs from this custom scene.",
+    "image_source": {
+      "asset": "formation.jpg",
+      "page_url": "https://lingl.com/wp-content/uploads/2018/03/Triangle_Brick_englisch.pdf",
+      "image_url": "https://lingl.com/wp-content/uploads/2018/03/Triangle_Brick_englisch.pdf",
+      "method": "Manufacturer datasheet image extracted from page 1",
+      "retrieved": "2026-10-25",
+      "sha256": "83bb7a9125d65bce0cadaef29fc6fddd22ab8994057ddccb89885ff3a09caac9",
+      "size": [
+        207,
+        278
+      ]
+    }
+  },
+  {
+    "id": "zpa",
+    "model": "Interroll EC5000 + MultiControl · ZPA reference",
+    "url": "https://www.interroll.com/fileadmin/user_upload/Downloads__PDF_/Drives___Controls/DC_Platform/EC5000_Catalog_PDF/EN/EC5000_50mm_IP54_EN.pdf",
+    "nominal": {
+      "Roller diameter": "50 mm",
+      "Reference motor rating": "35 W",
+      "Reference ratio": "30:1",
+      "Reference maximum speed": "0.60 m/s at 35 W / 30:1",
+      "Load capacity with drive head": "350 N per RollerDrive (not conveying thrust)",
+      "Supply family": "24 / 48 V DC",
+      "Protection": "IP54"
+    },
+    "scope": "Motor-driven roller accumulation with occupancy sensors and downstream availability. No vertical stop actuators in this revision. Custom 300 mm zones and abrasive hot bricks require validation; this is not a complete qualified conveyor. Short transfer bridges use a separate 18:1 drive reference (35 W, maximum 1.00 m/s); buffer zones retain 30:1. Thermal suitability, torque and grip remain unvalidated.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference",
+    "image_asset": "roller-drive.jpg",
+    "image_credit": "Official manufacturer reference illustration; installation/configuration differs from this custom scene.",
+    "image_source": {
+      "asset": "roller-drive.jpg",
+      "page_url": "https://www.interroll.com/fileadmin/user_upload/Downloads__PDF_/Drives___Controls/DC_Platform/EC5000_Catalog_PDF/EN/EC5000_50mm_IP54_EN.pdf",
+      "image_url": "https://www.interroll.com/fileadmin/user_upload/Downloads__PDF_/Drives___Controls/DC_Platform/EC5000_Catalog_PDF/EN/EC5000_50mm_IP54_EN.pdf",
+      "method": "Manufacturer datasheet image extracted from page 1",
+      "retrieved": "2026-10-25",
+      "sha256": "cf856103a7531b9c356ca15039f5150e24ee4d6f5a22867cc8f20bf19d3e294d",
+      "size": [
+        1000,
+        500
+      ]
+    }
+  },
+  {
+    "id": "bulk_bridge",
+    "model": "Complete-stack bridge / Demag KBK principle reference",
+    "url": "https://www.demagcranes.com/en-au/products/cranes/kbk-light-crane-system/kbk-double-girder-suspension-cranes",
+    "nominal": {
+      "family_payload_max_kg": 3200
+    },
+    "scope": "Family reference for overhead area handling only. Selected 2000 kg bulk lifting, 400 kg EOAT, travel speeds, building superstructure, long span/multiple supports and retention remain design assumptions requiring qualification. It is separate from the 102 kg layer tools.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference",
+    "image_asset": "bridge-crane.jpg",
+    "image_credit": "Official manufacturer reference illustration; installation/configuration differs from this custom scene.",
+    "image_source": {
+      "asset": "bridge-crane.jpg",
+      "image_url": "https://www.demagcranes.com/sites/default/files/styles/medium/public/media/images/Zweitr%C3%A4ger-H%C3%A4ngekran-590_Pixel.png.webp?itok=cJdVYNTn",
+      "method": "Official manufacturer image, transparency composited on white",
+      "retrieved": "2026-10-25",
+      "sha256": "6a3d6b6ee3c90bcb06b9f3276f54833a93f3e90c29c0d22f04419ae6c2152fd1"
+    }
+  },
+  {
+    "id": "cell_axis",
+    "model": "Festo ELGC-TB-KF-80-1500 · reference axis",
+    "url": "https://ftp.festo.com/Public/PNEUMATIC/SOFTWARE_SERVICE/Datasheet/EN_US/8062793.pdf",
+    "image_asset": "cell-axis.jpg",
+    "image_credit": "Festo · ELGC-TB official catalog, family illustration",
+    "nominal": {
+      "Maximum feed force": "250 N",
+      "Maximum speed": "1.5 m/s",
+      "Repeatability": "±0.1 mm",
+      "Available reference strokes": "200–2,000 mm",
+      "Guide": "Recirculating ball bearing",
+      "Protection": "IP40",
+      "Reference maximum acceleration": "15 m/s²",
+      "Specific reference stroke": "1,500 mm",
+      "Specific reference part number": "8062793"
+    },
+    "scope": "Reference for singulation, side ejection and selector axes. Custom multi-axis carriage, paddle, motor, selected stroke, contamination protection, acceleration and force limits require sizing. Force/speed maxima do not establish a valid operating point.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference"
+  },
+  {
+    "id": "pallet_transfer_car",
+    "model": "HORSTMANN VWG · rail-guided transfer-car reference",
+    "url": "https://www.horstmann-anlagentechnik.de/project/transfer-car/?lang=en",
+    "nominal": {
+      "Reference payload": "1,200 kg",
+      "Drive": "Reversible gearmotor driving one wheel axle",
+      "Guidance": "Running rails + horizontal side guide rollers",
+      "Rail options": "A45 / S20"
+    },
+    "scope": "Industrial reference for an onboard conveyor on a rail carriage, with geared wheel drive, guide rollers and track buffers. The rendered low-profile chassis, geometry and integration remain custom. Does not qualify the full installation.",
+    "image_asset": "pallet-transfer-car.jpg",
+    "image_credit": "HORSTMANN · official transfer-car reference photo; installation shown differs from this custom scene",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference"
+  },
+  {
+    "id": "stack_clamp",
+    "model": "Industrial supported pack clamp · custom hybrid",
+    "url": "https://www.kinshofer.com/us/crane/general-construction/brick-stack-grapples",
+    "nominal": {
+      "Mechanism reference": "Parallel synchronized hydraulic jaws with replaceable rubber pads",
+      "Catalog KM332-1300": "1,600 kg at 1,300 mm plunge (configuration dependent)",
+      "Important difference": "Custom full-height pads and automatic bridge interface; not a selected KM332"
+    },
+    "scope": "KM332 data demonstrate the parallel-jaw principle only. Its catalog cautions that ratings depend on product and do not apply to low-profile unbundled items. Our hybrid requires supplier validation, load/support sensing, pressure limits and loss-of-pressure protection.",
+    "image_asset": "stack-clamp.jpg",
+    "image_credit": "KINSHOFER · official KM332-V reference image; our supported full-height restraint is a custom hybrid",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference"
+  },
+  {
+    "id": "zpa_control",
+    "model": "Interroll MultiControl AI",
+    "url": "https://www.interroll.com/products/controls/multicontrol-ai",
+    "nominal": {
+      "Controlled zones": "Up to 4 RollerDrive zones / controller",
+      "Supply": "24 or 48 V DC",
+      "Rated drive options": "20 / 35 / 50 W",
+      "Protection": "IP54",
+      "Ambient": "-30 to +40 °C",
+      "Zone assembly": "One motor roller coupled to idlers; one occupancy sensor per zone"
+    },
+    "scope": "Controller datasheet; not a complete brick conveyor qualification. Product surface temperature, contamination, stopping distance, roller support and custom 300 mm zones require validation.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference",
+    "image_asset": "controller.jpg",
+    "image_credit": "Official manufacturer reference illustration; installation/configuration differs from this custom scene.",
+    "image_source": {
+      "asset": "controller.jpg",
+      "page_url": "https://www.interroll.com/products/controls/multicontrol-ai",
+      "image_url": "https://www.interroll.com/fileadmin/_processed_/0/c/csm_MultiControl-AI_1840x400_8429bf6a3f.jpg",
+      "method": "Official manufacturer website product image",
+      "retrieved": "2026-10-25",
+      "sha256": "4ad5776202eb2f3041f9a1705ef70416d4bd31f169cc04bceac493d386016a09",
+      "size": [
+        1000,
+        218
+      ]
+    }
+  },
+  {
+    "id": "roller_manual",
+    "model": "Interroll EC5000 · drive ratios and ramps",
+    "url": "https://www.interroll.com/fileadmin/Downloads/User_Manuals/RollerDrive/User_Manual_EC5000_EN.pdf",
+    "nominal": {
+      "35 W / 30:1 maximum speed": "0.60 m/s",
+      "35 W / 18:1 maximum speed": "1.00 m/s",
+      "Control": "Speed/position modes have configuration-dependent ramp limits"
+    },
+    "scope": "Manufacturer values at 20 °C. Ramp setting is not proof against brick slip or tipping. Motor torque, surface temperature and abrasive duty require trials.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference",
+    "image_asset": "roller-drive.jpg",
+    "image_credit": "Official manufacturer reference illustration; installation/configuration differs from this custom scene.",
+    "image_source": {
+      "asset": "roller-drive.jpg",
+      "page_url": "https://www.interroll.com/fileadmin/user_upload/Downloads__PDF_/Drives___Controls/DC_Platform/EC5000_Catalog_PDF/EN/EC5000_50mm_IP54_EN.pdf",
+      "image_url": "https://www.interroll.com/fileadmin/user_upload/Downloads__PDF_/Drives___Controls/DC_Platform/EC5000_Catalog_PDF/EN/EC5000_50mm_IP54_EN.pdf",
+      "method": "Manufacturer datasheet image extracted from page 1",
+      "retrieved": "2026-10-25",
+      "sha256": "cf856103a7531b9c356ca15039f5150e24ee4d6f5a22867cc8f20bf19d3e294d",
+      "size": [
+        1000,
+        500
+      ]
+    }
+  },
+  {
+    "id": "long_axis",
+    "model": "Festo ELGA-TB-KF-70 · longer horizontal sorter axis reference",
+    "url": "https://ftp.festo.com/Public/PNEUMATIC/SOFTWARE_SERVICE/Documentation/2019/EN/ELGA-TB_EN.PDF",
+    "nominal": {
+      "Reference stroke": "50–5,000 mm (size 70)",
+      "Reference maximum feed force": "350 N",
+      "Reference maximum speed": "5 m/s",
+      "Reference maximum acceleration": "50 m/s²"
+    },
+    "scope": "Manufacturer family envelope only. Rail supports, belt tension, carriage load, moment loads, contamination and integrated drive require sizing. No overhead reserve axis is used.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference",
+    "image_asset": "long-axis.jpg",
+    "image_credit": "Official manufacturer reference illustration; installation/configuration differs from this custom scene.",
+    "image_source": {
+      "asset": "long-axis.jpg",
+      "page_url": "https://ftp.festo.com/Public/PNEUMATIC/SOFTWARE_SERVICE/Documentation/2019/EN/ELGA-TB_EN.PDF",
+      "image_url": "https://ftp.festo.com/Public/PNEUMATIC/SOFTWARE_SERVICE/Documentation/2019/EN/ELGA-TB_EN.PDF",
+      "method": "Manufacturer datasheet image extracted from page 1",
+      "retrieved": "2026-10-25",
+      "sha256": "fdbaeefce84c08a6ea3b3c553d46a584b17bb47e6f18acb414bf44a38ab7b574",
+      "size": [
+        613,
+        456
+      ]
+    }
+  },
+  {
+    "id": "surge_belt",
+    "model": "Compact reversible belt staging · custom assembly",
+    "url": "https://www.mk-group.com/en/products/conveyor-technology/belt-conveyors/guf-p-2000.html",
+    "nominal": {
+      "Maximum speed": "80 m/min = 1.33 m/s",
+      "Typical maximum total load": "125 kg, configuration dependent",
+      "Length range": "380–10,000 mm",
+      "Standard widths": "50–800 mm",
+      "Incline reference": "Up to 20°, belt/product dependent",
+      "Transfer nose options": "53 mm roller; 19 mm knife edge"
+    },
+    "scope": "Legacy reversible staging concept; not present in the current continuous-flow scene. Flat belt family is a mechanism reference, not a rated buffer assembly.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference",
+    "image_asset": "flat-belt.jpg",
+    "image_credit": "Official manufacturer reference illustration; installation/configuration differs from this custom scene.",
+    "image_source": {
+      "asset": "flat-belt.jpg",
+      "image_url": "https://uploads.mknorthamerica.com/Customer-Content/www/Products/Photos/Medium/GUF-P-2000-2022.png",
+      "method": "mk North America official GUF-P 2000 image",
+      "retrieved": "2026-10-25",
+      "sha256": "82a3214d18501db351ad90c08b8d84e5d05ce391d5ecc71e5131f069753f16ef"
+    }
+  },
+  {
+    "id": "decline_belt",
+    "model": "mk GUF-P 2000 · powered flat/decline belt reference",
+    "url": "https://www.mk-group.com/en/products/conveyor-technology/belt-conveyors/guf-p-2000.html",
+    "nominal": {
+      "Maximum speed": "80 m/min = 1.33 m/s",
+      "Typical maximum total load": "125 kg, configuration dependent",
+      "Length range": "380–10,000 mm",
+      "Standard widths": "50–800 mm",
+      "Incline reference": "Up to 20°, belt/product dependent",
+      "Transfer nose options": "53 mm roller; 19 mm knife edge"
+    },
+    "scope": "Straight and incline belt family. Decline traction, brick retention, dusty/hot duty and integration must be sized and tested; catalog maxima are not simultaneous guarantees.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference",
+    "image_asset": "flat-belt.jpg",
+    "image_credit": "Official manufacturer reference illustration; installation/configuration differs from this custom scene.",
+    "image_source": {
+      "asset": "flat-belt.jpg",
+      "image_url": "https://uploads.mknorthamerica.com/Customer-Content/www/Products/Photos/Medium/GUF-P-2000-2022.png",
+      "method": "mk North America official GUF-P 2000 image",
+      "retrieved": "2026-10-25",
+      "sha256": "82a3214d18501db351ad90c08b8d84e5d05ce391d5ecc71e5131f069753f16ef"
+    }
+  },
+  {
+    "id": "curved_belt",
+    "model": "mk KMF-P 2040 · curved modular conveyor",
+    "url": "https://www.mk-group.com/en/products/conveyor-technology/modular-belt-conveyors/kmf-p-2040.html",
+    "nominal": {
+      "Maximum catalog speed": "30 m/min = 0.50 m/s",
+      "Typical maximum total load": "150 kg, configuration dependent",
+      "Catalog width range": "200–1,000 mm",
+      "Catalog length range": "475–10,000 mm",
+      "Layouts": "L, S and U; one drive for complex track layouts"
+    },
+    "image_asset": "loop-belt.jpg",
+    "image_credit": "Official manufacturer product/family illustration; reference configuration, not the simulated installation.",
+    "scope": "Mechanism reference only. Our loop assumes 1.50 m/s, three times this catalog speed, and a custom 28.8 m circuit; this product does NOT substantiate those timing/geometry assumptions. A different or engineered drive/conveyor is still required to qualify the modeled rate.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference",
+    "image_source": {
+      "asset": "loop-belt.jpg",
+      "image_url": "https://uploads.mknorthamerica.com/Customer-Content/www/Products/Photos/Medium/KMF-P-2040-2022.png",
+      "method": "mk North America official KMF-P 2040 image",
+      "retrieved": "2026-10-25",
+      "sha256": "ecd040a7b9c496d50bfd89233823fe91d64391cdde6c9b359bb057a0eb67416e"
+    }
+  },
+  {
+    "id": "merge_roller",
+    "model": "Interroll RM 8230 · driven roller merge",
+    "url": "https://www.interroll.com/fileadmin/user_upload/Downloads__PDF_/Conveyors___Sorters/MCP_Catalogue/EN/RM8230_EN.pdf",
+    "nominal": {
+      "Conveyor speed": "0.1–2.0 m/s",
+      "Maximum load": "50 kg/m",
+      "Roller diameter": "50 mm",
+      "Merge angles": "30° / 45°",
+      "Standard rated widths": "420 / 620 / 840 mm",
+      "Incline/decline": "Not suitable"
+    },
+    "image_asset": "merge-rollers.jpg",
+    "image_credit": "Official manufacturer product/family illustration; reference configuration, not the simulated installation.",
+    "scope": "Reference for driven angled merging and end transfer. Our 360/300 mm curved branches and row pocket are custom; this module is not their exact geometry or a supplier-approved selection.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference",
+    "image_source": {
+      "asset": "merge-rollers.jpg",
+      "page_url": "https://www.interroll.com/fileadmin/user_upload/Downloads__PDF_/Conveyors___Sorters/MCP_Catalogue/EN/RM8230_EN.pdf",
+      "image_url": "https://www.interroll.com/fileadmin/user_upload/Downloads__PDF_/Conveyors___Sorters/MCP_Catalogue/EN/RM8230_EN.pdf",
+      "method": "Manufacturer datasheet image extracted from page 1",
+      "retrieved": "2026-10-25",
+      "sha256": "7b8089ec9ad920ef4f4c4f2c6c809b13b266cb5567fb9666c176186bef6e27fc",
+      "size": [
+        966,
+        363
+      ]
+    }
+  },
+  {
+    "id": "flat_belt",
+    "model": "mk GUF-P 2000 · powered flat belt",
+    "url": "https://www.mk-group.com/en/products/conveyor-technology/belt-conveyors/guf-p-2000.html",
+    "nominal": {
+      "Maximum speed": "80 m/min = 1.33 m/s",
+      "Typical maximum total load": "125 kg, configuration dependent",
+      "Length range": "380–10,000 mm",
+      "Standard widths": "50–800 mm",
+      "Incline reference": "Up to 20°, belt/product dependent",
+      "Transfer nose options": "53 mm roller; 19 mm knife edge"
+    },
+    "image_asset": "flat-belt.jpg",
+    "image_credit": "Official manufacturer product/family illustration; reference configuration, not the simulated installation.",
+    "scope": "Mechanism reference for powered cross-belts and short dosing sections. Stroke, motor sizing, direction changes and brick traction remain custom integration choices.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference",
+    "image_source": {
+      "asset": "flat-belt.jpg",
+      "image_url": "https://uploads.mknorthamerica.com/Customer-Content/www/Products/Photos/Medium/GUF-P-2000-2022.png",
+      "method": "mk North America official GUF-P 2000 image",
+      "retrieved": "2026-10-25",
+      "sha256": "82a3214d18501db351ad90c08b8d84e5d05ce391d5ecc71e5131f069753f16ef"
+    }
+  },
+  {
+    "id": "guided_lift",
+    "model": "Festo DFM-32-160-P-A-KF · guided pneumatic drive",
+    "url": "https://ftp.festo.com/Public/PNEUMATIC/SOFTWARE_SERVICE/Datasheet/EN_US/170937.pdf",
+    "nominal": {
+      "Reference part": "170937",
+      "Reference stroke": "160 mm",
+      "Piston diameter": "32 mm",
+      "Theoretical advancing force at 6 bar": "482 N",
+      "Theoretical retracting force at 6 bar": "415 N",
+      "Pneumatic connection": "G1/8"
+    },
+    "image_asset": "guided-lift.jpg",
+    "image_credit": "Official manufacturer product/family illustration; reference configuration, not the simulated installation.",
+    "scope": "Reference for guided lifting and load restraint. The pictured family and our separate cylinder/twin-shaft carriage differ. These force figures do not validate the fast extraction pulse, air consumption, impact force or custom yellow guide.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference",
+    "image_source": {
+      "asset": "guided-lift.jpg",
+      "page_url": "https://ftp.festo.com/Public/PNEUMATIC/SOFTWARE_SERVICE/Documentation/2019/EN/DFM_EN.PDF",
+      "image_url": "https://ftp.festo.com/Public/PNEUMATIC/SOFTWARE_SERVICE/Documentation/2019/EN/DFM_EN.PDF",
+      "method": "Manufacturer datasheet image extracted from page 1",
+      "retrieved": "2026-10-25",
+      "sha256": "771904cba8b40a179e643a83cfaf781bceb2e3e097e6b52c394867e0e0721986",
+      "size": [
+        613,
+        455
+      ]
+    }
+  },
+  {
+    "id": "arb_divert",
+    "model": "Intralox Series 400 90-Degree Angled Roller",
+    "url": "https://www.intralox.com/belt-finder/modular-plastic-belting/series-400/90-degree-angled-rollertm",
+    "nominal": {
+      "Belt pitch": "50.8 mm",
+      "Minimum belt width": "152 mm",
+      "Width increments": "50.8 mm",
+      "Roller direction": "90° to belt travel",
+      "Roller/axle materials": "Polyurethane rollers; stainless-steel axles"
+    },
+    "image_asset": "arb-divert.jpg",
+    "image_credit": "Official manufacturer product/family illustration; reference configuration, not the simulated installation.",
+    "scope": "Driven lateral-transfer principle with complementary rails. Our steerable roller cassette is NOT this exact fixed-roller modular belt; no catalog speed, payload or brick-steering accuracy is claimed for the custom cassette.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference",
+    "image_source": {
+      "asset": "arb-divert.jpg",
+      "page_url": "https://www.intralox.com/belt-finder/modular-plastic-belting/series-400/90-degree-angled-rollertm",
+      "image_url": "https://assets-us-01.kc-usercontent.com:443/19eb64b5-1815-003a-d268-e7109927ccad/a4a7cafe-07e7-40cc-8791-63c25881ed4e/50967_TA23619_cropped.jpg?w=1200&h=630&fit=crop",
+      "method": "Official manufacturer website product image",
+      "retrieved": "2026-10-25",
+      "sha256": "d59e42d307e6575348801a928b8e381be267e32847f56564b1ec9092d4c09d78",
+      "size": [
+        1000,
+        525
+      ]
+    }
+  },
+  {
+    "id": "illumination",
+    "model": "Smart Vision Lights L300 · linear machine-vision light",
+    "url": "https://smartvisionlights.com/wp-content/uploads/L300_Datasheet-1.pdf",
+    "nominal": {
+      "Input voltage": "24 V DC ±5%",
+      "Maximum power": "17 W per light",
+      "Maximum current": "700 mA",
+      "Trigger": "PNP or NPN",
+      "Analog intensity": "1–10 V",
+      "Strobe trigger latency": "10 µs",
+      "Product protection": "IP50 (L300 product page)"
+    },
+    "image_asset": "inspection-light.jpg",
+    "image_credit": "Official manufacturer product/family illustration; reference configuration, not the simulated installation.",
+    "scope": "Reference for triggered inspection lighting. The two broad diffuse panels in the scene are custom; diffuser, white balance, exposure uniformity, lens and dust protection require calibration. No image-based inference runs in this simulator.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference",
+    "image_source": {
+      "asset": "inspection-light.jpg",
+      "page_url": "https://smartvisionlights.com/wp-content/uploads/L300_Datasheet-1.pdf",
+      "image_url": "https://smartvisionlights.com/wp-content/uploads/L300_Datasheet-1.pdf",
+      "method": "Manufacturer datasheet image extracted from page 1",
+      "retrieved": "2026-10-25",
+      "sha256": "c45d5cb91d0dbb684a7bf7566dd45ecb2157496088f293158832fa00f6543f10",
+      "size": [
+        1000,
+        391
+      ]
+    },
+    "sources": [
+      "https://smartvisionlights.com/wp-content/uploads/L300_Datasheet-1.pdf",
+      "https://smartvisionlights.com/products/l300/"
+    ]
+  },
+  {
+    "id": "encoder",
+    "model": "ifm RO3100 · incremental encoder",
+    "url": "https://www.ifm.com/us/en/product/RO3100",
+    "nominal": {
+      "Resolution": "1–10,000 pulses/revolution; factory setting 1,024",
+      "Supply": "4.75–30 V DC",
+      "Current": "<150 mA",
+      "Output": "HTL / TTL; A/B quadrature",
+      "Parameter interface": "IO-Link",
+      "Hollow-shaft diameter": "12 mm"
+    },
+    "image_asset": "encoder.jpg",
+    "image_credit": "Official manufacturer product/family illustration; reference configuration, not the simulated installation.",
+    "scope": "Reference for shared-drive position feedback. The simulator uses ideal encoder coordinates; wheel slip, pulse quantization, coupling, homing and missed pulses are not modeled. This is a drive feedback reference, not a per-brick sensor.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference",
+    "image_source": {
+      "asset": "encoder.jpg",
+      "page_url": "https://www.ifm.com/binaries/content/assets/pdf-files/en/product-news/2017/hmi/updates/ifm-ro3100-programmable-incremental-encoder-io-link-en-17.pdf",
+      "image_url": "https://www.ifm.com/binaries/content/assets/pdf-files/en/product-news/2017/hmi/updates/ifm-ro3100-programmable-incremental-encoder-io-link-en-17.pdf",
+      "method": "Manufacturer datasheet image extracted from page 1",
+      "retrieved": "2026-10-25",
+      "sha256": "8ce96d375135120a9e453c7a0b164150c35e4ae691c6112ecaea4a0a9c6c9ddb",
+      "size": [
+        618,
+        573
+      ]
+    }
+  },
+  {
+    "id": "guard_panel",
+    "model": "Troax ST20 · machine-guard panel",
+    "url": "https://www.troax.com/product/panel-st20/?term_id=3786",
+    "nominal": {
+      "Mesh opening": "20 × 100 mm",
+      "Panel width options": "200–1,500 mm",
+      "Panel height options": "1,250 / 2,050 / 2,350 / 2,550 mm",
+      "Frame section": "19 × 19 mm"
+    },
+    "image_asset": "guard-panel.jpg",
+    "image_credit": "Official manufacturer product/family illustration; reference configuration, not the simulated installation.",
+    "scope": "The scene shows boundary rails, not an installed ST20 mesh guard or a certified safeguarding layout. This is a real guarding product reference; access control and site risk assessment remain unimplemented.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference",
+    "image_source": {
+      "asset": "guard-panel.jpg",
+      "image_url": "https://www.troax.com/app/uploads/16711-1024x1024.png",
+      "method": "Official manufacturer image, transparency composited on white",
+      "retrieved": "2026-10-25",
+      "sha256": "c51008fa961587c71b6fb789ad355a11806fd19d02466e1bc72f6b4dc5ce834b"
+    }
+  },
+  {
+    "id": "discard_bin",
+    "model": "BAUER RD 1000 · industrial tipping container",
+    "url": "https://www.bauer-suedlohn.com/wp-content/uploads/2025/05/Katalog-DE-2025-05.pdf",
+    "nominal": {
+      "Reference volume": "1.00 m³",
+      "Rated load": "1,500 kg",
+      "Dimensions L × W × H": "1,750 × 955 × 1,220 mm",
+      "Painted / galvanized empty weight": "228 / 250 kg",
+      "Wheels": "Optional accessory"
+    },
+    "image_asset": "discard-bin.jpg",
+    "image_credit": "Official manufacturer product/family illustration; reference configuration, not the simulated installation.",
+    "scope": "Catalog page 22. Container illustration is an industrial collection reference; the custom open-front stationary bin differs in geometry and closure. The modeled capacity is a piece-count limit, not a verified packing-volume calculation. Emptying remains outside the batch.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference",
+    "image_source": {
+      "asset": "discard-bin.jpg",
+      "image_url": "https://www.bauer-suedlohn.com/wp-content/uploads/2025/05/Katalog-DE-2025-05.pdf",
+      "page": 22,
+      "method": "Bauer RD container catalog page illustration",
+      "sha256": "9220ed2a84b772db9558165b3100dffd101e84629b48ca7fafc0c6567ec0d841"
+    }
+  },
+  {
+    "id": "inventory_cart",
+    "model": "HORSTMANN VWG · rail-transfer principle",
+    "url": "https://www.horstmann-anlagentechnik.de/project/transfer-car/?lang=en",
+    "nominal": {
+      "Published reference load": "1,200 kg",
+      "Drive": "Reversible gearmotor on one axle",
+      "Guidance": "Running rails and horizontal guide rollers",
+      "Rail options": "A45 / S20"
+    },
+    "image_asset": "pallet-transfer-car.jpg",
+    "image_credit": "Official manufacturer product/family illustration; reference configuration, not the simulated installation.",
+    "scope": "Mechanism reference only. The inventory cart assumes an 8,000 kg design target and is not the published 1,200 kg VWG configuration. Its load, rails, motor and braking require a separate engineered selection.",
+    "verified_on": "2026-10-25",
+    "reference_level": "Manufacturer family / mechanism reference"
+  },
+  {
+    "id": "gear_motor",
+    "model": "SEW-EURODRIVE R..DR.. · helical gearmotor family",
+    "url": "https://download.sew-eurodrive.com/download/html/33346739/en-EN/39593815307.html",
+    "nominal": {
+      "Family torque range": "50–20,000 Nm across multiple sizes",
+      "Gear ratio range": "1.30–289.74; compound units up to 27,001",
+      "Construction": "Single-, two- and three-stage helical gear units",
+      "Selection": "Gear unit, motor and ratio selected as a combination"
+    },
+    "image_asset": "gear-motor.jpg",
+    "image_credit": "SEW-EURODRIVE · official R..DR.. reference illustration; not a selected loop motor.",
+    "image_source": {
+      "asset": "gear-motor.jpg",
+      "image_url": "https://download.sew-eurodrive.com/download/html/33346739/Images/png/51855886091__Web.png",
+      "method": "Official gearmotor manual illustration",
+      "retrieved": "2026-10-25",
+      "sha256": "31d924791fc8002b2989c8349ca2a16f5ecec7b4836f8912d8e30a9180c95f78"
+    },
+    "verified_on": "2026-10-25",
+    "reference_level": "Family reference; motor not selected",
+    "scope": "Very broad product-family envelope, not a rating of the small box drawn in the demo. Required loop torque, reducer ratio, electrical power, encoder coupling and thermal/dust suitability remain uncalculated. No plant energy or purchase-cost estimate is derived from this family range."
+  },
+  {
+    "id": "autonomous_stacker",
+    "model": "AGILOX OCF · omnidirectional counterbalanced forklift reference",
+    "url": "https://www.agilox.net/media/data_sheet_ocf_a4_en.pdf",
+    "nominal": {
+      "Maximum load": "1,500 kg",
+      "Maximum travel speed": "1.4 m/s",
+      "Maximum lift / station height": "1,600 / 1,450 mm",
+      "Dimensions": "2,784 × 1,200 × 2,566 mm",
+      "Drive system": "Three omnidirectional drive units"
+    },
+    "scope": "Manufacturer mechanism reference. Demo: 1.2 m/s, four vehicles and a configured 1,262 kg pallet assumption; route schedule, docks, forks and cycle times are custom proof-of-concept settings.",
+    "verified_on": "2026-10-27",
+    "image_asset": "agilox-ocf.jpg",
+    "image_credit": "AGILOX OCF official datasheet V03/2023 · embedded manufacturer product photograph"
+  }
+]

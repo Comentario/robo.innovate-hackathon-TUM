@@ -1,0 +1,11 @@
+{
+  "rows": 2,
+  "columns": 3,
+  "layers": 2,
+  "target_ratios": {
+    "color_group_1": 1,
+    "color_group_2": 1
+  },
+  "mode": "mixed",
+  "shortage_policy": "reject"
+}

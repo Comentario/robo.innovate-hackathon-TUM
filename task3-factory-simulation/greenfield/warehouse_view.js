@@ -1,0 +1,33 @@
+/* Jacob's direct-access storage and two-sided truck cells, driven by our production model. */
+'use strict';
+window.FactoryWarehouseView=({T,box,rod,beam,support,rollerBed,equipment,label,M,staticRoot,dynamicRoot})=>{
+ const A=window.FactoryLayout,names=['Mixed','Warm','Copper','Russet'];
+ function paint(x,z,l,w,colour=M.steel){box(x,.008,z,l,.012,w,colour)}
+ function sign(text,x,z,hanging=false){const c=document.createElement('canvas');c.width=768;c.height=128;const q=c.getContext('2d');q.fillStyle='#14333b';q.fillRect(0,0,768,128);q.fillStyle='#8bcebc';q.fillRect(0,0,768,9);q.fillStyle='#edf3f2';q.font='600 35px Segoe UI';q.fillText(text,25,80);const m=new T.Mesh(new T.PlaneGeometry(3.6,.6),new T.MeshBasicMaterial({map:new T.CanvasTexture(c),side:T.DoubleSide}));m.position.set(x,3.4,z);staticRoot.add(m);for(const s of [-1,1]){if(hanging)box(x+s*1.7,4.95,z,.045,2.50,.045,M.steel);else support(x+s*1.7,z,3.7,.065)}box(x,3.72,z,3.65,.10,.08,M.green)}
+ function build(){
+  for(const aisle of A.aisles){for(const x of [aisle.x0,aisle.x1])paint(x,0,.045,32.8,M.blue);sign(aisle.id+' · DIRECT ACCESS',aisle.x,-16.8,true)}
+  for(const z of [-16.4,-12,-2.2,2.2,12,16.4])paint(76.4,z,28.8,.04,M.blue);
+  for(const s of A.storage){for(const side of [-1,1]){paint(s.x+side*.69,s.z,.025,1.18);paint(s.x,s.z+side*.59,1.4,.025)}paint(s.x,s.z,.07,.07,M.green)}
+  for(const h of A.handoffs){for(const side of [-1,1]){paint(h.x+side*.69,h.z,.025,1.12,M.yellow);paint(h.x,h.z+side*.55,1.4,.025,M.yellow)}}
+  sign('CLASSIFIED STOCK · 128 LOCATIONS',76,-19.6);equipment('Shared direct-access warehouse','structure','warehouse_bay',[76.4,1.0,0],[28.8,2.1,32.8],'Jacob layout: eight rows and four 4.4 m work aisles, with north, middle and south cross aisles. Every stored pallet has a reserved location, direct fork access and a product ID. Product priorities can use other free locations.',[['Capacity','128 finite floor positions'],['Work aisles','4 × 4.4 m'],['Storage control','Reserve → deposit → clear gantry → pick'],['Pallet contact','Wood runner bottom rests on floor']]);
+  equipment('Warehouse-to-loading handoff','transport','autonomous_stacker',[96.5,.8,0],[1.6,1.7,19.6],'Warehouse vehicles deliver from the west. A dedicated loading vehicle collects from the east only after the warehouse vehicle withdraws. Pallets remain on a marked ground support position.',[['Positions',String(A.handoffs.length)],['Control','Warehouse-clear confirmation before loader pickup'],['Product','Linked to customer order']]);
+  for(const d of A.docks){for(const side of [-1,1])for(const edge of [-1,1])paint(d.x+side*3.975+edge*2.2,0,.045,24,M.blue);for(const z of [-16.4,-12,12,16.4])paint(d.x,z,16.9,.04,M.blue);
+   for(const side of [-1,1])for(const z of [-18,18]){support(d.x+side*6.6,z,4.8,.16);beam([d.x+side*6.6,.3,z],[d.x+side*5.8,4.4,z],.065,M.steel)}for(const z of [-18,18])box(d.x,4.8,z,13.4,.18,.20,M.green);for(const side of [-1,1])box(d.x+side*6.6,4.85,0,.18,.18,36.2,M.green);
+   for(let row=0;row<10;row++)for(const side of [-1,1])paint(d.x+side*.625,-7.3+row*1.3,1.18,.86,M.dark);
+   sign('BAY '+(d.id+1)+' · TWO-SIDED LOADING',d.x,17.3);equipment('Bay '+(d.id+1)+' · drive-through truck loading','transport','autonomous_stacker',[d.x,1.3,0],[13.4,3.2,24],'Ground-running loaders access the near half from each exposed trailer side. The forks lift; the vehicle stays on the ground. A north cross connection permits access to the other side. The truck leaves south after all ordered pallets are loaded and the loader is clear.',[['Physical trailer positions','20 · two sides × ten'],['Demo customer order','8 pallets of one product'],['Trailer deck','1.21 m'],['Fork mechanism','Fixed 1.50 m load centre · no reach attachment'],['Interlock','Truck parked + reserved order + loader clear']]);}
+  for(const p of [[A.spineX,-22],[A.spineX-4,-22],[A.docks[0].x-3.975,-22],[A.docks[1].x-3.975,-22]])for(const side of [-1,1])paint(p[0],p[1]+side*.85,3.3,.035,M.yellow);
+  equipment('Autonomous transport and loading fleet','transport','autonomous_stacker',[98,1,-22],[34,2.8,3.5],'Two warehouse pickers and two dedicated truck loaders share reserved paths. Loaded turns carry forks and pallet as one rigid group. No vehicle is lifted to trailer height.',[['Fleet','4 total · 2 warehouse + 2 loading'],['Travel','1.2 m/s model setting'],['Loading','Both sides; only near trailer half'],['Traffic','Reserved swept footprint and clear handoffs']]);label('05  DIRECT-ACCESS INVENTORY',[76,3.4,0]);label('06  TWO-SIDED CUSTOMER LOADING',[112,5.4,0]);
+ }
+ function ledLocal(x,y,z,parent=staticRoot){box(x,y,z,.06,.03,.06,M.led,parent)}
+ function amr(){const g=new T.Group();dynamicRoot.add(g);box(.1,.49,0,1.35,.54,1.08,M.dark,g);box(.25,.82,0,1.05,.18,1.14,M.green,g);box(.62,.95,0,.2,.18,.3,M.dark,g);box(.65,1.07,0,.22,.06,.32,M.blue,g);box(-.58,.30,0,.42,.17,1.15,M.steel,g);
+  for(const [x,z]of [[-.25,-.49],[-.25,.49],[.50,0]]){rod(x,.16,z,.16,.18,M.dark,'z',g);rod(x,.16,z,.075,.184,M.steel,'z',g);box(x,.25,z,.22,.08,.24,M.steel,g)}
+  // Low outriggers and load wheels support the pallet in front of the drive body.
+  box(-.65,.19,0,.14,.12,1.38,M.steel,g);for(const z of [-.64,.64]){box(-1.25,.18,z,1.30,.12,.10,M.steel,g);rod(-1.85,.10,z,.10,.08,M.dark,'z',g);rod(-1.85,.10,z,.045,.084,M.steel,'z',g)}
+  for(const z of [-.43,.43])box(-.72,1.30,z,.10,2.53,.11,M.steel,g);box(-.72,2.54,0,.14,.08,.98,M.green,g);for(const z of [-.30,.30])box(-.73,1.35,z,.02,2.30,.025,M.dark,g);
+  box(-.65,.43,0,.16,.12,.26,M.dark,g);ledLocal(-.65,.52,0,g);box(.15,.92,-.53,.12,.06,.12,M.red,g);return g;
+ }
+ function fork(){const g=new T.Group();dynamicRoot.add(g);for(const z of [-.20,.20]){box(0,-.01,z,1.2,.07,.125,M.steel,g);box(.64,.13,z,.07,.30,.125,M.steel,g)}box(.77,.12,0,.12,.22,.90,M.steel,g);return g}
+ function frame(){const g=new T.Group();dynamicRoot.add(g);box(0,.17,0,1.48,.15,1.14,M.yellow,g);box(0,.30,0,.35,.15,.35,M.dark,g);for(const x of [-.70,.70])for(const z of [-.52,.52])box(x,-.40,z,.08,1.15,.08,M.yellow,g);box(.70,-.97,0,.10,.08,1.12,M.steel,g);for(const z of [-.20,.20])box(.075,-.97,z,1.25,.07,.125,M.steel,g);for(const z of [-.52,.52])box(0,-.12,z,1.45,.12,.08,M.yellow,g);return g}
+ function truck(){const g=new T.Group();dynamicRoot.add(g);box(1.45,1.04,0,13.6,.28,2.55,M.dark,g);box(1.45,1.19,0,13.6,.04,2.55,M.steel,g);box(-6.80,1.47,0,2.9,2.1,2.50,M.green,g);box(-7.55,1.97,0,1.25,.66,2.53,M.blue,g);box(-8.26,.93,0,.12,.22,2.53,M.dark,g);box(-6.80,2.56,0,2.9,.15,2.55,M.green,g);for(const x of [-6.8,3.4,4.7,6.0])for(const z of [-1.12,1.12]){rod(x,.42,z,.42,.24,M.dark,'z',g);rod(x,.42,z,.19,.25,M.steel,'z',g)}return g}
+ return{build,amr,fork,frame,truck};
+};

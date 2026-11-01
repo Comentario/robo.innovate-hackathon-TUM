@@ -1,0 +1,9 @@
+[project]
+name = "robo-innovate-challenge2"
+version = "0.1.0"
+description = "FR3 connected LEGO sorting workcell for the Marmon challenge"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+

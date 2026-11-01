@@ -1,0 +1,728 @@
+{
+  "schema": "stage2-native-pick-results-v1",
+  "goal_status": "INCOMPLETE",
+  "baseline_source_commit": "efe9757",
+  "scientific_protocol_sha256": "16ce8eb603e2d620c97b931c02dae43ed605060187d252a6873eb9d9a824d8ce",
+  "maximum_improvement_rounds": 3,
+  "current_improvement_round": 3,
+  "rounds": [
+    {
+      "round": 1,
+      "failure": "Evaluator enumerated6x5 world-axis IDs for every layer instead of frozen parity-dependent5x6/6x5.",
+      "change": "Correct expected names from SHA-pinned geometry; audit-only replay of immutable1800 capture. Prospectively raise case budget600\u21921200 before first pick based measured443.339s cost; all original time remains charged.",
+      "physics_or_manipulation_parameters_changed": false,
+      "original_failure_preserved": true,
+      "status": "CORRECTED_CONTROL_PASS"
+    },
+    {
+      "round": 2,
+      "failure": "Close segmentation camera omits85162 sampled tool-path points;20 near-edge samples are unresolved behind depth returns.",
+      "change": "One fixed existing wide-overhead measured RGB-D geometry view, unchanged closeR3; every nonself sample needs a positive actual depth witness in at least one view. Exact I/O cache equivalence already validated.",
+      "status": "FAILED_CLEARANCE_ABSTENTION_APPROACH_REASSESSMENT",
+      "physics_controller_or_numerical_limits_changed": false,
+      "original_failures_preserved": true,
+      "prior_case_wall_seconds": 845.2514062500268,
+      "remaining_case_seconds": 354.7485937499732,
+      "repair_execution": {
+        "job_id": 1805,
+        "source_commit": "5e1a4ca",
+        "snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T105902.347591Z-stage2-pick-I-pick",
+        "status": "ABSTAINED",
+        "science_changed": false,
+        "prior_case_wall_seconds": 845.2514062500268,
+        "remaining_case_seconds": 173.44893860197044,
+        "independent_review": "One repaired execution after metadata-only fix; no automatic retries or H authorization",
+        "actual_capture_plus_audit_seconds": 181.29965514800278,
+        "cumulative_case_seconds": 1026.5510613980296,
+        "proceed_gate_passed": false,
+        "measured_physics_steps": 0,
+        "present_hypotheses": 14,
+        "first_candidate_clearance": {
+          "passed": false,
+          "unknown_samples": 0,
+          "nonfree_samples": 79283,
+          "samples": 274320,
+          "minimum_observed_ray_clearance_m": -0.46923598836766045,
+          "minimum_positive_witness_gap_m": 0.0006521000182708736,
+          "per_view_counts": {
+            "frame_0000": {
+              "self_known_proprio_skip": 7522,
+              "invalid_projection_or_behind_camera": 0,
+              "out_of_image": 85162,
+              "invalid_depth": 0,
+              "observed_ray_free": 181616,
+              "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED": 20
+            },
+            "geometry_safety_wide_0000": {
+              "self_known_proprio_skip": 7522,
+              "invalid_projection_or_behind_camera": 0,
+              "out_of_image": 0,
+              "invalid_depth": 0,
+              "observed_ray_free": 119421,
+              "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED": 147377
+            }
+          },
+          "witness_counts": {
+            "known_self": 7522,
+            "close_only": 68094,
+            "wide_only": 5899,
+            "both": 113522,
+            "none": 79283
+          },
+          "known_self_samples": 7522,
+          "samples_with_no_free_view": 79283,
+          "view_frame_ids": [
+            "frame_0000",
+            "geometry_safety_wide_0000"
+          ],
+          "evidence_file": "online/clearance_0000.npz",
+          "primary_unresolved_examples": [
+            {
+              "sample_id": 268504,
+              "point_world_m": [
+                0.08820071925960347,
+                -0.07437926377218113,
+                0.09839003983944422
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED"
+              ],
+              "gaps_m": [
+                -0.0007599618294858446,
+                -0.45340672396213044
+              ],
+              "positive_witness": [
+                false,
+                false
+              ]
+            },
+            {
+              "sample_id": 268506,
+              "point_world_m": [
+                0.08820071925960347,
+                -0.06963005376342805,
+                0.09839003983944422
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED"
+              ],
+              "gaps_m": [
+                -0.0007599916318082323,
+                -0.44869706295520295
+              ],
+              "positive_witness": [
+                false,
+                false
+              ]
+            },
+            {
+              "sample_id": 268648,
+              "point_world_m": [
+                0.0882063662896097,
+                -0.05937945192942614,
+                0.09839003968413304
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED"
+              ],
+              "gaps_m": [
+                -0.0007599917871193851,
+                -0.0007599917871192741
+              ],
+              "positive_witness": [
+                false,
+                false
+              ]
+            },
+            {
+              "sample_id": 268650,
+              "point_world_m": [
+                0.0882063662896097,
+                -0.05462987287908102,
+                0.09839003968413304
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED"
+              ],
+              "gaps_m": [
+                -0.0007599619847969974,
+                -0.0007599917871192741
+              ],
+              "positive_witness": [
+                false,
+                false
+              ]
+            },
+            {
+              "sample_id": 270664,
+              "point_world_m": [
+                0.08820071925960347,
+                -0.07437926377218113,
+                0.09639003983944422
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED"
+              ],
+              "gaps_m": [
+                -0.0027599618294858463,
+                -0.45540672396213044
+              ],
+              "positive_witness": [
+                false,
+                false
+              ]
+            },
+            {
+              "sample_id": 270666,
+              "point_world_m": [
+                0.08820071925960347,
+                -0.06963005376342805,
+                0.09639003983944422
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED"
+              ],
+              "gaps_m": [
+                -0.0027599618294858463,
+                -0.45069706295520295
+              ],
+              "positive_witness": [
+                false,
+                false
+              ]
+            },
+            {
+              "sample_id": 270736,
+              "point_world_m": [
+                0.08842927608087199,
+                -0.0668778581252903,
+                0.09643234441422842
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED"
+              ],
+              "gaps_m": [
+                -0.002717687057024021,
+                -0.44631852047300913
+              ],
+              "positive_witness": [
+                false,
+                false
+              ]
+            },
+            {
+              "sample_id": 270738,
+              "point_world_m": [
+                0.08842927608087199,
+                -0.062131463046767865,
+                0.09643234441422842
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED"
+              ],
+              "gaps_m": [
+                -0.002717687057024021,
+                -0.002717687057024021
+              ],
+              "positive_witness": [
+                false,
+                false
+              ]
+            },
+            {
+              "sample_id": 270808,
+              "point_world_m": [
+                0.0882063662896097,
+                -0.05937945192942614,
+                0.09639003968413304
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED"
+              ],
+              "gaps_m": [
+                -0.002759961984796999,
+                -0.002759991787119276
+              ],
+              "positive_witness": [
+                false,
+                false
+              ]
+            },
+            {
+              "sample_id": 270810,
+              "point_world_m": [
+                0.0882063662896097,
+                -0.05462987287908102,
+                0.09639003968413304
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED"
+              ],
+              "gaps_m": [
+                -0.002759961984796999,
+                -0.002759991787119276
+              ],
+              "positive_witness": [
+                false,
+                false
+              ]
+            },
+            {
+              "sample_id": 272824,
+              "point_world_m": [
+                0.08820071925960347,
+                -0.07437926377218113,
+                0.09439003983944422
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED"
+              ],
+              "gaps_m": [
+                -0.0047600214341306235,
+                -0.45740672396213045
+              ],
+              "positive_witness": [
+                false,
+                false
+              ]
+            },
+            {
+              "sample_id": 272825,
+              "point_world_m": [
+                0.08820071925960347,
+                -0.07437926377218113,
+                0.09784443606430747
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED"
+              ],
+              "gaps_m": [
+                -0.0013055954069449704,
+                -0.45395232773726724
+              ],
+              "positive_witness": [
+                false,
+                false
+              ]
+            },
+            {
+              "sample_id": 272826,
+              "point_world_m": [
+                0.08820071925960347,
+                -0.06963005376342805,
+                0.09439003983944422
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED"
+              ],
+              "gaps_m": [
+                -0.006509954200091317,
+                -0.45269706295520296
+              ],
+              "positive_witness": [
+                false,
+                false
+              ]
+            },
+            {
+              "sample_id": 272827,
+              "point_world_m": [
+                0.08820071925960347,
+                -0.06963005376342805,
+                0.09784443606430747
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED"
+              ],
+              "gaps_m": [
+                -0.0013055954069449704,
+                -0.44924266673033975
+              ],
+              "positive_witness": [
+                false,
+                false
+              ]
+            },
+            {
+              "sample_id": 272896,
+              "point_world_m": [
+                0.08842927608087199,
+                -0.0668778581252903,
+                0.09443234441422842
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED"
+              ],
+              "gaps_m": [
+                -0.004717687057024023,
+                -0.44498793213224985
+              ],
+              "positive_witness": [
+                false,
+                false
+              ]
+            },
+            {
+              "sample_id": 272898,
+              "point_world_m": [
+                0.08842927608087199,
+                -0.062131463046767865,
+                0.09443234441422842
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "observed_ray_free"
+              ],
+              "gaps_m": [
+                -0.004717687057024023,
+                0.014482280327314356
+              ],
+              "positive_witness": [
+                false,
+                true
+              ]
+            },
+            {
+              "sample_id": 272968,
+              "point_world_m": [
+                0.0882063662896097,
+                -0.05937945192942614,
+                0.09439003968413304
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED"
+              ],
+              "gaps_m": [
+                -0.004759961984797001,
+                -0.004759991787119278
+              ],
+              "positive_witness": [
+                false,
+                false
+              ]
+            },
+            {
+              "sample_id": 272969,
+              "point_world_m": [
+                0.0882063662896097,
+                -0.05937945192942614,
+                0.09784443621961864
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED"
+              ],
+              "gaps_m": [
+                -0.0013055952516338176,
+                -0.001305595251633651
+              ],
+              "positive_witness": [
+                false,
+                false
+              ]
+            },
+            {
+              "sample_id": 272970,
+              "point_world_m": [
+                0.0882063662896097,
+                -0.05462987287908102,
+                0.09439003968413304
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED"
+              ],
+              "gaps_m": [
+                -0.004759961984797001,
+                -0.004759991787119278
+              ],
+              "positive_witness": [
+                false,
+                false
+              ]
+            },
+            {
+              "sample_id": 272971,
+              "point_world_m": [
+                0.0882063662896097,
+                -0.05462987287908102,
+                0.09784443621961864
+              ],
+              "categories": [
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED",
+                "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED"
+              ],
+              "gaps_m": [
+                -0.00130556544931143,
+                -0.001305595251633651
+              ],
+              "positive_witness": [
+                false,
+                false
+              ]
+            }
+          ],
+          "method": "Fixed inflated box corners/midplanes over2mm/1deg path samples; ANY-view positive measured ray witness; conditional sampled screen, not global collision certification"
+        },
+        "failed_checks": [
+          "unique_premotion_identity",
+          "sensor_supported_clearance",
+          "selected_upper_depth_1mm",
+          "nonempty_pick_coverage"
+        ],
+        "audit_sha256": "dafa7c83eb3b8410c5a9a2aa3514e605acf6356931933bb662ac137f6f3ed206"
+      }
+    },
+    {
+      "round": 3,
+      "change": "One fixed pre-reset kinematic staging posture, unchanged full measured ray certificate.",
+      "job_id": 1807,
+      "snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T115521.846258Z-stage2-initialization-r3",
+      "source_commit": "decffbb",
+      "status": "FAILED_CLEARANCE_DIAGNOSTIC_POSE_AND_SOURCE_CHECKS_PASS",
+      "failed_checks": [
+        "clearance_all_nonself_have_positive_witness",
+        "unresolved_points_still_stop"
+      ],
+      "checks_passed": 32,
+      "check_count": 34,
+      "measured_post_native_physics_steps": 0,
+      "kinematic_metrics": {
+        "nominal_TCP_FK": {
+          "position_m": 2.8041670751234094e-07,
+          "angle_rad": 6.809031759975006e-07
+        },
+        "independent_goal_error": {
+          "position_m": 4.7963239029216665e-06,
+          "angle_rad": 7.913063792796194e-07
+        },
+        "q_max_error_rad": 4.0109017440670414e-08,
+        "PhysX_hand_vs_derived": {
+          "position_m": 4.443944664557609e-07,
+          "angle_rad": 7.977341898873167e-07
+        },
+        "USD_hand_vs_derived": {
+          "position_m": 4.4439446649571843e-07,
+          "angle_rad": 7.971773073134189e-07
+        },
+        "actual_q_TCP_vs_actual_proprio": {
+          "position_m": 4.614659027515028e-07,
+          "angle_rad": 8.150812584863735e-07
+        }
+      },
+      "depth_witnesses": {
+        "status": "INDEPENDENT_DEPTH_WITNESSES_CHECKED",
+        "views": {
+          "frame_0000": {
+            "depth_sha256": "535aa77a9e6e8ece2d0da6a6722843375d309fe00ce7f77597d1e976d9a500d5",
+            "image_size": [
+              1280,
+              960
+            ],
+            "measurement_time_s": 0.025000001303851604
+          },
+          "geometry_safety_wide_0000": {
+            "depth_sha256": "f67a1624fcc3280504f8b94da8b30fab457f54feee36d076a0d6a1d6d8b357f3",
+            "image_size": [
+              1280,
+              960
+            ],
+            "measurement_time_s": 0.025000001303851604
+          }
+        },
+        "samples": 149040,
+        "self_samples": 6277,
+        "close_only": 51466,
+        "wide_only": 1,
+        "both": 53523,
+        "no_free_view": 37773,
+        "scope": "Conditional frozen sampled-envelope depth evidence, not continuous-volume/global collision certification."
+      },
+      "actual_seconds": 20.30018373799976,
+      "cumulative_case_seconds": 1046.8512451360293,
+      "aggregate_limit_seconds": 1800,
+      "audit_sha256": "169b47ea5f8e7996700a915f73eaedcc31ed8769b8172477a315e942f287bde1"
+    }
+  ],
+  "I": {
+    "control": {
+      "status": "PASS_CORRECTED_AUDIT_OF_ORIGINAL_CAPTURE",
+      "original_failed_job": {
+        "job_id": 1800,
+        "status": "FAILED_AUDIT_EXPECTED_ID_ENUMERATION",
+        "snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T093331.984420Z-stage2-pick-I-control",
+        "proceed_gate_passed": false,
+        "measured_steps": 3600,
+        "checks_passed": 48,
+        "check_count": 49,
+        "failed_checks": [
+          "case_named_inventory"
+        ],
+        "metrics": {
+          "first_singleton_step": null,
+          "target_rise_m": null,
+          "held_translation_max_m": null,
+          "held_angle_max_rad": null,
+          "non_target_translation_max_m": 0.00020829330605920404,
+          "non_target_angle_max_rad": 0.002183660166338086,
+          "force_peak_N": {
+            "left": 0.0,
+            "right": 0.0
+          },
+          "first_force_trigger_step": null,
+          "loaded_point_observations": 0,
+          "max_loaded_flat_distance_m": null,
+          "min_loaded_outward_dot": null
+        },
+        "actual_capture_plus_audit_seconds": 443.33917641901644,
+        "audit_sha256": "cfe6b016f95853d0962a15b65ccecbfb850054f116f0c88d7687e79d93e2edc4"
+      },
+      "new_simulation_required": false,
+      "correction_job_id": 1801,
+      "correction_snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T095332.007786Z-stage2-pick-I-control-audit-correction",
+      "correction_source_commit": "ca77991",
+      "new_simulation_steps": 0,
+      "proceed_gate_passed": true,
+      "independent_team_review": "Evaluator and reviewer accept one first I pick; stationary stability only.",
+      "checks_passed": 49,
+      "check_count": 49,
+      "cumulative_case_seconds": 673.0897538720164,
+      "remaining_case_seconds": 526.9102461279836,
+      "audit_sha256": "18888820badbc258ea1f2944d9c25c1574440ee05f541d24089308f095ad4f0f",
+      "metrics": {
+        "first_singleton_step": null,
+        "target_rise_m": null,
+        "held_translation_max_m": null,
+        "held_angle_max_rad": null,
+        "non_target_translation_max_m": 0.00020829330605920404,
+        "non_target_angle_max_rad": 0.002183660166338086,
+        "force_peak_N": {
+          "left": 0.0,
+          "right": 0.0
+        },
+        "first_force_trigger_step": null,
+        "loaded_point_observations": 0,
+        "max_loaded_flat_distance_m": null,
+        "min_loaded_outward_dot": null
+      }
+    },
+    "pick": {
+      "status": "ABSTAINED_UNSUPPORTED_SWEPT_ENVELOPE",
+      "job_id": 1802,
+      "snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T100014.190794Z-stage2-pick-I-pick",
+      "source_commit": "ecd1dcf",
+      "prior_case_wall_seconds": 673.0897538720164,
+      "remaining_case_seconds": 382.67888577497797,
+      "proceed_gate_passed": false,
+      "measured_physics_steps": 0,
+      "raw_candidate_count": 30,
+      "present_hypotheses": 13,
+      "uncertain_hypotheses": 17,
+      "rejected_present_hypotheses": 13,
+      "reason": "All present hypotheses failed observed swept-envelope clearance; no target selected or contact attempted.",
+      "failed_checks": [
+        "unique_premotion_identity",
+        "sensor_supported_clearance",
+        "selected_upper_depth_1mm",
+        "nonempty_pick_coverage"
+      ],
+      "metrics": {
+        "measured_contact_steps": 0,
+        "force_peak_N": null
+      },
+      "actual_capture_plus_audit_seconds": 144.23136035300558,
+      "cumulative_case_seconds": 817.321114225022,
+      "audit_sha256": "48282e7a36f18c9ce29f9a6b02d521ebaf5b8c39cb443f06d082cd2e26b036d2"
+    },
+    "round2_metadata_failure": {
+      "job_id": 1804,
+      "snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T104959.233288Z-stage2-pick-I-pick",
+      "source_commit": "f17c6fd",
+      "status": "INCOMPLETE_CAPTURE_METADATA_SERIALIZATION",
+      "measured_physics_steps": 0,
+      "reason": "NumPy bool_ camera configured_pose.up_fallback_used cannot be serialized; fails before clearance selection and measured motion.",
+      "actual_capture_plus_audit_seconds": 15.942698122991715,
+      "cumulative_case_seconds": 845.2514062500268,
+      "remaining_case_seconds": 354.7485937499732,
+      "audit_sha256": "4bd5bb649c4c0ca59bf2e41a2cbeda528af8d6cc9c8ef30a79134da6b3761769",
+      "proceed_gate_passed": false
+    }
+  },
+  "H": {
+    "control": {
+      "status": "RESERVED_NOT_STARTED"
+    },
+    "pick": {
+      "status": "RESERVED_NOT_STARTED"
+    }
+  },
+  "budget": "Prospective1200 seconds per I or H case, including every original/replayed audit and capture. Original600s experiment remains saved as failed. No automatic extension.",
+  "scope": "Native extraction benchmark only. No successful pick/hold/extraction, classification, transfer or placement established by implementation or a stationary control.",
+  "baseline_scientific_protocol_sha256": "9fa39756db2343ee2b96caa85c7ecfe7528e704012c8defbbb25a3ef80aff8ad",
+  "remote_compute": {
+    "Alex_matching_Isaac_runtime_available": false,
+    "source": "User confirmation2026-10-25",
+    "use": "Continue verified local runtime; no remote Isaac equivalence claimed."
+  },
+  "classification_scope": {
+    "owner": "This LEGO pipeline; Challenge1 industrial-brick classifier is unrelated.",
+    "recommended_primary_timing": "Selected segmentation region before grasp",
+    "secondary": "Held C920 confirmation only after framing/focus/association evidence",
+    "status": "Recommended policy; not yet implemented or validated color accuracy."
+  },
+  "diagnostic": {
+    "status": "PASS_COMPLETED",
+    "attempt_limit": 1,
+    "maximum_active_seconds": 30,
+    "scope": "First candidate only: FOV/depth/unresolved clearance categories and projection-only alternate views; fixed exact cache-equivalence comparison.",
+    "new_physics_steps": 0,
+    "job_id": 1803,
+    "snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T102948.326898Z-stage2-pick-clearance-diagnostic-r2",
+    "actual_seconds": 11.987593902013032,
+    "cumulative_case_seconds": 829.3087081270351,
+    "cache_equivalence_passed": true,
+    "fixture_count": 25,
+    "exact_replay_counts": true,
+    "classification_counts": {
+      "out_of_image": 85162,
+      "self_known_proprio_skip": 7522,
+      "observed_ray_free": 181616,
+      "UNRESOLVED_OCCLUDED_OR_OBSTRUCTED": 20
+    }
+  },
+  "round1_scientific_protocol_sha256": "0d902e26bc4f11eda1d668b5e92fc97a11f360ef40f26423247f86681a764471",
+  "approach_reassessment": {
+    "status": "THREE_ROUND_ALL_PATH_RAY_CERTIFICATE_APPROACH_CLOSED_FAILED",
+    "reason": "Wide view establishes additional witnesses but robot occlusion leaves all candidates unsupported. Last all-candidate capture181.135s exceeds remaining173.449s before motion/audit; do not spend round3 on blind extra camera or relax unknown into free.",
+    "spent_case_seconds": 1046.8512451360293,
+    "case_limit_seconds": 1800,
+    "third_improvement_round_used": true,
+    "reserved_H_untouched": true,
+    "next_design_question": "Explicit one-off simulation-only finger-contact-guarded feasibility admission. Does not call unknown free, reinterpret old failures, or create another tuning pool. Fresh matched control required."
+  },
+  "exploratory_followup": {
+    "source": "experiments/stage2_exploratory_20261025",
+    "status": "SOURCE_REVIEW_BEFORE_ANY_EXECUTION",
+    "one_fresh_control_then_one_conditional_I_pick": true,
+    "prior_cost_seconds": 1046.8512451360293,
+    "aggregate_ceiling_seconds": 1800,
+    "no_H_or_tuning_pool": true,
+    "scene": "Historical1805 scene only; new physical measurements not validated."
+  }
+}

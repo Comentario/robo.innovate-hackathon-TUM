@@ -1,0 +1,109 @@
+{
+  "schema_version": "1.0",
+  "seed": 8,
+  "product_id": "ACME-King-reference",
+  "geometry": {
+    "rows": 4,
+    "columns": 10,
+    "input_layers": 20,
+    "output_layers": 14,
+    "stacks_per_cart": 36,
+    "brick_mm": [
+      245,
+      67,
+      69
+    ]
+  },
+  "orientation_assumption": "10 short edges across, 4 long edges deep; footprint 0.67 x 0.98 m. Counts/dimensions are organizer data; orientation needs confirmation.",
+  "brick_mass_kg": 1.8,
+  "layer_tool_mass_kg": 30,
+  "input_stacks": 4,
+  "cells": 8,
+  "input_bricks_per_hour": 7500,
+  "target_conforming_bricks_per_hour": 1500,
+  "shades": [
+    "Warm",
+    "Copper",
+    "Russet"
+  ],
+  "recipe": [
+    0.3333333333333333,
+    0.3333333333333333,
+    0.3333333333333333
+  ],
+  "defect_rate": 0.12,
+  "uncertain_rate": 0.04,
+  "reinspection_resolution": 0.85,
+  "false_accept_rate": 0.0,
+  "false_reject_rate": 0.0,
+  "buffer_cells_per_shade": 20,
+  "reject_capacity": 500,
+  "quarantine_capacity": 200,
+  "accepted_overflow_capacity": 400,
+  "speeds": {
+    "belt_m_s": 0.3,
+    "buffer_m_s": 0.3,
+    "transfer_m_s": 1.0,
+    "selector_m_s": 1.2,
+    "gantry_xy_m_s": 1.0,
+    "gantry_z_m_s": 0.7,
+    "pallet_m_s": 0.25,
+    "elevator_m_s": 0.12
+  },
+  "dwell": {
+    "grip_s": 0.25,
+    "release_s": 0.2,
+    "settle_s": 0.1,
+    "exposure_s": 0.015,
+    "inference_s": 0.12,
+    "sensor_s": 0.01,
+    "centering_s": 0.4
+  },
+  "faults": {
+    "jam_cell": null,
+    "jam_at_piece": 15,
+    "alignment_layer": 5,
+    "alignment_error_m": 0,
+    "disabled_cells": [],
+    "critical_sensor_layer": null,
+    "piece_pose_fault": "B00000",
+    "piece_yaw_deg": 0,
+    "hold_down_fault_bay": null
+  },
+  "max_simulation_seconds": 20000,
+  "provenance": {
+    "official": "UTUM Brick Coloration slide 18: 800 input, 560 output, 10x4x20 to 10x4x14; dimensions 245x67x69 mm.",
+    "mass": "1.8 kg engineering assumption, not verified ACME SKU. Comparable US Brick King: 3.36-4.2 lb.",
+    "timing": "Selected engineering speeds and dwell, not measured factory cycles. Derived per movement; no acceleration/contact dynamics. Source offered rate 7500/h is a target, not achieved capacity. Eight cells and 1.0 m/s high-load gantry profile are the scaled candidate; compare equal profiles across cell counts.",
+    "autonomy": "Automatic brick sorting into two stationary finite discard bins. Cart removal/emptying is outside the modeled batch; full-bin interlock stops upstream collection.",
+    "baseline": "Labor shortage, not verified labor savings. Mentor estimate 20-25 workers/shift; no human station modeled, no headcount removal or ROI claim.",
+    "mechanical_revision": "12: supported side-clamp stack tool, clearance-routed reserve handling, no-three spatial mix and scene-envelope audit. Capacity remains an unvalidated engineering estimate.",
+    "motion": "Distance/selected speed plus explicit dwell; no resolved acceleration ramps. Nominal reference, not commissioned capacity.",
+    "capacity_revision": "Eight cells, 20 zones per tone selected for hardware efficiency. 544 inspection/tone drives; reject, reserve and selector are separate physical resources. Compare equal-condition 20/24/30-zone runs."
+  },
+  "layout": "dual",
+  "logistics": {
+    "cart_m_s": 0.4,
+    "bridge_xy_m_s": 0.6,
+    "bridge_z_m_s": 0.35,
+    "fork_tool_kg": 400,
+    "bridge_capacity_kg": 2000,
+    "rail_cart_capacity_kg": 8000,
+    "discard_cart_capacity": 240,
+    "discard_carts_per_line": 1,
+    "unload_service_s": 20,
+    "discard_collection_available": true,
+    "discard_mode": "fixed",
+    "clamp_stroke_m": 0.17,
+    "clamp_m_s": 0.1,
+    "clamp_confirm_s": 0.3
+  },
+  "accumulation_mode": "zpa",
+  "stack_grip_mode": "supported_side_clamp",
+  "picker_clearance_m": 3.05,
+  "max_same_shade_run": 2,
+  "motion_acceleration": null,
+  "decoupled_reserve": true,
+  "timing_basis": "nominal constant-speed cycle reference",
+  "stretch_target_conforming_bricks_per_hour": 3000
+}

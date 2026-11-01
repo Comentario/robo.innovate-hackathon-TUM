@@ -1,0 +1,152 @@
+{
+  "schema": "declared-brick-runtime-material-result-v1",
+  "runtime_job_id": 1828,
+  "runtime_source_commit": "1955636",
+  "runtime_snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T174525.554088Z-brick-material-runtime",
+  "original_runtime_overall_result": "FAIL_PRESERVED",
+  "original_failed_checks": [
+    "authoring_preserved_/World/envs/env_0/contact_coupon/BodyCollider",
+    "authoring_preserved_/World/envs/env_0/contact_coupon/TopCollider",
+    "authoring_scope_only"
+  ],
+  "adjudication_job_id": 1829,
+  "adjudication_source_commit": "85ffe4c",
+  "adjudication_snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T175236.440880Z-brick-material-adjudication",
+  "adjudicated_diagnostic_complete": true,
+  "runtime_materials_verified": true,
+  "contract_checks_passed": 75,
+  "contract_checks_total": 75,
+  "runtime_comparisons_passed": 15,
+  "runtime_comparisons_total": 15,
+  "coupon_material_values_unordered": [
+    [
+      0.5,
+      0.4000000059604645,
+      0.10000000149011612
+    ],
+    [
+      1.0,
+      0.800000011920929,
+      0.20000000298023224
+    ]
+  ],
+  "previous_1823_coupon_material_values_unordered": [
+    [
+      0.5,
+      0.5,
+      0.0
+    ],
+    [
+      0.5,
+      0.5,
+      0.0
+    ]
+  ],
+  "all_finger_materials_and_contact_rest_offsets_unchanged": true,
+  "state_settings_properties_fixture_unchanged": true,
+  "native_source": {
+    "parts": 301,
+    "connections": 930
+  },
+  "isolated_coupon": {
+    "parts": 1,
+    "connections": 0
+  },
+  "initialization": {
+    "explicit_preassembly_physics_steps": 1,
+    "measured_steps": 0,
+    "inherited_targeted_mass_restoration": true,
+    "scope": "Existing reset/init/native preassembly and mass preservation retained; diagnostic makes no setters or extra steps."
+  },
+  "shape_row_to_collider_mapping": "UNKNOWN",
+  "BODY_material_mapped": false,
+  "pair_friction": "UNKNOWN",
+  "retention_claim": false,
+  "hardware_claim": false,
+  "global_model_adopted": false,
+  "automatic_retry": false,
+  "timing": {
+    "runtime": {
+      "phases": [
+        {
+          "phase": "capture",
+          "wall_seconds": 14.332001795002725,
+          "returncode": 0,
+          "cleanup": "complete_marker_cleanup",
+          "capture_completed": true
+        },
+        {
+          "phase": "audit",
+          "wall_seconds": 0.11390856999787502,
+          "returncode": 1
+        }
+      ],
+      "actual_capture_plus_audit_seconds": 14.446400657994673,
+      "prior_case_seconds": 2682.9455824780234,
+      "cumulative_case_seconds": 2697.5923319120234,
+      "case_limit_seconds": 2800,
+      "maximum_active_seconds": 60,
+      "within_budget": true,
+      "diagnostic_complete": false,
+      "runtime_materials_verified": false,
+      "physics_extraction_passed": false,
+      "physical_retry_authorized": false,
+      "automatic_retry": false,
+      "audit_sha256": "657e489ec6552a07f098863ac58638fcdeb3cb81a411fac0df7685ace7ab6b91",
+      "supervised_cumulative_case_seconds": 2697.391983136018,
+      "full_pueue_job_seconds": 14.646749434,
+      "pueue_job_id": 1828,
+      "pueue_start": "2026-10-25T18:45:25.854036002+01:00",
+      "pueue_end": "2026-10-25T18:45:40.500785436+01:00",
+      "full_pueue_timing_authoritative": true,
+      "remaining_case_seconds": 102.40766808797662
+    },
+    "saved_json_adjudication": {
+      "original_job_id": 1828,
+      "adjudication_job_id": 1829,
+      "prior_case_seconds": 2697.5923319120234,
+      "full_pueue_job_seconds": 0.538284444,
+      "cumulative_case_seconds": 2698.1306163560234,
+      "case_limit_seconds": 2800,
+      "remaining_case_seconds": 101.86938364397656,
+      "maximum_active_seconds": 5,
+      "pueue_start": "2026-10-25T18:52:36.734462730+01:00",
+      "pueue_end": "2026-10-25T18:52:37.272747174+01:00",
+      "original_runtime_audit_failed_preserved": true,
+      "simulation_started": false
+    }
+  },
+  "adjudication": {
+    "original_job_id": 1828,
+    "original_overall_result": "FAIL_PRESERVED",
+    "saved_inputs_unchanged_before_and_after": true,
+    "captured_code_context": "/home/faps/dev/github/robo.innovate26/runs/20261025T174525.554088Z-brick-material-runtime/code",
+    "new_auditor_source": {
+      "path": "/home/faps/dev/github/robo.innovate26/runs/20261025T175236.440880Z-brick-material-adjudication/code/evaluate.py",
+      "sha256": "90af14a79657a5074d50d4cd3a74cc6a1aef50e65bf75dc4763d61fcf168ae5d"
+    },
+    "adjudication_protocol_sha256": "e2cda0f53acc30762e612064fe15fa9c0e36c3e65e441ae778044d4382309532",
+    "allowed_semantic_changes": [
+      "Only target Body/Top may gain exactly one MaterialBindingAPI insertion; removal reproduces entire prior API sequence. No global sorting/pruning.",
+      "Only new Scope may contain empty builtin proxyPrim relationship, supported by pinned helper and installed schema. No other/nonempty relationships allowed."
+    ],
+    "schema_relation_authorship_limit": "Snapshot did not record relationship authored-opinion flags. Empty builtin interpretation comes from pinned Scope.Define helper and installed USD schema; no generic authored-absence claim.",
+    "simulation_started": false,
+    "physics_steps": 0,
+    "retention_claim": false,
+    "seconds": 0.1467832909838762
+  },
+  "original_audit_sha256": "657e489ec6552a07f098863ac58638fcdeb3cb81a411fac0df7685ace7ab6b91",
+  "adjudication_audit_sha256": "a90356f4513e840ba02cfd639d8b27fcd6493a7d3e5586d695b1ab9e7d0ada90",
+  "independent_reviews": {
+    "evaluator": "Accepts 75 contract/15 runtime checks. Original failed audit preserved; material multiset only, no row attribution, traction or grip claim.",
+    "reviewer": "Accepts narrowly corrected metadata adjudication with unchanged pinned inputs. No runtime rerun, physical criterion change, global adoption or fourth fixture trial."
+  },
+  "reproducible_commands": [
+    "python3 experiments/brick_material_runtime_20261025/submit.py (original1955636 submission; one runtime job only)",
+    "python3 experiments/brick_material_runtime_20261025/submit_adjudication.py (original85ffe4c saved-JSON-only submission; one audit job only)",
+    "Exact runtime command/environment: /home/faps/dev/github/robo.innovate26/runs/20261025T174525.554088Z-brick-material-runtime/launch.sh",
+    "Exact saved-audit command: /home/faps/dev/github/robo.innovate26/runs/20261025T175236.440880Z-brick-material-adjudication/launch.sh"
+  ],
+  "next_dependency": "Before any further contact trial, reconcile the declared simulation grasp width/depth with the successful operator grasp or explicitly review a different model contract. Do not repeat closed fixture tuning or infer a traction cure from corrected coefficients."
+}

@@ -1,0 +1,6 @@
+{
+  "rows": 2, "columns": 3, "layers": 2,
+  "target_ratios": {"dark": 1, "medium": 1, "light": 1},
+  "mode": "smooth", "shortage_policy": "reject",
+  "tone_values": {"dark": 0.0, "medium": 0.5, "light": 1.0}
+}

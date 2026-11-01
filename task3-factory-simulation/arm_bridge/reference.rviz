@@ -1,0 +1,89 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /Global Options1
+        - /Status1
+        - /Simulated brick placements1
+  - Class: rviz_common/Views
+    Name: Views
+Visualization Manager:
+  Class: ""
+  Enabled: true
+  Name: root
+  Value: true
+  Global Options:
+    Background Color: 26; 34; 40
+    Fixed Frame: world
+    Frame Rate: 30
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Ground grid
+      Enabled: true
+      Value: true
+      Alpha: 0.5
+      Cell Size: 0.1
+      Plane Cell Count: 40
+      Normal Cell Count: 0
+      Reference Frame: <Fixed Frame>
+      Plane: XY
+      Color: 75; 90; 100
+      Line Style:
+        Line Width: 0.03
+        Value: Lines
+    - Class: rviz_default_plugins/RobotModel
+      Name: Panda reference arm
+      Enabled: true
+      Value: true
+      Description Source: Topic
+      Description Topic:
+        Value: /robot_description
+        Reliability Policy: Reliable
+        Durability Policy: Transient Local
+      Visual Enabled: true
+      Collision Enabled: false
+    - Class: rviz_default_plugins/MarkerArray
+      Name: Simulated brick placements
+      Enabled: true
+      Value: true
+      Namespaces:
+        bricks: true
+        labels: false
+        demo_status: true
+        preserved_outline: true
+        stations: true
+      Topic:
+        Value: /munich_arm/markers
+        Reliability Policy: Reliable
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Depth: 1
+  Tools:
+    - Class: rviz_default_plugins/Interact
+      Hide Inactive Objects: true
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/FocusCamera
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Name: Current View
+      Value: Orbit (rviz)
+      Target Frame: <Fixed Frame>
+      Near Clip Distance: 0.01
+      Distance: 1.8
+      Pitch: 0.65
+      Yaw: 0.8
+      Focal Point:
+        X: 0.3
+        Y: 0.0
+        Z: 0.15
+    Saved: ~
+Window Geometry:
+  Width: 1200
+  Height: 800
+  X: 40
+  Y: 40
+  Hide Left Dock: false
+  Hide Right Dock: false

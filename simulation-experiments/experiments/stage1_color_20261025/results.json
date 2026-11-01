@@ -1,0 +1,599 @@
+{
+  "schema": "pregrasp-color-results-v1",
+  "status": "PASS_LIMITED_SAVED_SIMULATION_COLOR_BENCHMARK",
+  "job_id": 1806,
+  "source_commit": "cd0cc5574050e8014dc97e00a06d5ea487e6f18d",
+  "snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T112235.070296Z-stage1-color",
+  "maximum_active_seconds": 60,
+  "actual_pueue_active_seconds": 2.045347,
+  "inference_seconds": 1.7397996970103122,
+  "audit_seconds": 0.032123565004440024,
+  "protocol_sha256": "72a7d3abd3624293e5f3cb9cc3561183ad0df7566e2197b8a5dbca945ace3420",
+  "audit_sha256": "cf9677bceca1c83814ff7a88f614aebcf4c8e7c2ee2b6463c7ed0b21d6718295",
+  "versions": {
+    "python": "3.11.15 existing unitree_sim_env",
+    "opencv": "4.10.0",
+    "numpy": "1.26.0",
+    "model_or_weights": "None; fixed observed-RGB Lab reference medians plus frozen saved R3 detections"
+  },
+  "baseline": "No implemented color classifier: all UNKNOWN. Historical mock fixtures are not actual classifications.",
+  "summary": {
+    "all_visible_observations": 98,
+    "visible_unique_objects": 25,
+    "eligible_present_observations": 35,
+    "eligible_present_unique_objects": 14,
+    "known": 35,
+    "correct": 35,
+    "wrong": 0,
+    "unknown": 0,
+    "known_label_precision": 1.0,
+    "color_coverage_eligible_present": 1.0,
+    "correct_color_recall_eligible_present": 1.0,
+    "correct_color_recall_all_visible": 0.35714285714285715,
+    "per_label": {
+      "tan": {
+        "visible_observations": 12,
+        "visible_unique_objects": 3,
+        "eligible_present_observations": 9,
+        "correct": 9,
+        "correct_unique_objects": 3,
+        "known": 9,
+        "unknown": 0,
+        "precision": 1.0,
+        "correct_color_recall_all_visible": 0.75,
+        "validated": true
+      },
+      "brown": {
+        "visible_observations": 23,
+        "visible_unique_objects": 6,
+        "eligible_present_observations": 5,
+        "correct": 5,
+        "correct_unique_objects": 2,
+        "known": 5,
+        "unknown": 0,
+        "precision": 1.0,
+        "correct_color_recall_all_visible": 0.21739130434782608,
+        "validated": true
+      },
+      "dark_red": {
+        "visible_observations": 19,
+        "visible_unique_objects": 5,
+        "eligible_present_observations": 6,
+        "correct": 6,
+        "correct_unique_objects": 3,
+        "known": 6,
+        "unknown": 0,
+        "precision": 1.0,
+        "correct_color_recall_all_visible": 0.3157894736842105,
+        "validated": true
+      },
+      "bright_red": {
+        "visible_observations": 32,
+        "visible_unique_objects": 8,
+        "eligible_present_observations": 8,
+        "correct": 8,
+        "correct_unique_objects": 3,
+        "known": 8,
+        "unknown": 0,
+        "precision": 1.0,
+        "correct_color_recall_all_visible": 0.25,
+        "validated": true
+      },
+      "ochre": {
+        "visible_observations": 12,
+        "visible_unique_objects": 3,
+        "eligible_present_observations": 7,
+        "correct": 7,
+        "correct_unique_objects": 3,
+        "known": 7,
+        "unknown": 0,
+        "precision": 1.0,
+        "correct_color_recall_all_visible": 0.5833333333333334,
+        "validated": true
+      }
+    },
+    "confusion": {
+      "tan": {
+        "tan": 9
+      },
+      "brown": {
+        "brown": 5
+      },
+      "dark_red": {
+        "dark_red": 6
+      },
+      "bright_red": {
+        "bright_red": 8
+      },
+      "ochre": {
+        "ochre": 7
+      }
+    },
+    "available_labels": [
+      "tan",
+      "brown",
+      "dark_red",
+      "bright_red",
+      "ochre"
+    ],
+    "unvalidated_labels": [],
+    "all_available_labels_validated": true,
+    "unverified_confident_calls": 0,
+    "invalid_control_confident_calls": 0,
+    "association_aware_confident_precision": 1.0,
+    "precision_scope": "known_label_precision is conditional on eligible one-to-one associations; association_aware_confident_precision includes unverified/control confident calls in its denominator"
+  },
+  "by_split": {
+    "development": {
+      "all_visible_observations": 47,
+      "visible_unique_objects": 12,
+      "eligible_present_observations": 18,
+      "eligible_present_unique_objects": 8,
+      "known": 18,
+      "correct": 18,
+      "wrong": 0,
+      "unknown": 0,
+      "known_label_precision": 1.0,
+      "color_coverage_eligible_present": 1.0,
+      "correct_color_recall_eligible_present": 1.0,
+      "correct_color_recall_all_visible": 0.3829787234042553,
+      "per_label": {
+        "tan": {
+          "visible_observations": 4,
+          "visible_unique_objects": 1,
+          "eligible_present_observations": 3,
+          "correct": 3,
+          "correct_unique_objects": 1,
+          "known": 3,
+          "unknown": 0,
+          "precision": 1.0,
+          "correct_color_recall_all_visible": 0.75,
+          "validated": true
+        },
+        "brown": {
+          "visible_observations": 8,
+          "visible_unique_objects": 2,
+          "eligible_present_observations": 3,
+          "correct": 3,
+          "correct_unique_objects": 1,
+          "known": 3,
+          "unknown": 0,
+          "precision": 1.0,
+          "correct_color_recall_all_visible": 0.375,
+          "validated": true
+        },
+        "dark_red": {
+          "visible_observations": 19,
+          "visible_unique_objects": 5,
+          "eligible_present_observations": 6,
+          "correct": 6,
+          "correct_unique_objects": 3,
+          "known": 6,
+          "unknown": 0,
+          "precision": 1.0,
+          "correct_color_recall_all_visible": 0.3157894736842105,
+          "validated": true
+        },
+        "bright_red": {
+          "visible_observations": 12,
+          "visible_unique_objects": 3,
+          "eligible_present_observations": 5,
+          "correct": 5,
+          "correct_unique_objects": 2,
+          "known": 5,
+          "unknown": 0,
+          "precision": 1.0,
+          "correct_color_recall_all_visible": 0.4166666666666667,
+          "validated": true
+        },
+        "ochre": {
+          "visible_observations": 4,
+          "visible_unique_objects": 1,
+          "eligible_present_observations": 1,
+          "correct": 1,
+          "correct_unique_objects": 1,
+          "known": 1,
+          "unknown": 0,
+          "precision": 1.0,
+          "correct_color_recall_all_visible": 0.25,
+          "validated": true
+        }
+      },
+      "confusion": {
+        "tan": {
+          "tan": 3
+        },
+        "brown": {
+          "brown": 3
+        },
+        "dark_red": {
+          "dark_red": 6
+        },
+        "bright_red": {
+          "bright_red": 5
+        },
+        "ochre": {
+          "ochre": 1
+        }
+      },
+      "available_labels": [
+        "tan",
+        "brown",
+        "dark_red",
+        "bright_red",
+        "ochre"
+      ],
+      "unvalidated_labels": [],
+      "all_available_labels_validated": true
+    },
+    "reserved": {
+      "all_visible_observations": 51,
+      "visible_unique_objects": 13,
+      "eligible_present_observations": 17,
+      "eligible_present_unique_objects": 6,
+      "known": 17,
+      "correct": 17,
+      "wrong": 0,
+      "unknown": 0,
+      "known_label_precision": 1.0,
+      "color_coverage_eligible_present": 1.0,
+      "correct_color_recall_eligible_present": 1.0,
+      "correct_color_recall_all_visible": 0.3333333333333333,
+      "per_label": {
+        "tan": {
+          "visible_observations": 8,
+          "visible_unique_objects": 2,
+          "eligible_present_observations": 6,
+          "correct": 6,
+          "correct_unique_objects": 2,
+          "known": 6,
+          "unknown": 0,
+          "precision": 1.0,
+          "correct_color_recall_all_visible": 0.75,
+          "validated": true
+        },
+        "brown": {
+          "visible_observations": 15,
+          "visible_unique_objects": 4,
+          "eligible_present_observations": 2,
+          "correct": 2,
+          "correct_unique_objects": 1,
+          "known": 2,
+          "unknown": 0,
+          "precision": 1.0,
+          "correct_color_recall_all_visible": 0.13333333333333333,
+          "validated": true
+        },
+        "dark_red": {
+          "visible_observations": 0,
+          "visible_unique_objects": 0,
+          "eligible_present_observations": 0,
+          "correct": 0,
+          "correct_unique_objects": 0,
+          "known": 0,
+          "unknown": 0,
+          "precision": null,
+          "correct_color_recall_all_visible": null,
+          "validated": false
+        },
+        "bright_red": {
+          "visible_observations": 20,
+          "visible_unique_objects": 5,
+          "eligible_present_observations": 3,
+          "correct": 3,
+          "correct_unique_objects": 1,
+          "known": 3,
+          "unknown": 0,
+          "precision": 1.0,
+          "correct_color_recall_all_visible": 0.15,
+          "validated": true
+        },
+        "ochre": {
+          "visible_observations": 8,
+          "visible_unique_objects": 2,
+          "eligible_present_observations": 6,
+          "correct": 6,
+          "correct_unique_objects": 2,
+          "known": 6,
+          "unknown": 0,
+          "precision": 1.0,
+          "correct_color_recall_all_visible": 0.75,
+          "validated": true
+        }
+      },
+      "confusion": {
+        "tan": {
+          "tan": 6
+        },
+        "brown": {
+          "brown": 2
+        },
+        "dark_red": {},
+        "bright_red": {
+          "bright_red": 3
+        },
+        "ochre": {
+          "ochre": 6
+        }
+      },
+      "available_labels": [
+        "tan",
+        "brown",
+        "bright_red",
+        "ochre"
+      ],
+      "unvalidated_labels": [
+        "dark_red"
+      ],
+      "all_available_labels_validated": true
+    }
+  },
+  "by_view": {
+    "diagnostic_oblique": {
+      "all_visible_observations": 25,
+      "visible_unique_objects": 25,
+      "eligible_present_observations": 0,
+      "eligible_present_unique_objects": 0,
+      "known": 0,
+      "correct": 0,
+      "wrong": 0,
+      "unknown": 0,
+      "known_label_precision": null,
+      "color_coverage_eligible_present": null,
+      "correct_color_recall_eligible_present": null,
+      "correct_color_recall_all_visible": 0.0,
+      "per_label": {
+        "tan": {
+          "visible_observations": 3,
+          "visible_unique_objects": 3,
+          "eligible_present_observations": 0,
+          "correct": 0,
+          "correct_unique_objects": 0,
+          "known": 0,
+          "unknown": 0,
+          "precision": null,
+          "correct_color_recall_all_visible": 0.0,
+          "validated": false
+        },
+        "brown": {
+          "visible_observations": 6,
+          "visible_unique_objects": 6,
+          "eligible_present_observations": 0,
+          "correct": 0,
+          "correct_unique_objects": 0,
+          "known": 0,
+          "unknown": 0,
+          "precision": null,
+          "correct_color_recall_all_visible": 0.0,
+          "validated": false
+        },
+        "dark_red": {
+          "visible_observations": 5,
+          "visible_unique_objects": 5,
+          "eligible_present_observations": 0,
+          "correct": 0,
+          "correct_unique_objects": 0,
+          "known": 0,
+          "unknown": 0,
+          "precision": null,
+          "correct_color_recall_all_visible": 0.0,
+          "validated": false
+        },
+        "bright_red": {
+          "visible_observations": 8,
+          "visible_unique_objects": 8,
+          "eligible_present_observations": 0,
+          "correct": 0,
+          "correct_unique_objects": 0,
+          "known": 0,
+          "unknown": 0,
+          "precision": null,
+          "correct_color_recall_all_visible": 0.0,
+          "validated": false
+        },
+        "ochre": {
+          "visible_observations": 3,
+          "visible_unique_objects": 3,
+          "eligible_present_observations": 0,
+          "correct": 0,
+          "correct_unique_objects": 0,
+          "known": 0,
+          "unknown": 0,
+          "precision": null,
+          "correct_color_recall_all_visible": 0.0,
+          "validated": false
+        }
+      },
+      "confusion": {
+        "tan": {},
+        "brown": {},
+        "dark_red": {},
+        "bright_red": {},
+        "ochre": {}
+      },
+      "available_labels": [
+        "tan",
+        "brown",
+        "dark_red",
+        "bright_red",
+        "ochre"
+      ],
+      "unvalidated_labels": [
+        "tan",
+        "brown",
+        "dark_red",
+        "bright_red",
+        "ochre"
+      ],
+      "all_available_labels_validated": false
+    },
+    "diagnostic_table_top": {
+      "all_visible_observations": 73,
+      "visible_unique_objects": 25,
+      "eligible_present_observations": 35,
+      "eligible_present_unique_objects": 14,
+      "known": 35,
+      "correct": 35,
+      "wrong": 0,
+      "unknown": 0,
+      "known_label_precision": 1.0,
+      "color_coverage_eligible_present": 1.0,
+      "correct_color_recall_eligible_present": 1.0,
+      "correct_color_recall_all_visible": 0.4794520547945205,
+      "per_label": {
+        "tan": {
+          "visible_observations": 9,
+          "visible_unique_objects": 3,
+          "eligible_present_observations": 9,
+          "correct": 9,
+          "correct_unique_objects": 3,
+          "known": 9,
+          "unknown": 0,
+          "precision": 1.0,
+          "correct_color_recall_all_visible": 1.0,
+          "validated": true
+        },
+        "brown": {
+          "visible_observations": 17,
+          "visible_unique_objects": 6,
+          "eligible_present_observations": 5,
+          "correct": 5,
+          "correct_unique_objects": 2,
+          "known": 5,
+          "unknown": 0,
+          "precision": 1.0,
+          "correct_color_recall_all_visible": 0.29411764705882354,
+          "validated": true
+        },
+        "dark_red": {
+          "visible_observations": 14,
+          "visible_unique_objects": 5,
+          "eligible_present_observations": 6,
+          "correct": 6,
+          "correct_unique_objects": 3,
+          "known": 6,
+          "unknown": 0,
+          "precision": 1.0,
+          "correct_color_recall_all_visible": 0.42857142857142855,
+          "validated": true
+        },
+        "bright_red": {
+          "visible_observations": 24,
+          "visible_unique_objects": 8,
+          "eligible_present_observations": 8,
+          "correct": 8,
+          "correct_unique_objects": 3,
+          "known": 8,
+          "unknown": 0,
+          "precision": 1.0,
+          "correct_color_recall_all_visible": 0.3333333333333333,
+          "validated": true
+        },
+        "ochre": {
+          "visible_observations": 9,
+          "visible_unique_objects": 3,
+          "eligible_present_observations": 7,
+          "correct": 7,
+          "correct_unique_objects": 3,
+          "known": 7,
+          "unknown": 0,
+          "precision": 1.0,
+          "correct_color_recall_all_visible": 0.7777777777777778,
+          "validated": true
+        }
+      },
+      "confusion": {
+        "tan": {
+          "tan": 9
+        },
+        "brown": {
+          "brown": 5
+        },
+        "dark_red": {
+          "dark_red": 6
+        },
+        "bright_red": {
+          "bright_red": 8
+        },
+        "ochre": {
+          "ochre": 7
+        }
+      },
+      "available_labels": [
+        "tan",
+        "brown",
+        "dark_red",
+        "bright_red",
+        "ochre"
+      ],
+      "unvalidated_labels": [],
+      "all_available_labels_validated": true
+    }
+  },
+  "source_decisions": {
+    "present/known": 41,
+    "uncertain/unknown": 74,
+    "missing/unknown": 1
+  },
+  "excluded_calibration_ids": [
+    "brick_9_2_0",
+    "brick_9_4_4",
+    "brick_9_5_0",
+    "brick_9_5_1",
+    "brick_9_5_2"
+  ],
+  "excluded_calibration_observations": 6,
+  "checks": {
+    "frozen_frame_inventory": true,
+    "final_first_no_postscore_tuning": true,
+    "frozen_saved_inputs": true,
+    "human_reference_binding": true,
+    "reference_crosswalk_consistent_all_states": true,
+    "classifier_completed_fixed_sources": true,
+    "prototype_label_contract": true,
+    "prototypes_ready": true,
+    "f000_exact_candidate_frame_join": true,
+    "f000_one_to_one_scored_association": true,
+    "f001_exact_candidate_frame_join": true,
+    "f001_one_to_one_scored_association": true,
+    "f002_exact_candidate_frame_join": true,
+    "f002_one_to_one_scored_association": true,
+    "f004_exact_candidate_frame_join": true,
+    "f004_one_to_one_scored_association": true,
+    "f006_exact_candidate_frame_join": true,
+    "all_output_contracts": true,
+    "no_unverified_confident_calls": true,
+    "invalid_top_no_confident_color": true,
+    "mixed_present_color_gate_exercised": true,
+    "mixed_control_abstains_on_color": true,
+    "no_wrong_nonreference_confident_labels": true,
+    "each_available_color_correct_nonreference": true
+  },
+  "mixed_control": {
+    "decision": "unknown",
+    "reasons": [
+      "mixed_or_inconsistent_pixels"
+    ],
+    "valid_pixels": 2375,
+    "pixel_agreement": 0.5052631578947369
+  },
+  "independent_review": "Evaluator and reviewer accept limited pregrasp color benchmark; all source and audit checks reviewed.",
+  "next_action": "Reuse this unchanged function and frozen observed-RGB references when sensor-selected target transaction exists; Stage2 presently abstains, so no extraction/held identity/routing integration credit.",
+  "no_further_tuning_or_jobs_authorized_this_version": true,
+  "reproducible_commands": [
+    "/home/faps/miniforge3/envs/unitree_sim_env/bin/python experiments/stage1_color_20261025/test_synthetic.py",
+    "/home/faps/miniforge3/envs/unitree_sim_env/bin/python experiments/stage1_color_20261025/evaluation/test_synthetic.py",
+    "python3 experiments/stage1_color_20261025/submit.py (original submission from cd0cc55; no automatic resubmission)",
+    "Exact queued inference/evaluation commands: /home/faps/dev/github/robo.innovate26/runs/20261025T112235.070296Z-stage1-color/pipeline.sh"
+  ],
+  "limitations": [
+    "Correlated views and largely same objects across states, not independent-stack generalization.",
+    "Ideal rendered RGB-D and configured synthetic camera, no real optics/colorimetry equivalence.",
+    "A source color result does not establish held identity or gripper accessibility.",
+    "bright_red and ochre are observed color names, not validated quality decisions.",
+    "Reserved group has no visible dark_red objects; that class is not reserved-set validated.",
+    "All classification predictions arise from overhead R3 PRESENT candidates; oblique no-candidate is not successful color validation.",
+    "No defect/routing truth inferred from provisional color names.",
+    "No actual Stage2 integration or physical-camera calibration/focus validation."
+  ]
+}

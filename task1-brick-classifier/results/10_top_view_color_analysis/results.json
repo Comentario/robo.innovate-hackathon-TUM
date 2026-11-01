@@ -1,0 +1,228 @@
+{
+  "counts": {
+    "labeled": 191,
+    "solid": 136,
+    "solid_clean": 127
+  },
+  "separability_top_solid_clean": {
+    "L_med": 0.629,
+    "L_mode": 0.608,
+    "C_med": 0.762,
+    "C_mode": 0.738,
+    "a_med": 0.737,
+    "b_med": 0.782,
+    "hue": 0.589,
+    "dL_bg": 0.583,
+    "stain_share": 0.671,
+    "speck_share": 0.678,
+    "L_iqr": 0.546
+  },
+  "separability_standing_calibration": {
+    "L_med": 0.704,
+    "L_mode": 0.668,
+    "C_med": 0.544,
+    "C_mode": 0.573,
+    "a_med": 0.612,
+    "b_med": 0.528,
+    "hue": 0.656,
+    "L_iqr": 0.555
+  },
+  "band_L_med_all_data": [
+    57.2,
+    68.7
+  ],
+  "rules_solid_clean": {
+    "band L_med": {
+      "in_sample": {
+        "accuracy": 0.787,
+        "balanced_accuracy": 0.858,
+        "good_recall": 1.0,
+        "bad_recall": 0.716,
+        "correct": 100,
+        "n": 127
+      },
+      "leave_one_photo_out": {
+        "accuracy": 0.772,
+        "balanced_accuracy": 0.827,
+        "good_recall": 0.938,
+        "bad_recall": 0.716,
+        "correct": 98,
+        "n": 127
+      },
+      "leave_one_block_out": {
+        "accuracy": 0.756,
+        "balanced_accuracy": 0.816,
+        "good_recall": 0.938,
+        "bad_recall": 0.695,
+        "correct": 96,
+        "n": 127
+      }
+    },
+    "band L_mode": {
+      "in_sample": {
+        "accuracy": 0.78,
+        "balanced_accuracy": 0.842,
+        "good_recall": 0.969,
+        "bad_recall": 0.716,
+        "correct": 99,
+        "n": 127
+      },
+      "leave_one_photo_out": {
+        "accuracy": 0.772,
+        "balanced_accuracy": 0.827,
+        "good_recall": 0.938,
+        "bad_recall": 0.716,
+        "correct": 98,
+        "n": 127
+      },
+      "leave_one_block_out": {
+        "accuracy": 0.772,
+        "balanced_accuracy": 0.827,
+        "good_recall": 0.938,
+        "bad_recall": 0.716,
+        "correct": 98,
+        "n": 127
+      }
+    },
+    "band C_med": {
+      "in_sample": {
+        "accuracy": 0.85,
+        "balanced_accuracy": 0.879,
+        "good_recall": 0.938,
+        "bad_recall": 0.821,
+        "correct": 108,
+        "n": 127
+      },
+      "leave_one_photo_out": {
+        "accuracy": 0.819,
+        "balanced_accuracy": 0.848,
+        "good_recall": 0.906,
+        "bad_recall": 0.789,
+        "correct": 104,
+        "n": 127
+      },
+      "leave_one_block_out": {
+        "accuracy": 0.819,
+        "balanced_accuracy": 0.848,
+        "good_recall": 0.906,
+        "bad_recall": 0.789,
+        "correct": 104,
+        "n": 127
+      }
+    },
+    "band dL_bg": {
+      "in_sample": {
+        "accuracy": 0.693,
+        "balanced_accuracy": 0.774,
+        "good_recall": 0.938,
+        "bad_recall": 0.611,
+        "correct": 88,
+        "n": 127
+      },
+      "leave_one_photo_out": {
+        "accuracy": 0.661,
+        "balanced_accuracy": 0.722,
+        "good_recall": 0.844,
+        "bad_recall": 0.6,
+        "correct": 84,
+        "n": 127
+      },
+      "leave_one_block_out": {
+        "accuracy": 0.669,
+        "balanced_accuracy": 0.717,
+        "good_recall": 0.812,
+        "bad_recall": 0.621,
+        "correct": 85,
+        "n": 127
+      }
+    },
+    "ellipse L_med+C_med": {
+      "in_sample": {
+        "accuracy": 0.874,
+        "balanced_accuracy": 0.905,
+        "good_recall": 0.969,
+        "bad_recall": 0.842,
+        "correct": 111,
+        "n": 127
+      },
+      "leave_one_photo_out": {
+        "accuracy": 0.835,
+        "balanced_accuracy": 0.838,
+        "good_recall": 0.844,
+        "bad_recall": 0.832,
+        "correct": 106,
+        "n": 127
+      },
+      "leave_one_block_out": {
+        "accuracy": 0.811,
+        "balanced_accuracy": 0.801,
+        "good_recall": 0.781,
+        "bad_recall": 0.821,
+        "correct": 103,
+        "n": 127
+      }
+    },
+    "ellipse L_med+C_med+hue": {
+      "in_sample": {
+        "accuracy": 0.953,
+        "balanced_accuracy": 0.948,
+        "good_recall": 0.938,
+        "bad_recall": 0.958,
+        "correct": 121,
+        "n": 127
+      },
+      "leave_one_photo_out": {
+        "accuracy": 0.945,
+        "balanced_accuracy": 0.932,
+        "good_recall": 0.906,
+        "bad_recall": 0.958,
+        "correct": 120,
+        "n": 127
+      },
+      "leave_one_block_out": {
+        "accuracy": 0.913,
+        "balanced_accuracy": 0.87,
+        "good_recall": 0.781,
+        "bad_recall": 0.958,
+        "correct": 116,
+        "n": 127
+      }
+    },
+    "1-NN L_med+C_med": {
+      "in_sample": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "good_recall": 1.0,
+        "bad_recall": 1.0,
+        "correct": 127,
+        "n": 127
+      },
+      "leave_one_photo_out": {
+        "accuracy": 0.992,
+        "balanced_accuracy": 0.995,
+        "good_recall": 1.0,
+        "bad_recall": 0.989,
+        "correct": 126,
+        "n": 127
+      },
+      "leave_one_block_out": {
+        "accuracy": 0.945,
+        "balanced_accuracy": 0.953,
+        "good_recall": 0.969,
+        "bad_recall": 0.937,
+        "correct": 120,
+        "n": 127
+      }
+    },
+    "standing calibration band L_med 31.1-34.4": {
+      "transfer": {
+        "accuracy": 0.748,
+        "balanced_accuracy": 0.5,
+        "good_recall": 0.0,
+        "bad_recall": 1.0,
+        "correct": 95,
+        "n": 127
+      }
+    }
+  }
+}

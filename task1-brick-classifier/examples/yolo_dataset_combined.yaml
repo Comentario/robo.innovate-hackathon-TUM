@@ -1,0 +1,9 @@
+# standing (front view) + top view brick datasets, one class
+train:
+  - E:/PythonProjects/robo.innovate-hackathon-TUM/outputs2/yolo_dataset/images/train
+  - E:/PythonProjects/robo.innovate-hackathon-TUM/outputs2/yolo_dataset_top/images/train
+val:
+  - E:/PythonProjects/robo.innovate-hackathon-TUM/outputs2/yolo_dataset/images/val
+  - E:/PythonProjects/robo.innovate-hackathon-TUM/outputs2/yolo_dataset_top/images/val
+names:
+  0: brick

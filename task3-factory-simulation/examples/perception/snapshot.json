@@ -1,0 +1,320 @@
+{
+  "schema_version": "inventory-snapshot-0.1",
+  "snapshot_id": "synthetic-face-inventory-001",
+  "source": "synthetic",
+  "face_aware": true,
+  "items": [
+    {
+      "id": "face_brick_01",
+      "faces": {
+        "front": {
+          "color_group": "dark"
+        },
+        "back": {
+          "color_group": "dark"
+        },
+        "top": null
+      },
+      "allowed_orientations": [
+        {
+          "id": "front_out",
+          "visible_face": "front"
+        },
+        {
+          "id": "back_out",
+          "visible_face": "back"
+        },
+        {
+          "id": "top_out",
+          "visible_face": "top"
+        }
+      ]
+    },
+    {
+      "id": "face_brick_02",
+      "faces": {
+        "front": {
+          "color_group": "dark"
+        },
+        "back": {
+          "color_group": "medium"
+        },
+        "top": null
+      },
+      "allowed_orientations": [
+        {
+          "id": "front_out",
+          "visible_face": "front"
+        },
+        {
+          "id": "back_out",
+          "visible_face": "back"
+        },
+        {
+          "id": "top_out",
+          "visible_face": "top"
+        }
+      ]
+    },
+    {
+      "id": "face_brick_03",
+      "faces": {
+        "front": {
+          "color_group": "dark"
+        },
+        "back": {
+          "color_group": "light"
+        },
+        "top": null
+      },
+      "allowed_orientations": [
+        {
+          "id": "front_out",
+          "visible_face": "front"
+        },
+        {
+          "id": "back_out",
+          "visible_face": "back"
+        },
+        {
+          "id": "top_out",
+          "visible_face": "top"
+        }
+      ]
+    },
+    {
+      "id": "face_brick_04",
+      "faces": {
+        "front": {
+          "color_group": "dark"
+        },
+        "back": {
+          "color_group": "dark"
+        },
+        "top": null
+      },
+      "allowed_orientations": [
+        {
+          "id": "front_out",
+          "visible_face": "front"
+        },
+        {
+          "id": "back_out",
+          "visible_face": "back"
+        },
+        {
+          "id": "top_out",
+          "visible_face": "top"
+        }
+      ]
+    },
+    {
+      "id": "face_brick_05",
+      "faces": {
+        "front": {
+          "color_group": "dark"
+        },
+        "back": {
+          "color_group": "medium"
+        },
+        "top": null
+      },
+      "allowed_orientations": [
+        {
+          "id": "front_out",
+          "visible_face": "front"
+        },
+        {
+          "id": "back_out",
+          "visible_face": "back"
+        },
+        {
+          "id": "top_out",
+          "visible_face": "top"
+        }
+      ]
+    },
+    {
+      "id": "face_brick_06",
+      "faces": {
+        "front": {
+          "color_group": "dark"
+        },
+        "back": {
+          "color_group": "light"
+        },
+        "top": null
+      },
+      "allowed_orientations": [
+        {
+          "id": "front_out",
+          "visible_face": "front"
+        },
+        {
+          "id": "back_out",
+          "visible_face": "back"
+        },
+        {
+          "id": "top_out",
+          "visible_face": "top"
+        }
+      ]
+    },
+    {
+      "id": "face_brick_07",
+      "faces": {
+        "front": {
+          "color_group": "dark"
+        },
+        "back": {
+          "color_group": "dark"
+        },
+        "top": null
+      },
+      "allowed_orientations": [
+        {
+          "id": "front_out",
+          "visible_face": "front"
+        },
+        {
+          "id": "back_out",
+          "visible_face": "back"
+        },
+        {
+          "id": "top_out",
+          "visible_face": "top"
+        }
+      ]
+    },
+    {
+      "id": "face_brick_08",
+      "faces": {
+        "front": {
+          "color_group": "dark"
+        },
+        "back": {
+          "color_group": "medium"
+        },
+        "top": null
+      },
+      "allowed_orientations": [
+        {
+          "id": "front_out",
+          "visible_face": "front"
+        },
+        {
+          "id": "back_out",
+          "visible_face": "back"
+        },
+        {
+          "id": "top_out",
+          "visible_face": "top"
+        }
+      ]
+    },
+    {
+      "id": "face_brick_09",
+      "faces": {
+        "front": {
+          "color_group": "dark"
+        },
+        "back": {
+          "color_group": "light"
+        },
+        "top": null
+      },
+      "allowed_orientations": [
+        {
+          "id": "front_out",
+          "visible_face": "front"
+        },
+        {
+          "id": "back_out",
+          "visible_face": "back"
+        },
+        {
+          "id": "top_out",
+          "visible_face": "top"
+        }
+      ]
+    },
+    {
+      "id": "face_brick_10",
+      "faces": {
+        "front": {
+          "color_group": "dark"
+        },
+        "back": {
+          "color_group": "dark"
+        },
+        "top": null
+      },
+      "allowed_orientations": [
+        {
+          "id": "front_out",
+          "visible_face": "front"
+        },
+        {
+          "id": "back_out",
+          "visible_face": "back"
+        },
+        {
+          "id": "top_out",
+          "visible_face": "top"
+        }
+      ]
+    },
+    {
+      "id": "face_brick_11",
+      "faces": {
+        "front": {
+          "color_group": "dark"
+        },
+        "back": {
+          "color_group": "medium"
+        },
+        "top": null
+      },
+      "allowed_orientations": [
+        {
+          "id": "front_out",
+          "visible_face": "front"
+        },
+        {
+          "id": "back_out",
+          "visible_face": "back"
+        },
+        {
+          "id": "top_out",
+          "visible_face": "top"
+        }
+      ]
+    },
+    {
+      "id": "face_brick_12",
+      "faces": {
+        "front": {
+          "color_group": "dark"
+        },
+        "back": {
+          "color_group": "light"
+        },
+        "top": null
+      },
+      "allowed_orientations": [
+        {
+          "id": "front_out",
+          "visible_face": "front"
+        },
+        {
+          "id": "back_out",
+          "visible_face": "back"
+        },
+        {
+          "id": "top_out",
+          "visible_face": "top"
+        }
+      ]
+    }
+  ]
+}

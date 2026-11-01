@@ -1,0 +1,20 @@
+{
+  "method": "Visible equipment bounding boxes at nine playback times; ground slab, grid and UI excluded",
+  "samples": 9,
+  "min": [
+    -15,
+    -0.06599999871104956,
+    -17.519999999552965
+  ],
+  "max": [
+    44.20000076293945,
+    6.450000002980232,
+    17.519999999552965
+  ],
+  "length_m": 59.20000076293945,
+  "width_m": 35.03999999910593,
+  "height_m": 6.516000001691282,
+  "area_m2": 2074.3680266804695,
+  "source_artifact": "artifacts/greenfield_25/index.html",
+  "scope": "Sampled visible-equipment envelope, including perimeter rails and animated travel; not a building or safety layout"
+}

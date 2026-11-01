@@ -1,0 +1,164 @@
+[
+  {
+    "asset": "pallet-roller.jpg",
+    "page_url": "https://www.interroll.com/fileadmin/products/product_data/PM-9710/PM9710_EN.pdf",
+    "image_url": "https://www.interroll.com/fileadmin/products/product_data/PM-9710/PM9710_EN.pdf",
+    "method": "Manufacturer datasheet image extracted from page 1",
+    "retrieved": "2026-10-25",
+    "sha256": "b3666695c7d8230e79b1d4091da2ed1e3a479a55cb983499fe3a2247bb5734fe",
+    "size": [
+      1000,
+      705
+    ]
+  },
+  {
+    "asset": "formation.jpg",
+    "page_url": "https://lingl.com/wp-content/uploads/2018/03/Triangle_Brick_englisch.pdf",
+    "image_url": "https://lingl.com/wp-content/uploads/2018/03/Triangle_Brick_englisch.pdf",
+    "method": "Manufacturer datasheet image extracted from page 1",
+    "retrieved": "2026-10-25",
+    "sha256": "83bb7a9125d65bce0cadaef29fc6fddd22ab8994057ddccb89885ff3a09caac9",
+    "size": [
+      207,
+      278
+    ]
+  },
+  {
+    "asset": "roller-drive.jpg",
+    "page_url": "https://www.interroll.com/fileadmin/user_upload/Downloads__PDF_/Drives___Controls/DC_Platform/EC5000_Catalog_PDF/EN/EC5000_50mm_IP54_EN.pdf",
+    "image_url": "https://www.interroll.com/fileadmin/user_upload/Downloads__PDF_/Drives___Controls/DC_Platform/EC5000_Catalog_PDF/EN/EC5000_50mm_IP54_EN.pdf",
+    "method": "Manufacturer datasheet image extracted from page 1",
+    "retrieved": "2026-10-25",
+    "sha256": "cf856103a7531b9c356ca15039f5150e24ee4d6f5a22867cc8f20bf19d3e294d",
+    "size": [
+      1000,
+      500
+    ]
+  },
+  {
+    "asset": "bridge-crane.jpg",
+    "image_url": "https://www.demagcranes.com/sites/default/files/styles/medium/public/media/images/Zweitr%C3%A4ger-H%C3%A4ngekran-590_Pixel.png.webp?itok=cJdVYNTn",
+    "method": "Official manufacturer image, transparency composited on white",
+    "retrieved": "2026-10-25",
+    "sha256": "6a3d6b6ee3c90bcb06b9f3276f54833a93f3e90c29c0d22f04419ae6c2152fd1"
+  },
+  {
+    "asset": "controller.jpg",
+    "page_url": "https://www.interroll.com/products/controls/multicontrol-ai",
+    "image_url": "https://www.interroll.com/fileadmin/_processed_/0/c/csm_MultiControl-AI_1840x400_8429bf6a3f.jpg",
+    "method": "Official manufacturer website product image",
+    "retrieved": "2026-10-25",
+    "sha256": "4ad5776202eb2f3041f9a1705ef70416d4bd31f169cc04bceac493d386016a09",
+    "size": [
+      1000,
+      218
+    ]
+  },
+  {
+    "asset": "long-axis.jpg",
+    "page_url": "https://ftp.festo.com/Public/PNEUMATIC/SOFTWARE_SERVICE/Documentation/2019/EN/ELGA-TB_EN.PDF",
+    "image_url": "https://ftp.festo.com/Public/PNEUMATIC/SOFTWARE_SERVICE/Documentation/2019/EN/ELGA-TB_EN.PDF",
+    "method": "Manufacturer datasheet image extracted from page 1",
+    "retrieved": "2026-10-25",
+    "sha256": "fdbaeefce84c08a6ea3b3c553d46a584b17bb47e6f18acb414bf44a38ab7b574",
+    "size": [
+      613,
+      456
+    ]
+  },
+  {
+    "asset": "flat-belt.jpg",
+    "image_url": "https://uploads.mknorthamerica.com/Customer-Content/www/Products/Photos/Medium/GUF-P-2000-2022.png",
+    "method": "mk North America official GUF-P 2000 image",
+    "retrieved": "2026-10-25",
+    "sha256": "82a3214d18501db351ad90c08b8d84e5d05ce391d5ecc71e5131f069753f16ef"
+  },
+  {
+    "asset": "loop-belt.jpg",
+    "image_url": "https://uploads.mknorthamerica.com/Customer-Content/www/Products/Photos/Medium/KMF-P-2040-2022.png",
+    "method": "mk North America official KMF-P 2040 image",
+    "retrieved": "2026-10-25",
+    "sha256": "ecd040a7b9c496d50bfd89233823fe91d64391cdde6c9b359bb057a0eb67416e"
+  },
+  {
+    "asset": "merge-rollers.jpg",
+    "page_url": "https://www.interroll.com/fileadmin/user_upload/Downloads__PDF_/Conveyors___Sorters/MCP_Catalogue/EN/RM8230_EN.pdf",
+    "image_url": "https://www.interroll.com/fileadmin/user_upload/Downloads__PDF_/Conveyors___Sorters/MCP_Catalogue/EN/RM8230_EN.pdf",
+    "method": "Manufacturer datasheet image extracted from page 1",
+    "retrieved": "2026-10-25",
+    "sha256": "7b8089ec9ad920ef4f4c4f2c6c809b13b266cb5567fb9666c176186bef6e27fc",
+    "size": [
+      966,
+      363
+    ]
+  },
+  {
+    "asset": "guided-lift.jpg",
+    "page_url": "https://ftp.festo.com/Public/PNEUMATIC/SOFTWARE_SERVICE/Documentation/2019/EN/DFM_EN.PDF",
+    "image_url": "https://ftp.festo.com/Public/PNEUMATIC/SOFTWARE_SERVICE/Documentation/2019/EN/DFM_EN.PDF",
+    "method": "Manufacturer datasheet image extracted from page 1",
+    "retrieved": "2026-10-25",
+    "sha256": "771904cba8b40a179e643a83cfaf781bceb2e3e097e6b52c394867e0e0721986",
+    "size": [
+      613,
+      455
+    ]
+  },
+  {
+    "asset": "arb-divert.jpg",
+    "page_url": "https://www.intralox.com/belt-finder/modular-plastic-belting/series-400/90-degree-angled-rollertm",
+    "image_url": "https://assets-us-01.kc-usercontent.com:443/19eb64b5-1815-003a-d268-e7109927ccad/a4a7cafe-07e7-40cc-8791-63c25881ed4e/50967_TA23619_cropped.jpg?w=1200&h=630&fit=crop",
+    "method": "Official manufacturer website product image",
+    "retrieved": "2026-10-25",
+    "sha256": "d59e42d307e6575348801a928b8e381be267e32847f56564b1ec9092d4c09d78",
+    "size": [
+      1000,
+      525
+    ]
+  },
+  {
+    "asset": "inspection-light.jpg",
+    "page_url": "https://smartvisionlights.com/wp-content/uploads/L300_Datasheet-1.pdf",
+    "image_url": "https://smartvisionlights.com/wp-content/uploads/L300_Datasheet-1.pdf",
+    "method": "Manufacturer datasheet image extracted from page 1",
+    "retrieved": "2026-10-25",
+    "sha256": "c45d5cb91d0dbb684a7bf7566dd45ecb2157496088f293158832fa00f6543f10",
+    "size": [
+      1000,
+      391
+    ]
+  },
+  {
+    "asset": "encoder.jpg",
+    "page_url": "https://www.ifm.com/binaries/content/assets/pdf-files/en/product-news/2017/hmi/updates/ifm-ro3100-programmable-incremental-encoder-io-link-en-17.pdf",
+    "image_url": "https://www.ifm.com/binaries/content/assets/pdf-files/en/product-news/2017/hmi/updates/ifm-ro3100-programmable-incremental-encoder-io-link-en-17.pdf",
+    "method": "Manufacturer datasheet image extracted from page 1",
+    "retrieved": "2026-10-25",
+    "sha256": "8ce96d375135120a9e453c7a0b164150c35e4ae691c6112ecaea4a0a9c6c9ddb",
+    "size": [
+      618,
+      573
+    ]
+  },
+  {
+    "asset": "guard-panel.jpg",
+    "image_url": "https://www.troax.com/app/uploads/16711-1024x1024.png",
+    "method": "Official manufacturer image, transparency composited on white",
+    "retrieved": "2026-10-25",
+    "sha256": "c51008fa961587c71b6fb789ad355a11806fd19d02466e1bc72f6b4dc5ce834b"
+  },
+  {
+    "asset": "discard-bin.jpg",
+    "image_url": "https://www.bauer-suedlohn.com/wp-content/uploads/2025/05/Katalog-DE-2025-05.pdf",
+    "page": 22,
+    "method": "Bauer RD container catalog page illustration",
+    "sha256": "9220ed2a84b772db9558165b3100dffd101e84629b48ca7fafc0c6567ec0d841"
+  },
+  {
+    "asset": "gear-motor.jpg",
+    "image_url": "https://download.sew-eurodrive.com/download/html/33346739/Images/png/51855886091__Web.png",
+    "method": "Official gearmotor manual illustration",
+    "retrieved": "2026-10-25",
+    "sha256": "31d924791fc8002b2989c8349ca2a16f5ecec7b4836f8912d8e30a9180c95f78"
+  }
+]

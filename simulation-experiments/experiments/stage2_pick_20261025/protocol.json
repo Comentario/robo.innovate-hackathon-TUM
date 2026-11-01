@@ -1,0 +1,286 @@
+{
+  "schema": "stage2-sensor-native-pick-v1",
+  "status": "scientific_parameters_frozen_before_implementation",
+  "execution_authorized": true,
+  "objective": "One RGB-D-selected native-connected brick grasp and straight withdrawal; no transfer/classification/placement claim.",
+  "history": "Closed idle/contact/proxy/query benchmarks remain closed and all failures preserved. Original1778 global G remains failed at distal axial endcap; current model is authorized only for lateral-qualified flat-face contacts. D1791/R1794 establish bounded normal-contact/reopen, not tangential retention or extraction.",
+  "cases": [
+    {
+      "id": "I",
+      "split": "development",
+      "source_bricks": 300,
+      "source_parts": 301,
+      "native_connections": 930,
+      "removed": [],
+      "pick_attempts_per_version": 1
+    },
+    {
+      "id": "H",
+      "split": "reserved",
+      "source_bricks": 299,
+      "source_parts": 300,
+      "native_connections": 926,
+      "removed": [
+        "brick_9_2_2"
+      ],
+      "pick_attempts": 1,
+      "requires": "Independent I pass and frozen implementation; no reserved-driven changes"
+    }
+  ],
+  "budget": {
+    "stationary_guard_steps_per_case": 3600,
+    "pick_steps_per_case_maximum": 3600,
+    "physics_dt_s": 0.008333333333333333,
+    "maximum_total_steps_per_case": 7200,
+    "capture_plus_independent_audit_seconds_per_case": 1200,
+    "queue_wait_excluded": true,
+    "attempts_per_case_version": 1,
+    "automatic_retry": false,
+    "maximum_reviewed_improvement_rounds": 3,
+    "round_policy": "Baseline then at most three separately reviewed changes, each addressing one observed development failure; no automatic alternatives. Reserved is evaluated once after retained development success. Existing closed pools are not reset. No speedup/coarsening on timeout."
+  },
+  "physics": {
+    "scene_solver": "PGS",
+    "source_position_iterations": 32,
+    "source_velocity_iterations": 4,
+    "OSQP_EPSILON": "1e-4",
+    "native_thresholds": "Unchanged exact frozen exposed-tip benchmark values",
+    "automatic_assembly": false,
+    "native_breakage": true,
+    "dt_s": 0.008333333333333333,
+    "mass_reference": "experiments/stage2_contact_20261025/proxy_reference.json",
+    "mass_reference_sha256": "cb46c2fab2833fa267a45980fa7e2adf27e0f8626edfd9f514ff1c7d6b7dddc6",
+    "mass_route": "Validated two exact count1 finger RigidBodyViews; masses L/R then COM L/R then inertias L/R, strict all-six whole-robot readback; no nonfinger setters",
+    "geometry_model": "experiments/stage2_exposed_tip_20261025/model_config.json",
+    "geometry_model_sha256": "9dbece90e4a2c6435834f0153dcc4fc31946867077b9325b5cf7dda7b7e96734",
+    "cook_identity": "Reuse exact single-body/head cook export and canonical vertex/normalized-plane fingerprint, no global queries/new model or tuning",
+    "actuators_unchanged": {
+      "arm_stiffness": 400,
+      "arm_damping": 80,
+      "hand_stiffness_N_m": 2000,
+      "hand_damping_N_s_m": 100,
+      "hand_effort_limit_N": 15
+    },
+    "native_core_sha256": "4e62dc33ee02270993c20e3cfd658e6d6ef0ea9780e53ad15cedde12f41b2455"
+  },
+  "stationary_guard": {
+    "steps": 3600,
+    "before_pick_each_case": true,
+    "same_source_tip_contact_processing_and_physics": true,
+    "all_native_edges_and_parts_unchanged": true,
+    "max_source_position_drift_m": 0.002,
+    "max_source_orientation_drift_rad": 0.03490658503988659,
+    "max_terminal_linear_speed_m_s": 0.02,
+    "max_terminal_angular_speed_rad_s": 0.2,
+    "first_failure_stops_case": true,
+    "scope": "Matched full-duration stationary source control; not a grasp validation.",
+    "separate_reset_initialization_per_mode": true,
+    "no_reset_or_pose_writes_within_mode": true
+  },
+  "perception": {
+    "method": "Unchanged frozen R3",
+    "entry": "experiments/stage1_20261025/upstream/method.py:analyze",
+    "workspace_entry": "experiments/stage1_20261025/online.py:filter_workspace_depth",
+    "contract_entry": "experiments/stage1_20261025/online.py:candidate_contract",
+    "upstream_sha256": {
+      "method.py": "45b8004948d1af8779f79c7c7bedbd984aa186087626a1c58c7c3dec74b732ba",
+      "depth_module.py": "7d9243a7282309ae98344b9213ac7f575baac23a334bdd97c05d48fd656249ae",
+      "evidence.py": "97e53a1aa65c7393ffcf8226ee4d612521c610e262ef5f19e6d9f5d3c334986e",
+      "config.json": "9e14b949200cb23c809ea8181e85dee657540401dd8ff10301cb7cc68c0ef56f",
+      "depth_config.json": "5d5a31ba9ef310c67bf9acd92b943c8f6cbda42f9904fc427d6c1deab86e6c14",
+      "version.json": "6a650edca3ba8e9ed39975160cdb14bcff2a0d23bb4a99fd133ddcd5a5891d15"
+    },
+    "camera_config": "experiments/stage1_20261025/source_views_v1.json",
+    "workspace": "experiments/stage1_20261025/workspace_v1.json",
+    "view": "diagnostic_table_top",
+    "pose_frame": "TABLE: source plate center origin,+X gray plate,+Y bowl,+Z up; not robot base",
+    "camera_status": "Configured fixed virtual RGB-D inspection camera; no physical D435/wrist calibration claim",
+    "candidate_selection": "Among PRESENT candidates with all support/uncertainty-inflated clearance checks passing, minimize planar distance from current measured TCP; tie by opaque candidate_id. Select once before motion; no truth matching or alternative target after failure.",
+    "fresh_frame_id_and_candidate_id_required": true,
+    "motion_sensor_rate_Hz": 10,
+    "height": "Use locally supported upper depth surface from the selected opaque RGB-D neighborhood; coarse R3 band median alone is not a certified body-top. Account for known1.7mm stud/body difference when checking nominal body-side overlap. Unsupported/ambiguous depth abstains.",
+    "unknown_or_abstention": "Counts as failed coverage for this case, not a successful pick or permission to fill from simulator truth.",
+    "geometry_safety_view": {
+      "id": "geometry_safety_wide",
+      "source_config": "experiments/final_workcell_20261024/cameras_realism.json",
+      "source_config_sha256": "aad98d4f63c3f754d7cdfcc62d70c2b3f4179233e84d2ba776042eb773c85dac",
+      "source_view_id": "diagnostic_table_top",
+      "view": {
+        "id": "geometry_safety_wide",
+        "eye_offset_m": [
+          0.15,
+          -0.055,
+          1.4
+        ],
+        "target_offset_m": [
+          0.15,
+          -0.055,
+          -0.1
+        ],
+        "up_world": [
+          0,
+          -1,
+          0
+        ]
+      },
+      "image_size": [
+        1280,
+        960
+      ],
+      "K": [
+        [
+          923.9097744360902,
+          0,
+          640.0
+        ],
+        [
+          0,
+          923.9097744360902,
+          480.0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "calibration_policy": "Fixed original full-design reference center and unchanged focal/aperture/resolution; no target or current-state camera recentering. Configured virtual view only.",
+      "capture_policy": "Close RGB-D first for unchanged R3. Wide RGB-D at identical physics time, then restore close pose. Geometry only.",
+      "clearance_policy": "Identical sampled points/envelopes/proprio self-skip. Each nonself sample requires strict positive measured depth gap in at least one valid view; otherwise abstain. Unknown remains unknown in each view.",
+      "readback_guards": {
+        "K_atol_px": 0.001,
+        "position_m": 2e-06,
+        "angle_rad": 0.0001
+      }
+    }
+  },
+  "engineering_envelopes": {
+    "XY_m": 0.0015,
+    "local_upper_depth_Z_m": 0.001,
+    "yaw_rad": 0.017453292519943295,
+    "final_TCP_tracking_position_m": 0.0005,
+    "final_TCP_tracking_angle_rad": 0.017453292519943295,
+    "meaning": "Explicit simulation engineering working bounds, not calibrated covariance or guarantees. Combine pose, TCP tracking and rotational swept extents, rather than testing each in isolation.",
+    "unknown_depth": "No corridor fill from CAD layout, GT poses or missing depth. Unsupported inflated finger/metal/head swept volume abstains.",
+    "selection_reference_XY_error_m": 0.000723
+  },
+  "tool_frames": {
+    "hand_frame": "fr3_hand link frame, not COM",
+    "T_hand_grip_translation_m": [
+      0,
+      0,
+      0.11755756120085716
+    ],
+    "T_hand_grip_quaternion_wxyz": [
+      1,
+      0,
+      0,
+      0
+    ],
+    "metal_distal_hand_z_m": 0.11225756120085716,
+    "nominal_finger_origin_hand_z_m": 0.0584,
+    "updated_tip_distal_finger_z_m": 0.06164037066757202,
+    "grip_axis": "Hand X along observed brick long axis; opening hand Y across short axis; hand Z distal/down opposite observed upright top normal.",
+    "metal_clearance_above_supported_upper_surface_m": 0.003,
+    "minimum_nominal_body_side_overlap_m": 0.002,
+    "online_clearance": "Inflate actual known body/white/head tool envelope by the combined engineering bounds. No ghosting or contact-permitted descent on unsupported corridors.",
+    "physical_mount_status": "User-confirmed orientation/proximal alignment, nominal rigid attachment; no physical fit calibration."
+  },
+  "motion": {
+    "preopen_per_side_m": 0.0025,
+    "symmetric_finger_commands": true,
+    "finger_initialization": "Configure preopening once before measurement; no target brick or robot pose writes after initialization",
+    "maximum_symmetric_closing_travel_per_finger_m": 0.004,
+    "finger_command_speed_m_s": 0.001,
+    "finger_actual_speed_abort_m_s": 0.002,
+    "travel_float_allowance_m": 2e-06,
+    "force_trigger_per_pad_N": 1.5,
+    "force_trigger_consecutive_fresh_steps": 3,
+    "grasp_action": "Stop closing and hold joint targets; not a claimed regulated-force controller",
+    "sampled_normal_force_abort_per_pad_N": 2.0,
+    "force_abort_semantics": "SUM ABS of all finite normal coefficients on each finger, all partners; sampled abort, not a guaranteed cap",
+    "approach_command_speed_m_s": 0.02,
+    "final_approach_distance_m": 0.01,
+    "final_approach_command_speed_m_s": 0.002,
+    "lift_distance_m": 0.005,
+    "lift_command_speed_m_s": 0.001,
+    "hold_duration_s": 0.25,
+    "hold_steps": 30,
+    "lift_steps_nominal": 600,
+    "tilt_rad": 0.0,
+    "orientation_concurrent_with_approach": true,
+    "orientation_command_speed_rad_s": 0.2617993877991494,
+    "actual_TCP_speed_abort_m_s": {
+      "approach": 0.03,
+      "final_approach": 0.003,
+      "lift": 0.002,
+      "hold": 0.002
+    },
+    "actual_joint_velocity_abort_rad_s": 1.0,
+    "maximum_joint_command_increment_rad": 0.005,
+    "joint_position_limits": "Actual asset joint limits; any violation or nonfinite stops",
+    "completion": "Controller follows bounded sensor-derived waypoints and force trigger; native detachment never advances the online phase."
+  },
+  "controller": {
+    "implementation": "Installed IsaacLab DifferentialIKController, ik_method dls; existing challenge2/env_cfg.py Actions.arm is configuration precedent, not a validated arm-trajectory result",
+    "pose_and_jacobian_frame": "Actual robot-root frame for both linear and angular blocks",
+    "fixed_base_hand_jacobian_index": "body_id-1",
+    "TCP_jacobian": "J_linear_world=J_hand_linear_world-skew(R_world_hand*offset_hand)@J_hand_angular_world; then rotate BOTH blocks by inverse actual root quaternion",
+    "TCP_pose": "Actual measured hand link pose composed with rotated updated hand-to-grip offset, then transformed to actual root frame. Do not copy the old stock0.1034m TCP or unrotated offset shortcut.",
+    "no_new_IK_framework": true
+  },
+  "contacts": {
+    "scope": "Simulation-only per-finger contact instrumentation, not hardware force-sensor equivalence",
+    "online_inputs": "Unlabelled aggregate finger normal/friction data, world contact points/normals/separations and proprioception. Actor/collider IDs/filter labels stripped before controller; full raw data retained offline.",
+    "all_partners_included": true,
+    "normal_scalar_semantics": "Preserve signed f*n vectors and SUMABS magnitudes",
+    "force_carrying_abs_floor_N": 1e-08,
+    "point_surface_slack_m": 5e-05,
+    "white_head_clearance_extra_m": 0.0001,
+    "minimum_outward_dot_grip_normal": 0.9,
+    "pad_outward": "-sign(f)*n for finger view; +sign(f)*n for reciprocal reporting, mapped with actual finger frame. Never fit/try sign flips.",
+    "load_domain": "ALL force-carrying points must be uniquely body compatible, flat inward-Y compatible and laterally qualified; no Z exclusion. Cap/taper/head/white/unassociated loads stop. Cosine0.9 is not exact zero axial force.",
+    "contact_association": "Only spatial compatibility with the sensor-selected candidate envelope; no GT actor-path selection or exemption.",
+    "friction": "Retain raw separate friction anchor/count/vector buffers; tangential load is measured during this trial. No friction calibration or invented wrist-wrench estimator.",
+    "unavailable_wrench": "Explicit UNKNOWN, not zero",
+    "buffer_capacity": 1024,
+    "native_truth": "Logged only for initialization/evaluation; not controller input.",
+    "disable_contact_processing_setting": false,
+    "evaluation_only_source_view": "Uniquely bound once by initial selected-image face versus initial GT projection. Raw view and identity remain evaluation-only; never controller input or phase/target selection."
+  },
+  "independent_evaluation": {
+    "identity_binding": "Before motion, evaluator uniquely binds the frozen selected RGB-D face to one GT brick; ambiguous binding fails. Binding never enters controller.",
+    "detachment": "Selected target becomes a singleton native component disconnected from all source/plate parts; every broken edge must be incident to that prebound target, no unrelated breaks",
+    "minimum_target_rise_m": 0.004,
+    "postdetach_relative_T_max_translation_drift_m": 0.001,
+    "postdetach_relative_T_max_angle_drift_rad": 0.05235987755982989,
+    "required_hold_duration_s": 0.25,
+    "forbidden_success_shortcuts": [
+      "No measured actor/root teleport",
+      "No deallocate_connection or create_connection during manipulation",
+      "No synthetic grasp joint",
+      "No GT target pose/ID online",
+      "No truth-selected source drift exclusion online"
+    ],
+    "physics_extraction_and_online_hold_verification": "Report separately; RGB-D held association may be UNKNOWN. UNKNOWN blocks transfer/stacking even if independent physics extraction passes.",
+    "all_source_roots_and_native_events_logged": true,
+    "watchdog": "Experiment-side nonfinite/catastrophic-state stop is separate from online task logic, never a native-completion signal."
+  },
+  "stop_policy": "First unsupported sensor corridor, unbound candidate, DLS tracking/joint/speed limit, force/contact-domain violation, nonfinite or exhausted step/wall budget stops with preserved evidence. No target substitution/reset/teleport completion; no transfer after uncertain held identity.",
+  "implementation_support_rules": {
+    "local_height_minimum_returns": 64,
+    "local_height_upper_quantiles": [
+      0.9,
+      0.99
+    ],
+    "minimum_upper_returns_within_half_mm": 32,
+    "eroded_candidate_interior_half_extents_m": [
+      0.014,
+      0.006
+    ],
+    "local_height_window_about_R3_m": 0.003,
+    "swept_path_spacing_m": 0.002,
+    "swept_orientation_spacing_rad": 0.017453292519943295,
+    "clearance_reference": "Pointwise combined XY/Z/yaw/TCP engineering envelopes at each box corner/midplane; observed ray-space free checks and known-proprioceptive current tool self volume only; unknown fails. No GT scene completion or global collision-certification claim."
+  }
+}

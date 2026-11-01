@@ -1,0 +1,30 @@
+# Model weights and exported networks: reproducible from the scripts, heavy in git.
+*.pt
+*.pth
+*.onnx
+*.engine
+*.safetensors
+
+# Datasets, recorded runs and generated artifacts.
+datasets/
+outputs/
+outputs2/
+runs/
+*.zip
+*.tar
+*.tar.gz
+*.npy
+*.npz
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

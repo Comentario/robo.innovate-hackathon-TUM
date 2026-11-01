@@ -1,0 +1,16 @@
+# Tested on Windows 11, Python 3 venv, RTX 3050 Laptop (CUDA 13.0 build of torch).
+# Install torch/torchvision for your CUDA (or CPU) first: https://pytorch.org/get-started/locally/
+torch>=2.14
+torchvision>=0.29
+ultralytics==8.4.185
+transformers>=5.20
+opencv-python>=5.0
+numpy>=2.5
+matplotlib>=3.11
+scikit-learn>=1.9
+scipy>=1.18
+# Web demo (scripts/web_demo.py): server and ByteTrack.
+fastapi
+uvicorn[standard]
+httpx
+lap

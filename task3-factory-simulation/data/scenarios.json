@@ -1,0 +1,10 @@
+{
+  "shape": {"rows": 2, "columns": 3, "layers": 2},
+  "target_ratios": {"dark": 1, "medium": 1, "light": 1},
+  "tone_values": {"dark": 0.0, "medium": 0.5, "light": 1.0},
+  "scenarios": [
+    {"name": "Balanced inventory", "stock": {"dark": 6, "medium": 6, "light": 6}},
+    {"name": "Dark-heavy inventory", "stock": {"dark": 14, "medium": 2, "light": 2}},
+    {"name": "Missing medium shade", "stock": {"dark": 9, "medium": 0, "light": 9}}
+  ]
+}

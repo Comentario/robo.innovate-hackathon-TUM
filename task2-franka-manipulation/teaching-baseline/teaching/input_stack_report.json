@@ -1,0 +1,280 @@
+{
+  "generator": "teaching/generate_stack.py",
+  "source_signature": "c78d287f53d43022dffdc17603fbec418144911e026645dd5a91ef1fbdd5f7b6",
+  "brick_id_format": "a_n_m_k; n=0..5, m=0..4, k=0..9 from bottom",
+  "source_anchor_brick_ids": {
+    "point_03": "a_0_0_9",
+    "point_02": "a_0_1_9",
+    "point_05": "a_1_0_9",
+    "point_07": "a_0_0_8",
+    "point_06": "a_0_1_8",
+    "point_04": "a_1_0_8"
+  },
+  "enumeration_order": "Descending k (top down), ascending n, ascending m",
+  "generated_count": 300,
+  "numbered_poses_retained": 15,
+  "center_xy_m": [
+    0.41239024699848265,
+    -0.07836070413711575
+  ],
+  "length_axis_heading_deg": -179.03609483400848,
+  "length_axis_world": [
+    -0.9998584913094584,
+    -0.016822525267442115,
+    0
+  ],
+  "ridge_axis_world": [
+    0.016822525267442115,
+    -0.9998584913094584,
+    0
+  ],
+  "measured_anchor_residuals": {
+    "point_03": {
+      "indices": {
+        "layer": 1,
+        "ridge": 1,
+        "brick": 1
+      },
+      "predicted_xyz_m": [
+        0.47464385628700256,
+        0.002197958528995514,
+        0.09742671251296997
+      ],
+      "taught_xyz_m": [
+        0.47464385628700256,
+        0.002197958528995514,
+        0.09742671251296997
+      ],
+      "xy_residual_mm": 0.0,
+      "taught_minus_grid_z_mm": 0.0
+    },
+    "point_02": {
+      "indices": {
+        "layer": 1,
+        "ridge": 1,
+        "brick": 2
+      },
+      "predicted_xyz_m": [
+        0.4428483562633618,
+        0.0016630022254908545,
+        0.09742671251296997
+      ],
+      "taught_xyz_m": [
+        0.44255757331848145,
+        0.0018452613148838282,
+        0.09742671251296997
+      ],
+      "xy_residual_mm": 0.3431808513009329,
+      "taught_minus_grid_z_mm": 0.0
+    },
+    "point_05": {
+      "indices": {
+        "layer": 1,
+        "ridge": 2,
+        "brick": 1
+      },
+      "predicted_xyz_m": [
+        0.4751788125905072,
+        -0.02959754149464526,
+        0.09742671251296997
+      ],
+      "taught_xyz_m": [
+        0.4750593602657318,
+        -0.02999178133904934,
+        0.09742671251296997
+      ],
+      "xy_residual_mm": 0.41193921009051615,
+      "taught_minus_grid_z_mm": 0.0
+    },
+    "point_07": {
+      "indices": {
+        "layer": 2,
+        "ridge": 1,
+        "brick": 1
+      },
+      "predicted_xyz_m": [
+        0.49080908445057525,
+        -0.013432313331072544,
+        0.08782671251296997
+      ],
+      "taught_xyz_m": [
+        0.49124905467033386,
+        -0.013945425860583782,
+        0.0871789465546608
+      ],
+      "xy_residual_mm": 0.6759129102302032,
+      "taught_minus_grid_z_mm": -0.6477659583091766
+    },
+    "point_06": {
+      "indices": {
+        "layer": 2,
+        "ridge": 1,
+        "brick": 2
+      },
+      "predicted_xyz_m": [
+        0.4913440407540799,
+        -0.04522781335471332,
+        0.08782671251296997
+      ],
+      "taught_xyz_m": [
+        0.4915671646595001,
+        -0.04584366828203201,
+        0.0868651419878006
+      ],
+      "xy_residual_mm": 0.6550279144224991,
+      "taught_minus_grid_z_mm": -0.9615705251693751
+    },
+    "point_04": {
+      "indices": {
+        "layer": 2,
+        "ridge": 2,
+        "brick": 1
+      },
+      "predicted_xyz_m": [
+        0.4590135844269345,
+        -0.013967269634577202,
+        0.08782671251296997
+      ],
+      "taught_xyz_m": [
+        0.45988017320632935,
+        -0.013779922388494015,
+        0.08668561279773712
+      ],
+      "xy_residual_mm": 0.8866087655713608,
+      "taught_minus_grid_z_mm": -1.1410997152328517
+    }
+  },
+  "layers": [
+    {
+      "layer_from_top": 1,
+      "rotation_deg": 0.0,
+      "count": 30,
+      "center_xy_m": [
+        0.4123902469984827,
+        -0.07836070413711575
+      ],
+      "upper_z_m": 0.09742671251296997,
+      "grasp_z_m": 0.08242671251296997
+    },
+    {
+      "layer_from_top": 2,
+      "rotation_deg": 90.0,
+      "count": 30,
+      "center_xy_m": [
+        0.4123902469984827,
+        -0.07836070413711574
+      ],
+      "upper_z_m": 0.08782671251296997,
+      "grasp_z_m": 0.07282671251296997
+    },
+    {
+      "layer_from_top": 3,
+      "rotation_deg": 0.0,
+      "count": 30,
+      "center_xy_m": [
+        0.4123902469984827,
+        -0.07836070413711575
+      ],
+      "upper_z_m": 0.07822671251296998,
+      "grasp_z_m": 0.06322671251296998
+    },
+    {
+      "layer_from_top": 4,
+      "rotation_deg": 90.0,
+      "count": 30,
+      "center_xy_m": [
+        0.4123902469984827,
+        -0.07836070413711574
+      ],
+      "upper_z_m": 0.06862671251296998,
+      "grasp_z_m": 0.05362671251296998
+    },
+    {
+      "layer_from_top": 5,
+      "rotation_deg": 0.0,
+      "count": 30,
+      "center_xy_m": [
+        0.4123902469984827,
+        -0.07836070413711575
+      ],
+      "upper_z_m": 0.059026712512969974,
+      "grasp_z_m": 0.044026712512969975
+    },
+    {
+      "layer_from_top": 6,
+      "rotation_deg": 90.0,
+      "count": 30,
+      "center_xy_m": [
+        0.4123902469984827,
+        -0.07836070413711574
+      ],
+      "upper_z_m": 0.04942671251296998,
+      "grasp_z_m": 0.03442671251296998
+    },
+    {
+      "layer_from_top": 7,
+      "rotation_deg": 0.0,
+      "count": 30,
+      "center_xy_m": [
+        0.4123902469984827,
+        -0.07836070413711575
+      ],
+      "upper_z_m": 0.03982671251296997,
+      "grasp_z_m": 0.024826712512969973
+    },
+    {
+      "layer_from_top": 8,
+      "rotation_deg": 90.0,
+      "count": 30,
+      "center_xy_m": [
+        0.4123902469984827,
+        -0.07836070413711574
+      ],
+      "upper_z_m": 0.030226712512969975,
+      "grasp_z_m": 0.015226712512969975
+    },
+    {
+      "layer_from_top": 9,
+      "rotation_deg": 0.0,
+      "count": 30,
+      "center_xy_m": [
+        0.4123902469984827,
+        -0.07836070413711575
+      ],
+      "upper_z_m": 0.020626712512969977,
+      "grasp_z_m": 0.005626712512969978
+    },
+    {
+      "layer_from_top": 10,
+      "rotation_deg": 90.0,
+      "count": 30,
+      "center_xy_m": [
+        0.4123902469984827,
+        -0.07836070413711574
+      ],
+      "upper_z_m": 0.01102671251296998,
+      "grasp_z_m": -0.0039732874870300194
+    }
+  ],
+  "max_xy_anchor_residual_mm": 0.8866087655713608,
+  "max_abs_z_anchor_residual_mm": 1.1410997152328517,
+  "short_edge_gap_m": 0.0,
+  "gap_between_ridges_m": 0.016,
+  "layer_footprint_m": {
+    "length": 0.159,
+    "width": 0.1748
+  },
+  "upper_xyz_bounds_m": {
+    "min": [
+      0.33183158433237137,
+      -0.15891936680322702,
+      0.01102671251296998
+    ],
+    "max": [
+      0.49294890966459387,
+      0.002197958528995514,
+      0.09742671251296997
+    ]
+  },
+  "physical_validation": "Not performed. Generated geometry is not proof of collision-free motion, grasping or separation."
+}

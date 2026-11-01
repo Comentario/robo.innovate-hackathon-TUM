@@ -1,0 +1,114 @@
+{
+  "protocol_sha256": "69f667faed7c58140c3d2fd5ba49aac6c66adc3a97ac53a7983f98ff052869c9",
+  "failed_checks": [
+    "all_frames",
+    "completed_pick",
+    "coupon_rise",
+    "lift_5mm",
+    "held_30"
+  ],
+  "frame_failure_counts": {
+    "coupon_relative_retention": 151,
+    "no_capture_abort": 1,
+    "plane_compatible": 1
+  },
+  "metrics": {
+    "coupon_rise_m": 0.0008535236120223999,
+    "relative_translation_max_m": 0.0018605646125109585,
+    "relative_angle_max_rad": 0.13869291804694414,
+    "minimum_hold_support_clearance_m": null,
+    "source_drift_max_m": 0.00020829330605920404,
+    "source_angle_max_rad": 0.002178899707942024,
+    "force_peak_N": {
+      "left": 1.6166992791113444,
+      "right": 1.7113064089789987
+    }
+  },
+  "lift_admission": {
+    "kind": "position_candidate",
+    "step": 450,
+    "command_q_m": 0.005593305453658104
+  },
+  "finger_actual_speed_max_m_s_by_phase": {
+    "close": [
+      0.001694543519988656,
+      0.001681539579294622
+    ],
+    "lift": [
+      0.003947020508348942,
+      0.003990704659372568
+    ]
+  },
+  "old_2mm_actual_finger_speed_reference_frames": {
+    "lift": 12
+  },
+  "margin_configuration_verified": true,
+  "runtime_row_to_BODY_mapping": "UNKNOWN",
+  "schema": "final-finger-response-fixture-result-v1",
+  "job_id": 1825,
+  "source_commit": "9c8dbb4",
+  "snapshot": "/home/faps/dev/github/robo.innovate26/runs/20261025T165816.000989Z-stage2-finger-response",
+  "improvement_round": 3,
+  "maximum_improvements": 3,
+  "phase_closed": true,
+  "automatic_retry": false,
+  "control_reused_job_id": 1824,
+  "control_passed": true,
+  "pick_steps": 740,
+  "retention_fixture_passed": false,
+  "retention_verdict": "PHYSICAL_RETENTION_FAILURE_NOT_SPEED_CENSORED",
+  "stop_reasons": [
+    "unqualified_contact_right"
+  ],
+  "position_endpoint_commands": 30,
+  "pick_audit_sha256": "4f890683374ba76f9f7e6d91c59f58bb779f2ac125f45fe71e6de01544f79a10",
+  "timing": {
+    "schema": "finger-response-reassessment-supervisor-v1",
+    "phases": [
+      {
+        "phase": "capture",
+        "wall_seconds": 64.54926820099354,
+        "returncode": 0,
+        "cleanup": "complete_marker_cleanup",
+        "capture_completed": true
+      },
+      {
+        "phase": "audit",
+        "wall_seconds": 23.893218168988824,
+        "returncode": 0
+      }
+    ],
+    "actual_capture_plus_audit_seconds": 88.46931911099819,
+    "prior_case_seconds": 2594.2272199420236,
+    "cumulative_case_seconds": 2682.9455824780234,
+    "case_limit_seconds": 2800,
+    "maximum_active_seconds": 150,
+    "within_budget": true,
+    "control_reused": true,
+    "improvement_round": 3,
+    "retention_fixture_passed": false,
+    "proceed_gate_passed": false,
+    "physics_extraction_passed": false,
+    "perception_credit": false,
+    "transfer_authorized": false,
+    "automatic_retry": false,
+    "audit_sha256": "4f890683374ba76f9f7e6d91c59f58bb779f2ac125f45fe71e6de01544f79a10",
+    "supervised_cumulative_case_seconds": 2682.6965390530218,
+    "full_pueue_job_seconds": 88.718362536,
+    "pueue_job_id": 1825,
+    "pueue_start": "2026-10-25T17:58:16.375813546+01:00",
+    "pueue_end": "2026-10-25T17:59:45.094176082+01:00",
+    "full_pueue_timing_authoritative": true,
+    "remaining_case_seconds": 117.05441752197657
+  },
+  "physics_extraction_passed": false,
+  "perception_credit": false,
+  "transfer_authorized": false,
+  "hardware_claim": false,
+  "interpretation": "The revised response criterion allowed observation beyond the earlier speed stop. The coupon violated unchanged relative-retention limits before the unchanged right-contact qualification stop. No completed 5 mm lift, 4 mm coupon rise or 30-step hold. Configuration and control-compatibility checks pass; no causal friction, offset or controller explanation is established.",
+  "independent_reviews": {
+    "evaluator": "Accepts physical retention failure; guard, model and control checks pass. Third/final comparison closed.",
+    "reviewer": "Accepts negative retention result; the old speed cutoff no longer censors it. Close the third/final comparison. Reconcile simulated jaw gap and gripping depth with the successful real Desk 14 mm condition before further physics; no fourth fixture variant."
+  },
+  "next_dependency": "Reassess the grip/contact model and controller behavior before further physics; no fourth fixture parameter round or automatic stronger squeeze, tilt or transfer."
+}

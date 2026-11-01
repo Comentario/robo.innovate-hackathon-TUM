@@ -1,0 +1,85 @@
+id,source,label,L_mode,L_med,C_mode,stain_share,speck_share,face,holes,two_faces,aspect,scene_L,x_position,band_side,hints
+cal003#1,calibration,good,19.5,24.243,27.5,0.216,0.0,solid,0.0,True,2.891,50.33,0.791,below,stains 22%; 2 faces in box; frame edge
+cal031#1,calibration,bad,19.5,21.594,28.5,0.159,0.0,solid,0.0,True,2.663,50.055,0.723,below,stains 16%; 2 faces in box; light -2.7
+cal032#1,calibration,bad,19.5,21.765,28.5,0.1,0.002,solid,0.004,True,2.775,49.701,0.297,below,stains 10%; 2 faces in box; light -3.1
+cal029#1,calibration,bad,20.5,22.571,26.5,0.031,0.002,solid,0.0,False,2.964,50.305,0.319,below,
+cal030#1,calibration,bad,20.5,21.741,27.5,0.092,0.001,solid,0.0,False,2.936,49.969,0.742,below,stains 9%; light -2.8
+cal033#1,calibration,bad,20.5,21.881,28.5,0.147,0.0,solid,0.0,True,2.59,49.921,0.766,below,stains 15%; 2 faces in box; light -2.9; frame edge
+cal004#1,calibration,good,22.5,24.756,26.5,0.094,0.017,solid,0.0,True,2.895,49.738,0.328,in,stains 9%; 2 faces in box; light -3.1
+cal002#1,calibration,good,23.5,24.359,34.5,0.088,0.001,solid,0.0,True,2.608,49.969,0.824,in,stains 9%; 2 faces in box; light -2.8; frame edge
+cal023#1,calibration,good,23.5,24.823,31.5,0.124,0.001,solid,0.0,False,2.912,50.348,0.755,in,stains 12%; frame edge
+cal014#1,calibration,good,24.5,25.659,34.5,0.098,0.002,solid,0.0,False,2.911,50.33,0.748,in,stains 10%
+cal024#1,calibration,good,24.5,25.995,30.5,0.022,0.008,solid,0.0,False,3.026,49.585,0.32,in,light -3.2
+cal001#1,calibration,good,25.5,25.885,34.5,0.023,0.033,solid,0.0,True,2.869,51.624,0.257,in,2 faces in box
+cal005#1,calibration,bad,25.5,26.691,32.5,0.037,0.007,solid,0.0,False,3.169,50.525,0.376,in,
+cal006#1,calibration,bad,25.5,27.026,33.5,0.084,0.003,solid,0.0,False,3.063,50.195,0.728,in,stains 8%; light -2.6
+cal010#1,calibration,good,25.5,25.665,33.5,0.097,0.004,solid,0.0,False,3.147,50.684,0.709,in,stains 10%
+cal011#1,calibration,good,25.5,25.055,36.5,0.051,0.005,solid,0.0,False,3.147,50.348,0.715,in,stains 5%
+cal012#1,calibration,good,25.5,25.226,34.5,0.032,0.022,solid,0.002,True,2.578,51.678,0.235,in,2 faces in box; frame edge
+cal035#1,calibration,good,25.5,26.202,31.5,0.074,0.002,solid,0.0,False,2.901,50.5,0.784,in,stains 7%; frame edge
+cal009#1,calibration,good,26.5,26.178,27.5,0.052,0.015,solid,0.0,False,2.96,50.671,0.353,in,stains 5%
+cal013#1,calibration,good,26.5,27.496,28.5,0.009,0.017,solid,0.0,False,2.905,51.056,0.338,in,
+cal020#1,calibration,good,26.5,36.731,27.5,0.448,0.008,perforated,0.045,False,2.944,49.042,0.361,in,stains 45%; perforated face; light -3.8
+cal034#1,calibration,good,26.5,27.319,28.5,0.009,0.011,solid,0.0,False,3.07,50.909,0.351,in,
+cal007#1,calibration,bad,27.5,28.156,36.5,0.045,0.002,solid,0.0,False,3.144,51.08,0.69,in,
+cal015#1,calibration,good,27.5,28.253,37.5,0.089,0.006,solid,0.0,True,2.724,50.116,0.729,in,stains 9%; 2 faces in box; light -2.7
+cal037#1,calibration,good,27.5,28.162,36.5,0.031,0.007,solid,0.001,True,2.837,48.773,0.335,in,2 faces in box; light -4.0
+cal008#1,calibration,bad,28.5,28.925,36.5,0.014,0.013,solid,0.0,False,2.928,51.074,0.317,in,
+cal016#1,calibration,good,28.5,28.748,36.5,0.03,0.012,solid,0.002,True,2.807,50.317,0.31,in,2 faces in box
+cal022#1,calibration,good,28.5,28.809,37.5,0.064,0.013,solid,0.0,False,2.961,50.33,0.749,in,stains 6%
+cal036#1,calibration,good,28.5,28.558,37.5,0.069,0.005,solid,0.0,True,2.808,50.317,0.735,in,stains 7%; 2 faces in box
+cal021#1,calibration,good,29.5,29.23,36.5,0.019,0.014,solid,0.0,False,2.969,50.391,0.317,in,
+cal018#1,calibration,good,30.5,30.487,36.5,0.068,0.021,solid,0.0,False,2.904,50.299,0.762,in,stains 7%; light -2.5; frame edge
+cal017#1,calibration,good,33.5,32.251,36.5,0.015,0.063,solid,0.0,False,2.915,51.636,0.346,above,
+cal038#1,calibration,bad,33.5,33.734,41.5,0.051,0.021,solid,0.0,False,2.97,50.354,0.738,above,stains 5%
+cal025#1,calibration,bad,34.5,34.076,40.5,0.025,0.037,solid,0.0,False,2.935,50.69,0.307,above,
+cal026#1,calibration,bad,34.5,34.265,41.5,0.042,0.014,solid,0.0,False,3.354,51.196,0.695,above,
+cal039#1,calibration,bad,34.5,34.113,40.5,0.021,0.052,solid,0.0,True,2.803,50.5,0.269,above,2 faces in box
+cal019#1,calibration,good,42.5,36.987,30.5,0.015,0.332,solid,0.016,False,3.124,50.104,0.717,above,light -2.7
+cal027#1,calibration,bad,52.5,47.736,30.5,0.0,0.257,perforated,0.141,False,2.944,51.276,0.729,above,perforated face
+cal028#1,calibration,bad,54.5,47.144,27.5,0.001,0.39,perforated,0.264,True,2.65,51.678,0.268,above,perforated face; 2 faces in box
+cal040#1,calibration,bad,54.5,50.177,29.5,0.0,0.245,perforated,0.231,False,3.322,51.349,0.752,above,perforated face; frame edge
+cal041#1,calibration,bad,54.5,48.486,27.5,0.001,0.345,perforated,0.291,True,2.831,50.964,0.328,above,perforated face; 2 faces in box
+0002#2,live,bad,32.5,34.619,23.5,0.134,0.001,solid,0.004,False,3.276,53.314,0.456,above,stains 13%
+0001#2,live,good,34.5,36.737,24.5,0.051,0.0,solid,0.001,False,3.304,50.909,0.458,above,stains 5%
+0012#1,live,good,36.5,36.975,18.5,0.071,0.053,perforated,0.033,True,2.565,53.943,0.259,above,stains 7%; perforated face; 2 faces in box
+0005#2,live,good,38.5,38.672,25.5,0.035,0.008,solid,0.0,True,2.807,54.15,0.357,above,2 faces in box
+0006#4,live,good,38.5,41.064,23.5,0.109,0.001,perforated,0.093,False,3.349,54.013,0.782,above,stains 11%; perforated face; frame edge
+0007#3,live,good,38.5,41.394,23.5,0.112,0.001,perforated,0.094,False,3.301,54.974,0.783,above,stains 11%; perforated face; frame edge
+0012#2,live,good,38.5,39.459,17.5,0.023,0.002,solid,0.001,False,3.154,53.943,0.384,above,
+0002#4,live,good,39.5,39.868,18.5,0.011,0.072,solid,0.004,True,2.457,53.314,0.771,above,2 faces in box; frame edge
+0005#1,live,good,39.5,37.012,13.5,0.045,0.177,perforated,0.028,True,2.77,54.15,0.226,above,perforated face; 2 faces in box; frame edge
+0006#1,live,good,39.5,38.812,25.5,0.056,0.004,solid,0.0,False,3.129,54.013,0.435,above,stains 6%
+0009#3,live,good,39.5,41.73,18.5,0.1,0.017,perforated,0.098,False,3.143,54.828,0.815,above,stains 10%; perforated face; frame edge
+0011#1,live,good,39.5,39.911,17.5,0.018,0.003,solid,0.001,False,3.087,54.144,0.384,above,
+0001#3,live,bad,40.5,45.026,21.5,0.156,0.011,perforated,0.117,False,3.219,50.909,0.625,above,stains 16%; perforated face
+0008#1,live,good,40.5,39.044,25.5,0.044,0.014,solid,0.0,False,3.253,53.168,0.38,above,
+0012#5,live,good,40.5,39.014,24.5,0.037,0.114,solid,0.005,True,2.523,53.943,0.78,above,2 faces in box; frame edge
+0004#3,live,good,41.5,40.527,24.5,0.045,0.025,solid,0.001,False,3.008,nan,0.67,above,
+0005#4,live,good,41.5,42.554,18.5,0.014,0.036,solid,0.005,True,2.402,54.15,0.817,above,2 faces in box; frame edge
+0010#1,live,good,41.5,42.2,24.5,0.033,0.02,solid,0.001,True,2.603,54.236,0.354,above,2 faces in box
+0002#3,live,bad,43.5,44.293,14.5,0.003,0.006,solid,0.003,False,3.117,53.314,0.621,above,
+0006#2,live,bad,44.5,45.215,27.5,0.033,0.002,solid,0.004,False,3.289,54.013,0.558,above,
+0011#3,live,bad,44.5,45.941,21.5,0.003,0.036,solid,0.004,True,2.784,54.144,0.674,above,2 faces in box
+0003#4,live,good,45.5,44.33,28.5,0.015,0.136,solid,0.01,True,2.34,53.809,0.758,above,2 faces in box; frame edge
+0009#1,live,bad,45.5,46.283,13.5,0.005,0.001,solid,0.006,False,3.485,54.828,0.533,above,
+0004#4,live,bad,46.5,46.411,22.5,0.001,0.002,solid,0.005,False,3.529,nan,0.785,above,frame edge
+0003#2,live,bad,48.5,48.779,22.5,0.055,0.004,perforated,0.129,False,3.195,53.809,0.461,above,stains 6%; perforated face
+0008#2,live,bad,49.5,50.726,21.5,0.06,0.002,perforated,0.207,False,3.288,53.168,0.528,above,stains 6%; perforated face
+0004#1,live,bad,50.5,49.078,30.5,0.033,0.012,perforated,0.06,False,3.054,nan,0.379,above,perforated face
+0007#1,live,bad,50.5,51.3,21.5,0.056,0.001,perforated,0.232,False,3.267,54.974,0.528,above,stains 6%; perforated face
+0003#3,live,bad,51.5,51.599,28.5,0.038,0.003,perforated,0.177,False,3.199,53.809,0.614,above,perforated face
+0010#2,live,bad,51.5,51.416,23.5,0.037,0.004,perforated,0.12,False,3.298,54.236,0.493,above,perforated face
+0010#3,live,bad,51.5,51.898,21.5,0.044,0.017,perforated,0.264,False,3.098,54.236,0.638,above,perforated face
+0005#3,live,bad,52.5,52.161,23.5,0.031,0.006,perforated,0.183,False,3.313,54.15,0.541,above,perforated face
+0012#4,live,bad,52.5,51.05,30.5,0.021,0.017,perforated,0.109,False,3.099,53.943,0.652,above,perforated face
+0008#3,live,bad,54.5,52.954,23.5,0.028,0.042,perforated,0.303,False,2.962,53.168,0.655,above,perforated face
+0011#2,live,bad,55.5,54.529,21.5,0.001,0.038,perforated,0.459,False,3.42,54.144,0.519,above,perforated face
+0012#3,live,bad,55.5,54.346,21.5,0.001,0.039,perforated,0.439,False,3.425,53.943,0.519,above,perforated face
+0004#2,live,bad,56.5,55.103,21.5,0.001,0.045,perforated,0.525,False,3.361,nan,0.525,above,perforated face
+0006#3,live,bad,56.5,55.157,21.5,0.002,0.034,perforated,0.571,False,3.448,54.013,0.672,above,perforated face
+0007#2,live,bad,57.5,55.731,22.5,0.001,0.106,perforated,0.66,False,3.117,54.974,0.667,above,perforated face
+0001#1,live,bad,62.5,57.867,16.5,0.001,0.3,perforated,0.742,True,2.636,50.909,0.331,above,perforated face; 2 faces in box
+0002#1,live,bad,67.5,61.627,13.5,0.0,0.322,perforated,0.833,True,2.66,53.314,0.33,above,perforated face; 2 faces in box
+0003#1,live,bad,67.5,61.377,13.5,0.0,0.326,perforated,0.808,True,2.611,53.809,0.332,above,perforated face; 2 faces in box
+0009#2,live,bad,74.5,69.684,12.5,0.0,0.297,perforated,0.951,False,3.013,54.828,0.687,above,perforated face

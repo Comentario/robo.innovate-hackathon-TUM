@@ -1,0 +1,22 @@
+{
+  "status": "awaiting_cad_and_calibration",
+  "kind": "paper",
+  "reference": "https://arxiv.org/abs/2309.02354",
+  "robot": "fr3",
+  "mount_body": "fr3_link8",
+  "replace_parallel_hand": true,
+  "cad_path": null,
+  "cad_units": "m",
+  "flange_to_tool_xyz_m": null,
+  "flange_to_tool_quat_wxyz": null,
+  "tool_to_tcp_xyz_m": null,
+  "tool_to_tcp_quat_wxyz": null,
+  "mass_kg": null,
+  "center_of_mass_xyz_m": null,
+  "inertia_tensor_kg_m2": null,
+  "stud_engagement_interface_geometry": null,
+  "calibrated_engagement_depth_m": null,
+  "calibrated_pull_off_force_n": null,
+  "calibrated_release_torque_nm": null,
+  "motion_search_bounds": {"duration_s": null, "twist_rad": null, "pivot_dx_m": null, "pivot_dz_m": null}
+}

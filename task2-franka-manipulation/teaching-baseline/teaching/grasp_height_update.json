@@ -1,0 +1,21 @@
+{
+  "updated_utc": "2026-10-25T20:50:08.995705+00:00",
+  "backup": "teaching/history/positions_before_restore_15mm_grasp_20261025T205008.995705Z.json",
+  "updated_grasp_references": 315,
+  "grasp_offset_below_upper_mm": 15,
+  "height_change_mm": -3,
+  "upper_poses_unchanged": true,
+  "robot_commands_sent": false,
+  "example_a_0_0_9": {
+    "upper_xyz_m": [
+      0.47464385628700256,
+      0.002197958528995514,
+      0.09742671251296997
+    ],
+    "grasp_xyz_m": [
+      0.47464385628700256,
+      0.002197958528995514,
+      0.08242671251296997
+    ]
+  }
+}

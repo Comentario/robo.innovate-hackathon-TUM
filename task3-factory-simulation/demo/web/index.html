@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marmon · Brick blending lab</title>
+<style>/*INLINE_CSS*/</style>
+</head>
+<body>
+<main>
+<header><div class="eyebrow">MARMON #08 / MUNICH 2026</div><h1>See the blend take shape.</h1>
+<p class="intro">Both strategies use the same shade quantities. Compare their positions, layer balance, chosen faces and failure handling.</p>
+<div class="notice">SYNTHETIC DATA · LOGICAL PLACEMENT · NO ROBOT CONNECTION</div></header>
+<section class="controls" aria-label="Simulation controls">
+<div class="config"><label>Scenario<select id="scenario"></select></label>
+<label>Missing shades<select id="policy"><option value="reject">Reject impossible recipes</option><option value="redistribute">Redistribute and report deviation</option></select></label>
+<label>Failure injection<select id="failure"><option value="none">No failure</option><option value="5">Before pick 5</option></select></label></div>
+<p id="description"></p>
+<div class="playback"><button id="play" class="primary">Play</button><button id="step">Next step</button><button id="reset">Reset</button>
+<label class="speed">Speed<select id="speed"><option value="1000">1×</option><option value="400">2.5×</option><option value="1800">0.5×</option></select></label>
+<label class="toggle"><input id="ghosts" type="checkbox" checked> Show target pattern</label>
+<span id="progress" aria-live="polite"></span></div></section>
+<div class="legend" aria-label="Shade legend"><span><i class="dark"></i>Dark</span><span><i class="medium"></i>Medium</span><span><i class="light"></i>Light</span><span><i class="unknown"></i>Unobserved face</span><span>Target recipe: ⅓ of each shade</span></div>
+<section id="panels" class="panels" aria-label="Strategy comparison"></section>
+<section class="explanation"><h2>What this demonstrates</h2><p><strong>Mixed</strong> allocates shade quotas to layers and rows, then discourages matching neighbors. <strong>Smooth</strong> reduces shade differences and may create clusters. Neither strategy guarantees the desired industrial appearance.</p>
+<p>Target and planned counts are shown for each layer. Row counts expose smaller clusters. Missing stock can cause recipe deviation even when the available shades are evenly distributed.</p><p>In face-aware scenarios, a brick is counted once. Its displayed shade comes from the selected observed face and a declared allowed orientation. Other faces remain distinct; unobserved faces are never guessed.</p>
+<p class="muted">One display face per placement · illustrative colors · orientation candidates are not robot-verified · no physical stability or wall simulation · reset starts a fresh simulation</p></section>
+</main>
+<noscript>This local demo requires JavaScript to animate the precomputed plans.</noscript>
+<script id="demo-data" type="application/json">__DEMO_DATA__</script>
+<script>/*INLINE_JS*/</script>
+</body></html>

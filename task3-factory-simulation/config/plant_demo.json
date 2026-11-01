@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.2",
+  "seed": 8,
+  "product_id": "ACME-demo-product",
+  "geometry": {
+    "columns": 10,
+    "rows": 4,
+    "input_layers": 20,
+    "output_layers": 14,
+    "stacks_per_cart": 36,
+    "brick_mm": [
+      245,
+      67,
+      69
+    ]
+  },
+  "input_stacks": 2,
+  "arrival_bricks_per_hour": 3000,
+  "inflight_pairs": 4,
+  "buffer_pairs": 2,
+  "correction_robots": 1,
+  "defect_rate": 0.12,
+  "false_accept_rate": 0.0,
+  "false_reject_rate": 0.0,
+  "input_pattern": "random",
+  "shades": [
+    "Warm",
+    "Copper",
+    "Russet"
+  ],
+  "recipe": [
+    0.3333333333333333,
+    0.3333333333333333,
+    0.3333333333333333
+  ],
+  "replacement_per_shade": 150,
+  "mixing_budget_per_layer": 0,
+  "sensor_timeout_seconds": 5,
+  "fault": null,
+  "max_simulation_seconds": 100000,
+  "provenance": {
+    "geometry": "UTUM Brick Coloration, slide 18; supplied by organizer",
+    "throughput": "Organizer range 1500\u20133000 bricks/hour; 3000 selected as arrival target",
+    "product": "Team assumption: one product per run; these shade names are illustrative",
+    "mechanism": "Team concept: two-layer dehacking, whole-layer separation, two inspection lanes, selective robot correction, pairing, restacking; single gated infeed berth; separate inspection and correction positions; exclusively reserved join nests",
+    "timing": "Engineering assumptions: durations derived from axis distances / configured speeds + explicit grip, settle, exposure and inference dwell. No acceleration model.",
+    "quality": "Synthetic labels and simulated inspection; no camera or Person 1 integration; perfect inspection is an explicit demo assumption",
+    "mixing": "Equal shade recipe is a team assumption. Budget 0 preserves good bricks; replacement choice favors distribution. Mixing is evaluated, not guaranteed.",
+    "mechanics": "Whole-layer support/grip, robot reach, brick temperature/mass and contact mechanics remain unvalidated"
+  },
+  "automation": {
+    "infeed_m_s": 0.4,
+    "transfer_m_s": 0.4,
+    "gantry_xy_m_s": 1.0,
+    "gantry_z_m_s": 0.7,
+    "robot_xy_m_s": 2.0,
+    "robot_z_m_s": 1.2,
+    "dock_m_s": 0.25,
+    "pallet_m_s": 0.25,
+    "clamp_s": 0.25,
+    "release_s": 0.2,
+    "settle_s": 0.2,
+    "exposure_s": 0.15,
+    "inference_s": 0.4,
+    "clearance_m": 2.35
+  },
+  "initial_arrival_s": 0.0
+}

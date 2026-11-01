@@ -1,0 +1,855 @@
+{
+  "solutions": [
+    {
+      "q": [
+        1.3379037970974663,
+        -0.19239416074857082,
+        -1.8780305032272953,
+        -2.751053362381943,
+        -0.5174717048175593,
+        2.7642747299370733,
+        0.7308657500237062
+      ],
+      "position_error_m": 6.535133219097873e-09,
+      "rotation_error_rad": 2.438907754825431e-08,
+      "metrics": {
+        "full_sigma_min": 0.11685882191586099,
+        "fixed_elbow_sigma_min": 0.04140255011387073,
+        "full_condition": 22.53998942899745,
+        "fixed_elbow_condition": 62.11642820367953,
+        "abs_joint2_rad": 0.19239416074857082,
+        "abs_joint5_rad": 0.5174717048175593,
+        "elbow_extension_margin_rad": 2.284050938728932,
+        "joint_limit_margin_rad": 0.2310466376180571
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        -2.2261861879891987,
+        -0.16815245228854483,
+        1.902289251555955,
+        -2.75598444297945,
+        0.45882958662432005,
+        2.77621285660159,
+        0.03791166697165744
+      ],
+      "position_error_m": 8.264221629267043e-08,
+      "rotation_error_rad": 2.960328279036314e-07,
+      "metrics": {
+        "full_sigma_min": 0.10759251885257409,
+        "fixed_elbow_sigma_min": 0.04652383382355115,
+        "full_condition": 24.549555934422266,
+        "fixed_elbow_condition": 55.618991309560634,
+        "abs_joint2_rad": 0.16815245228854483,
+        "abs_joint5_rad": 0.45882958662432005,
+        "elbow_extension_margin_rad": 2.2889820193264394,
+        "joint_limit_margin_rad": 0.22611555702054975
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        1.3809460623433123,
+        -0.16413875694737193,
+        -1.9071123640846532,
+        -2.756779169788114,
+        -0.4487263575164237,
+        2.778079636441089,
+        0.682160026406151
+      ],
+      "position_error_m": 2.3452856802109174e-08,
+      "rotation_error_rad": 8.31559850366069e-08,
+      "metrics": {
+        "full_sigma_min": 0.10625478849350624,
+        "fixed_elbow_sigma_min": 0.047589715980062744,
+        "full_condition": 24.87396507492486,
+        "fixed_elbow_condition": 54.43689241983601,
+        "abs_joint2_rad": 0.16413875694737193,
+        "abs_joint5_rad": 0.4487263575164237,
+        "elbow_extension_margin_rad": 2.2897767461351033,
+        "joint_limit_margin_rad": 0.22532083021188587
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        -2.256989211526045,
+        -0.15153254630150428,
+        1.924227042301425,
+        -2.7592236913194186,
+        0.4162330448940792,
+        2.783726622596778,
+        0.06812446409471955
+      ],
+      "position_error_m": 2.380906474427095e-08,
+      "rotation_error_rad": 8.131265749926704e-08,
+      "metrics": {
+        "full_sigma_min": 0.10255618669353155,
+        "fixed_elbow_sigma_min": 0.05143579491416679,
+        "full_condition": 25.830716827170335,
+        "fixed_elbow_condition": 50.57017591969923,
+        "abs_joint2_rad": 0.15153254630150428,
+        "abs_joint5_rad": 0.4162330448940792,
+        "elbow_extension_margin_rad": 2.2922212676664078,
+        "joint_limit_margin_rad": 0.2228763086805814
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        0.8833770119307442,
+        0.150934470138242,
+        -1.2164696846067173,
+        -2.759337529603966,
+        0.4146621441539238,
+        2.7839861614883383,
+        0.0692390916187811
+      ],
+      "position_error_m": 3.439801319913746e-08,
+      "rotation_error_rad": 1.1744591627577362e-07,
+      "metrics": {
+        "full_sigma_min": 0.10240256582254555,
+        "fixed_elbow_sigma_min": 0.05163899141896974,
+        "full_condition": 25.872722159627795,
+        "fixed_elbow_condition": 50.38161664814461,
+        "abs_joint2_rad": 0.150934470138242,
+        "abs_joint5_rad": 0.4146621441539238,
+        "elbow_extension_margin_rad": 2.292335105950955,
+        "joint_limit_margin_rad": 0.22276247039603403
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        -1.7214772499104087,
+        0.14439222903820784,
+        1.2060905231073444,
+        -2.760568708814084,
+        -0.3972990784216008,
+        2.7867738732346576,
+        0.6456748594377625
+      ],
+      "position_error_m": 4.308639635289894e-09,
+      "rotation_error_rad": 1.4205417581961124e-08,
+      "metrics": {
+        "full_sigma_min": 0.10087487756634657,
+        "fixed_elbow_sigma_min": 0.05400052487553975,
+        "full_condition": 26.303616423234647,
+        "fixed_elbow_condition": 48.29275504308855,
+        "abs_joint2_rad": 0.14439222903820784,
+        "abs_joint5_rad": 0.3972990784216008,
+        "elbow_extension_margin_rad": 2.293566285161073,
+        "joint_limit_margin_rad": 0.22153129118591597
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        1.4424417138407495,
+        -0.1350502128365966,
+        -1.9524145457665514,
+        -2.762278481505335,
+        -0.37192270317109555,
+        2.7905879842622747,
+        0.627662491580267
+      ],
+      "position_error_m": 4.418385074019082e-09,
+      "rotation_error_rad": 1.4198288144639305e-08,
+      "metrics": {
+        "full_sigma_min": 0.09925198751002874,
+        "fixed_elbow_sigma_min": 0.057862295127961365,
+        "full_condition": 26.801164903164892,
+        "fixed_elbow_condition": 45.24008407777745,
+        "abs_joint2_rad": 0.1350502128365966,
+        "abs_joint5_rad": 0.37192270317109555,
+        "elbow_extension_margin_rad": 2.295276057852324,
+        "joint_limit_margin_rad": 0.21982151849466502
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        -1.6448163158809601,
+        0.11663559135893875,
+        1.1461506275023712,
+        -2.765454537197238,
+        -0.3197488750849875,
+        2.7975017777224678,
+        0.5906188470331659
+      ],
+      "position_error_m": 6.81015463969102e-11,
+      "rotation_error_rad": 8.671544523813129e-11,
+      "metrics": {
+        "full_sigma_min": 0.09865836414561455,
+        "fixed_elbow_sigma_min": 0.06763722684152694,
+        "full_condition": 27.146437521053837,
+        "fixed_elbow_condition": 39.061849224676024,
+        "abs_joint2_rad": 0.11663559135893875,
+        "abs_joint5_rad": 0.3197488750849875,
+        "elbow_extension_margin_rad": 2.298452113544227,
+        "joint_limit_margin_rad": 0.2166454628027621
+      },
+      "margin_validated": false,
+      "evaluations": 81
+    },
+    {
+      "q": [
+        0.7689116083989684,
+        0.11008981394525523,
+        -1.1266321384741316,
+        -2.7665122948705974,
+        0.3004482689959838,
+        2.799756419227152,
+        0.15032192823513088
+      ],
+      "position_error_m": 2.7202635957346764e-09,
+      "rotation_error_rad": 7.850968236146248e-09,
+      "metrics": {
+        "full_sigma_min": 0.09956916815347257,
+        "fixed_elbow_sigma_min": 0.07201645248729571,
+        "full_condition": 26.984737614265406,
+        "fixed_elbow_condition": 36.83703617845415,
+        "abs_joint2_rad": 0.11008981394525523,
+        "abs_joint5_rad": 0.3004482689959838,
+        "elbow_extension_margin_rad": 2.2995098712175865,
+        "joint_limit_margin_rad": 0.21558770512940262
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        0.7377004525089705,
+        0.10256612881055907,
+        -1.1004469711372606,
+        -2.7676762052696287,
+        0.27771337376323796,
+        2.8022103986540396,
+        0.1664663353436871
+      ],
+      "position_error_m": 2.309924733214305e-10,
+      "rotation_error_rad": 2.298671873792939e-10,
+      "metrics": {
+        "full_sigma_min": 0.10158201130784086,
+        "fixed_elbow_sigma_min": 0.07782582023805189,
+        "full_condition": 26.566720345039137,
+        "fixed_elbow_condition": 34.27284625173022,
+        "abs_joint2_rad": 0.10256612881055907,
+        "abs_joint5_rad": 0.27771337376323796,
+        "elbow_extension_margin_rad": 2.300673781616618,
+        "joint_limit_margin_rad": 0.21442379473037132
+      },
+      "margin_validated": false,
+      "evaluations": 96
+    },
+    {
+      "q": [
+        0.6672599173877339,
+        0.08903641532470695,
+        -1.0395169287847992,
+        -2.7696165305889338,
+        0.23510329392339285,
+        2.8062399358540873,
+        0.19672394869986912
+      ],
+      "position_error_m": 7.10317230159074e-09,
+      "rotation_error_rad": 1.9527000567249726e-08,
+      "metrics": {
+        "full_sigma_min": 0.1085926166329438,
+        "fixed_elbow_sigma_min": 0.09105055477402788,
+        "full_condition": 25.114056090810287,
+        "fixed_elbow_condition": 29.66166862884085,
+        "abs_joint2_rad": 0.08903641532470695,
+        "abs_joint5_rad": 0.23510329392339285,
+        "elbow_extension_margin_rad": 2.302614106935923,
+        "joint_limit_margin_rad": 0.21248346941106622
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        -1.516522438546852,
+        0.08856421467824634,
+        1.0369751545909887,
+        -2.7696804699308744,
+        -0.23356969716641474,
+        2.8063714341881987,
+        0.52942251526635
+      ],
+      "position_error_m": 1.1299346770273e-08,
+      "rotation_error_rad": 3.1078980629925377e-08,
+      "metrics": {
+        "full_sigma_min": 0.10893453417043308,
+        "fixed_elbow_sigma_min": 0.09159363941790438,
+        "full_condition": 25.0463385129838,
+        "fixed_elbow_condition": 29.500971535952242,
+        "abs_joint2_rad": 0.08856421467824634,
+        "abs_joint5_rad": 0.23356969716641474,
+        "elbow_extension_margin_rad": 2.3026780462778635,
+        "joint_limit_margin_rad": 0.21241953006912562
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        1.6349685465315336,
+        -0.08698635718033287,
+        -2.1133585098735614,
+        -2.769892188786824,
+        -0.22841930164957688,
+        2.806806279338488,
+        0.5257653401096163
+      ],
+      "position_error_m": 1.9815694219916794e-08,
+      "rotation_error_rad": 5.4523071519732545e-08,
+      "metrics": {
+        "full_sigma_min": 0.11013295083488103,
+        "fixed_elbow_sigma_min": 0.09345621034722351,
+        "full_condition": 24.811675120842438,
+        "fixed_elbow_condition": 28.964149591827002,
+        "abs_joint2_rad": 0.08698635718033287,
+        "abs_joint5_rad": 0.22841930164957688,
+        "elbow_extension_margin_rad": 2.302889765133813,
+        "joint_limit_margin_rad": 0.212207811213176
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        0.6282975845364765,
+        0.08310271260157201,
+        -1.0049515927824302,
+        -2.7704004181274318,
+        0.21556217547859577,
+        2.807846497420695,
+        0.21059946410562302
+      ],
+      "position_error_m": 1.4992253574017505e-10,
+      "rotation_error_rad": 1.9762805478183038e-10,
+      "metrics": {
+        "full_sigma_min": 0.11347498616302644,
+        "fixed_elbow_sigma_min": 0.09837974593774142,
+        "full_condition": 24.17944590830131,
+        "fixed_elbow_condition": 27.643831612926203,
+        "abs_joint2_rad": 0.08310271260157201,
+        "abs_joint5_rad": 0.21556217547859577,
+        "elbow_extension_margin_rad": 2.303397994474421,
+        "joint_limit_margin_rad": 0.2116995818725682
+      },
+      "margin_validated": false,
+      "evaluations": 74
+    },
+    {
+      "q": [
+        -1.4709727052262187,
+        0.08179229051247207,
+        0.9964710145705121,
+        -2.7705677067828476,
+        -0.2111618674532143,
+        2.8081877848624868,
+        0.5135115497430985
+      ],
+      "position_error_m": 2.806614569239519e-08,
+      "rotation_error_rad": 7.595442071853906e-08,
+      "metrics": {
+        "full_sigma_min": 0.11473862575715353,
+        "fixed_elbow_sigma_min": 0.10015982240072965,
+        "full_condition": 23.948821934917955,
+        "fixed_elbow_condition": 27.19871188180262,
+        "abs_joint2_rad": 0.08179229051247207,
+        "abs_joint5_rad": 0.2111618674532143,
+        "elbow_extension_margin_rad": 2.3035652831298368,
+        "joint_limit_margin_rad": 0.2115322932171524
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        0.5755577954187107,
+        0.07636875383937886,
+        -0.9574104474512893,
+        -2.7712368725617367,
+        0.1925704480044405,
+        2.8095474745145035,
+        0.22692428956111554
+      ],
+      "position_error_m": 2.3346697931927688e-08,
+      "rotation_error_rad": 6.225785394833954e-08,
+      "metrics": {
+        "full_sigma_min": 0.12080245997460473,
+        "fixed_elbow_sigma_min": 0.10826948312115561,
+        "full_condition": 22.90353459258825,
+        "fixed_elbow_condition": 25.357690334848975,
+        "abs_joint2_rad": 0.07636875383937886,
+        "abs_joint5_rad": 0.1925704480044405,
+        "elbow_extension_margin_rad": 2.304234448908726,
+        "joint_limit_margin_rad": 0.2108631274382633
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        -1.3803847809349272,
+        0.07133084535277924,
+        0.9141568792575401,
+        -2.771824047184518,
+        -0.17465463903442788,
+        2.810733398817721,
+        0.4875911083846508
+      ],
+      "position_error_m": 1.84374624591939e-08,
+      "rotation_error_rad": 4.859617086984158e-08,
+      "metrics": {
+        "full_sigma_min": 0.12784412092710407,
+        "fixed_elbow_sigma_min": 0.11708305720818585,
+        "full_condition": 21.80682085594724,
+        "fixed_elbow_condition": 23.648427989089065,
+        "abs_joint2_rad": 0.07133084535277924,
+        "abs_joint5_rad": 0.17465463903442788,
+        "elbow_extension_margin_rad": 2.3048216235315073,
+        "joint_limit_margin_rad": 0.21027595281548184
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        -1.3419301829983048,
+        0.06779785640859406,
+        0.878669299409277,
+        -2.7722154071643987,
+        -0.1616255126529699,
+        2.811520142616748,
+        0.478340978833087
+      ],
+      "position_error_m": 5.135443355768972e-09,
+      "rotation_error_rad": 1.3390265289417332e-08,
+      "metrics": {
+        "full_sigma_min": 0.13377216945755568,
+        "fixed_elbow_sigma_min": 0.12418507206075131,
+        "full_condition": 20.969481571349473,
+        "fixed_elbow_condition": 22.448852086140676,
+        "abs_joint2_rad": 0.06779785640859406,
+        "abs_joint5_rad": 0.1616255126529699,
+        "elbow_extension_margin_rad": 2.305212983511388,
+        "joint_limit_margin_rad": 0.20988459283560124
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        0.46319573946574405,
+        0.06560379002667441,
+        -0.853983305262397,
+        -2.7724497812408844,
+        0.15329807211502505,
+        2.811989895497207,
+        0.2548064079570716
+      ],
+      "position_error_m": 8.597639331636098e-11,
+      "rotation_error_rad": 1.6481904775086413e-10,
+      "metrics": {
+        "full_sigma_min": 0.13793998282101433,
+        "fixed_elbow_sigma_min": 0.12905617617653764,
+        "full_condition": 20.42251087381108,
+        "fixed_elbow_condition": 21.702828368315593,
+        "abs_joint2_rad": 0.06560379002667441,
+        "abs_joint5_rad": 0.15329807211502505,
+        "elbow_extension_margin_rad": 2.3054473575878736,
+        "joint_limit_margin_rad": 0.2096502187591156
+      },
+      "margin_validated": false,
+      "evaluations": 124
+    },
+    {
+      "q": [
+        0.38316183254042396,
+        0.06000480450708945,
+        -0.7790521804315322,
+        -2.773017067082903,
+        0.13098492434788278,
+        2.8131225686032058,
+        0.27064659079659137
+      ],
+      "position_error_m": 4.81546529700087e-09,
+      "rotation_error_rad": 1.2289840804674702e-08,
+      "metrics": {
+        "full_sigma_min": 0.15064289506618336,
+        "fixed_elbow_sigma_min": 0.1434797092845266,
+        "full_condition": 18.937417035078667,
+        "fixed_elbow_condition": 19.79147817871433,
+        "abs_joint2_rad": 0.06000480450708945,
+        "abs_joint5_rad": 0.13098492434788278,
+        "elbow_extension_margin_rad": 2.3060146434298923,
+        "joint_limit_margin_rad": 0.2090829329170969
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        -1.166000955632962,
+        0.05613314631486475,
+        0.71356320889572,
+        -2.7733828623821553,
+        -0.11432418580526106,
+        2.813849703163925,
+        0.44476198096619063
+      ],
+      "position_error_m": 5.990097657693724e-09,
+      "rotation_error_rad": 1.5368731408642966e-08,
+      "metrics": {
+        "full_sigma_min": 0.16161844328905592,
+        "fixed_elbow_sigma_min": 0.1556022912496883,
+        "full_condition": 17.837871938159086,
+        "fixed_elbow_condition": 18.458340957955944,
+        "abs_joint2_rad": 0.05613314631486475,
+        "abs_joint5_rad": 0.11432418580526106,
+        "elbow_extension_margin_rad": 2.3063804387291444,
+        "joint_limit_margin_rad": 0.20871713761784472
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        2.0053191829945614,
+        -0.05469642161091103,
+        -2.4562543316938705,
+        -2.773512986401392,
+        -0.10778095663435713,
+        2.8141077576129043,
+        0.4401173156497159
+      ],
+      "position_error_m": 3.67747404966703e-12,
+      "rotation_error_rad": 2.427724744777806e-11,
+      "metrics": {
+        "full_sigma_min": 0.16626698787149113,
+        "fixed_elbow_sigma_min": 0.16067277424129392,
+        "full_condition": 17.414822190495276,
+        "fixed_elbow_condition": 17.95985525783743,
+        "abs_joint2_rad": 0.05469642161091103,
+        "abs_joint5_rad": 0.10778095663435713,
+        "elbow_extension_margin_rad": 2.306510562748381,
+        "joint_limit_margin_rad": 0.2085870135986081
+      },
+      "margin_validated": false,
+      "evaluations": 5
+    },
+    {
+      "q": [
+        0.2651336870315668,
+        0.05384018287792483,
+        -0.6672700143180627,
+        -2.7735890747934655,
+        0.10376467414513717,
+        2.8142585043317405,
+        0.2899690191418677
+      ],
+      "position_error_m": 4.73284311989838e-09,
+      "rotation_error_rad": 1.2086721186723663e-08,
+      "metrics": {
+        "full_sigma_min": 0.16920868234041178,
+        "fixed_elbow_sigma_min": 0.1638659545441635,
+        "full_condition": 17.158776663872658,
+        "fixed_elbow_condition": 17.66153790073297,
+        "abs_joint2_rad": 0.05384018287792483,
+        "abs_joint5_rad": 0.10376467414513717,
+        "elbow_extension_margin_rad": 2.3065866511404547,
+        "joint_limit_margin_rad": 0.20851092520653447
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        0.21702613864812237,
+        0.05186573966649751,
+        -0.6213845018552904,
+        -2.773760339072809,
+        0.09410144481876197,
+        2.81459741663349,
+        0.2968281908355906
+      ],
+      "position_error_m": 1.3782362794156186e-09,
+      "rotation_error_rad": 3.4504408591514844e-09,
+      "metrics": {
+        "full_sigma_min": 0.1765374101343179,
+        "fixed_elbow_sigma_min": 0.17177701108680346,
+        "full_condition": 16.556864465022667,
+        "fixed_elbow_condition": 16.969388306547703,
+        "abs_joint2_rad": 0.05186573966649751,
+        "abs_joint5_rad": 0.09410144481876197,
+        "elbow_extension_margin_rad": 2.3067579154197984,
+        "joint_limit_margin_rad": 0.2083396609271908
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        -1.0413179786962838,
+        0.0508384289722565,
+        0.5947463735689047,
+        -2.7738471227513855,
+        -0.08880573056120174,
+        2.81476894226678,
+        0.42664830228807477
+      ],
+      "position_error_m": 1.9237198320595627e-08,
+      "rotation_error_rad": 4.8823614122946426e-08,
+      "metrics": {
+        "full_sigma_min": 0.1806845823842082,
+        "fixed_elbow_sigma_min": 0.17622978886912727,
+        "full_condition": 16.237166436459113,
+        "fixed_elbow_condition": 16.606543470739464,
+        "abs_joint2_rad": 0.0508384289722565,
+        "abs_joint5_rad": 0.08880573056120174,
+        "elbow_extension_margin_rad": 2.3068446990983746,
+        "joint_limit_margin_rad": 0.20825287724861452
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        -0.9548905446996815,
+        0.04811775119998468,
+        0.5118346516031185,
+        -2.774069189348282,
+        -0.07354201032975585,
+        2.815207209702222,
+        0.41581419952514176
+      ],
+      "position_error_m": 1.3405130178253504e-08,
+      "rotation_error_rad": 3.388289587268381e-08,
+      "metrics": {
+        "full_sigma_min": 0.19297649645555476,
+        "fixed_elbow_sigma_min": 0.18934691830745945,
+        "full_condition": 15.36726295903655,
+        "fixed_elbow_condition": 15.634068674836351,
+        "abs_joint2_rad": 0.04811775119998468,
+        "abs_joint5_rad": 0.07354201032975585,
+        "elbow_extension_margin_rad": 2.307066765695271,
+        "joint_limit_margin_rad": 0.20803081065171813
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        -0.8953635745747921,
+        0.04659812784717644,
+        0.4545366799345811,
+        -2.774188278367602,
+        -0.06387415340954929,
+        2.8154418630222935,
+        0.40895217137955925
+      ],
+      "position_error_m": 1.7189167733160438e-08,
+      "rotation_error_rad": 4.3200419272419124e-08,
+      "metrics": {
+        "full_sigma_min": 0.20082012341689712,
+        "fixed_elbow_sigma_min": 0.19766597133891123,
+        "full_condition": 14.865363057994301,
+        "fixed_elbow_condition": 15.081835385545984,
+        "abs_joint2_rad": 0.04659812784717644,
+        "abs_joint5_rad": 0.06387415340954929,
+        "elbow_extension_margin_rad": 2.307185854714591,
+        "joint_limit_margin_rad": 0.20791172163239802
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        0.01871857923852876,
+        0.04604616960171077,
+        -0.4309199865165673,
+        -2.774230649557128,
+        0.060060450715325696,
+        2.8155252876206154,
+        0.3209901212227686
+      ],
+      "position_error_m": 1.8187651718199113e-11,
+      "rotation_error_rad": 1.0890553318313347e-10,
+      "metrics": {
+        "full_sigma_min": 0.20387320048841734,
+        "fixed_elbow_sigma_min": 0.20089503228595224,
+        "full_condition": 14.67990026373535,
+        "fixed_elbow_condition": 14.879267326040837,
+        "abs_joint2_rad": 0.04604616960171077,
+        "abs_joint5_rad": 0.060060450715325696,
+        "elbow_extension_margin_rad": 2.307228225904117,
+        "joint_limit_margin_rad": 0.20786935044287214
+      },
+      "margin_validated": false,
+      "evaluations": 46
+    },
+    {
+      "q": [
+        -0.028464100217674516,
+        0.04509281244619387,
+        -0.38537857900396066,
+        -2.7743027209494855,
+        0.052947436212244584,
+        2.8156671123830774,
+        0.32603868005227116
+      ],
+      "position_error_m": 3.480698072581088e-11,
+      "rotation_error_rad": 1.2109126396374674e-10,
+      "metrics": {
+        "full_sigma_min": 0.2094319983870111,
+        "fixed_elbow_sigma_min": 0.20676238084970763,
+        "full_condition": 14.355316249076733,
+        "fixed_elbow_condition": 14.526590084343573,
+        "abs_joint2_rad": 0.04509281244619387,
+        "abs_joint5_rad": 0.052947436212244584,
+        "elbow_extension_margin_rad": 2.3073002972964747,
+        "joint_limit_margin_rad": 0.20779727905051448
+      },
+      "margin_validated": false,
+      "evaluations": 7
+    },
+    {
+      "q": [
+        -0.7238693232297492,
+        0.04350477232728589,
+        0.2888465039916924,
+        -2.774419625899212,
+        -0.038726928918435835,
+        2.815896957489093,
+        0.3911037063069987
+      ],
+      "position_error_m": 3.6297431128296318e-09,
+      "rotation_error_rad": 9.013032361795454e-09,
+      "metrics": {
+        "full_sigma_min": 0.2196008055118017,
+        "fixed_elbow_sigma_min": 0.2174587988880832,
+        "full_condition": 13.801431584785979,
+        "fixed_elbow_condition": 13.929962804198889,
+        "abs_joint2_rad": 0.04350477232728589,
+        "abs_joint5_rad": 0.038726928918435835,
+        "elbow_extension_margin_rad": 2.307417202246201,
+        "joint_limit_margin_rad": 0.207680374100788
+      },
+      "margin_validated": false,
+      "evaluations": 150
+    },
+    {
+      "q": [
+        -0.1911061393939432,
+        0.04277191973221544,
+        -0.2279852216110426,
+        -2.7744722432813607,
+        0.030217375668060955,
+        2.8160003248205725,
+        0.3421713484226233
+      ],
+      "position_error_m": 3.126057484012593e-11,
+      "rotation_error_rad": 7.636142715849778e-11,
+      "metrics": {
+        "full_sigma_min": 0.2247331789992839,
+        "fixed_elbow_sigma_min": 0.22284024646364653,
+        "full_condition": 13.539583898524947,
+        "fixed_elbow_condition": 13.650118792498882,
+        "abs_joint2_rad": 0.04277191973221544,
+        "abs_joint5_rad": 0.030217375668060955,
+        "elbow_extension_margin_rad": 2.30746981962835,
+        "joint_limit_margin_rad": 0.2076277567186393
+      },
+      "margin_validated": false,
+      "evaluations": 7
+    },
+    {
+      "q": [
+        -0.2395091967811203,
+        0.04233517524150448,
+        -0.1810574604858134,
+        -2.7745031991349327,
+        0.023831883013460585,
+        2.816061113908884,
+        0.3467033913718614
+      ],
+      "position_error_m": 1.7653207857616253e-11,
+      "rotation_error_rad": 9.952435252221171e-11,
+      "metrics": {
+        "full_sigma_min": 0.22794088368495197,
+        "fixed_elbow_sigma_min": 0.22619782697354981,
+        "full_condition": 13.381456427394223,
+        "fixed_elbow_condition": 13.481801466349296,
+        "abs_joint2_rad": 0.04233517524150448,
+        "abs_joint5_rad": 0.023831883013460585,
+        "elbow_extension_margin_rad": 2.307500775481922,
+        "joint_limit_margin_rad": 0.20759680086506727
+      },
+      "margin_validated": false,
+      "evaluations": 40
+    },
+    {
+      "q": [
+        -0.5005357768025162,
+        0.0417215787694204,
+        0.07228394874417154,
+        -2.7745461821355617,
+        -0.009421455123111194,
+        2.816145491860513,
+        0.3703044465817296
+      ],
+      "position_error_m": 3.305166191078564e-11,
+      "rotation_error_rad": 9.182197263663905e-11,
+      "metrics": {
+        "full_sigma_min": 0.23265221785858375,
+        "fixed_elbow_sigma_min": 0.23112111486641976,
+        "full_condition": 13.156464765553455,
+        "fixed_elbow_condition": 13.24319237477562,
+        "abs_joint2_rad": 0.0417215787694204,
+        "abs_joint5_rad": 0.009421455123111194,
+        "elbow_extension_margin_rad": 2.307543758482551,
+        "joint_limit_margin_rad": 0.20755381786443827
+      },
+      "margin_validated": false,
+      "evaluations": 146
+    },
+    {
+      "q": [
+        -0.45577732177502284,
+        0.041625175641975765,
+        0.028835689086600082,
+        -2.7745528812586167,
+        -0.0037525973934909138,
+        2.8161586394764426,
+        0.3662810657719564
+      ],
+      "position_error_m": 3.6487595906281635e-11,
+      "rotation_error_rad": 5.638305475661406e-11,
+      "metrics": {
+        "full_sigma_min": 0.2334154249194859,
+        "fixed_elbow_sigma_min": 0.23191772720087994,
+        "full_condition": 13.120799098557764,
+        "fixed_elbow_condition": 13.20546360461542,
+        "abs_joint2_rad": 0.041625175641975765,
+        "abs_joint5_rad": 0.0037525973934909138,
+        "elbow_extension_margin_rad": 2.307550457605606,
+        "joint_limit_margin_rad": 0.20754711874138332
+      },
+      "margin_validated": false,
+      "evaluations": 85
+    }
+  ],
+  "physical_validation": false
+}

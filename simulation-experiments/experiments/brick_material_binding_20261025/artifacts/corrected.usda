@@ -1,0 +1,111 @@
+#usda 1.0
+
+def Material "Visual"
+{
+}
+
+def Xform "Brick" (
+    prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+)
+{
+    point3f physics:centerOfMass = (0, 0, 0.0048)
+    float3 physics:diagonalInertia = (1e-7, 2e-7, 3e-7)
+    float physics:mass = 0.00216
+    double3 xformOp:translate = (0.1, 0.2, 0.3)
+    uniform token[] xformOpOrder = ["xformOp:translate"]
+
+    def Cube "BodyCollider" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </Visual>
+        rel material:binding:physics = </Brick/DeclaredContactMaterials/Body>
+        bool physics:collisionEnabled = 1
+        custom float physics:dynamicFriction = 0.4
+        custom float physics:restitution = 0.1
+        custom float physics:staticFriction = 0.5
+        double size = 1
+        float3 xformOp:scale = (0.032, 0.016, 0.0096)
+        double3 xformOp:translate = (0, 0, 0.0048)
+        uniform token[] xformOpOrder = ["xformOp:scale", "xformOp:translate"]
+    }
+
+    def Cube "TopCollider" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </Visual>
+        rel material:binding:physics = </Brick/DeclaredContactMaterials/Top>
+        bool physics:collisionEnabled = 1
+        custom float physics:dynamicFriction = 0.8
+        custom float physics:restitution = 0.2
+        custom float physics:staticFriction = 1
+        double size = 1
+        float3 xformOp:scale = (0.032, 0.016, 0.0017)
+        double3 xformOp:translate = (0, 0, 0.01045)
+        uniform token[] xformOpOrder = ["xformOp:scale", "xformOp:translate"]
+    }
+
+    def Scope "DeclaredContactMaterials"
+    {
+        def Material "Body" (
+            prepend apiSchemas = ["PhysicsMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.4
+            float physics:restitution = 0.1
+            float physics:staticFriction = 0.5
+        }
+
+        def Material "Top" (
+            prepend apiSchemas = ["PhysicsMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.8
+            float physics:restitution = 0.2
+            float physics:staticFriction = 1
+        }
+    }
+}
+
+def Xform "Other" (
+    prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+)
+{
+    point3f physics:centerOfMass = (0, 0, 0.0048)
+    float3 physics:diagonalInertia = (1e-7, 2e-7, 3e-7)
+    float physics:mass = 0.00216
+    double3 xformOp:translate = (0.1, 0.2, 0.3)
+    uniform token[] xformOpOrder = ["xformOp:translate"]
+
+    def Cube "BodyCollider" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </Visual>
+        bool physics:collisionEnabled = 1
+        custom float physics:dynamicFriction = 0.4
+        custom float physics:restitution = 0.1
+        custom float physics:staticFriction = 0.5
+        double size = 1
+        float3 xformOp:scale = (0.032, 0.016, 0.0096)
+        double3 xformOp:translate = (0, 0, 0.0048)
+        uniform token[] xformOpOrder = ["xformOp:scale", "xformOp:translate"]
+    }
+
+    def Cube "TopCollider" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </Visual>
+        bool physics:collisionEnabled = 1
+        custom float physics:dynamicFriction = 0.8
+        custom float physics:restitution = 0.2
+        custom float physics:staticFriction = 1
+        double size = 1
+        float3 xformOp:scale = (0.032, 0.016, 0.0017)
+        double3 xformOp:translate = (0, 0, 0.01045)
+        uniform token[] xformOpOrder = ["xformOp:scale", "xformOp:translate"]
+    }
+}
+

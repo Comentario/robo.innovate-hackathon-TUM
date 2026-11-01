@@ -1,0 +1,261 @@
+{
+  "val_photos": 31,
+  "label_bricks": 126,
+  "matched": 126,
+  "missed": 0,
+  "extra": 2,
+  "mean_mask_iou": 0.954,
+  "min_mask_iou": 0.853,
+  "speed_ms_per_frame_1080p": 18.3,
+  "device": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "per_photo": [
+    {
+      "photo": "calibration_20261025_104739__cal001",
+      "labels": 3,
+      "predicted": 3,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.976
+    },
+    {
+      "photo": "calibration_20261025_104739__cal002",
+      "labels": 3,
+      "predicted": 3,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.969
+    },
+    {
+      "photo": "calibration_20261025_104739__cal003",
+      "labels": 3,
+      "predicted": 3,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.934
+    },
+    {
+      "photo": "calibration_20261025_104739__cal004",
+      "labels": 3,
+      "predicted": 3,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.977
+    },
+    {
+      "photo": "calibration_20261025_104739__cal005",
+      "labels": 3,
+      "predicted": 3,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.974
+    },
+    {
+      "photo": "calibration_20261025_104739__cal006",
+      "labels": 3,
+      "predicted": 3,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.971
+    },
+    {
+      "photo": "calibration_20261025_104739__cal007",
+      "labels": 1,
+      "predicted": 1,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.988
+    },
+    {
+      "photo": "calibration_20261025_104739__cal008",
+      "labels": 1,
+      "predicted": 1,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.936
+    },
+    {
+      "photo": "calibration_20261025_104739__cal009",
+      "labels": 3,
+      "predicted": 3,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.975
+    },
+    {
+      "photo": "calibration_20261025_104739__cal010",
+      "labels": 1,
+      "predicted": 1,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.945
+    },
+    {
+      "photo": "calibration_20261025_104739__cal011",
+      "labels": 3,
+      "predicted": 3,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.976
+    },
+    {
+      "photo": "calibration_20261025_104739__cal012",
+      "labels": 3,
+      "predicted": 3,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.976
+    },
+    {
+      "photo": "live_20261024_203017__0001",
+      "labels": 4,
+      "predicted": 4,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.949
+    },
+    {
+      "photo": "live_20261024_203017__0002",
+      "labels": 4,
+      "predicted": 4,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.95
+    },
+    {
+      "photo": "live_20261024_203017__0003",
+      "labels": 4,
+      "predicted": 4,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.94
+    },
+    {
+      "photo": "live_20261024_203017__0004",
+      "labels": 5,
+      "predicted": 5,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.937
+    },
+    {
+      "photo": "live_20261024_203017__0005",
+      "labels": 6,
+      "predicted": 8,
+      "missed": 0,
+      "extra": 2,
+      "mean_iou": 0.953
+    },
+    {
+      "photo": "live_20261024_203017__0006",
+      "labels": 6,
+      "predicted": 6,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.957
+    },
+    {
+      "photo": "live_20261024_203017__0007",
+      "labels": 5,
+      "predicted": 5,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.941
+    },
+    {
+      "photo": "live_20261024_203017__0008",
+      "labels": 3,
+      "predicted": 3,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.964
+    },
+    {
+      "photo": "live_20261024_203017__0009",
+      "labels": 2,
+      "predicted": 2,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.915
+    },
+    {
+      "photo": "live_20261024_203017__0010",
+      "labels": 4,
+      "predicted": 4,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.973
+    },
+    {
+      "photo": "live_20261024_203017__0011",
+      "labels": 6,
+      "predicted": 6,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.942
+    },
+    {
+      "photo": "live_20261024_203017__0012",
+      "labels": 6,
+      "predicted": 6,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.947
+    },
+    {
+      "photo": "third_MIX__MIX_01",
+      "labels": 4,
+      "predicted": 4,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.961
+    },
+    {
+      "photo": "third_MIX__MIX_02",
+      "labels": 5,
+      "predicted": 5,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.964
+    },
+    {
+      "photo": "third_MIX__MIX_03",
+      "labels": 5,
+      "predicted": 5,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.968
+    },
+    {
+      "photo": "third_MIX__MIX_04",
+      "labels": 6,
+      "predicted": 6,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.926
+    },
+    {
+      "photo": "third_MIX__MIX_05",
+      "labels": 6,
+      "predicted": 6,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.944
+    },
+    {
+      "photo": "third_MIX__MIX_06",
+      "labels": 7,
+      "predicted": 7,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.95
+    },
+    {
+      "photo": "third_MIX__MIX_07",
+      "labels": 8,
+      "predicted": 8,
+      "missed": 0,
+      "extra": 0,
+      "mean_iou": 0.946
+    }
+  ]
+}

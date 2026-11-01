@@ -1,0 +1,34 @@
+{
+  "training_data": {
+    "n": 745,
+    "correct": 738,
+    "accuracy": 0.991,
+    "good_recall": 0.987,
+    "bad_recall": 0.993,
+    "balanced_accuracy": 0.99
+  },
+  "note": "scored on its own training crops: memorization, not generalization",
+  "crops": {
+    "calibration_20261024_171456": 21,
+    "calibration_20261024_174814": 16,
+    "calibration_20261024_200150": 10,
+    "calibration_20261024_202203": 20,
+    "calibration_20261025_104739": 30,
+    "calibration_20261025_172333": 8,
+    "calibration_20261025_174018": 11,
+    "calibration_20261025_181610": 40,
+    "calibration_20261025_183202": 40,
+    "calibration_20261025_190919": 41,
+    "calibration_20261025_201100": 41,
+    "calibration_20261026_144328": 32,
+    "calibration_20261026_150311": 20,
+    "calibration_20261026_155426": 20,
+    "calibration_20261026_161021": 46,
+    "calibration_20261026_163845": 15,
+    "calibration_20261026_171541": 35,
+    "carpet": 34,
+    "top_night": 191,
+    "video_Record_raw": 34,
+    "wood": 40
+  }
+}
